@@ -1,4 +1,3 @@
-export { setup } from './config';
+export { setup, start, startServer, startCli } from './main';
 export { Addon, createAddon } from './addon';
 export { router } from './router';
-export { startServer, startCli, start } from './main';

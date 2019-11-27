@@ -143,7 +143,7 @@ export const router = express.Router();
 router.use((req, res, next) => {
   if (req.query?.watchedAddonCheck) {
     const url = req.url.replace(/\/v1\/.*$/, '/v1');
-    res.status(200).send({ root: url });
+    res.status(200).send({ watched: true, root: url });
   } else {
     next();
   }
@@ -151,8 +151,12 @@ router.use((req, res, next) => {
 
 router.get('/health', (req, res) => res.status(200).send('OK'));
 
-router.post('/v1', async (req, res) => route(null, 'repository', req, res));
-router.post('/v1/addons', async (req, res) => route(null, 'addons', req, res));
+router.post('/v1', async (req, res) =>
+  route(config.repository.id, 'infos', req, res),
+);
+router.post('/v1/addons', async (req, res) =>
+  route(config.repository.id, 'addons', req, res),
+);
 router.post('/v1/:addonId', async (req, res) =>
   route(req.params.addonId, 'infos', req, res),
 );

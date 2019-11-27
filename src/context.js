@@ -2,54 +2,43 @@ import { getServerValidators } from '@watchedcom/schema';
 import fetch from 'node-fetch';
 import { config } from './config';
 
-const ACTIONS = [
-  'repository',
-  'infos',
-  'directory',
-  'metadata',
-  'source',
-  'subtitle',
-  'resolve',
-];
-
-const getFunction = (addonId, action) => {
-  if (!addonId) {
-    if (action === 'repository') {
-      // eslint-disable-next-line no-unused-vars
-      return async (ctx, args) => config.repository;
-    }
-
-    if (!addonId && action === 'addons') {
-      return async (ctx, args) =>
-        await Promise.all(
-          Object.values(config.addons).map(addon =>
-            addon.infos(ctx, { ...args, index: true }),
-          ),
-        );
-    }
-  }
-
-  const addon = config.addons[addonId];
-  if (!addon) {
-    throw new Error(`Addon ${addonId} not found (requested action ${action})`);
-  }
-  if (action === 'infos') {
-    return async (ctx, args) =>
-      await addon.infos(ctx, { ...args, index: false });
-  }
-
-  if (!ACTIONS.includes(action)) {
-    throw new Error(`Resource ${action} not found`);
-  }
-
-  return async (ctx, args) => await addon[action](ctx, args);
-};
-
 export class Context {
   constructor(addonId, action) {
     this.addonId = addonId;
     this.action = action;
-    this.fn = getFunction(addonId, action);
+    const addon = config.addons[addonId];
+    if (!addon) {
+      throw new Error(
+        `Addon ${addonId} not found (requested action ${action})`,
+      );
+    }
+
+    switch (action) {
+      default:
+        throw new Error(`Unknown action: ${action}`);
+
+      case 'infos':
+        this.fn = async (ctx, args) =>
+          await addon.infos(ctx, { ...args, index: false });
+        break;
+
+      case 'addons':
+        this.fn = async (ctx, args) =>
+          await Promise.all(
+            Object.values(config.addons).map(addon =>
+              addon.infos(ctx, { ...args, index: true }),
+            ),
+          );
+        break;
+
+      case 'directory':
+      case 'metadata':
+      case 'source':
+      case 'subtitle':
+      case 'resolve':
+        this.fn = async (ctx, args) => await addon[action](ctx, args);
+        break;
+    }
   }
 
   get schema() {

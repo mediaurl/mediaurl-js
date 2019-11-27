@@ -15,7 +15,7 @@ npm install
 npm run debug
 ```
 
-Please don't forget to change the `name`, `version` and `id` in `package.json` and `src/index.js`.
+Please don't forget to change the `name` and `id` in `package.json` and `src/index.js`.
 
 ## Connect to your delevopment machine
 
