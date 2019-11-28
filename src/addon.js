@@ -1,9 +1,6 @@
 /*eslint no-unused-vars: [2, { "args": "none" }]*/
-import appRootPath from 'app-root-path';
 import { getServerValidators } from '@watchedcom/schema';
 import { config } from './config';
-
-const rootPackage = appRootPath.require('./package.json');
 
 const hardCopy = obj => {
   if (Array.isArray(obj)) {
@@ -26,23 +23,26 @@ export class Addon {
       ...this.getProps(),
     };
 
-    if (!props.id && rootPackage.name) {
-      props.id = `${rootPackage.name}`;
-      if (props.type !== 'repository') props.id += `.${props.type}`;
-    } else if (props.id.indexOf('.') === 0) {
-      props.id = rootPackage.name + props.id;
+    if (props.type === 'repository') {
+      if (!props.id) props.id = config.rootPackage.name;
+    } else {
+      props.id = `${config.repository.id}.${props.id}`;
     }
 
-    if (!props.name && rootPackage.description) {
-      props.name = rootPackage.description;
+    if (!props.name && config.rootPackage.description) {
+      props.name = config.rootPackage.description;
     }
 
     if (!props.version) {
-      props.version = rootPackage.version ?? '0.0.0';
+      props.version = config.rootPackage.version ?? '0.0.0';
     }
 
-    if (!props.homepage && (rootPackage.homepage || rootPackage.repository)) {
-      props.homepage = rootPackage.homepage ?? rootPackage.repository;
+    if (
+      !props.homepage &&
+      (config.rootPackage.homepage || config.rootPackage.repository)
+    ) {
+      props.homepage =
+        config.rootPackage.homepage ?? config.rootPackage.repository;
     }
 
     this.props = getServerValidators().models.addon(props);
@@ -55,6 +55,10 @@ export class Addon {
 
   get id() {
     return this.props.id;
+  }
+
+  get type() {
+    return this.props.type;
   }
 
   async cacheGet(key) {

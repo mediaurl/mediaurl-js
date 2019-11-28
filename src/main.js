@@ -8,8 +8,13 @@ import { createCache } from './cache';
 import { router } from './router';
 import { Context } from './context';
 
-export function setup(props = null, cache = null) {
+export function setup(
+  props = null,
+  { cache = null, rootPath = '/', rootPackage = null } = {},
+) {
   config.setCache(cache ?? createCache());
+  config.setRootPath(rootPath);
+  if (rootPackage !== null) config.setRootPackage(rootPackage);
   config.setRepository(
     createAddon({
       mirrors: [],
@@ -21,6 +26,7 @@ export function setup(props = null, cache = null) {
       },
     }),
   );
+  console.warn(config.repository.props);
 }
 
 export function startServer(port = null) {
@@ -57,7 +63,7 @@ export function startCli(args) {
     }
   }
   const ctx = new Context(
-    request.addonId ?? config.repository.id,
+    request.addonId ?? 'repository',
     request.action ?? 'infos',
   );
   ctx

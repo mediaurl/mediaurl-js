@@ -6,7 +6,8 @@ export class Context {
   constructor(addonId, action) {
     this.addonId = addonId;
     this.action = action;
-    const addon = config.addons[addonId];
+    const addon =
+      addonId === 'repository' ? config.repository : config.addons[addonId];
     if (!addon) {
       throw new Error(
         `Addon ${addonId} not found (requested action ${action})`,
@@ -23,6 +24,9 @@ export class Context {
         break;
 
       case 'addons':
+        if (addonId !== config.repository.id) {
+          throw new Error('Action addons only allowed for this repository');
+        }
         this.fn = async (ctx, args) =>
           await Promise.all(
             Object.values(config.addons).map(addon =>
