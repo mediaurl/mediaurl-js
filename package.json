@@ -17,6 +17,7 @@
     "app-root-path": "^3.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "markdown-it": "^10.0.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.3.0",
     "redis": "^2.8.0",

@@ -1,6 +1,7 @@
 import { getServerValidators } from '@watchedcom/schema';
 import express from 'express';
 import uuid4 from 'uuid/v4';
+import MarkdownIt from 'markdown-it';
 import { Context } from './context';
 import { config, debug } from './config';
 
@@ -140,20 +141,46 @@ const route = async (addonId, action, req, res) => {
 
 export const router = express.Router();
 
+router.get('/health', (req, res) => res.status(200).send('OK'));
+
+const md = new MarkdownIt();
+
 router.use((req, res, next) => {
   if (req.query?.watchedAddonCheck) {
-    const url = req.url.replace(/\/v1\/.*$/, '/v1');
-    res.status(200).send({ watched: true, root: url });
+    res.status(200).send({ watched: true, rootPath: config.rootPath });
   } else {
     next();
   }
 });
 
-router.get('/health', (req, res) => res.status(200).send('OK'));
+const addonLink = (addon, isChild) => {
+  const data = {
+    mirrors: config.repository.props.mirrors,
+  };
+  if (isChild) data.id = addon.id;
+  console.warn(data);
+  return 'https://wtchd.cm/#' + JSON.stringify(data);
+};
 
-router.post('/v1', async (req, res) =>
-  route(config.repository.id, 'infos', req, res),
-);
+const renderAddon = (addon, isChild) =>
+  `${isChild ? '##' : '#'} [${addon.name ?? addon.id}](${addonLink(
+    addon,
+    isChild,
+  )})
+
+- ID: \`${addon.id}\`
+- Version \`${addon.version}\``;
+
+router.get('/', (req, res) => {
+  const html = `${renderAddon(config.repository.props, false)}
+
+${Object.values(config.addons)
+  .filter(addon => addon !== config.repository)
+  .map(addon => renderAddon(addon.props, true))
+  .join('\n\n')}`;
+  res.send(md.render(html));
+});
+
 router.post('/v1/addons', async (req, res) =>
   route(config.repository.id, 'addons', req, res),
 );
