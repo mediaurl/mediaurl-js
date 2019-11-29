@@ -74,7 +74,7 @@ class HttpContext extends Context {
       };
       getServerValidators().task.task(task);
       await config.cache.set(`task:wait:${id}`, '1');
-      console.warn('task.create', id);
+      // console.warn('task.create', id);
       await this.send(428, task);
     }
 
@@ -83,7 +83,7 @@ class HttpContext extends Context {
     const { resultChannel, result } = JSON.parse(data);
     if (!resultChannel) throw new Error('Missing resultChannel');
     this.resultChannel = resultChannel;
-    console.warn('task.result.get', result.id);
+    // console.warn('task.result.get', result.id);
     getServerValidators().task.result(result);
     return new TunnelResponse(result);
   }
@@ -109,7 +109,7 @@ const handleTaskResult = async (req, res, ctx, result) => {
   await config.cache.del(`task:wait:${result.id}`);
 
   // Set the result
-  console.warn('task.result.set', result.id);
+  // console.warn('task.result.set', result.id);
   const resultChannel = uuid4();
   const raw = JSON.stringify({ resultChannel, result });
   await config.cache.set(`task:result:${result.id}`, raw);
@@ -155,10 +155,10 @@ router.use((req, res, next) => {
 
 const addonLink = (addon, isChild) => {
   const data = {
+    id: config.repository.id,
     mirrors: config.repository.props.mirrors,
   };
-  if (isChild) data.id = addon.id;
-  console.warn(data);
+  if (isChild) data.addonId = addon.id;
   return 'https://wtchd.cm/#' + JSON.stringify(data);
 };
 
@@ -181,12 +181,12 @@ ${Object.values(config.addons)
   res.send(md.render(html));
 });
 
-router.post('/v1/addons', async (req, res) =>
+router.post('/addons', async (req, res) =>
   route(config.repository.id, 'addons', req, res),
 );
-router.post('/v1/:addonId', async (req, res) =>
+router.post('/:addonId', async (req, res) =>
   route(req.params.addonId, 'infos', req, res),
 );
-router.post('/v1/:addonId/:action', async (req, res) =>
+router.post('/:addonId/:action', async (req, res) =>
   route(req.params.addonId, req.params.action, req, res),
 );
