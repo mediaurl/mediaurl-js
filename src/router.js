@@ -146,8 +146,8 @@ router.get('/health', (req, res) => res.status(200).send('OK'));
 const md = new MarkdownIt();
 
 router.use((req, res, next) => {
-  if (req.query?.watchedAddonCheck) {
-    res.status(200).send({ watched: true, rootPath: config.rootPath });
+  if (req.query?.wtchDiscover) {
+    res.status(200).send({ watched: true, id: config.repository.id });
   } else {
     next();
   }

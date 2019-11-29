@@ -6,7 +6,6 @@ export const debug = debugModule('watched:sdk');
 class Config {
   cache = null;
   repository = null;
-  rootPath = null;
   rootPackage = appRootPath.require('./package');
   addons = {};
 
@@ -17,10 +16,6 @@ class Config {
   setRepository(repository) {
     if (this.repository) throw new Error('Repository already set');
     this.repository = repository;
-  }
-
-  setRootPath(rootPath) {
-    this.rootPath = rootPath;
   }
 
   setRootPackage(rootPackage) {

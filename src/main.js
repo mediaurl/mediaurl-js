@@ -8,12 +8,8 @@ import { createCache } from './cache';
 import { router } from './router';
 import { Context } from './context';
 
-export function setup(
-  props = null,
-  { cache = null, rootPath = '/', rootPackage = null } = {},
-) {
+export function setup(props = null, { cache = null, rootPackage = null } = {}) {
   config.setCache(cache ?? createCache());
-  config.setRootPath(rootPath);
   if (rootPackage !== null) config.setRootPackage(rootPackage);
   config.setRepository(
     createAddon({
