@@ -8,8 +8,8 @@ export class Context {
 
     if (addonId === 'repository') {
       addonId = config.repository.id;
-    } else if (addonId.indexOf(config.repository.id) !== 0) {
-      addonId = `${config.repository.id}.${addonId}`;
+    } else if (addonId.indexOf('.') === 0) {
+      addonId = config.repository.id + addonId;
     }
     const addon = config.addons[addonId];
     if (!addon) {

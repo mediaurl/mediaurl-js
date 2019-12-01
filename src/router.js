@@ -154,29 +154,27 @@ router.use((req, res, next) => {
 });
 
 const addonLink = (addon, isChild) => {
-  const data = {
-    id: config.repository.id,
-    mirrors: config.repository.props.mirrors,
-  };
-  if (isChild) data.addonId = addon.id;
-  return 'https://wtchd.cm/#' + JSON.stringify(data);
+  const urls = config.repository.props.mirrors.map(
+    url => url + (isChild ? `/.${addon.shortId}` : ''),
+  );
+  return 'https://wtchd.cm/#' + JSON.stringify(urls);
 };
 
 const renderAddon = (addon, isChild) =>
-  `${isChild ? '##' : '#'} [${addon.name ?? addon.id}](${addonLink(
+  `${isChild ? '##' : '#'} [${addon.props.name ?? addon.props.id}](${addonLink(
     addon,
     isChild,
   )})
 
-- ID: \`${addon.id}\`
-- Version \`${addon.version}\``;
+- ID: \`${addon.props.id}\`
+- Version \`${addon.props.version}\``;
 
 router.get('/', (req, res) => {
-  const html = `${renderAddon(config.repository.props, false)}
+  const html = `${renderAddon(config.repository, false)}
 
 ${Object.values(config.addons)
   .filter(addon => addon !== config.repository)
-  .map(addon => renderAddon(addon.props, true))
+  .map(addon => renderAddon(addon, true))
   .join('\n\n')}`;
   res.send(md.render(html));
 });

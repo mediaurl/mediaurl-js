@@ -25,7 +25,10 @@ export class Addon {
 
     if (props.type === 'repository') {
       if (!props.id) props.id = config.rootPackage.name;
+      this.shortId = '';
     } else {
+      if (!props.id) props.id = props.type;
+      this.shortId = props.id;
       props.id = `${config.repository.id}.${props.id}`;
     }
 
