@@ -4,8 +4,6 @@ import { config } from './config';
 
 export class Context {
   constructor(addonId, action) {
-    this.action = action;
-
     if (addonId === 'repository') {
       addonId = config.repository.id;
     } else if (addonId.indexOf('.') === 0) {
@@ -29,7 +27,7 @@ export class Context {
 
       case 'addons':
         if (addonId !== config.repository.id) {
-          throw new Error('Action addons only allowed for this repository');
+          throw new Error('Action addons is only allowed for this repository');
         }
         this.fn = async (ctx, args) =>
           await Promise.all(
@@ -47,12 +45,9 @@ export class Context {
         this.fn = async (ctx, args) => await addon[action](ctx, args);
         break;
     }
-  }
 
-  get schema() {
-    const schema = getServerValidators().actions[this.action];
-    if (!schema) throw new Error(`Found no schema for action ${this.action}`);
-    return schema;
+    this.schema = getServerValidators().actions[action];
+    if (!this.schema) throw new Error(`Found no schema for action ${action}`);
   }
 
   async run(request) {
