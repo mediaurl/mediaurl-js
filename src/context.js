@@ -17,9 +17,6 @@ export class Context {
     }
 
     switch (action) {
-      default:
-        throw new Error(`Unknown action: ${action}`);
-
       case 'addons':
         if (addonId !== config.repository.id) {
           throw new Error('Action addons is only allowed for this repository');
@@ -40,6 +37,9 @@ export class Context {
       case 'resolve':
         this.fn = async (ctx, args) => await addon[action](ctx, args);
         break;
+
+      default:
+        throw new Error(`Unknown action: ${action}`);
     }
 
     this.action = action;
@@ -51,8 +51,7 @@ export class Context {
     this.schema.request(request);
     console.debug(`Calling ${this.action}: ${JSON.stringify(request)}`);
     const response = await this.fn(this, request);
-    this.schema.response(response);
-    return response;
+    return this.schema.response(response);
   }
 
   async fetch(props) {

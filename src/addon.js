@@ -116,10 +116,6 @@ export function setupRepository(props) {
       mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
       ...props,
       type: 'repository',
-      // sdk: {
-      //   engine: 'javascript',
-      //   version: require('./package.json').version,
-      // },
     }),
     props === undefined,
   );

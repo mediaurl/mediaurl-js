@@ -30,22 +30,6 @@ class Config {
     }
     this.addons[addon.id] = addon;
   }
-
-  // registerAddon(addon) {
-  //   if (
-  //     addon.id === 'repository' ||
-  //     addon.id === 'addons' ||
-  //     (addon.type === 'repository' && !/^[a-z0-9\\-]+$/.test(addon.id)) ||
-  //     (addon.type !== 'repository' &&
-  //       !/^[a-z0-9\\-]+\.[a-z0-9\\-\\.]+$/.test(addon.id))
-  //   ) {
-  //     throw new Error(`Addon ID ${addon.id} for ${addon.type} is forbidden`);
-  //   }
-  //   if (this.addons[addon.id]) {
-  //     throw new Error(`Addon ${addon.id} already exists`);
-  //   }
-  //   this.addons[addon.id] = addon;
-  // }
 }
 
 export const config = new Config();
