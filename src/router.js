@@ -155,7 +155,7 @@ router.use((req, res, next) => {
 
 const addonLink = (addon, isChild) => {
   const urls = config.repository.props.mirrors.map(
-    url => url + (isChild ? `/.${addon.shortId}` : ''),
+    url => url + (isChild ? `/${addon.id}` : ''),
   );
   return 'https://wtchd.cm/#' + JSON.stringify(urls);
 };
@@ -180,7 +180,7 @@ ${Object.values(config.addons)
 });
 
 router.post('/addons', async (req, res) =>
-  route(config.repository.id, 'addons', req, res),
+  route('repository', 'addons', req, res),
 );
 router.post('/:addonId', async (req, res) =>
   route(req.params.addonId, 'infos', req, res),

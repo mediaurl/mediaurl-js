@@ -1,6 +1,16 @@
 /*eslint no-unused-vars: [2, { "args": "none" }]*/
+import appRootPath from 'app-root-path';
 import { getServerValidators } from '@watchedcom/schema';
 import { config } from './config';
+
+const rootPackage = appRootPath.require('./package');
+
+const defaults = {
+  id: rootPackage.name,
+  name: rootPackage.description ?? rootPackage.name,
+  version: rootPackage.version ?? '0.0.0',
+  homepage: rootPackage.homepage || rootPackage.repository,
+};
 
 const hardCopy = obj => {
   if (Array.isArray(obj)) {
@@ -22,33 +32,13 @@ export class Addon {
       type: 'worker',
       ...this.getProps(),
     };
-
-    if (props.type === 'repository') {
-      if (!props.id) props.id = config.rootPackage.name;
-      this.shortId = '';
-    } else {
-      if (!props.id) props.id = props.type;
-      this.shortId = props.id;
-      props.id = `${config.repository.id}.${props.id}`;
-    }
-
-    if (!props.name && config.rootPackage.description) {
-      props.name = config.rootPackage.description;
-    }
-
-    if (!props.version) {
-      props.version = config.rootPackage.version ?? '0.0.0';
-    }
-
-    if (
-      !props.homepage &&
-      (config.rootPackage.homepage || config.rootPackage.repository)
-    ) {
-      props.homepage =
-        config.rootPackage.homepage ?? config.rootPackage.repository;
-    }
-
-    this.props = getServerValidators().models.addon(props);
+    this.props = getServerValidators().models.addon({
+      id: `${config.repository?.id ?? defaults.id}.${props.type}`,
+      name: config.repository?.name ?? defaults.name,
+      version: config.repository?.version ?? defaults.version,
+      homepage: config.repository?.homepage ?? defaults.homepage,
+      ...props,
+    });
     config.registerAddon(this);
   }
 
@@ -114,4 +104,23 @@ export function createAddon(props) {
   }
 
   return new MyAddon();
+}
+
+export function setupRepository(props) {
+  config.setRepository(
+    createAddon({
+      id: defaults.id,
+      name: defaults.name,
+      version: defaults.version,
+      homepage: defaults.homepage,
+      mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
+      ...props,
+      type: 'repository',
+      // sdk: {
+      //   engine: 'javascript',
+      //   version: require('./package.json').version,
+      // },
+    }),
+    props === undefined,
+  );
 }

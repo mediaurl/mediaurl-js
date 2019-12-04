@@ -1,29 +1,10 @@
 import express from 'express';
 import http from 'http';
 import morgan from 'morgan';
-import sdkPackage from '../package.json';
+import { setupRepository } from './addon';
 import { config, debug } from './config';
-import { createAddon } from './addon';
-import { createCache } from './cache';
 import { router } from './router';
 import { Context } from './context';
-
-export function setup(props = null, { cache = null, rootPackage = null } = {}) {
-  config.setCache(cache ?? createCache());
-  if (rootPackage !== null) config.setRootPackage(rootPackage);
-  config.setRepository(
-    createAddon({
-      mirrors: [],
-      ...(props ?? {}),
-      type: 'repository',
-      sdk: {
-        engine: 'javascript',
-        version: sdkPackage.version,
-      },
-    }),
-  );
-  console.warn(config.repository.props);
-}
 
 export function startServer(port = null) {
   const app = express();
@@ -74,6 +55,7 @@ export function startCli(args) {
 }
 
 export function start() {
+  if (!config.repository) setupRepository();
   const args = [...process.argv];
   args.splice(0, 2);
   if (args[0] === 'call') {

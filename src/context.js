@@ -20,11 +20,6 @@ export class Context {
       default:
         throw new Error(`Unknown action: ${action}`);
 
-      case 'infos':
-        this.fn = async (ctx, args) =>
-          await addon.infos(ctx, { ...args, index: false });
-        break;
-
       case 'addons':
         if (addonId !== config.repository.id) {
           throw new Error('Action addons is only allowed for this repository');
@@ -37,6 +32,7 @@ export class Context {
           );
         break;
 
+      case 'infos':
       case 'directory':
       case 'metadata':
       case 'source':
@@ -46,13 +42,14 @@ export class Context {
         break;
     }
 
+    this.action = action;
     this.schema = getServerValidators().actions[action];
     if (!this.schema) throw new Error(`Found no schema for action ${action}`);
   }
 
   async run(request) {
     this.schema.request(request);
-    console.debug(`Calling ${this.schema}: ${JSON.stringify(request)}`);
+    console.debug(`Calling ${this.action}: ${JSON.stringify(request)}`);
     const response = await this.fn(this, request);
     this.schema.response(response);
     return response;
