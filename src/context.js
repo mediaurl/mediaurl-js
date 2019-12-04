@@ -52,6 +52,7 @@ export class Context {
 
   async run(request) {
     this.schema.request(request);
+    console.debug(`Calling ${this.schema}: ${JSON.stringify(request)}`);
     const response = await this.fn(this, request);
     this.schema.response(response);
     return response;
