@@ -2,6 +2,7 @@ import { getServerValidators } from '@watchedcom/schema';
 import express from 'express';
 import uuid4 from 'uuid/v4';
 import MarkdownIt from 'markdown-it';
+import path from 'path';
 import { Context } from './context';
 import { config, debug } from './config';
 
@@ -147,7 +148,17 @@ const md = new MarkdownIt();
 
 router.use((req, res, next) => {
   if (req.query?.wtchDiscover) {
-    res.status(200).send({ watched: true, id: config.repository.id });
+    let addonId = null;
+    let p = req.path;
+    let rootLevel = 0;
+    while (p !== '/') {
+      addonId = path.basename(p);
+      p = path.dirname(p);
+      rootLevel += 1;
+    }
+    res
+      .status(200)
+      .send({ watched: true, id: config.repository.id, addonId, rootLevel });
   } else {
     next();
   }
