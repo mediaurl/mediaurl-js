@@ -146,7 +146,7 @@ router.get('/health', (req, res) => res.status(200).send('OK'));
 const discover = (req, res, next) => {
   if (req.query?.wtchDiscover) {
     const repositoryId = config.repository?.id ?? null;
-    const addonId = req.params.id;
+    const addonId = req.params.addonId;
     res.status(200).send({
       watched: true,
       repositoryId,
