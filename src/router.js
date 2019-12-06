@@ -1,10 +1,10 @@
 import { getServerValidators } from '@watchedcom/schema';
 import express from 'express';
 import uuid4 from 'uuid/v4';
-import MarkdownIt from 'markdown-it';
 import path from 'path';
 import { Context } from './context';
 import { config, debug } from './config';
+import { render as renderLandingPage } from './landing';
 
 const decodeBody = body => {
   if (typeof body === 'string') return JSON.parse(body);
@@ -144,8 +144,6 @@ export const router = express.Router();
 
 router.get('/health', (req, res) => res.status(200).send('OK'));
 
-const md = new MarkdownIt();
-
 router.use((req, res, next) => {
   if (req.query?.wtchDiscover) {
     let addonId = null;
@@ -156,43 +154,32 @@ router.use((req, res, next) => {
       p = path.dirname(p);
       rootLevel += 1;
     }
-    res
-      .status(200)
-      .send({ watched: true, id: config.repository.id, addonId, rootLevel });
+    const id = config.repository?.id ?? null;
+    res.status(200).send({
+      watched: true,
+      id: config.repository?.id ?? null,
+      addonId: addonId === id ? null : addonId,
+      rootLevel,
+    });
   } else {
     next();
   }
 });
 
-const addonLink = (addon, isChild) => {
-  const urls = config.repository.props.mirrors.map(
-    url => url + (isChild ? `/${addon.id}` : ''),
-  );
-  return 'https://wtchd.cm/#' + JSON.stringify(urls);
-};
-
-const renderAddon = (addon, isChild) =>
-  `${isChild ? '##' : '#'} [${addon.props.name ?? addon.props.id}](${addonLink(
-    addon,
-    isChild,
-  )})
-
-- ID: \`${addon.props.id}\`
-- Version \`${addon.props.version}\``;
-
 router.get('/', (req, res) => {
-  const html = `${renderAddon(config.repository, false)}
-
-${Object.values(config.addons)
-  .filter(addon => addon !== config.repository)
-  .map(addon => renderAddon(addon, true))
-  .join('\n\n')}`;
-  res.send(md.render(html));
+  res.send(
+    renderLandingPage(
+      config.repository,
+      Object.values(config.addons).filter(addon => addon !== config.repository),
+    ),
+  );
 });
 
-router.post('/addons', async (req, res) =>
-  route('repository', 'addons', req, res),
-);
+router.get('/:addonId', (req, res) => {
+  res.redirect('..#' + req.params.addonId);
+});
+
+router.post('/addons', async (req, res) => route(null, 'addons', req, res));
 router.post('/:addonId', async (req, res) =>
   route(req.params.addonId, 'infos', req, res),
 );

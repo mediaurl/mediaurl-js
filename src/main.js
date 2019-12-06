@@ -1,8 +1,7 @@
 import express from 'express';
 import http from 'http';
 import morgan from 'morgan';
-import { setupRepository } from './addon';
-import { config, debug } from './config';
+import { debug } from './config';
 import { router } from './router';
 import { Context } from './context';
 
@@ -55,7 +54,6 @@ export function startCli(args) {
 }
 
 export function start() {
-  if (!config.repository) setupRepository();
   const args = [...process.argv];
   args.splice(0, 2);
   if (args[0] === 'call') {

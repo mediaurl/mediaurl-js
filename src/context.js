@@ -4,23 +4,8 @@ import { config } from './config';
 
 export class Context {
   constructor(addonId, action) {
-    if (addonId === 'repository') {
-      addonId = config.repository.id;
-    } else if (addonId.indexOf('.') === 0) {
-      addonId = config.repository.id + addonId;
-    }
-    const addon = config.addons[addonId];
-    if (!addon) {
-      throw new Error(
-        `Addon ${addonId} not found (requested action ${action})`,
-      );
-    }
-
     switch (action) {
       case 'addons':
-        if (addonId !== config.repository.id) {
-          throw new Error('Action addons is only allowed for this repository');
-        }
         this.fn = async (ctx, args) =>
           await Promise.all(
             Object.values(config.addons).map(addon =>
@@ -34,9 +19,21 @@ export class Context {
       case 'metadata':
       case 'source':
       case 'subtitle':
-      case 'resolve':
+      case 'resolve': {
+        if (addonId === 'repository') {
+          addonId = config.repository.id;
+        } else if (addonId.indexOf('.') === 0) {
+          addonId = config.repository.id + addonId;
+        }
+        const addon = config.addons[addonId];
+        if (!addon) {
+          throw new Error(
+            `Addon ${addonId} not found (requested action ${action})`,
+          );
+        }
         this.fn = async (ctx, args) => await addon[action](ctx, args);
         break;
+      }
 
       default:
         throw new Error(`Unknown action: ${action}`);
