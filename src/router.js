@@ -1,7 +1,6 @@
 import { getServerValidators } from '@watchedcom/schema';
 import express from 'express';
 import uuid4 from 'uuid/v4';
-import path from 'path';
 import { Context } from './context';
 import { config, debug } from './config';
 import { render as renderLandingPage } from './landing';
@@ -144,27 +143,21 @@ export const router = express.Router();
 
 router.get('/health', (req, res) => res.status(200).send('OK'));
 
-router.use((req, res, next) => {
+const discover = (req, res, next) => {
   if (req.query?.wtchDiscover) {
-    let addonId = null;
-    let p = req.path;
-    let rootLevel = 0;
-    while (p !== '/') {
-      addonId = path.basename(p);
-      p = path.dirname(p);
-      rootLevel += 1;
-    }
-    const id = config.repository?.id ?? null;
+    const repositoryId = config.repository?.id ?? null;
+    const addonId = req.params.id;
     res.status(200).send({
       watched: true,
-      id: config.repository?.id ?? null,
-      addonId: addonId === id ? null : addonId,
-      rootLevel,
+      repositoryId,
+      addonId: addonId ? (addonId === repositoryId ? null : addonId) : null,
     });
   } else {
     next();
   }
-});
+};
+router.get('/', discover);
+router.get('/:addonId', discover);
 
 router.get('/', (req, res) => {
   res.send(
