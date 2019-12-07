@@ -141,16 +141,18 @@ const route = async (addonId, action, req, res) => {
 
 export const router = express.Router();
 
+// Healthcheck
 router.get('/health', (req, res) => res.status(200).send('OK'));
 
+// Discovery
 const discover = (req, res, next) => {
   if (req.query?.wtchDiscover) {
     const repositoryId = config.repository?.id ?? null;
-    const addonId = req.params.addonId;
+    const addonId = req.params.addonId ?? null;
     res.status(200).send({
       watched: true,
       repositoryId,
-      addonId: addonId ? (addonId === repositoryId ? null : addonId) : null,
+      addonId: addonId === repositoryId ? null : addonId,
     });
   } else {
     next();
@@ -159,6 +161,7 @@ const discover = (req, res, next) => {
 router.get('/', discover);
 router.get('/:addonId', discover);
 
+// HTML routes
 router.get('/', (req, res) => {
   res.send(
     renderLandingPage(
@@ -167,11 +170,11 @@ router.get('/', (req, res) => {
     ),
   );
 });
-
 router.get('/:addonId', (req, res) => {
   res.redirect('..#' + req.params.addonId);
 });
 
+// API routes
 router.post('/addons', async (req, res) => route(null, 'addons', req, res));
 router.post('/:addonId', async (req, res) =>
   route(req.params.addonId, 'infos', req, res),

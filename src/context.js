@@ -20,11 +20,7 @@ export class Context {
       case 'source':
       case 'subtitle':
       case 'resolve': {
-        if (addonId === 'repository') {
-          addonId = config.repository.id;
-        } else if (addonId.indexOf('.') === 0) {
-          addonId = config.repository.id + addonId;
-        }
+        if (addonId === 'repository') addonId = config.repository.id;
         const addon = config.addons[addonId];
         if (!addon) {
           throw new Error(
