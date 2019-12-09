@@ -7,7 +7,7 @@
   "private": false,
   "scripts": {
     "lint": "eslint src",
-    "test": "jest --coverage --passWithNoTests .",
+    "test": "jest",
     "prepublishOnly": "npm run build",
     "build": "rm -rf ./dist && babel src --out-dir ./dist",
     "debug": "nodemon --watch src --exec npm run build"
