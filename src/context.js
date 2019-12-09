@@ -8,9 +8,9 @@ export class Context {
       case 'addons':
         this.fn = async (ctx, args) =>
           await Promise.all(
-            Object.values(config.addons).map(addon =>
-              addon.infos(ctx, { ...args, index: true }),
-            ),
+            Object.values(config.addons)
+              .filter(addon => addon.type !== 'repository')
+              .map(addon => addon.infos(ctx, { ...args, index: true })),
           );
         break;
 

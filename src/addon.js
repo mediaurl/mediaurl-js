@@ -107,16 +107,13 @@ export function createAddon(props) {
 }
 
 export function setupRepository(props) {
-  config.setRepository(
-    createAddon({
-      id: defaults.id,
-      name: defaults.name,
-      version: defaults.version,
-      homepage: defaults.homepage,
-      mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
-      ...props,
-      type: 'repository',
-    }),
-    props === undefined,
-  );
+  createAddon({
+    id: defaults.id,
+    name: defaults.name,
+    version: defaults.version,
+    homepage: defaults.homepage,
+    mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
+    ...(props ?? {}),
+    type: 'repository',
+  });
 }

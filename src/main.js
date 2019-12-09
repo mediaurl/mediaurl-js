@@ -1,11 +1,18 @@
 import express from 'express';
 import http from 'http';
 import morgan from 'morgan';
-import { debug } from './config';
+import { config, debug } from './config';
 import { router } from './router';
 import { Context } from './context';
+import { setupRepository } from './addon';
+
+const ensureRepository = () => {
+  if (!config.repository) setupRepository();
+};
 
 export function startServer(port = null) {
+  ensureRepository();
+
   const app = express();
   app.use(morgan('dev'));
   app.use(express.json());
@@ -28,6 +35,8 @@ export function startServer(port = null) {
 }
 
 export function startCli(args) {
+  ensureRepository();
+
   const request = {};
   for (const arg of args) {
     const m = /^(.*?)=(.*)$/.exec(arg);
