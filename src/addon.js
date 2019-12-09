@@ -33,10 +33,10 @@ export class Addon {
       ...this.getProps(),
     };
     this.props = getServerValidators().models.addon({
-      id: `${config.repository?.id ?? defaults.id}.${props.type}`,
-      name: config.repository?.name ?? defaults.name,
-      version: config.repository?.version ?? defaults.version,
-      homepage: config.repository?.homepage ?? defaults.homepage,
+      id: `${defaults.id}.${props.type}`,
+      name: defaults.name,
+      version: defaults.version,
+      homepage: defaults.homepage,
       ...props,
     });
     config.registerAddon(this);
@@ -74,7 +74,7 @@ export class Addon {
     throw new Error('Not implemented');
   }
 
-  async metadata(ctx, args) {
+  async item(ctx, args) {
     throw new Error('Not implemented');
   }
 
@@ -108,12 +108,12 @@ export function createAddon(props) {
 
 export function setupRepository(props) {
   createAddon({
-    id: defaults.id,
     name: defaults.name,
     version: defaults.version,
     homepage: defaults.homepage,
     mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
     ...(props ?? {}),
     type: 'repository',
+    id: 'repository',
   });
 }

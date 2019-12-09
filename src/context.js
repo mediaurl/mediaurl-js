@@ -16,7 +16,7 @@ export class Context {
 
       case 'infos':
       case 'directory':
-      case 'metadata':
+      case 'item':
       case 'source':
       case 'subtitle':
       case 'resolve': {
