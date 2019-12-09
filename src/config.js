@@ -13,7 +13,7 @@ class Config {
   }
 
   registerAddon(addon) {
-    if (addon.id === 'repository' || addon.id === 'addons') {
+    if (addon.id === 'addons') {
       throw new Error(`Addon ID ${addon.id} for ${addon.type} is forbidden`);
     }
     if (this.addons[addon.id]) {
