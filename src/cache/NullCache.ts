@@ -1,15 +1,17 @@
-export class NullCache {
-    async get(key) {
+import { ICache } from "./index";
+
+export class NullCache implements ICache {
+    async get(key: string) {
         return null;
     }
 
-    async set(key, value) {
+    async set(key: string, value: any) {
         return value;
     }
 
-    async del(key) {}
+    async del(key: string) {}
 
-    async waitKey(key, timeout = 30 * 1000, del = true) {
+    async waitKey(key: string, timeout = 30 * 1000, del = true) {
         const t = new Date().getTime();
         for (;;) {
             const result = await this.get(key);
