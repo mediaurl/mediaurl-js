@@ -80,7 +80,11 @@ class HttpContext extends Context {
         }
 
         // Wait for result
-        const data = await config.cache.waitKey(`task:result:${id}`, timeout, true);
+        const data = await config.cache.waitKey(
+            `task:result:${id}`,
+            timeout,
+            true
+        );
         const { resultChannel, result } = JSON.parse(data);
         if (!resultChannel) throw new Error("Missing resultChannel");
         this.resultChannel = resultChannel;
@@ -167,7 +171,9 @@ router.get("/", (req, res) => {
     res.send(
         renderLandingPage(
             config.repository,
-            Object.values(config.addons).filter(addon => addon !== config.repository)
+            Object.values(config.addons).filter(
+                addon => addon !== config.repository
+            )
         )
     );
 });
@@ -177,5 +183,9 @@ router.get("/:addonId", (req, res) => {
 
 // API routes
 router.post("/addons", async (req, res) => route(null, "addons", req, res));
-router.post("/:addonId", async (req, res) => route(req.params.addonId, "infos", req, res));
-router.post("/:addonId/:action", async (req, res) => route(req.params.addonId, req.params.action, req, res));
+router.post("/:addonId", async (req, res) =>
+    route(req.params.addonId, "infos", req, res)
+);
+router.post("/:addonId/:action", async (req, res) =>
+    route(req.params.addonId, req.params.action, req, res)
+);

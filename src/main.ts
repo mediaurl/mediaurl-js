@@ -24,7 +24,8 @@ export function startServer(port = null) {
 
     function onListening() {
         const addr = server.address();
-        const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
+        const bind =
+            typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
         debug(`Listening on ${bind}`);
     }
 
@@ -47,7 +48,10 @@ export function startCli(args) {
             request[key] = m[2];
         }
     }
-    const ctx = new Context(request.addonId ?? "repository", request.action ?? "infos");
+    const ctx = new Context(
+        request.addonId ?? "repository",
+        request.action ?? "infos"
+    );
     ctx.run(request)
         .then(result => {
             console.log(JSON.stringify(result, null, 2));

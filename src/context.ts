@@ -11,7 +11,9 @@ export class Context {
                     await Promise.all(
                         Object.values(config.addons)
                             .filter(addon => addon.type !== "repository")
-                            .map(addon => addon.infos(ctx, { ...args, index: true }))
+                            .map(addon =>
+                                addon.infos(ctx, { ...args, index: true })
+                            )
                     );
                 break;
 
@@ -24,7 +26,9 @@ export class Context {
                 if (addonId === "repository") addonId = config.repository.id;
                 const addon = config.addons[addonId];
                 if (!addon) {
-                    throw new Error(`Addon ${addonId} not found (requested action ${action})`);
+                    throw new Error(
+                        `Addon ${addonId} not found (requested action ${action})`
+                    );
                 }
                 this.fn = async (ctx, args) => await addon[action](ctx, args);
                 break;
@@ -36,7 +40,8 @@ export class Context {
 
         this.action = action;
         this.schema = getServerValidators().actions[action];
-        if (!this.schema) throw new Error(`Found no schema for action ${action}`);
+        if (!this.schema)
+            throw new Error(`Found no schema for action ${action}`);
     }
 
     async run(request) {

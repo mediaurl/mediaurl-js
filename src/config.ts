@@ -15,7 +15,9 @@ class Config {
 
     registerAddon(addon) {
         if (addon.id === "addons") {
-            throw new Error(`Addon ID ${addon.id} for ${addon.type} is forbidden`);
+            throw new Error(
+                `Addon ID ${addon.id} for ${addon.type} is forbidden`
+            );
         }
         if (this.addons[addon.id]) {
             throw new Error(`Addon ${addon.id} already exists`);
