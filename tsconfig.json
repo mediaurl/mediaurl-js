@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        // "declaration": false,
+        "outDir": "dist"
+    },
+    "include": [
+        "src/index.ts"
+    ]
+}

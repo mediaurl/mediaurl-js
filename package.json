@@ -6,17 +6,17 @@
   "main": "dist/index.js",
   "private": false,
   "scripts": {
-    "lint": "eslint src",
-    "test": "jest --coverage --passWithNoTests .",
+    "test": "jest",
     "prepublishOnly": "npm run build",
-    "build": "rm -rf ./dist && babel src --out-dir ./dist",
-    "debug": "nodemon --watch src --exec npm run build"
+    "build": "tsc",
+    "develop": "ts-node-dev -r dotenv/config --respawn --transpileOnly --no-notify"
   },
   "dependencies": {
     "@watchedcom/schema": "latest",
     "app-root-path": "^3.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "lodash": "^4.17.15",
     "markdown-it": "^10.0.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.3.0",
@@ -24,26 +24,24 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-export-default-from": "^7.2.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
-    "@babel/preset-env": "^7.6.3",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^6.7.1",
-    "eslint-config-prettier": "^6.4.0",
-    "eslint-plugin-prettier": "^3.1.1",
-    "husky": "^3.0.9",
+    "@types/app-root-path": "^1.2.4",
+    "@types/express": "^4.17.2",
+    "@types/lodash": "^4.14.149",
+    "@types/markdown-it": "0.0.9",
+    "@types/morgan": "^1.7.37",
+    "@types/redis": "^2.8.14",
+    "husky": "^3.1.0",
     "jest": "^24.9.0",
-    "lint-staged": "^9.4.2",
-    "nodemon": "^2.0.1",
-    "prettier": "^1.18.2"
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,css,md}": [
-      "eslint --fix",
+    "*.{js,ts,tsx,css,md}": [
+      "tslint --fix",
+      "prettier --write",
       "git add"
     ]
   },

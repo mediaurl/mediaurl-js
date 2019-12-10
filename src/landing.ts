@@ -1,30 +1,30 @@
-import MarkdownIt from 'markdown-it';
+import * as MarkdownIt from "markdown-it";
 
 const md = new MarkdownIt();
 
 const selectT = value => value;
 
 const renderAddon = (addon, heading) => `${heading} [${selectT(
-  addon.props.name ?? addon.props.id,
+    addon.props.name ?? addon.props.id
 )}](http://id/${addon.id})
   
   - ID: \`${addon.props.id}\`
   - Version \`${addon.props.version}\``;
 
 const renderBody = (repo, addons) => {
-  let body = [];
-  if (repo) body.push(renderAddon(repo, '#'));
-  else body.push('# WATCHED.com Addon Server');
-  for (const addon of addons) {
-    body.push(renderAddon(addon, '##'));
-  }
-  return md.render(body.join('\n\n'));
+    let body = [];
+    if (repo) body.push(renderAddon(repo, "#"));
+    else body.push("# WATCHED.com Addon Server");
+    for (const addon of addons) {
+        body.push(renderAddon(addon, "##"));
+    }
+    return md.render(body.join("\n\n"));
 };
 
 export const render = (repo, addons) => `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>${selectT(repo?.name ?? 'WATCHED.com Addon Server')}</title>
+  <title>${selectT(repo?.name ?? "WATCHED.com Addon Server")}</title>
 </head>
 <body>
   ${renderBody(repo, addons)}
