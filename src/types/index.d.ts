@@ -20,4 +20,5 @@ export type Actions =
     | "source"
     | "subtitle"
     | "resolve";
+
 export type ActionFunction = (ctx: IContext, args: any) => any;

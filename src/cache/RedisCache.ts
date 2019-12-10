@@ -1,9 +1,11 @@
 import * as redis from "redis";
 import { promisify } from "util";
 
+import { ICache } from "../types/cache";
+
 import { NullCache } from "./NullCache";
 
-export class RedisCache extends NullCache {
+export class RedisCache extends NullCache implements ICache {
     private client: any;
 
     constructor(clientConfig: redis.ClientOpts) {

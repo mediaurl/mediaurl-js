@@ -1,4 +1,4 @@
-import { ICache } from "./index";
+import { ICache } from "../types/cache";
 
 export class NullCache implements ICache {
     async get(key: string) {
