@@ -1,5 +1,5 @@
 import { getServerValidators } from '@watchedcom/schema';
-import express from 'express';
+import * as express from 'express';
 import uuid4 from 'uuid/v4';
 import { Context } from './context';
 import { config, debug } from './config';

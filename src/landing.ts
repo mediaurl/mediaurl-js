@@ -1,4 +1,4 @@
-import MarkdownIt from 'markdown-it';
+import * as MarkdownIt from 'markdown-it';
 
 const md = new MarkdownIt();
 

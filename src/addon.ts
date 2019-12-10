@@ -1,7 +1,7 @@
-/*eslint no-unused-vars: [2, { "args": "none" }]*/
-import appRootPath from 'app-root-path';
-import { getServerValidators } from '@watchedcom/schema';
+import * as appRootPath from 'app-root-path';
+// import { getServerValidators } from '@watchedcom/schema';
 import { config } from './config';
+import { getServerValidators } from '@watchedcom/schema';
 
 const rootPackage = appRootPath.require('./package');
 
