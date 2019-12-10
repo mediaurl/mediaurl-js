@@ -97,7 +97,7 @@ export function createAddon(props): WorkerAddon {
 }
 
 export const setupRepository = props => {
-    return createAddon({
+    createAddon({
         name: defaults.name,
         version: defaults.version,
         homepage: defaults.homepage,
