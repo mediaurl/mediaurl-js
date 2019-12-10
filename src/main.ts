@@ -1,6 +1,5 @@
-import express from "express";
-import http from "http";
-import morgan from "morgan";
+import * as express from "express";
+import * as morgan from "morgan";
 
 import { setupRepository } from "./addon";
 import { config, debug } from "./config";
@@ -11,31 +10,24 @@ const ensureRepository = () => {
     if (!config.repository) setupRepository();
 };
 
-export function startServer(port = null) {
+export const startServer = (port = parseInt(process.env.PORT) || 3000) => {
     ensureRepository();
 
     const app = express();
+
     app.use(morgan("dev"));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
     app.use("/", router);
 
-    const server = http.createServer(app);
+    app.listen(port, () => {
+        debug(`Listening on ${port}`);
+    });
 
-    function onListening() {
-        const addr = server.address();
-        const bind =
-            typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
-        debug(`Listening on ${bind}`);
-    }
+    return { app };
+};
 
-    server.listen(port ?? parseInt(process.env.PORT || 3000));
-    server.on("listening", onListening);
-
-    return { server, app };
-}
-
-export function startCli(args) {
+export const startCli = args => {
     ensureRepository();
 
     const request = {};
@@ -60,7 +52,7 @@ export function startCli(args) {
             console.error(error);
             throw error;
         });
-}
+};
 
 export function start() {
     const args = [...process.argv];
