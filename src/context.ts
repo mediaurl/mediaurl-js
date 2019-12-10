@@ -1,35 +1,21 @@
 import { getServerValidators } from "@watchedcom/schema";
 import fetch from "node-fetch";
 
-import { config } from "./config";
+import { Addon } from "./addon";
 
 export class Context {
-    constructor(addonId, action) {
-        switch (action) {
-            case "addons":
-                this.fn = async (ctx, args) =>
-                    await Promise.all(
-                        Object.values(config.addons)
-                            .filter(addon => addon.type !== "repository")
-                            .map(addon =>
-                                addon.infos(ctx, { ...args, index: true })
-                            )
-                    );
-                break;
+    action: string;
+    schema: any;
+    fn: (ctx: any, args: any) => Promise<any>;
 
-            case "infos":
+    constructor(addon: Addon, action: string) {
+        switch (action) {
+            case "addon":
             case "directory":
             case "item":
             case "source":
             case "subtitle":
             case "resolve": {
-                if (addonId === "repository") addonId = config.repository.id;
-                const addon = config.addons[addonId];
-                if (!addon) {
-                    throw new Error(
-                        `Addon ${addonId} not found (requested action ${action})`
-                    );
-                }
                 this.fn = async (ctx, args) => await addon[action](ctx, args);
                 break;
             }
@@ -44,18 +30,18 @@ export class Context {
             throw new Error(`Found no schema for action ${action}`);
     }
 
-    async run(request) {
+    async run(request: any) {
         this.schema.request(request);
         console.debug(`Calling ${this.action}: ${JSON.stringify(request)}`);
         const response = await this.fn(this, request);
         return this.schema.response(response);
     }
 
-    async fetch(props) {
+    async fetch(props: any) {
         return await fetch(props);
     }
 
-    async fetchRemote(props) {
+    async fetchRemote(props: any) {
         return await this.fetch(props);
     }
 }

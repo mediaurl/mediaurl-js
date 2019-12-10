@@ -13,3 +13,13 @@ export function createCache() {
         ? new RedisCache({ url: process.env.REDIS_CACHE })
         : new NullCache();
 }
+
+let cache: ICache = createCache();
+
+export function getCache() {
+    return cache;
+}
+
+export function setCache(c: ICache) {
+    cache = c;
+}

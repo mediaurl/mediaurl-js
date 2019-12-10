@@ -1,9 +1,15 @@
 import { getServerValidators } from "@watchedcom/schema";
-import { WorkerAddon } from "@watchedcom/schema/dist/entities";
+import {
+    Addon as AddonType,
+    ApiAddonRequest,
+    ApiAddonResponse,
+    RepositoryAddon as RepositoryAddonType
+} from "@watchedcom/schema/dist/entities";
 import * as appRootPath from "app-root-path";
 import { cloneDeep } from "lodash";
 
-import { config } from "./config";
+import { getCache } from "./cache";
+import { Context } from "./context";
 
 const rootPackage = appRootPath.require("./package");
 
@@ -17,23 +23,18 @@ const defaults = {
 const hardCopy = cloneDeep;
 
 export class Addon {
-    constructor() {
-        const props = {
-            type: "worker",
-            ...this.getProps()
-        };
+    props: AddonType;
+    hasRepository: boolean = false;
+
+    constructor(props: AddonType) {
         this.props = getServerValidators().models.addon({
+            type: "worker",
             id: `${defaults.id}.${props.type}`,
             name: defaults.name,
             version: defaults.version,
             homepage: defaults.homepage,
             ...props
         });
-        config.registerAddon(this);
-    }
-
-    getProps() {
-        throw new Error("Not implemented");
     }
 
     get id() {
@@ -44,66 +45,91 @@ export class Addon {
         return this.props.type;
     }
 
-    async cacheGet(key) {
-        return config.cache.get(`${this.id}/${key}`);
+    async cacheGet(key: string) {
+        return getCache().get(`${this.id}/${key}`);
     }
 
-    async cacheSet(key, value, ttl = 24 * 3600) {
-        return config.cache.set(`${this.id}/${key}`, value, ttl);
+    async cacheSet(key: string, value: any, ttl = 24 * 3600) {
+        return getCache().set(`${this.id}/${key}`, value, ttl);
     }
 
-    async cacheDel(key) {
-        return config.cache.del(`${this.id}/${key}`);
+    async cacheDel(key: string) {
+        return getCache().del(`${this.id}/${key}`);
     }
 
-    async infos(ctx, args) {
+    async addon(
+        ctx: Context,
+        args: ApiAddonRequest
+    ): Promise<ApiAddonResponse> {
         return hardCopy(this.props);
     }
 
-    async directory(ctx, args) {
+    async directory(ctx: Context, args: any) {
         throw new Error("Not implemented");
     }
 
-    async item(ctx, args) {
+    async item(ctx: Context, args: any) {
         throw new Error("Not implemented");
     }
 
-    async sources(ctx, args) {
+    async source(ctx: Context, args: any) {
         throw new Error("Not implemented");
     }
 
-    async subtitles(ctx, args) {
+    async subtitle(ctx: Context, args: any) {
         throw new Error("Not implemented");
     }
 
-    async resolve(ctx, args) {
+    async resolve(ctx: Context, args: any) {
         throw new Error("Not implemented");
     }
 }
 
-export function createAddon(props): WorkerAddon {
-    class MyAddon extends Addon {
-        getProps() {
-            return props;
-        }
+type Actions = string;
+type ActionFunction = (ctx: Context, args: any) => any;
 
-        on(action, fn) {
+export function createAddon(props: AddonType): Addon {
+    class MyAddon extends Addon {
+        on(action: Actions, fn: ActionFunction) {
             this[action] = fn.bind(this);
             return this;
         }
     }
 
-    return new MyAddon();
+    return new MyAddon(props);
 }
 
-export const setupRepository = props => {
-    createAddon({
-        name: defaults.name,
-        version: defaults.version,
-        homepage: defaults.homepage,
-        mirrors: rootPackage.homepage ? [rootPackage.homepage] : [],
-        ...(props ?? {}),
-        type: "repository",
-        id: "repository"
-    });
-};
+export class Repository extends Addon {
+    props: RepositoryAddonType;
+    addons: Addon[];
+
+    constructor(props: RepositoryAddonType) {
+        super({ ...props, type: "repository" });
+        this.addons = [this];
+    }
+
+    register(addon: Addon) {
+        addon.hasRepository = true;
+        this.addons.push(addon);
+    }
+
+    async addon(ctx: Context, args: any): Promise<ApiAddonResponse> {
+        const props = await super.addon(ctx, args);
+        if (!args.index) {
+            args.index = true;
+            props.addons = [];
+            for (const addon of this.addons) {
+                if (addon !== this) {
+                    const p = await addon.addon(ctx, args);
+                    p.metadata = { url: "./" + addon.id };
+                    props.addons.push(p);
+                }
+            }
+        }
+        return props;
+    }
+}
+
+export function createRepository(props: RepositoryAddonType) {
+    return new Repository(props);
+}

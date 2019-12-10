@@ -1,58 +1,59 @@
 {
-  "name": "@watchedcom/sdk",
-  "description": "WATCHED.com Javascript SDK",
-  "version": "0.0.15",
-  "repository": "https://github.com/watchedcom/sdk-javascript",
-  "main": "dist/index.js",
-  "private": false,
-  "scripts": {
-    "test": "jest",
-    "prepublishOnly": "npm run build",
-    "build": "tsc",
-    "develop": "ts-node-dev -r dotenv/config --respawn --transpileOnly --no-notify"
-  },
-  "dependencies": {
-    "@watchedcom/schema": "latest",
-    "app-root-path": "^3.0.0",
-    "debug": "^4.1.1",
-    "express": "^4.17.1",
-    "lodash": "^4.17.15",
-    "markdown-it": "^10.0.0",
-    "morgan": "^1.9.1",
-    "node-fetch": "^2.3.0",
-    "redis": "^2.8.0",
-    "uuid": "^3.3.2"
-  },
-  "devDependencies": {
-    "@types/app-root-path": "^1.2.4",
-    "@types/express": "^4.17.2",
-    "@types/lodash": "^4.14.149",
-    "@types/markdown-it": "0.0.9",
-    "@types/morgan": "^1.7.37",
-    "@types/redis": "^2.8.14",
-    "husky": "^3.1.0",
-    "jest": "^24.9.0",
-    "lint-staged": "^9.5.0",
-    "prettier": "^1.19.1",
-    "ts-node-dev": "^1.0.0-pre.44",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.3"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx,css,md}": [
-      "tslint --fix",
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
+    "name": "@watchedcom/sdk",
+    "description": "WATCHED.com Javascript SDK",
+    "version": "0.0.15",
+    "repository": "https://github.com/watchedcom/sdk-javascript",
+    "main": "dist/index.js",
+    "private": false,
+    "scripts": {
+        "test": "jest",
+        "prepublishOnly": "npm run build",
+        "build": "tsc",
+        "develop": "ts-node-dev -r dotenv/config --respawn --transpileOnly --no-notify"
+    },
+    "dependencies": {
+        "@watchedcom/schema": "latest",
+        "app-root-path": "^3.0.0",
+        "debug": "^4.1.1",
+        "express": "^4.17.1",
+        "lodash": "^4.17.15",
+        "markdown-it": "^10.0.0",
+        "morgan": "^1.9.1",
+        "node-fetch": "^2.3.0",
+        "redis": "^2.8.0",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "@types/app-root-path": "^1.2.4",
+        "@types/express": "^4.17.2",
+        "@types/lodash": "^4.14.149",
+        "@types/markdown-it": "0.0.9",
+        "@types/morgan": "^1.7.37",
+        "@types/node-fetch": "^2.5.4",
+        "@types/redis": "^2.8.14",
+        "husky": "^3.1.0",
+        "jest": "^24.9.0",
+        "lint-staged": "^9.5.0",
+        "prettier": "^1.19.1",
+        "ts-node-dev": "^1.0.0-pre.44",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.3"
+    },
+    "lint-staged": {
+        "*.{js,ts,tsx,css,md}": [
+            "tslint --fix",
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "np": {
+        "yarn": false,
+        "releaseDraft": false,
+        "publish": true
     }
-  },
-  "np": {
-    "yarn": false,
-    "releaseDraft": false,
-    "publish": true
-  }
 }
