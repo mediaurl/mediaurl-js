@@ -1,5 +1,7 @@
 import { getServerValidators } from "@watchedcom/schema";
+import { WorkerAddon } from "@watchedcom/schema/dist/entities";
 import * as appRootPath from "app-root-path";
+import { cloneDeep } from "lodash";
 
 import { config } from "./config";
 
@@ -12,19 +14,7 @@ const defaults = {
     homepage: rootPackage.homepage || rootPackage.repository
 };
 
-const hardCopy = obj => {
-    if (Array.isArray(obj)) {
-        return obj.map(hardCopy);
-    }
-    if (typeof obj === "object") {
-        const n = {};
-        for (const key of Object.keys(obj)) {
-            n[key] = hardCopy(obj[key]);
-        }
-        return n;
-    }
-    return obj;
-};
+const hardCopy = cloneDeep;
 
 export class Addon {
     constructor() {
@@ -91,7 +81,7 @@ export class Addon {
     }
 }
 
-export function createAddon(props) {
+export function createAddon(props): WorkerAddon {
     class MyAddon extends Addon {
         getProps() {
             return props;
@@ -106,8 +96,8 @@ export function createAddon(props) {
     return new MyAddon();
 }
 
-export function setupRepository(props) {
-    createAddon({
+export const setupRepository = props => {
+    return createAddon({
         name: defaults.name,
         version: defaults.version,
         homepage: defaults.homepage,
@@ -116,4 +106,4 @@ export function setupRepository(props) {
         type: "repository",
         id: "repository"
     });
-}
+};
