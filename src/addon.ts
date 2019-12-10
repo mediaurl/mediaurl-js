@@ -10,6 +10,7 @@ import { cloneDeep } from "lodash";
 
 import { getCache } from "./cache";
 import { Context } from "./context";
+import { Actions, ActionFunction } from "./types";
 
 const rootPackage = appRootPath.require("./package");
 
@@ -84,9 +85,6 @@ export class Addon {
         throw new Error("Not implemented");
     }
 }
-
-type Actions = string;
-type ActionFunction = (ctx: Context, args: any) => any;
 
 export function createAddon(props: AddonType): Addon {
     class MyAddon extends Addon {

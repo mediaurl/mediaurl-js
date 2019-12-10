@@ -1,11 +1,12 @@
 import { getServerValidators } from "@watchedcom/schema";
 import * as express from "express";
-import uuid4 from "uuid/v4";
+import * as uuid4 from "uuid/v4";
 
 import { Addon } from "./addon";
 import { getCache } from "./cache";
 import { debug } from "./common";
 import { Context } from "./context";
+import { Actions, IContext, IResponse } from "./types";
 import { render as renderLandingPage } from "./views";
 
 const decodeBody = (body: object | string) => {
@@ -14,7 +15,7 @@ const decodeBody = (body: object | string) => {
     return {};
 };
 
-class TunnelResponse {
+class TunnelResponse implements IResponse {
     r: any;
 
     constructor(r: any) {
@@ -51,14 +52,23 @@ class TunnelResponse {
 }
 
 class HttpContext extends Context {
-    constructor(addonId, action, req, res) {
-        super(addonId, action);
+    req: express.Request;
+    res: express.Response;
+    resultChannel: string | null;
+
+    constructor(
+        addon: Addon,
+        action: Actions,
+        req: express.Request,
+        res: express.Response
+    ) {
+        super(addon, action);
         this.req = req;
         this.res = res;
         this.resultChannel = null;
     }
 
-    async send(status, body) {
+    async send(status: number, body: any) {
         if (this.resultChannel) {
             const data = JSON.stringify({ status, body });
             await getCache().set(`task:response:${this.resultChannel}`, data);
@@ -67,26 +77,24 @@ class HttpContext extends Context {
         }
     }
 
-    async fetchRemote(url, params, { timeout = 30 * 1000 } = {}) {
+    async fetchRemote(url: string, params: any): Promise<IResponse> {
         // Create and send task
         const id = uuid4();
-        {
-            const task = {
-                id,
-                action: "fetch",
-                url,
-                params
-            };
-            getServerValidators().task.task(task);
-            await getCache().set(`task:wait:${id}`, "1");
-            // console.warn('task.create', id);
-            await this.send(428, task);
-        }
+        const task = {
+            id,
+            action: "fetch",
+            url,
+            params
+        };
+        getServerValidators().task.task(task);
+        await getCache().set(`task:wait:${id}`, "1");
+        // console.warn('task.create', id);
+        await this.send(428, task);
 
         // Wait for result
         const data = await getCache().waitKey(
             `task:result:${id}`,
-            timeout,
+            30 * 1000,
             true
         );
         const { resultChannel, result } = JSON.parse(data);
@@ -98,7 +106,7 @@ class HttpContext extends Context {
     }
 }
 
-const validateResponse = (ctx, status, response) => {
+const validateResponse = (ctx: IContext, status: number, response: any) => {
     if (status == 500) {
         getServerValidators().error(response);
     } else if (status == 428) {
@@ -108,7 +116,12 @@ const validateResponse = (ctx, status, response) => {
     }
 };
 
-const handleTaskResult = async (req, res, ctx, result) => {
+const handleTaskResult = async (
+    req: express.Request,
+    res: express.Response,
+    ctx: IContext,
+    result: any
+) => {
     getServerValidators().task.result(result);
 
     // Make sure the key exists to prevent spamming

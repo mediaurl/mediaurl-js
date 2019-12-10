@@ -2,13 +2,14 @@ import { getServerValidators } from "@watchedcom/schema";
 import fetch from "node-fetch";
 
 import { Addon } from "./addon";
+import { Actions, IContext } from "./types";
 
-export class Context {
-    action: string;
+export class Context implements IContext {
+    action: Actions;
     schema: any;
     fn: (ctx: any, args: any) => Promise<any>;
 
-    constructor(addon: Addon, action: string) {
+    constructor(addon: Addon, action: Actions) {
         switch (action) {
             case "addon":
             case "directory":
@@ -37,11 +38,11 @@ export class Context {
         return this.schema.response(response);
     }
 
-    async fetch(props: any) {
-        return await fetch(props);
+    async fetch(url: string, params: any) {
+        return await fetch(url, params);
     }
 
-    async fetchRemote(props: any) {
-        return await this.fetch(props);
+    async fetchRemote(url: string, params: any) {
+        return await this.fetch(url, params);
     }
 }
