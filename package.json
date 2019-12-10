@@ -23,6 +23,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.2",
     "@types/markdown-it": "0.0.9",
     "husky": "^3.1.0",
     "jest": "^24.9.0",

@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
-        "allowJs": true,
         "target": "es5",
-        "noImplicitAny": false,
-        "strictNullChecks": false,
-        "declaration": false,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        // "declaration": false,
         "outDir": "dist"
     },
     "include": [
