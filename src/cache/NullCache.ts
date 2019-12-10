@@ -1,4 +1,3 @@
-/*eslint no-unused-vars: [2, { "args": "none" }]*/
 export class NullCache {
     async get(key) {
         return null;
