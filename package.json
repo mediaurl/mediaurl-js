@@ -24,17 +24,18 @@
   },
   "devDependencies": {
     "@types/markdown-it": "0.0.9",
-    "husky": "^3.0.9",
+    "husky": "^3.1.0",
     "jest": "^24.9.0",
-    "lint-staged": "^9.4.2",
-    "prettier": "^1.18.2",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
     "ts-node-dev": "^1.0.0-pre.44",
     "tslint": "^5.20.1",
     "typescript": "^3.7.3"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,css,md}": [
-      "eslint --fix",
+    "*.{js,ts,tsx,css,md}": [
+      "tslint --fix",
+      "prettier --write",
       "git add"
     ]
   },
