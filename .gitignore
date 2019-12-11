@@ -1,6 +1,7 @@
 .DS_Store
 settings.json
 sandbox.js
+sandbox.ts
 
 # Logs
 logs
