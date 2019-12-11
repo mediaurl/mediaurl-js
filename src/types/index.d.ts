@@ -1,3 +1,6 @@
+import { RequestInfo, RequestInit, Response } from "node-fetch";
+
+/** Hack around node-fetch Response */
 export interface IResponse {
     error: Error;
     status: number;
@@ -8,9 +11,13 @@ export interface IResponse {
     data: () => Promise<any>;
 }
 
+type FetchFn = (url: RequestInfo, init?: RequestInit) => Promise<IResponse>;
+
 export interface IContext {
-    fetch: (url: string, params: any) => Promise<IResponse>;
-    fetchRemote: (url: string, params: any) => Promise<IResponse>;
+    schema: any;
+
+    fetch: FetchFn;
+    fetchRemote: FetchFn;
 }
 
 export type Actions =

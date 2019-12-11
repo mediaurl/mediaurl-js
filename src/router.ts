@@ -77,7 +77,7 @@ class HttpContext extends Context {
         }
     }
 
-    async fetchRemote(url: string, params: any): Promise<IResponse> {
+    async fetchRemote(url: string, params: any) {
         // Create and send task
         const id = uuid4();
         const task = {
@@ -107,9 +107,9 @@ class HttpContext extends Context {
 }
 
 const validateResponse = (ctx: IContext, status: number, response: any) => {
-    if (status == 500) {
+    if (status === 500) {
         getServerValidators().error(response);
-    } else if (status == 428) {
+    } else if (status === 428) {
         getServerValidators().task.task(response);
     } else {
         ctx.schema.response(response);
@@ -143,7 +143,7 @@ const handleTaskResult = async (
     res.status(status).send(response);
 };
 
-export function createRouter(addon: Addon): express.Router {
+export const createRouter = (addon: Addon): express.Router => {
     const router = express.Router();
 
     router.get("/", (req, res) => {
@@ -159,9 +159,10 @@ export function createRouter(addon: Addon): express.Router {
     });
 
     router.post("/:action", async (req, res) => {
-        const action = req.params.action;
+        const action = <Actions>req.params.action;
 
-        let ctx = res;
+        /** FIXME: typings issues. Initially it's express.Request, but then it's HttpContext. Wtf? */
+        let ctx: any = res;
         try {
             ctx = new HttpContext(addon, action, req, res);
             const request = decodeBody(req.body);
@@ -179,4 +180,4 @@ export function createRouter(addon: Addon): express.Router {
     });
 
     return router;
-}
+};

@@ -2,7 +2,7 @@ import { getServerValidators } from "@watchedcom/schema";
 import fetch from "node-fetch";
 
 import { Addon } from "./addon";
-import { Actions, IContext } from "./types";
+import { Actions, IContext, IResponse } from "./types";
 
 export class Context implements IContext {
     action: Actions;
@@ -42,7 +42,7 @@ export class Context implements IContext {
         return fetch(url, params);
     }
 
-    async fetchRemote(url: string, params: any) {
+    async fetchRemote(url: string, params: any): Promise {
         return this.fetch(url, params);
     }
 }
