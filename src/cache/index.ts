@@ -12,4 +12,7 @@ let cache = createCache();
 
 export const getCache = () => cache;
 
-export const setCache = (c: ICache) => (cache = c);
+export const setCache = (c: ICache) => {
+    cache = c;
+    return cache;
+};
