@@ -1,3 +1,4 @@
+import { WorkerAddon } from "@watchedcom/schema/dist/entities";
 import { RequestInfo, RequestInit, Response } from "node-fetch";
 
 /** Hack around node-fetch Response */
@@ -20,12 +21,6 @@ export interface IContext {
     fetchRemote: FetchFn;
 }
 
-export type Actions =
-    | "addon"
-    | "directory"
-    | "item"
-    | "source"
-    | "subtitle"
-    | "resolve";
+export type Actions = WorkerAddon["resources"][0]["actions"][0];
 
 export type ActionFunction = (ctx: IContext, args: any) => any;
