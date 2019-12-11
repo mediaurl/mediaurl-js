@@ -3,10 +3,10 @@ import { ICache } from "../types/cache";
 import { NullCache } from "./NullCache";
 import { RedisCache } from "./RedisCache";
 
-const createCache = (): ICache =>
+export const createCache = <T = any>(): ICache<T> =>
     process.env.REDIS_CACHE
-        ? new RedisCache({ url: process.env.REDIS_CACHE })
-        : new NullCache();
+        ? new RedisCache<T>({ url: process.env.REDIS_CACHE })
+        : new NullCache<T>();
 
 let cache = createCache();
 

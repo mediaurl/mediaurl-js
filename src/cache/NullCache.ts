@@ -1,6 +1,6 @@
 import { ICache } from "../types/cache";
 
-export class NullCache implements ICache {
+export class NullCache<T> implements ICache<T> {
     async get(key: string) {
         return null;
     }

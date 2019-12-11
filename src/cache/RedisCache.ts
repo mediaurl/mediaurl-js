@@ -5,7 +5,7 @@ import { ICache } from "../types/cache";
 
 import { NullCache } from "./NullCache";
 
-export class RedisCache extends NullCache implements ICache {
+export class RedisCache<T> extends NullCache<T> implements ICache<T> {
     private client: any;
 
     constructor(clientConfig: redis.ClientOpts) {
