@@ -1,3 +1,2 @@
-export { start, startServer, startCli } from "./main";
-export { Addon, createAddon, createRepository } from "./addon";
-export { getCache, setCache } from "./cache";
+export { createWorkerAddon } from "./addons";
+export { generateAddonsRouter, serveAddons } from "./server";
