@@ -39,10 +39,10 @@ export class Context implements IContext {
     }
 
     async fetch(url: string, params: any) {
-        return await fetch(url, params);
+        return fetch(url, params);
     }
 
     async fetchRemote(url: string, params: any) {
-        return await this.fetch(url, params);
+        return this.fetch(url, params);
     }
 }
