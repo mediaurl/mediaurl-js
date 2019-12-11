@@ -39,7 +39,7 @@ export const startServer = (addons: Addon[], port = 3000) => {
 };
 
 export const startCli = (addons: Addon[], args: any) => {
-    const request: object = {};
+    const request: any = {};
     for (const arg of args) {
         const m = /^(.*?)=(.*)$/.exec(arg);
         if (!m) throw new Error(`Failed parsing ${arg}`);
