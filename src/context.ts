@@ -42,7 +42,7 @@ export class Context implements IContext {
         return fetch(url, params);
     }
 
-    async fetchRemote(url: string, params: any): Promise {
+    async fetchRemote(url: string, params: any) {
         return this.fetch(url, params);
     }
 }
