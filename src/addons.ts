@@ -1,9 +1,17 @@
-import { getServerValidators } from "@watchedcom/schema";
 import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
+import * as express from "express";
+
+import { validateWorkerAddonProps } from "./validators";
 
 export type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
 
-export type ActionHandler<Req = any, Res = any> = (input: Req) => Promise<Res>;
+export type ActionHandler<InputType = any, OutputType = any> = (
+    input: InputType,
+    context: {
+        request: express.Request;
+        addon: WorkerAddon;
+    }
+) => Promise<OutputType>;
 
 export interface IWorkerAddon {
     registerActionHandler(action: ActionType, handler: ActionHandler): void;
@@ -33,22 +41,6 @@ export class WorkerAddon implements IWorkerAddon {
         return handlerFn;
     }
 }
-
-/** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
-const validateWorkerAddonProps = (input: any): WorkerAddonProps => {
-    try {
-        const result: WorkerAddonProps = getServerValidators().models.addon(
-            input
-        );
-        return result;
-    } catch (error) {
-        // Actual error message contains big json string that pollutes output
-        console.error(
-            `Addon validation failed.\nCheck out schema at https://github.com/watchedcom/schema/blob/master/schema.yaml`
-        );
-        throw new Error("Validation error");
-    }
-};
 
 export const createWorkerAddon = (
     props: Partial<WorkerAddonProps>
