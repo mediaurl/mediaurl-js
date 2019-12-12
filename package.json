@@ -3,7 +3,7 @@
     "description": "WATCHED.com Javascript SDK",
     "version": "0.0.15",
     "repository": "https://github.com/watchedcom/sdk-javascript",
-    "main": "dist/index.js",
+    "main": "dist",
     "private": false,
     "scripts": {
         "test": "jest",

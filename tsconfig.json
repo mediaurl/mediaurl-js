@@ -3,7 +3,7 @@
         "target": "es5",
         "noImplicitAny": true,
         "strictNullChecks": true,
-        // "declaration": false,
+        "declaration": true,
         "outDir": "dist"
     },
     "include": [
