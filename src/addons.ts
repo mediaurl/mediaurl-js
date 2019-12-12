@@ -30,7 +30,7 @@ const validateWorkerAddonProps = (input: any): WorkerAddonProps => {
         );
         return result;
     } catch (error) {
-        // Actual error message is polluted with big json string that pollutes output
+        // Actual error message contains big json string that pollutes output
         console.error(
             `Addon validation failed.\nCheck out schema at https://github.com/watchedcom/schema/blob/master/schema.yaml`
         );
