@@ -7,6 +7,7 @@ export type ActionHandler<Req = any, Res = any> = (input: Req) => Promise<Res>;
 
 export interface IWorkerAddon {
     registerActionHandler(action: ActionType, handler: ActionHandler): void;
+    getActionHandler(action: ActionType): ActionHandler;
 }
 
 export class WorkerAddon implements IWorkerAddon {
@@ -22,14 +23,14 @@ export class WorkerAddon implements IWorkerAddon {
         this.handlersMap[action] = handlerFn;
     }
 
-    public handleAction(action: string, opts) {
+    public getActionHandler(action: string): ActionHandler {
         const handlerFn = this.handlersMap[action];
 
         if (!handlerFn) {
             throw new Error(`No handler for "${action}" action`);
         }
 
-        return handlerFn(opts);
+        return handlerFn;
     }
 }
 

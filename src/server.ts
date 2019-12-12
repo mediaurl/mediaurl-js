@@ -19,10 +19,14 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
         return res.send("OK");
     });
 
+    router.get("/props", (req, res) => {
+        res.send(addon.getProps());
+    });
+
     router.post("/:action", async (req, res, next) => {
         const { action } = req.params;
-        const resp = await addon.handleAction(action, {});
-        res.send({ action, resp });
+        const handler = await addon.getActionHandler(action);
+        res.send({ action });
     });
 
     return router;
