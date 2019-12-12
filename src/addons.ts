@@ -1,16 +1,25 @@
 import { getServerValidators } from "@watchedcom/schema";
 import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
 
-type HandlerFn = (...args: any[]) => any;
+export type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
+
+export type ActionHandler<Req = any, Res = any> = (input: Req) => Promise<Res>;
 
 export interface IWorkerAddon {
-    registerActionHandler(action: string, handler: HandlerFn): void;
+    registerActionHandler(action: ActionType, handler: ActionHandler): void;
 }
 
 export class WorkerAddon implements IWorkerAddon {
     constructor(private props: WorkerAddonProps) {}
 
-    public registerActionHandler() {}
+    public getProps() {
+        return this.props;
+    }
+
+    public registerActionHandler(
+        action: ActionType,
+        handlerFn: ActionHandler
+    ) {}
 }
 
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
