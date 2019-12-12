@@ -10,16 +10,27 @@ export interface IWorkerAddon {
 }
 
 export class WorkerAddon implements IWorkerAddon {
+    private handlersMap: { [action: string]: ActionHandler } = {};
+
     constructor(private props: WorkerAddonProps) {}
 
     public getProps() {
         return this.props;
     }
 
-    public registerActionHandler(
-        action: ActionType,
-        handlerFn: ActionHandler
-    ) {}
+    public registerActionHandler(action: ActionType, handlerFn: ActionHandler) {
+        this.handlersMap[action] = handlerFn;
+    }
+
+    public handleAction(action: string, opts) {
+        const handlerFn = this.handlersMap[action];
+
+        if (!handlerFn) {
+            throw new Error(`No handler for "${action}" action`);
+        }
+
+        return handlerFn(opts);
+    }
 }
 
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
