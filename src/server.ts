@@ -1,15 +1,20 @@
+import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
+import { defaults } from "lodash";
 
 import { WorkerAddon } from "./addons";
 import { errorHandler } from "./error-handler";
+import { validateActionPostBody } from "./validators";
 
 export interface ServeAddonOptions {
     errorHandler: express.ErrorRequestHandler;
+    port: number;
 }
 
 const defaultServeOpts: ServeAddonOptions = {
-    errorHandler
+    errorHandler,
+    port: parseInt(<string>process.env.PORT) || 3000
 };
 
 const _makeAddonRouter = (addon: WorkerAddon) => {
@@ -25,8 +30,12 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
 
     router.post("/:action", async (req, res, next) => {
         const { action } = req.params;
-        const handler = await addon.getActionHandler(action);
-        res.send({ action });
+
+        const handler = addon.getActionHandler(action);
+
+        const result = await handler(req.body, { addon, request: req });
+
+        res.send(result);
     });
 
     return router;
@@ -35,6 +44,8 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
 export const generateAddonsRouter = (addons: WorkerAddon[]): express.Router => {
     const router = express.Router();
 
+    router.use(bodyParser.json());
+
     addons.forEach(addon => {
         router.use(`/${addon.getProps().id}`, _makeAddonRouter(addon));
     });
@@ -42,16 +53,17 @@ export const generateAddonsRouter = (addons: WorkerAddon[]): express.Router => {
     return router;
 };
 
-export const serveAddons = async (
+export const serveAddons = (
     addons: WorkerAddon[],
-    opts: ServeAddonOptions = defaultServeOpts
-): Promise<{ app: express.Application; listenPromise: Promise<void> }> => {
+    opts?: Partial<ServeAddonOptions>
+): { app: express.Application; listenPromise: Promise<void> } => {
     const app = express();
-    const port = parseInt(<string>process.env.PORT) || 3000;
+    const options = defaults(opts, defaultServeOpts);
+    const port = options.port;
 
     app.use("/", generateAddonsRouter(addons));
 
-    app.use(opts.errorHandler);
+    app.use(options.errorHandler);
 
     const listenPromise = new Promise<void>(resolve => {
         app.listen(port, resolve);
