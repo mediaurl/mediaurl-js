@@ -1,8 +1,14 @@
 import {
     ApiDirectoryRequest,
     ApiDirectoryResponse,
+    ApiItemRequest,
     ApiItemResponse,
-    DefaultItemRequest,
+    ApiResolveRequest,
+    ApiResolveResponse,
+    ApiSourceRequest,
+    ApiSourceResponse,
+    ApiSubtitleRequest,
+    ApiSubtitleResponse,
     WorkerAddon as WorkerAddonProps
 } from "@watchedcom/schema/dist/entities";
 
@@ -13,10 +19,10 @@ type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
 
 export interface ActionsMap {
     directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
-    // "item": ActionHandler<DefaultItemRequest, ApiItemResponse>;
-    // "source": ActionHandler<ApiSou, ApiDirectoryResponse>;
-    // "subtitle": ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
-    // "resolve": ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
+    item: ActionHandler<ApiItemRequest, ApiItemResponse>;
+    source: ActionHandler<ApiSourceRequest, ApiSourceResponse>;
+    subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse>;
+    resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse>;
     [key: string]: ActionHandler;
 }
 
