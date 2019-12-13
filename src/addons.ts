@@ -1,4 +1,8 @@
-import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
+import {
+    ApiDirectoryRequest,
+    ApiDirectoryResponse,
+    WorkerAddon as WorkerAddonProps
+} from "@watchedcom/schema/dist/entities";
 import * as express from "express";
 
 import { FetchRemoteFn } from "./utils/fetch-remote";
@@ -17,6 +21,11 @@ export type ActionHandler<InputType = any, OutputType = any> = (
 
 export interface IWorkerAddon {
     registerActionHandler(action: ActionType, handler: ActionHandler): void;
+    registerActionHandler(
+        action: "directory",
+        handler: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>
+    ): void;
+
     unregisterActionHandler(action: ActionType): void;
     getActionHandler(action: ActionType): ActionHandler;
 }
@@ -31,6 +40,11 @@ export class WorkerAddon implements IWorkerAddon {
     }
 
     public registerActionHandler(action: ActionType, handlerFn: ActionHandler) {
+        if (this.handlersMap[action]) {
+            throw new Error(
+                `Another handler is already registered for "${action}" action`
+            );
+        }
         this.handlersMap[action] = handlerFn;
     }
 
