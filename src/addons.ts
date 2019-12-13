@@ -1,6 +1,7 @@
 import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
 import * as express from "express";
 
+import { FetchRemoteFn } from "./utils/fetch-remote";
 import { validateWorkerAddonProps } from "./validators";
 
 export type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
@@ -10,6 +11,7 @@ export type ActionHandler<InputType = any, OutputType = any> = (
     context: {
         request: express.Request;
         addon: WorkerAddon;
+        fetchRemote: FetchRemoteFn;
     }
 ) => Promise<OutputType>;
 
