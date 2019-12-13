@@ -1,8 +1,6 @@
 import { getServerValidators } from "@watchedcom/schema";
 import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
 
-import { ActionType } from "./addons";
-
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
 export const validateWorkerAddonProps = (input: any): WorkerAddonProps => {
     try {
@@ -19,7 +17,7 @@ export const validateWorkerAddonProps = (input: any): WorkerAddonProps => {
     }
 };
 
-export const validateActionPostBody = (action: ActionType, body: any) => {
+export const validateActionPostBody = (action: string, body: any) => {
     console.log("validate", { action, body });
     const validator = getServerValidators().actions[action];
 

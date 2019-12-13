@@ -1,33 +1,23 @@
 import {
     ApiDirectoryRequest,
     ApiDirectoryResponse,
+    ApiItemResponse,
+    DefaultItemRequest,
     WorkerAddon as WorkerAddonProps
 } from "@watchedcom/schema/dist/entities";
-import * as express from "express";
 
-import { FetchRemoteFn } from "./utils/fetch-remote";
+import { ActionHandler, IWorkerAddon } from "./interfaces";
 import { validateWorkerAddonProps } from "./validators";
 
-export type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
+type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
 
-export type ActionHandler<InputType = any, OutputType = any> = (
-    input: InputType,
-    context: {
-        request: express.Request;
-        addon: WorkerAddon;
-        fetchRemote: FetchRemoteFn;
-    }
-) => Promise<OutputType>;
-
-export interface IWorkerAddon {
-    registerActionHandler(action: ActionType, handler: ActionHandler): void;
-    registerActionHandler(
-        action: "directory",
-        handler: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>
-    ): void;
-
-    unregisterActionHandler(action: ActionType): void;
-    getActionHandler(action: ActionType): ActionHandler;
+export interface ActionsMap {
+    directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
+    // "item": ActionHandler<DefaultItemRequest, ApiItemResponse>;
+    // "source": ActionHandler<ApiSou, ApiDirectoryResponse>;
+    // "subtitle": ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
+    // "resolve": ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
+    [key: string]: ActionHandler;
 }
 
 export class WorkerAddon implements IWorkerAddon {
@@ -39,16 +29,21 @@ export class WorkerAddon implements IWorkerAddon {
         return this.props;
     }
 
-    public registerActionHandler(action: ActionType, handlerFn: ActionHandler) {
+    public registerActionHandler<A extends ActionType>(
+        action: A,
+        handlerFn: ActionsMap[A]
+    ) {
         if (this.handlersMap[action]) {
             throw new Error(
                 `Another handler is already registered for "${action}" action`
             );
         }
         this.handlersMap[action] = handlerFn;
+
+        return this;
     }
 
-    public unregisterActionHandler(action: ActionType) {
+    public unregisterActionHandler(action: keyof ActionsMap) {
         delete this.handlersMap[action];
     }
 
