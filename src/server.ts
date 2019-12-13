@@ -5,6 +5,7 @@ import { defaults } from "lodash";
 
 import { WorkerAddon } from "./addons";
 import { errorHandler } from "./error-handler";
+import { fetchRemote } from "./utils/fetch-remote";
 import { validateActionPostBody } from "./validators";
 
 export interface ServeAddonOptions {
@@ -33,7 +34,11 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
 
         const handler = addon.getActionHandler(action);
 
-        const result = await handler(req.body, { addon, request: req });
+        const result = await handler(req.body, {
+            addon,
+            request: req,
+            fetchRemote
+        });
 
         res.send(result);
     });

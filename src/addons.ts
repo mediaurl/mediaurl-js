@@ -17,6 +17,7 @@ export type ActionHandler<InputType = any, OutputType = any> = (
 
 export interface IWorkerAddon {
     registerActionHandler(action: ActionType, handler: ActionHandler): void;
+    unregisterActionHandler(action: ActionType): void;
     getActionHandler(action: ActionType): ActionHandler;
 }
 
@@ -31,6 +32,10 @@ export class WorkerAddon implements IWorkerAddon {
 
     public registerActionHandler(action: ActionType, handlerFn: ActionHandler) {
         this.handlersMap[action] = handlerFn;
+    }
+
+    public unregisterActionHandler(action: ActionType) {
+        delete this.handlersMap[action];
     }
 
     public getActionHandler(action: string): ActionHandler {
