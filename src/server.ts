@@ -25,7 +25,7 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
         return res.send("OK");
     });
 
-    router.get("/props", (req, res) => {
+    router.get("/addon", (req, res) => {
         res.send(addon.getProps());
     });
 
