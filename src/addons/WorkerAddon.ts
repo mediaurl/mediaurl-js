@@ -12,8 +12,8 @@ import {
     WorkerAddon as WorkerAddonProps
 } from "@watchedcom/schema/dist/entities";
 
-import { ActionHandler, IWorkerAddon } from "./interfaces";
-import { validateWorkerAddonProps } from "./validators";
+import { ActionHandler, IAddon } from "../interfaces";
+import { validateWorkerAddonProps } from "../validators";
 
 type ActionType = WorkerAddonProps["resources"][0]["actions"][0];
 
@@ -23,11 +23,15 @@ export interface ActionsMap {
     source: ActionHandler<ApiSourceRequest, ApiSourceResponse>;
     subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse>;
     resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse>;
-    [key: string]: ActionHandler;
+    addon: ActionHandler<any, WorkerAddonProps>;
 }
 
-export class WorkerAddon implements IWorkerAddon {
-    private handlersMap: { [action: string]: ActionHandler } = {};
+export class WorkerAddon implements IAddon {
+    private handlersMap: { [action: string]: ActionHandler } = {
+        addon: async () => {
+            return this.getProps();
+        }
+    };
 
     constructor(private props: WorkerAddonProps) {}
 
@@ -35,7 +39,7 @@ export class WorkerAddon implements IWorkerAddon {
         return this.props;
     }
 
-    public registerActionHandler<A extends ActionType>(
+    public registerActionHandler<A extends keyof ActionsMap>(
         action: A,
         handlerFn: ActionsMap[A]
     ) {

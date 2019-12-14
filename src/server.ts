@@ -3,8 +3,9 @@ import * as express from "express";
 import "express-async-errors";
 import { defaults } from "lodash";
 
-import { WorkerAddon } from "./addons";
+import { WorkerAddon } from "./addons/WorkerAddon";
 import { errorHandler } from "./error-handler";
+import { IAddon } from "./interfaces";
 import { fetchRemote } from "./utils/fetch-remote";
 import { validateActionPostBody } from "./validators";
 
@@ -18,18 +19,8 @@ const defaultServeOpts: ServeAddonOptions = {
     port: parseInt(<string>process.env.PORT) || 3000
 };
 
-const _makeAddonRouter = (addon: WorkerAddon) => {
-    const router = express.Router();
-
-    router.get("/health", (req, res) => {
-        return res.send("OK");
-    });
-
-    router.get("/addon", (req, res) => {
-        res.send(addon.getProps());
-    });
-
-    router.post("/:action", async (req, res, next) => {
+const createActionHandler = (addon: IAddon) => {
+    const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
         const handler = addon.getActionHandler(action);
@@ -41,7 +32,20 @@ const _makeAddonRouter = (addon: WorkerAddon) => {
         });
 
         res.send(result);
+    };
+
+    return actionHandler;
+};
+
+const _makeAddonRouter = (addon: IAddon) => {
+    const router = express.Router();
+
+    router.get("/health", (req, res) => {
+        return res.send("OK");
     });
+
+    router.post("/:action", createActionHandler(addon));
+    router.get("/:action", createActionHandler(addon));
 
     return router;
 };
