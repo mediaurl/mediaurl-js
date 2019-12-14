@@ -25,24 +25,10 @@ export type WorkerActionsMap = BasicActions & {
     resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse>;
 };
 
-export class WorkerAddon extends BasicAddon<WorkerActionsMap>
+export class WorkerAddon extends BasicAddon<WorkerActionsMap, WorkerAddonProps>
     implements IAddon {}
 
-// export const createWorkerAddon = (
-//     props: Partial<WorkerAddonProps>
-// ): WorkerAddon => {
-//     const addonProps = validateAddonProps<WorkerAddonProps>({
-//         ...props,
-//         type: "worker"
-//     });
-//     const addon = new WorkerAddon(addonProps);
-//     return addon;
-// };
-
-export const createWorkerAddon = makeCreateFunction<
-    WorkerAddonProps,
-    WorkerAddon
->({
+export const createWorkerAddon = makeCreateFunction({
     AddonClass: WorkerAddon,
     type: "worker"
 });
