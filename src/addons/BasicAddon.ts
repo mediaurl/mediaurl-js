@@ -27,11 +27,11 @@ export class BasicAddon<
         action: A,
         handlerFn: AM[A]
     ) {
-        if (this.handlersMap[action]) {
-            throw new Error(
-                `Another handler is already registered for "${action}" action`
-            );
-        }
+        // if (this.handlersMap[action]) {
+        //     throw new Error(
+        //         `Another handler is already registered for "${action}" action`
+        //     );
+        // }
         this.handlersMap[action] = handlerFn;
 
         return this;
