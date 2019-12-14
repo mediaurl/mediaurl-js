@@ -1,12 +1,10 @@
 import { getServerValidators } from "@watchedcom/schema";
-import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema/dist/entities";
+import { Addon } from "@watchedcom/schema/dist/entities";
 
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
-export const validateWorkerAddonProps = (input: any): WorkerAddonProps => {
+export const validateAddonProps = <T extends Addon>(input: any): T => {
     try {
-        const result: WorkerAddonProps = getServerValidators().models.addon(
-            input
-        );
+        const result: T = getServerValidators().models.addon(input);
         return result;
     } catch (error) {
         // Actual error message contains big json string that pollutes output
