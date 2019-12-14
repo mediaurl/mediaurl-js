@@ -20,6 +20,10 @@ export class RepositoryAddon extends BasicAddon<
             return { ok: "default repository response" };
         });
     }
+
+    public addUrl() {}
+
+    public addAddon() {}
 }
 
 export const createRepositoryAddon = makeCreateFunction({
