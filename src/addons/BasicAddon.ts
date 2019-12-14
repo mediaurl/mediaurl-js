@@ -7,8 +7,10 @@ export type BasicActions = {
     addon: ActionHandler<any, AddonProps>;
 };
 
-export class BasicAddon<AM extends ActionsMap, P extends AddonProps>
-    implements IAddon {
+export class BasicAddon<
+    AM extends ActionsMap = BasicActions,
+    P extends AddonProps = AddonProps
+> implements IAddon {
     private handlersMap: ActionsMap = {
         addon: async () => {
             return this.getProps();

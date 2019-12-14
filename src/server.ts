@@ -3,6 +3,7 @@ import * as express from "express";
 import "express-async-errors";
 import { defaults } from "lodash";
 
+import { BasicAddon } from "./addons/BasicAddon";
 import { WorkerAddon } from "./addons/WorkerAddon";
 import { errorHandler } from "./error-handler";
 import { IAddon } from "./interfaces";
@@ -50,7 +51,7 @@ const _makeAddonRouter = (addon: IAddon) => {
     return router;
 };
 
-export const generateAddonsRouter = (addons: WorkerAddon[]): express.Router => {
+export const generateAddonsRouter = (addons: BasicAddon[]): express.Router => {
     const router = express.Router();
 
     router.use(bodyParser.json());
@@ -63,7 +64,7 @@ export const generateAddonsRouter = (addons: WorkerAddon[]): express.Router => {
 };
 
 export const serveAddons = (
-    addons: WorkerAddon[],
+    addons: BasicAddon[],
     opts?: Partial<ServeAddonOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
     const app = express();
