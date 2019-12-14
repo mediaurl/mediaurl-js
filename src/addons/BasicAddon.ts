@@ -7,16 +7,17 @@ export type BasicActions = {
     addon: ActionHandler<any, AddonProps>;
 };
 
-export class BasicAddon<AM extends ActionsMap> implements IAddon {
+export class BasicAddon<AM extends ActionsMap, P extends AddonProps>
+    implements IAddon {
     private handlersMap: ActionsMap = {
         addon: async () => {
             return this.getProps();
         }
     };
 
-    constructor(private props: AddonProps) {}
+    constructor(private props: P) {}
 
-    public getProps() {
+    public getProps(): P {
         return this.props;
     }
 
