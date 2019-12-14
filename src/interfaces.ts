@@ -16,3 +16,7 @@ export interface IAddon {
     unregisterActionHandler(action: string): void;
     getActionHandler(action: string): ActionHandler;
 }
+
+export interface ActionsMap {
+    [action: string]: ActionHandler;
+}

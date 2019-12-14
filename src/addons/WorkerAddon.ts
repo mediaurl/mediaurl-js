@@ -13,7 +13,7 @@ import {
 } from "@watchedcom/schema/dist/entities";
 
 import { ActionHandler, IAddon } from "../interfaces";
-import { validateAddonProps } from "../validators";
+import { makeCreateFunction } from "../utils/addon-func";
 
 import { BasicActions, BasicAddon } from "./BasicAddon";
 
@@ -28,15 +28,21 @@ export type WorkerActionsMap = BasicActions & {
 export class WorkerAddon extends BasicAddon<WorkerActionsMap>
     implements IAddon {}
 
-export const createWorkerAddon = (
-    props: Partial<WorkerAddonProps>
-): WorkerAddon => {
-    const addonProps = validateAddonProps<WorkerAddonProps>({
-        ...props,
-        type: "worker"
-    });
-    const addon = new WorkerAddon(addonProps);
-    return addon;
-};
+// export const createWorkerAddon = (
+//     props: Partial<WorkerAddonProps>
+// ): WorkerAddon => {
+//     const addonProps = validateAddonProps<WorkerAddonProps>({
+//         ...props,
+//         type: "worker"
+//     });
+//     const addon = new WorkerAddon(addonProps);
+//     return addon;
+// };
 
-// export const createWorkerAddon = addonFn<WorkerAddonProps,WorkerAddon>({AddonClass: WorkerAddon, type: 'worker'})
+export const createWorkerAddon = makeCreateFunction<
+    WorkerAddonProps,
+    WorkerAddon
+>({
+    AddonClass: WorkerAddon,
+    type: "worker"
+});
