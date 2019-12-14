@@ -4,20 +4,19 @@ import { BasicAddon } from "../addons/BasicAddon";
 import { validateAddonProps } from "../validators";
 
 interface Opts {
-    AddonClass: any;
-    type: string;
+    AddonClass: new (props: AddonProps) => BasicAddon<any>;
+    type: AddonProps["type"];
 }
 
 export const makeCreateFunction = <
     P extends AddonProps,
     C extends BasicAddon<any>
->({
-    AddonClass,
-    type
-}: Opts) => {
+>(
+    opts: Opts
+) => {
     const createAddon = (props: Partial<P>): C => {
-        const addonProps = validateAddonProps<P>({ ...props, type });
-        const addon = new AddonClass(addonProps);
+        const addonProps = validateAddonProps<P>({ ...props, type: opts.type });
+        const addon = new opts.AddonClass(addonProps) as C;
         return addon;
     };
 
