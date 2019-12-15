@@ -1,21 +1,20 @@
 import * as express from "express";
 
+import { BasicAddon } from "./addons/BasicAddon";
 import { FetchRemoteFn } from "./utils/fetch-remote";
 
-export type ActionHandler<InputType = any, OutputType = any> = (
+export type ActionHandler<
+    InputType = any,
+    OutputType = any,
+    AddonType extends BasicAddon = BasicAddon
+> = (
     input: InputType,
     context: {
         request: express.Request;
-        addon: IAddon;
+        addon: AddonType;
         fetchRemote: FetchRemoteFn;
     }
 ) => Promise<OutputType>;
-
-export interface IAddon {
-    registerActionHandler(action: string, handler: ActionHandler): this;
-    unregisterActionHandler(action: string): void;
-    getActionHandler(action: string): ActionHandler;
-}
 
 export interface ActionsMap {
     [action: string]: ActionHandler;

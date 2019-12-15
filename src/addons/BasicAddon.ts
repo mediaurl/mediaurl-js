@@ -1,6 +1,6 @@
 import { Addon as AddonProps } from "@watchedcom/schema/dist/entities";
 
-import { ActionHandler, IAddon } from "../interfaces";
+import { ActionHandler } from "../interfaces";
 import { ActionsMap } from "../interfaces";
 
 export type BasicActions = {
@@ -10,7 +10,7 @@ export type BasicActions = {
 export abstract class BasicAddon<
     AM extends ActionsMap = BasicActions,
     P extends AddonProps = AddonProps
-> implements IAddon {
+> {
     private handlersMap: ActionsMap = {
         addon: async () => {
             return this.getProps();

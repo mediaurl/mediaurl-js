@@ -12,7 +12,7 @@ import {
     WorkerAddon as WorkerAddonProps
 } from "@watchedcom/schema/dist/entities";
 
-import { ActionHandler, IAddon } from "../interfaces";
+import { ActionHandler } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 
 import { BasicActions, BasicAddon } from "./BasicAddon";
@@ -25,8 +25,10 @@ export type WorkerActionsMap = BasicActions & {
     resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse>;
 };
 
-export class WorkerAddon extends BasicAddon<WorkerActionsMap, WorkerAddonProps>
-    implements IAddon {}
+export class WorkerAddon extends BasicAddon<
+    WorkerActionsMap,
+    WorkerAddonProps
+> {}
 
 export const createWorkerAddon = makeCreateFunction({
     AddonClass: WorkerAddon,

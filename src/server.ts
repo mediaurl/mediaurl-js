@@ -4,9 +4,7 @@ import "express-async-errors";
 import { defaults } from "lodash";
 
 import { BasicAddon } from "./addons/BasicAddon";
-import { WorkerAddon } from "./addons/WorkerAddon";
 import { errorHandler } from "./error-handler";
-import { IAddon } from "./interfaces";
 import { fetchRemote } from "./utils/fetch-remote";
 import { validateActionPostBody } from "./validators";
 
@@ -20,7 +18,7 @@ const defaultServeOpts: ServeAddonOptions = {
     port: parseInt(<string>process.env.PORT) || 3000
 };
 
-const createActionHandler = (addon: IAddon) => {
+const createActionHandler = (addon: BasicAddon) => {
     const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
@@ -38,7 +36,7 @@ const createActionHandler = (addon: IAddon) => {
     return actionHandler;
 };
 
-const _makeAddonRouter = (addon: IAddon) => {
+const _makeAddonRouter = (addon: BasicAddon) => {
     const router = express.Router();
 
     router.get("/health", (req, res) => {
