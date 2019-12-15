@@ -7,7 +7,11 @@ import { BasicAddon } from "./addons/BasicAddon";
 import { WorkerAddon } from "./addons/WorkerAddon";
 import { errorHandler } from "./error-handler";
 import { IAddon } from "./interfaces";
-import { fetchRemote } from "./utils/fetch-remote";
+import {
+    createFetchRemote,
+    createTaskResultHandler,
+    Responder
+} from "./utils/fetch-remote";
 import { validateActionPostBody } from "./validators";
 
 export interface ServeAddonOptions {
@@ -26,13 +30,20 @@ const createActionHandler = (addon: IAddon) => {
 
         const handler = addon.getActionHandler(action);
 
+        const responder: Responder = {
+            send: async (statusCode, body) => {
+                res.status(statusCode).send(body);
+            }
+        };
+
+        // TODO: Catch errors and return an ApiError response
         const result = await handler(req.body, {
             addon,
             request: req,
-            fetchRemote
+            fetchRemote: createFetchRemote(responder)
         });
 
-        res.send(result);
+        responder.send(200, result);
     };
 
     return actionHandler;
@@ -46,7 +57,7 @@ const _makeAddonRouter = (addon: IAddon) => {
     });
 
     router.post("/:action", createActionHandler(addon));
-    router.get("/:action", createActionHandler(addon));
+    router.post("/:action/task", createTaskResultHandler(addon));
 
     return router;
 };
