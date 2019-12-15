@@ -43,6 +43,14 @@ const _makeAddonRouter = (addon: BasicAddon) => {
         return res.send("OK");
     });
 
+    router.get("/", (req, res) => {
+        if (req.query.wtchDiscover) {
+            res.send({ watched: true, hasRepository: false });
+        } else {
+            res.send("TODO: Create landing page");
+        }
+    });
+
     router.post("/:action", createActionHandler(addon));
     router.get("/:action", createActionHandler(addon));
 
