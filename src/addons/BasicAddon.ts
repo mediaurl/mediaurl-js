@@ -7,7 +7,7 @@ export type BasicActions = {
     addon: ActionHandler<any, AddonProps>;
 };
 
-export class BasicAddon<
+export abstract class BasicAddon<
     AM extends ActionsMap = BasicActions,
     P extends AddonProps = AddonProps
 > implements IAddon {
