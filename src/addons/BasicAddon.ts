@@ -1,10 +1,14 @@
-import { Addon as AddonProps } from "@watchedcom/schema/dist/entities";
+import {
+    Addon as AddonProps,
+    ApiAddonRequest,
+    ApiAddonResponse
+} from "@watchedcom/schema/dist/entities";
 
 import { ActionHandler } from "../interfaces";
 import { ActionsMap } from "../interfaces";
 
 export type BasicActions = {
-    addon: ActionHandler<any, AddonProps>;
+    addon: ActionHandler<ApiAddonRequest, ApiAddonResponse>;
 };
 
 export abstract class BasicAddon<
@@ -16,6 +20,9 @@ export abstract class BasicAddon<
             return this.getProps();
         }
     };
+
+    public hasRepository = false;
+    public isRootAddon = false;
 
     constructor(private props: P) {}
 
