@@ -63,6 +63,11 @@ const _makeAddonRouter = (addon: BasicAddon) => {
     });
 
     router.post("/:action", createActionHandler(addon));
+
+    if (process.env.NODE_ENV === "development") {
+        router.get("/:action", createActionHandler(addon));
+    }
+
     router.post("/:action/task", createTaskResultHandler(addon));
 
     return router;
