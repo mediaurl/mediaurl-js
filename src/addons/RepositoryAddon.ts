@@ -3,7 +3,7 @@ import {
     ApiRepositoryRequest,
     ApiRepositoryResponse,
     RepositoryAddon as RepositoryAddonProps
-} from "@watchedcom/schema/dist/entities";
+} from "@watchedcom/schema";
 
 import { ActionHandler } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
@@ -11,7 +11,11 @@ import { makeCreateFunction } from "../utils/addon-func";
 import { BasicActions, BasicAddon } from "./BasicAddon";
 
 type RepositoryActionsMap = BasicActions & {
-    repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse>;
+    repository: ActionHandler<
+        ApiRepositoryRequest,
+        ApiRepositoryResponse,
+        RepositoryAddon
+    >;
 };
 
 type Url = string;

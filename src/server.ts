@@ -94,7 +94,7 @@ export const generateRouter = (
 
     return router;
 };
-s;
+
 export const serveAddons = (
     appdata: BasicAddon | BasicAddon[],
     opts?: Partial<ServeAddonOptions>
@@ -108,7 +108,10 @@ export const serveAddons = (
     app.use(options.errorHandler);
 
     const listenPromise = new Promise<void>(resolve => {
-        app.listen(port, resolve);
+        app.listen(port, () => {
+            console.info(`Listening on ${port}`);
+            resolve();
+        });
     });
 
     return { app, listenPromise };

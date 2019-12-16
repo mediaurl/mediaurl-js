@@ -2,7 +2,7 @@ import {
     Addon as AddonProps,
     ApiAddonRequest,
     ApiAddonResponse
-} from "@watchedcom/schema/dist/entities";
+} from "@watchedcom/schema";
 
 import { ActionHandler } from "../interfaces";
 import { ActionsMap } from "../interfaces";

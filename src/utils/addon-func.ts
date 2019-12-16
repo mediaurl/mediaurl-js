@@ -1,4 +1,4 @@
-import { Addon as AddonProps } from "@watchedcom/schema/dist/entities";
+import { Addon as AddonProps } from "@watchedcom/schema";
 
 import { validateAddonProps } from "../validators";
 

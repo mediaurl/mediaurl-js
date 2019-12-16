@@ -1,5 +1,4 @@
-import { getServerValidators } from "@watchedcom/schema";
-import { Addon } from "@watchedcom/schema/dist/entities";
+import { getServerValidators, Addon } from "@watchedcom/schema";
 
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
 export const validateAddonProps = <T extends Addon>(input: any): T => {

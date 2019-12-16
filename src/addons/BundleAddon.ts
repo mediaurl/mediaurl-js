@@ -1,4 +1,4 @@
-import { BundleAddon as BundleAddonProps } from "@watchedcom/schema/dist/entities";
+import { BundleAddon as BundleAddonProps } from "@watchedcom/schema";
 
 import { ActionHandler } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";

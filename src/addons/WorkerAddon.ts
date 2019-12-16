@@ -10,7 +10,7 @@ import {
     ApiSubtitleRequest,
     ApiSubtitleResponse,
     WorkerAddon as WorkerAddonProps
-} from "@watchedcom/schema/dist/entities";
+} from "@watchedcom/schema";
 
 import { ActionHandler } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
