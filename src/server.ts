@@ -6,8 +6,11 @@ import { defaults } from "lodash";
 import { BasicAddon } from "./addons/BasicAddon";
 import { RepositoryAddon } from "./addons/RepositoryAddon";
 import { errorHandler } from "./error-handler";
-import { fetchRemote } from "./utils/fetch-remote";
-import { validateActionPostBody } from "./validators";
+import {
+    createFetchRemote,
+    createTaskResultHandler,
+    Responder
+} from "./utils/fetch-remote";
 
 export interface ServeAddonOptions {
     errorHandler: express.ErrorRequestHandler;
@@ -25,13 +28,20 @@ const createActionHandler = (addon: BasicAddon) => {
 
         const handler = addon.getActionHandler(action);
 
+        const responder: Responder = {
+            send: async (statusCode, body) => {
+                res.status(statusCode).send(body);
+            }
+        };
+
+        // TODO: Catch errors and return an ApiError response
         const result = await handler(req.body, {
             addon,
             request: req,
-            fetchRemote
+            fetchRemote: createFetchRemote(responder)
         });
 
-        res.send(result);
+        responder.send(200, result);
     };
 
     return actionHandler;
@@ -53,7 +63,7 @@ const _makeAddonRouter = (addon: BasicAddon) => {
     });
 
     router.post("/:action", createActionHandler(addon));
-    router.get("/:action", createActionHandler(addon));
+    router.post("/:action/task", createTaskResultHandler(addon));
 
     return router;
 };
