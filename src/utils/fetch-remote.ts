@@ -2,7 +2,10 @@ import { ApiTask, ApiTaskResult } from "@watchedcom/schema/dist/entities";
 import * as express from "express";
 import * as uuid4 from "uuid/v4";
 
-import { IAddon } from "../interfaces";
+import { BasicAddon } from "../addons/BasicAddon";
+
+// Dummy value
+const cache: any = {};
 
 export type Responder = {
     send: (statusCode: number, body: any) => Promise<void>;
@@ -85,7 +88,7 @@ export const createFetchRemote = (responder: Responder) => {
 };
 
 export const createTaskResultHandler = (
-    addon: IAddon,
+    addon: BasicAddon,
     timeout = 120 * 1000
 ) => {
     const handler: express.RequestHandler = async (req, res) => {
