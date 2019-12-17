@@ -5,17 +5,17 @@ import {
 } from "@watchedcom/schema";
 
 import { ActionHandler } from "../interfaces";
-import { ActionsMap } from "../interfaces";
+import { HandlersMap } from "../interfaces";
 
-export type BasicActions = {
+export type BasicHandlers = {
     addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, BasicAddon>;
 };
 
 export abstract class BasicAddon<
-    AM extends ActionsMap = BasicActions,
+    HM extends HandlersMap = BasicHandlers,
     P extends AddonProps = AddonProps
 > {
-    private handlersMap: ActionsMap = {
+    private handlersMap: HandlersMap = {
         addon: async () => {
             return this.getProps();
         }
@@ -30,16 +30,16 @@ export abstract class BasicAddon<
         return this.props;
     }
 
-    public registerActionHandler<A extends Extract<keyof AM, string>>(
+    public registerActionHandler<A extends Extract<keyof HM, string>>(
         action: A,
-        handlerFn: AM[A]
+        handlerFn: HM[A]
     ) {
         this.handlersMap[action] = handlerFn;
 
         return this;
     }
 
-    public unregisterActionHandler(action: keyof ActionsMap) {
+    public unregisterActionHandler(action: keyof HandlersMap) {
         delete this.handlersMap[action];
     }
 

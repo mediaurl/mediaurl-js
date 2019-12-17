@@ -32,10 +32,14 @@ export type ActionHandler<
     }
 ) => Promise<OutputType>;
 
-export interface ActionsMap {
+export interface HandlersMap {
     [action: string]: ActionHandler;
 }
 
+/**
+ * Should include all available handlers
+ * It's base type to pick from (by action)
+ */
 export type ActionHandlers<T extends BasicAddon> = {
     addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, T>;
 

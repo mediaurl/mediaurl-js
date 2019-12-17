@@ -1,6 +1,7 @@
 import {
     Addon as AddonProps,
-    RepositoryAddon as RepositoryAddonProps
+    RepositoryAddon as RepositoryAddonProps,
+    RepositoryAddonActions
 } from "@watchedcom/schema";
 
 import { ActionHandlers } from "../interfaces";
@@ -8,17 +9,15 @@ import { makeCreateFunction } from "../utils/addon-func";
 
 import { BasicAddon } from "./BasicAddon";
 
-export type RepositoryAddonActions = Pick<
+export type RepositoryHandlers = Pick<
     ActionHandlers<RepositoryAddon>,
-    /** FIXME: need to define set of available actions from schema */
-    "repository"
-    // RepositoryAddonProps['resources'][0]['actions'][0]
+    RepositoryAddonActions
 >;
 
 type Url = string;
 
 export class RepositoryAddon extends BasicAddon<
-    RepositoryAddonActions,
+    RepositoryHandlers,
     RepositoryAddonProps
 > {
     private addons: BasicAddon[] = [];

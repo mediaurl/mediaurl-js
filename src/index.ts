@@ -1,10 +1,10 @@
 export * from "./interfaces";
 
-export { createWorkerAddon, WorkerAddonActions } from "./addons/WorkerAddon";
+export { createWorkerAddon, WorkerHandlers } from "./addons/WorkerAddon";
 export {
     createRepositoryAddon,
-    RepositoryAddonActions
+    RepositoryHandlers
 } from "./addons/RepositoryAddon";
-export { createBundleAddon, BundleAddonActions } from "./addons/BundleAddon";
+export { createBundleAddon, BundleHandlers } from "./addons/BundleAddon";
 
 export { generateRouter, serveAddons } from "./server";
