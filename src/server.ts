@@ -110,7 +110,7 @@ export const generateRouter = (
     addons.forEach(addon => {
         const { id } = addon.getProps();
         console.info(`Mounting ${id} to /${id}`);
-        router.use(id, _makeAddonRouter(addon));
+        router.use(`/${id}`, _makeAddonRouter(addon));
     });
 
     return router;
