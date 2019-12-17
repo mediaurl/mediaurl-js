@@ -32,13 +32,16 @@ export class RepositoryAddon extends BasicAddon<
 
         this.registerActionHandler("repository", async (args, ctx) => {
             const result: AddonProps[] = [];
-            args.index = true;
+
             for (const addon of this.addons) {
                 const url = addon.isRootAddon
                     ? "./"
                     : `'./${addon.getProps().id}`;
                 const handler = addon.getActionHandler("addon");
-                const props: AddonProps = await handler(args, ctx);
+                const props: AddonProps = await handler(
+                    { ...args, index: true },
+                    ctx
+                );
                 props.metadata = { url };
                 result.push(props);
             }
