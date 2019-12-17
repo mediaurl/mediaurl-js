@@ -59,6 +59,7 @@ export class RepositoryAddon extends BasicAddon<
     }
 
     public addAddon(addon: BasicAddon) {
+        addon.hasRepository = true;
         this.addons.push(addon);
     }
 

@@ -91,9 +91,6 @@ export const generateRouter = (
     if (appdata instanceof RepositoryAddon) {
         rootAddon = appdata;
         addons = (<RepositoryAddon>rootAddon).getAddons();
-        addons.forEach(addon => {
-            addon.hasRepository = true;
-        });
     } else if (appdata instanceof BasicAddon) {
         rootAddon = appdata;
         addons = [];
