@@ -17,6 +17,7 @@ import {
 import * as express from "express";
 
 import { BasicAddon } from "./addons/BasicAddon";
+import { BasicCache } from "./cache/BasicCache";
 import { FetchRemoteFn } from "./utils/fetch-remote";
 
 export type ActionHandler<
@@ -28,6 +29,7 @@ export type ActionHandler<
     context: {
         request: express.Request;
         addon: AddonType;
+        cache: null | BasicCache;
         fetchRemote: FetchRemoteFn;
     }
 ) => Promise<OutputType>;

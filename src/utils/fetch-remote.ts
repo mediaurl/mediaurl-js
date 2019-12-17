@@ -1,11 +1,13 @@
-import { ApiTask, ApiTaskResult } from "@watchedcom/schema/dist/entities";
+import {
+    getServerValidators,
+    ApiTask,
+    ApiTaskResult
+} from "@watchedcom/schema";
 import * as express from "express";
 import * as uuid4 from "uuid/v4";
 
 import { BasicAddon } from "../addons/BasicAddon";
-
-// Dummy value
-const cache: any = {};
+import { BasicCache } from "../cache/BasicCache";
 
 export type Responder = {
     send: (statusCode: number, body: any) => Promise<void>;
@@ -52,7 +54,7 @@ class TunnelResponse {
     }
 }
 
-export const createFetchRemote = (responder: Responder) => {
+export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
     const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
         const id = uuid4();
         const task: ApiTask = {
@@ -62,6 +64,7 @@ export const createFetchRemote = (responder: Responder) => {
             params
         };
         // getServerValidators().task.task(task);
+        console.debug(`Task ${id} is starting`);
         await cache.set(`task.wait:${id}`, "1", timeout * 2);
         await responder.send(200, task);
 
@@ -71,13 +74,18 @@ export const createFetchRemote = (responder: Responder) => {
         };
 
         // Wait for the result
-        const data = cache.waitKey(`task.result:${id}`, timeout, true);
+        const data: any = await cache.waitKey(
+            `task.result:${id}`,
+            timeout,
+            true
+        );
         const { resultChannel, result } = JSON.parse(data);
         // getServerValidators().task.result(result);
+        console.debug(`Task ${id} resolved`);
 
         // Set new valid responder
         responder.send = async (statusCode, body) => {
-            const data = JSON.stringify({ status, body });
+            const data = JSON.stringify({ statusCode, body });
             await cache.set(`task.response:${resultChannel}`, data, timeout);
         };
 
@@ -89,20 +97,21 @@ export const createFetchRemote = (responder: Responder) => {
 
 export const createTaskResultHandler = (
     addon: BasicAddon,
+    cache: BasicCache,
     timeout = 120 * 1000
 ) => {
     const handler: express.RequestHandler = async (req, res) => {
-        const result: ApiTaskResult = JSON.parse(req.body);
+        const result: ApiTaskResult = req.body;
         // getServerValidators().task.result(result);
+        console.debug(`Task ${result.id} received response from client`);
 
         // Make sure the key exists to prevent spamming
         if (!(await cache.get(`task.wait:${result.id}`))) {
             throw new Error(`Task wait key ${result.id} does not exists`);
         }
-        await cache.del(`task.wait:${result.id}`);
+        await cache.delete(`task.wait:${result.id}`);
 
         // Set the result
-        // console.warn('task.result.set', result.id);
         const resultChannel = uuid4();
         const raw = JSON.stringify({ resultChannel, result });
         await cache.set(`task.result:${result.id}`, raw);
@@ -113,10 +122,11 @@ export const createTaskResultHandler = (
             timeout,
             true
         );
-        const { status, body: response } = JSON.parse(data);
+        const { statusCode, body: response } = JSON.parse(data);
         // TODO: Validate with the correct JSON schema
-        // validateResponse(ctx, status, response);
-        res.status(status).send(response);
+        // validateResponse(ctx, statusCode, response);
+        res.status(statusCode).send(response);
+        console.debug(`Task ${result.id} sending next response to client`);
     };
     return handler;
 };

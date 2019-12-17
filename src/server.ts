@@ -4,7 +4,9 @@ import "express-async-errors";
 import { defaults } from "lodash";
 
 import { BasicAddon } from "./addons/BasicAddon";
-import { RepositoryAddon } from "./addons/RepositoryAddon";
+import { BasicCache } from "./cache/BasicCache";
+import { LocalCache } from "./cache/LocalCache";
+import { RedisCache } from "./cache/RedisCache";
 import { errorHandler } from "./error-handler";
 import {
     createFetchRemote,
@@ -15,6 +17,7 @@ import {
 export interface ServeAddonOptions {
     errorHandler: express.ErrorRequestHandler;
     port: number;
+    cache: null | BasicCache;
 }
 
 const _isDiscoveryQuery = (req: express.Request): boolean =>
@@ -22,10 +25,11 @@ const _isDiscoveryQuery = (req: express.Request): boolean =>
 
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
-    port: parseInt(<string>process.env.PORT) || 3000
+    port: parseInt(<string>process.env.PORT) || 3000,
+    cache: null
 };
 
-const createActionHandler = (addon: BasicAddon) => {
+const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
     const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
@@ -41,7 +45,8 @@ const createActionHandler = (addon: BasicAddon) => {
         const result = await handler(req.body, {
             addon,
             request: req,
-            fetchRemote: createFetchRemote(responder)
+            cache,
+            fetchRemote: createFetchRemote(responder, cache)
         });
 
         responder.send(200, result);
@@ -50,7 +55,7 @@ const createActionHandler = (addon: BasicAddon) => {
     return actionHandler;
 };
 
-const _makeAddonRouter = (addon: BasicAddon) => {
+const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
     const router = express.Router();
 
     router.get("/", (req, res) => {
@@ -61,18 +66,21 @@ const _makeAddonRouter = (addon: BasicAddon) => {
         }
     });
 
-    router.post("/:action", createActionHandler(addon));
+    router.post("/:action", createActionHandler(addon, cache));
 
     if (process.env.NODE_ENV === "development") {
-        router.get("/:action", createActionHandler(addon));
+        router.get("/:action", createActionHandler(addon, cache));
     }
 
-    router.post("/:action/task", createTaskResultHandler(addon));
+    router.post("/:action/task", createTaskResultHandler(addon, cache));
 
     return router;
 };
 
-export const generateRouter = (addons: BasicAddon[]): express.Router => {
+export const generateRouter = (
+    addons: BasicAddon[],
+    cache: BasicCache
+): express.Router => {
     const router = express.Router();
 
     router.use(bodyParser.json());
@@ -80,7 +88,7 @@ export const generateRouter = (addons: BasicAddon[]): express.Router => {
     addons.forEach(addon => {
         const { id } = addon.getProps();
         console.info(`Mounting ${id} to /${id}`);
-        router.use(`/${id}`, _makeAddonRouter(addon));
+        router.use(`/${id}`, _makeAddonRouter(addon, cache));
     });
 
     return router;
@@ -94,7 +102,16 @@ export const serveAddons = (
     const options = defaults(opts, defaultServeOpts);
     const port = options.port;
 
-    app.use("/", generateRouter(addons));
+    let cache = options.cache;
+    if (!cache) {
+        if (process.env.REDIS_CACHE) {
+            cache = new RedisCache({ url: process.env.REDIS_CACHE });
+        } else {
+            cache = new LocalCache();
+        }
+    }
+
+    app.use("/", generateRouter(addons, cache));
 
     app.get("/", (req, res) => {
         res.send("TODO: Create addon index page");
