@@ -17,6 +17,9 @@ export interface ServeAddonOptions {
     port: number;
 }
 
+const _isDiscoveryQuery = (req: express.Request): boolean =>
+    !!req.query.wtchDiscover;
+
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
     port: parseInt(<string>process.env.PORT) || 3000
@@ -55,11 +58,14 @@ const _makeAddonRouter = (addon: BasicAddon) => {
     });
 
     router.get("/", (req, res) => {
-        if (req.query.wtchDiscover) {
-            res.send({ watched: true, hasRepository: addon.hasRepository });
-        } else {
-            res.send("TODO: Create landing page");
+        if (_isDiscoveryQuery(req)) {
+            return res.send({
+                watched: true,
+                hasRepository: addon.hasRepository
+            });
         }
+
+        res.send("TODO: Create landing page");
     });
 
     router.post("/:action", createActionHandler(addon));
@@ -100,11 +106,11 @@ export const generateRouter = (
         rootAddon.isRootAddon = true;
         router.use("/", _makeAddonRouter(rootAddon));
     }
+
     addons.forEach(addon => {
-        console.info(
-            `Mounting ${addon.getProps().id} to /${addon.getProps().id}`
-        );
-        router.use(`/${addon.getProps().id}`, _makeAddonRouter(addon));
+        const { id } = addon.getProps();
+        console.info(`Mounting ${id} to /${id}`);
+        router.use(id, _makeAddonRouter(addon));
     });
 
     return router;
