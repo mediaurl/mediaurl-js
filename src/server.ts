@@ -53,16 +53,12 @@ const createActionHandler = (addon: BasicAddon) => {
 const _makeAddonRouter = (addon: BasicAddon) => {
     const router = express.Router();
 
-    router.get("/health", (req, res) => {
-        return res.send("OK");
-    });
-
     router.get("/", (req, res) => {
         if (_isDiscoveryQuery(req)) {
-            return res.send({ watched: true });
+            res.send({ watched: true });
+        } else {
+            res.send("TODO: Create addon detail page");
         }
-
-        res.send("TODO: Create landing page");
     });
 
     router.post("/:action", createActionHandler(addon));
@@ -99,6 +95,14 @@ export const serveAddons = (
     const port = options.port;
 
     app.use("/", generateRouter(addons));
+
+    app.get("/", (req, res) => {
+        res.send("TODO: Create addon index page");
+    });
+
+    app.get("/health", (req, res) => {
+        res.send("OK");
+    });
 
     app.use(options.errorHandler);
 
