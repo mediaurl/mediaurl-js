@@ -8,7 +8,7 @@ import { ActionHandler } from "../interfaces";
 import { ActionsMap } from "../interfaces";
 
 export type BasicActions = {
-    addon: ActionHandler<ApiAddonRequest, ApiAddonResponse>;
+    addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, BasicAddon>;
 };
 
 export abstract class BasicAddon<
@@ -34,11 +34,6 @@ export abstract class BasicAddon<
         action: A,
         handlerFn: AM[A]
     ) {
-        // if (this.handlersMap[action]) {
-        //     throw new Error(
-        //         `Another handler is already registered for "${action}" action`
-        //     );
-        // }
         this.handlersMap[action] = handlerFn;
 
         return this;

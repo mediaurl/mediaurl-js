@@ -1,32 +1,17 @@
-import {
-    ApiDirectoryRequest,
-    ApiDirectoryResponse,
-    ApiItemRequest,
-    ApiItemResponse,
-    ApiResolveRequest,
-    ApiResolveResponse,
-    ApiSourceRequest,
-    ApiSourceResponse,
-    ApiSubtitleRequest,
-    ApiSubtitleResponse,
-    WorkerAddon as WorkerAddonProps
-} from "@watchedcom/schema";
+import { WorkerAddon as WorkerAddonProps } from "@watchedcom/schema";
 
-import { ActionHandler } from "../interfaces";
+import { ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 
-import { BasicActions, BasicAddon } from "./BasicAddon";
+import { BasicAddon } from "./BasicAddon";
 
-export type WorkerActionsMap = BasicActions & {
-    directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse>;
-    item: ActionHandler<ApiItemRequest, ApiItemResponse>;
-    source: ActionHandler<ApiSourceRequest, ApiSourceResponse>;
-    subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse>;
-    resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse>;
-};
+export type WorkerAddonActions = Pick<
+    ActionHandlers<WorkerAddon>,
+    WorkerAddonProps["resources"][0]["actions"][0]
+>;
 
 export class WorkerAddon extends BasicAddon<
-    WorkerActionsMap,
+    WorkerAddonActions,
     WorkerAddonProps
 > {}
 

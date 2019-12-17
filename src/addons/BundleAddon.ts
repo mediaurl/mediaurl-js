@@ -1,14 +1,19 @@
 import { BundleAddon as BundleAddonProps } from "@watchedcom/schema";
 
-import { ActionHandler } from "../interfaces";
+import { ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 
-import { BasicActions, BasicAddon } from "./BasicAddon";
+import { BasicAddon } from "./BasicAddon";
 
-type BundleActionsMap = BasicActions & {};
+export type BundleAddonActions = Pick<
+    ActionHandlers<BundleAddon>,
+    /** FIXME: need to define set of available actions from schema */
+    never
+    // BundleAddonProps['resources'][0]['actions'][0]
+>;
 
 export class BundleAddon extends BasicAddon<
-    BundleActionsMap,
+    BundleAddonActions,
     BundleAddonProps
 > {
     constructor(p: BundleAddonProps) {
