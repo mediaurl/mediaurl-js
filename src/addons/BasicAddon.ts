@@ -21,9 +21,6 @@ export abstract class BasicAddon<
         }
     };
 
-    public hasRepository = false;
-    public isRootAddon = false;
-
     constructor(private props: P) {}
 
     public getProps(): P {

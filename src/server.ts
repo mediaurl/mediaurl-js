@@ -59,10 +59,7 @@ const _makeAddonRouter = (addon: BasicAddon) => {
 
     router.get("/", (req, res) => {
         if (_isDiscoveryQuery(req)) {
-            return res.send({
-                watched: true,
-                hasRepository: addon.hasRepository
-            });
+            return res.send({ watched: true });
         }
 
         res.send("TODO: Create landing page");
@@ -79,33 +76,10 @@ const _makeAddonRouter = (addon: BasicAddon) => {
     return router;
 };
 
-export const generateRouter = (
-    appdata: BasicAddon | BasicAddon[]
-): express.Router => {
+export const generateRouter = (addons: BasicAddon[]): express.Router => {
     const router = express.Router();
 
     router.use(bodyParser.json());
-
-    let rootAddon: BasicAddon | null = null;
-    let addons: BasicAddon[];
-    if (appdata instanceof RepositoryAddon) {
-        rootAddon = appdata;
-        addons = (<RepositoryAddon>rootAddon).getAddons();
-        addons.forEach(addon => {
-            addon.hasRepository = true;
-        });
-    } else if (appdata instanceof BasicAddon) {
-        rootAddon = appdata;
-        addons = [];
-    } else {
-        addons = appdata;
-    }
-
-    if (rootAddon) {
-        console.info(`Mounting ${rootAddon.getProps().id} to /`);
-        rootAddon.isRootAddon = true;
-        router.use("/", _makeAddonRouter(rootAddon));
-    }
 
     addons.forEach(addon => {
         const { id } = addon.getProps();
@@ -117,14 +91,14 @@ export const generateRouter = (
 };
 
 export const serveAddons = (
-    appdata: BasicAddon | BasicAddon[],
+    addons: BasicAddon[],
     opts?: Partial<ServeAddonOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
     const app = express();
     const options = defaults(opts, defaultServeOpts);
     const port = options.port;
 
-    app.use("/", generateRouter(appdata));
+    app.use("/", generateRouter(addons));
 
     app.use(options.errorHandler);
 
