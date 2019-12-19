@@ -2,6 +2,7 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
 import { defaults } from "lodash";
+import * as morgan from "morgan";
 
 import { BasicAddon } from "./addons/BasicAddon";
 import { BasicCache } from "./cache/BasicCache";
@@ -15,6 +16,7 @@ import {
 } from "./utils/fetch-remote";
 
 export interface ServeAddonOptions {
+    logRequests: boolean;
     errorHandler: express.ErrorRequestHandler;
     port: number;
     cache: null | BasicCache;
@@ -26,7 +28,8 @@ const _isDiscoveryQuery = (req: express.Request): boolean =>
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
     port: parseInt(<string>process.env.PORT) || 3000,
-    cache: null
+    cache: null,
+    logRequests: true
 };
 
 const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
@@ -109,6 +112,10 @@ export const serveAddons = (
         } else {
             cache = new LocalCache();
         }
+    }
+
+    if (options.logRequests) {
+        app.use(morgan("dev"));
     }
 
     app.use("/", generateRouter(addons, cache));
