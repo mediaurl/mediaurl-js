@@ -19,7 +19,7 @@ export interface ServeAddonOptions {
     logRequests: boolean;
     errorHandler: express.ErrorRequestHandler;
     port: number;
-    cache: null | BasicCache;
+    cache: BasicCache;
 }
 
 const _isDiscoveryQuery = (req: express.Request): boolean =>
@@ -28,7 +28,9 @@ const _isDiscoveryQuery = (req: express.Request): boolean =>
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
     port: parseInt(<string>process.env.PORT) || 3000,
-    cache: null,
+    cache: process.env.REDIS_CACHE
+        ? new RedisCache({ url: process.env.REDIS_CACHE })
+        : new LocalCache(),
     logRequests: true
 };
 
@@ -103,16 +105,7 @@ export const serveAddons = (
 ): { app: express.Application; listenPromise: Promise<void> } => {
     const app = express();
     const options = defaults(opts, defaultServeOpts);
-    const port = options.port;
-
-    let cache = options.cache;
-    if (!cache) {
-        if (process.env.REDIS_CACHE) {
-            cache = new RedisCache({ url: process.env.REDIS_CACHE });
-        } else {
-            cache = new LocalCache();
-        }
-    }
+    const { port, cache } = options;
 
     if (options.logRequests) {
         app.use(morgan("dev"));
