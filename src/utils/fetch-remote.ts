@@ -107,7 +107,7 @@ export const createTaskResultHandler = (
 
         // Make sure the key exists to prevent spamming
         if (!(await cache.get(`task.wait:${result.id}`))) {
-            throw new Error(`Task wait key ${result.id} does not exists`);
+            throw new Error(`Task wait key ${result.id} does not exist`);
         }
         await cache.delete(`task.wait:${result.id}`);
 
