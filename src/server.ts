@@ -40,11 +40,11 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
 
         const handler = addon.getActionHandler(action);
 
-        const responder: Responder = {
-            send: async (statusCode, body) => {
+        const responder = new Responder(
+            async (statusCode: number, body: any) => {
                 res.status(statusCode).send(body);
             }
-        };
+        );
 
         // TODO: Catch errors and return an ApiError response
         const result = await handler(req.body, {
