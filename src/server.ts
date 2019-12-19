@@ -2,6 +2,7 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
 import { defaults } from "lodash";
+import * as morgan from "morgan";
 
 import { BasicAddon } from "./addons/BasicAddon";
 import { BasicCache } from "./cache/BasicCache";
@@ -15,9 +16,10 @@ import {
 } from "./utils/fetch-remote";
 
 export interface ServeAddonOptions {
+    logRequests: boolean;
     errorHandler: express.ErrorRequestHandler;
     port: number;
-    cache: null | BasicCache;
+    cache: BasicCache;
 }
 
 const _isDiscoveryQuery = (req: express.Request): boolean =>
@@ -26,7 +28,10 @@ const _isDiscoveryQuery = (req: express.Request): boolean =>
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
     port: parseInt(<string>process.env.PORT) || 3000,
-    cache: null
+    cache: process.env.REDIS_CACHE
+        ? new RedisCache({ url: process.env.REDIS_CACHE })
+        : new LocalCache(),
+    logRequests: true
 };
 
 const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
@@ -100,15 +105,10 @@ export const serveAddons = (
 ): { app: express.Application; listenPromise: Promise<void> } => {
     const app = express();
     const options = defaults(opts, defaultServeOpts);
-    const port = options.port;
+    const { port, cache } = options;
 
-    let cache = options.cache;
-    if (!cache) {
-        if (process.env.REDIS_CACHE) {
-            cache = new RedisCache({ url: process.env.REDIS_CACHE });
-        } else {
-            cache = new LocalCache();
-        }
+    if (options.logRequests) {
+        app.use(morgan("dev"));
     }
 
     app.use("/", generateRouter(addons, cache));
