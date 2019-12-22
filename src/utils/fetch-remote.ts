@@ -94,6 +94,11 @@ class TunnelResponse {
         return this.r.url;
     }
 
+    get ok() {
+        const status = this.r.status;
+        return status >= 200 && status < 300;
+    }
+
     get headers() {
         return this.r.headers;
     }
