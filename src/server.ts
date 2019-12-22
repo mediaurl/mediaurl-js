@@ -88,7 +88,7 @@ export const generateRouter = (
 ): express.Router => {
     const router = express.Router();
 
-    router.use(bodyParser.json());
+    router.use(bodyParser.json({ limit: "10mb" }));
 
     addons.forEach(addon => {
         const { id } = addon.getProps();
