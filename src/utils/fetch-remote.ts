@@ -73,12 +73,10 @@ export class Responder {
 export type FetchRemoteFn = (
     url: string,
     params: ApiTask["params"]
-) => Promise<any>;
+) => Promise<TunnelResponse>;
 
 class TunnelResponse {
-    r: any;
-
-    constructor(r: ApiTaskResult) {
+    constructor(private r: ApiTaskResult) {
         this.r = r;
     }
 
