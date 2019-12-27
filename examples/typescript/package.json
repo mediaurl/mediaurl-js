@@ -1,0 +1,14 @@
+{
+  "name": "examples-ts",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node ."
+  },
+  "devDependencies": {
+    "@watchedcom/schema": "latest",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  }
+}
