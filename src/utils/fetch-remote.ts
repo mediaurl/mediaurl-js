@@ -110,7 +110,7 @@ class TunnelResponse {
     }
 
     async data() {
-        return Buffer.from(this.r.data, "base64");
+        return Buffer.from(this.r.data ?? "", "base64");
     }
 }
 
