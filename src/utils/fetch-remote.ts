@@ -72,7 +72,7 @@ export class Responder {
 
 export type FetchRemoteFn = (
     url: string,
-    params: ApiTask["params"]
+    params?: ApiTask["params"]
 ) => Promise<TunnelResponse>;
 
 class TunnelResponse {
@@ -105,7 +105,11 @@ class TunnelResponse {
         return this.r.json;
     }
 
-    async text() {
+    async text(): Promise<string> {
+        if (!this.r.text) {
+            throw new Error("No text in task result");
+        }
+
         return this.r.text;
     }
 
