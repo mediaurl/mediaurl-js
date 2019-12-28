@@ -20,18 +20,22 @@ import { BasicAddon } from "./addons/BasicAddon";
 import { BasicCache } from "./cache/BasicCache";
 import { FetchRemoteFn } from "./utils/fetch-remote";
 
+export interface ActionHandlerContext<
+    AddonType extends BasicAddon = BasicAddon
+> {
+    request: express.Request;
+    addon: AddonType;
+    cache: null | BasicCache;
+    fetchRemote: FetchRemoteFn;
+}
+
 export type ActionHandler<
     InputType = any,
     OutputType = any,
     AddonType extends BasicAddon = BasicAddon
 > = (
     input: InputType,
-    context: {
-        request: express.Request;
-        addon: AddonType;
-        cache: null | BasicCache;
-        fetchRemote: FetchRemoteFn;
-    }
+    context: ActionHandlerContext<AddonType>
 ) => Promise<OutputType>;
 
 export interface HandlersMap {
