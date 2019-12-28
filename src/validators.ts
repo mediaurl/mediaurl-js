@@ -1,6 +1,7 @@
 import { getServerValidators, Addon } from "@watchedcom/schema";
 
 const handleError = (action: string, error: Error) => {
+    console.error(error.message);
     console.error(
         `Data validation of action ${action} failed.\nCheck out our schema at https://www.watched.com/swagger`
     );
