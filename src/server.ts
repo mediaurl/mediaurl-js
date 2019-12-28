@@ -46,15 +46,19 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
             }
         );
 
-        // TODO: Catch errors and return an ApiError response
-        const result = await handler(req.body, {
-            addon,
-            request: req,
-            cache,
-            fetchRemote: createFetchRemote(responder, cache)
-        });
-
-        responder.send(200, result);
+        try {
+            const result = await handler(req.body, {
+                addon,
+                request: req,
+                cache,
+                fetchRemote: createFetchRemote(responder, cache)
+            });
+            responder.send(200, result);
+        } catch (error) {
+            responder.send(500, {
+                error: error.message || error
+            });
+        }
     };
 
     return actionHandler;
