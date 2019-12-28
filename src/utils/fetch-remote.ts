@@ -145,7 +145,9 @@ export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
         });
 
         // Return fetch response
-        return new TunnelResponse(result);
+        const res = new TunnelResponse(result);
+        if (res.status === 0) throw new Error(res.error);
+        return res;
     };
     return fetch;
 };
