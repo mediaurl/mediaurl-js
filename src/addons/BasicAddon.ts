@@ -32,7 +32,6 @@ export abstract class BasicAddon<
         handlerFn: HM[A]
     ) {
         this.handlersMap[action] = handlerFn;
-
         return this;
     }
 
@@ -42,11 +41,9 @@ export abstract class BasicAddon<
 
     public getActionHandler(action: string): ActionHandler {
         const handlerFn = this.handlersMap[action];
-
         if (!handlerFn) {
             throw new Error(`No handler for "${action}" action`);
         }
-
         return handlerFn;
     }
 }

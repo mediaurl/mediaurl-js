@@ -14,6 +14,7 @@ import {
     createTaskResultHandler,
     Responder
 } from "./utils/fetch-remote";
+import { getActionValidator } from "./validators";
 
 export interface ServeAddonOptions {
     logRequests: boolean;
@@ -21,9 +22,6 @@ export interface ServeAddonOptions {
     port: number;
     cache: BasicCache;
 }
-
-const _isDiscoveryQuery = (req: express.Request): boolean =>
-    !!req.query.wtchDiscover;
 
 const defaultServeOpts: ServeAddonOptions = {
     errorHandler,
@@ -39,6 +37,8 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         const { action } = req.params;
 
         const handler = addon.getActionHandler(action);
+        const validator = getActionValidator(action);
+        validator.request(req.body);
 
         const responder = new Responder(
             async (statusCode: number, body: any) => {
@@ -46,19 +46,22 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
             }
         );
 
+        let statusCode = 200;
+        let result;
         try {
-            const result = await handler(req.body, {
+            result = await handler(req.body, {
                 addon,
                 request: req,
                 cache,
                 fetchRemote: createFetchRemote(responder, cache)
             });
-            responder.send(200, result);
         } catch (error) {
-            responder.send(500, {
-                error: error.message || error
-            });
+            statusCode = 500;
+            result = { error: error.message || error };
         }
+
+        validator.response(result);
+        responder.send(statusCode, result);
     };
 
     return actionHandler;
@@ -66,23 +69,18 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
 
 const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
     const router = express.Router();
-
     router.get("/", (req, res) => {
-        if (_isDiscoveryQuery(req)) {
+        if (req.query.wtchDiscover) {
             res.send({ watched: true });
         } else {
             res.send("TODO: Create addon detail page");
         }
     });
-
     router.post("/:action", createActionHandler(addon, cache));
-
     if (process.env.NODE_ENV === "development") {
         router.get("/:action", createActionHandler(addon, cache));
     }
-
     router.post("/:action/task", createTaskResultHandler(addon, cache));
-
     return router;
 };
 
@@ -91,7 +89,6 @@ export const generateRouter = (
     cache: BasicCache
 ): express.Router => {
     const router = express.Router();
-
     router.use(bodyParser.json({ limit: "10mb" }));
 
     addons.forEach(addon => {
@@ -116,15 +113,12 @@ export const serveAddons = (
     }
 
     app.use("/", generateRouter(addons, cache));
-
     app.get("/", (req, res) => {
         res.send("TODO: Create addon index page");
     });
-
     app.get("/health", (req, res) => {
         res.send("OK");
     });
-
     app.use(options.errorHandler);
 
     const listenPromise = new Promise<void>(resolve => {
