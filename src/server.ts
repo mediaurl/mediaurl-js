@@ -55,12 +55,12 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
                 cache,
                 fetchRemote: createFetchRemote(responder, cache)
             });
+            validator.response(result);
         } catch (error) {
             statusCode = 500;
             result = { error: error.message || error };
         }
 
-        validator.response(result);
         responder.send(statusCode, result);
     };
 
