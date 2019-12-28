@@ -3,6 +3,7 @@ import {
     ApiAddonRequest,
     ApiAddonResponse
 } from "@watchedcom/schema";
+import { cloneDeep } from "lodash";
 
 import { ActionHandler } from "../interfaces";
 import { HandlersMap } from "../interfaces";
@@ -21,10 +22,10 @@ export abstract class BasicAddon<
         }
     };
 
-    constructor(private props: P) {}
+    constructor(private readonly props: P) {}
 
     public getProps(): P {
-        return this.props;
+        return cloneDeep(this.props);
     }
 
     public registerActionHandler<A extends Extract<keyof HM, string>>(
