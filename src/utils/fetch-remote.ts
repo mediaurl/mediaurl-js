@@ -1,8 +1,4 @@
-import {
-    getServerValidators,
-    ApiTask,
-    ApiTaskResult
-} from "@watchedcom/schema";
+import { ApiTask, ApiTaskResult } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import * as express from "express";
 import * as uuid4 from "uuid/v4";
@@ -156,12 +152,15 @@ export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
     return fetch;
 };
 
+// Bugfix for missing import express-serve-static-core in declaration file
+type RequestHandler = express.RequestHandler;
+
 export const createTaskResultHandler = (
     addon: BasicAddon,
     cache: BasicCache,
     timeout = 120 * 1000
 ) => {
-    const taskHandler: express.RequestHandler = async (req, res) => {
+    const taskHandler: RequestHandler = async (req, res) => {
         const result: ApiTaskResult = req.body;
         // getServerValidators().task.result(result);
         console.debug(`Task ${result.id} received response from client`);
@@ -189,5 +188,6 @@ export const createTaskResultHandler = (
         res.status(statusCode).send(response);
         console.debug(`Task ${result.id} sending next response to client`);
     };
+
     return taskHandler;
 };
