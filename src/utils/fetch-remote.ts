@@ -161,7 +161,7 @@ export const createTaskResultHandler = (
     cache: BasicCache,
     timeout = 120 * 1000
 ) => {
-    const handler: express.RequestHandler = async (req, res) => {
+    const taskHandler: express.RequestHandler = async (req, res) => {
         const result: ApiTaskResult = req.body;
         // getServerValidators().task.result(result);
         console.debug(`Task ${result.id} received response from client`);
@@ -189,5 +189,5 @@ export const createTaskResultHandler = (
         res.status(statusCode).send(response);
         console.debug(`Task ${result.id} sending next response to client`);
     };
-    return handler;
+    return taskHandler;
 };
