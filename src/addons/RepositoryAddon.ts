@@ -1,11 +1,15 @@
 import {
     Addon as AddonProps,
+    ApiAddonRequest,
+    ApiRepositoryRequest,
     RepositoryAddon as RepositoryAddonProps,
     RepositoryAddonActions
 } from "@watchedcom/schema";
+import fetch from "node-fetch";
 
-import { ActionHandlers } from "../interfaces";
+import { ActionHandlers, ActionHandlerContext } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
+import { validateAddonProps } from "../validators";
 
 import { BasicAddon } from "./BasicAddon";
 
@@ -26,26 +30,71 @@ export class RepositoryAddon extends BasicAddon<
     constructor(p: RepositoryAddonProps) {
         super(p);
 
-        this.registerActionHandler("repository", async (args, ctx) => {
-            const result: AddonProps[] = [];
+        this.registerActionHandler(
+            "repository",
+            async (args: ApiRepositoryRequest, ctx: ActionHandlerContext) => {
+                return this.getAllAddonProps(args, ctx);
+            }
+        );
+    }
 
-            for (const addon of this.addons) {
-                const handler = addon.getActionHandler("addon");
-                const props: AddonProps = await handler(
-                    { ...args, index: true },
-                    ctx
-                );
-                props.metadata = {
-                    url: `'./${addon.getProps().id}`
-                };
-                result.push(props);
-            }
-            for (const url of this.urls) {
-                // TODO: Load props from remote repo via a POST /addon call
-                throw new Error("Repository URL's are not yet implemented");
-            }
-            return result;
-        });
+    private async getAllAddonProps(
+        args: ApiAddonRequest,
+        ctx: ActionHandlerContext
+    ) {
+        const result: AddonProps[] = [];
+        const promises: Promise<void>[] = [];
+
+        for (const addon of this.addons) {
+            const fn = async () => {
+                const id = addon.getProps().id;
+                try {
+                    const handler = addon.getActionHandler("addon");
+                    const props: AddonProps = await handler(
+                        { ...args },
+                        { ...ctx, addon }
+                    );
+                    props.metadata = { url: `'./${id}` };
+                    result.push(props);
+                } catch (error) {
+                    console.warn(`Failed loading ${id}:`, error.message);
+                }
+            };
+            promises.push(fn());
+        }
+
+        for (const url of this.urls) {
+            const fn = async () => {
+                const key = `${this.getProps().id}:url:${url}`;
+                const data = await ctx.cache?.get(key);
+                if (data !== null) {
+                    if (data.props) result.push(data.props);
+                    return;
+                }
+                try {
+                    const res = await fetch(`${url.replace(/\/$/, "")}/addon`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(args)
+                    });
+                    if (!res.ok) {
+                        throw new Error(`Get status code ${res.status}`);
+                    }
+                    const props = await res.json();
+                    props.metadata = { ...props.metadata, url };
+                    validateAddonProps(props);
+                    result.push(props);
+                    ctx.cache?.set(key, { props });
+                } catch (error) {
+                    console.warn(`Failed loading ${url}:`, error.message);
+                    ctx.cache?.set(key, { error: true });
+                }
+            };
+            promises.push(fn());
+        }
+
+        await Promise.all(promises);
+        return result;
     }
 
     public async _resolveAddonUrl(url: Url): Promise<AddonProps> {

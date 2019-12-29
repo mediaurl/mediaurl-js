@@ -4,8 +4,8 @@
   "main": "dist",
   "scripts": {
     "build": "tsc",
-    "start": "node .",
-    "develop": "ts-node-dev --respawn --transpileOnly --no-notify src"
+    "start": "node dist/serve",
+    "develop": "ts-node-dev --respawn --transpileOnly --no-notify src/serve"
   },
   "devDependencies": {
     "ts-node-dev": "^1.0.0-pre.44",
