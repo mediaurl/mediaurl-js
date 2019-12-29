@@ -1,7 +1,7 @@
 {
     "name": "@watchedcom/sdk",
     "description": "WATCHED.com Javascript SDK",
-    "version": "0.0.24",
+    "version": "0.1.0",
     "repository": "https://github.com/watchedcom/sdk-javascript",
     "main": "dist",
     "private": false,
