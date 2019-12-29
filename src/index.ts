@@ -8,3 +8,5 @@ export {
 export { createBundleAddon, BundleHandlers } from "./addons/BundleAddon";
 
 export { generateRouter, serveAddons } from "./server";
+
+export * from "@watchedcom/schema";

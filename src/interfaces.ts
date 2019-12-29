@@ -49,11 +49,11 @@ export interface HandlersMap {
 export type ActionHandlers<T extends BasicAddon> = {
     addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, T>;
 
+    repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse, T>;
+
     directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse, T>;
     item: ActionHandler<ApiItemRequest, ApiItemResponse, T>;
     source: ActionHandler<ApiSourceRequest, ApiSourceResponse, T>;
     subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse, T>;
     resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse, T>;
-
-    repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse, T>;
 };

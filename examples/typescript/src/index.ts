@@ -1,11 +1,11 @@
 import {
+  createWorkerAddon,
+  serveAddons,
   ApiItemRequest,
   ApiSourceRequest,
   Item,
   Source
-} from "@watchedcom/schema";
-
-import * as watched from "../../";
+} from "../../../";
 
 const EXAMPLE_ITEMS: Item[] = [
   {
@@ -32,6 +32,8 @@ type ExampleSources = {
 const EXAMPLE_SOURCES: ExampleSources = {
   id1235: [
     {
+      type: "url",
+      id: "",
       name: "Source 1",
       url:
         "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
@@ -39,18 +41,17 @@ const EXAMPLE_SOURCES: ExampleSources = {
   ]
 };
 
-const addon = watched
-  .createWorkerAddon({
-    id: "example-ts",
-    name: "Javascript Example Addon",
-    version: "1.0.0",
-    resources: [
-      {
-        actions: ["directory", "item", "source"],
-        itemTypes: ["movie"]
-      }
-    ]
-  })
+const addon = createWorkerAddon({
+  id: "example-ts",
+  name: "Typescript Example Addon",
+  version: "1.0.0",
+  resources: [
+    {
+      actions: ["directory", "item", "source"],
+      itemTypes: ["movie"]
+    }
+  ]
+})
   .registerActionHandler("directory", async (args, ctx) => {
     return {
       items: EXAMPLE_ITEMS,
@@ -69,4 +70,4 @@ const addon = watched
     return sources ?? [];
   });
 
-watched.serveAddons([addon]);
+serveAddons([addon]);

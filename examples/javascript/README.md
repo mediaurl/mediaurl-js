@@ -9,6 +9,8 @@ However, it is recommended to use the typescript example as a starting point, to
 ```shell
 cd examples/javascript
 npm i
+npm run develop
+# or to start the server for production
 npm start
 ```
 

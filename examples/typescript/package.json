@@ -1,13 +1,14 @@
 {
   "name": "examples-ts",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "dist",
   "scripts": {
-    "start": "ts-node ."
+    "build": "tsc",
+    "start": "node .",
+    "develop": "ts-node-dev --respawn --transpileOnly --no-notify src"
   },
   "devDependencies": {
-    "@watchedcom/schema": "latest",
-    "ts-node": "^8.5.4",
+    "ts-node-dev": "^1.0.0-pre.44",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
   }

@@ -1,9 +1,13 @@
 {
   "name": "example-js",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "develop": "nodemon"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }

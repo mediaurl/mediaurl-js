@@ -1,4 +1,4 @@
-const watched = require("../../");
+const watched = require("../../../");
 
 const EXAMPLE_ITEMS = [
   {
