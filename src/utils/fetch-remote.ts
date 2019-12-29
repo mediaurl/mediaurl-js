@@ -1,6 +1,6 @@
 import { ApiTask, ApiTaskResult } from "@watchedcom/schema";
 import { EventEmitter } from "events";
-import * as express from "express";
+import { RequestHandler } from "express";
 import * as uuid4 from "uuid/v4";
 
 import { BasicAddon } from "../addons/BasicAddon";
@@ -151,9 +151,6 @@ export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
     };
     return fetch;
 };
-
-// Bugfix for missing import express-serve-static-core in declaration file
-type RequestHandler = express.RequestHandler;
 
 export const createTaskResultHandler = (
     addon: BasicAddon,
