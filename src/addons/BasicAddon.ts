@@ -3,6 +3,7 @@ import {
     ApiAddonRequest,
     ApiAddonResponse
 } from "@watchedcom/schema";
+import { AddonTypes } from "@watchedcom/schema/dist/types";
 import { cloneDeep } from "lodash";
 
 import { ActionHandler } from "../interfaces";
@@ -26,6 +27,14 @@ export abstract class BasicAddon<
 
     public getProps(): P {
         return cloneDeep(this.props);
+    }
+
+    public getType(): AddonTypes {
+        return this.props.type;
+    }
+
+    public getId(): AddonProps["id"] {
+        return this.props.id;
     }
 
     public registerActionHandler<A extends Extract<keyof HM, string>>(

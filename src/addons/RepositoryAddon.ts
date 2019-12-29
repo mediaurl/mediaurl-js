@@ -38,7 +38,7 @@ export class RepositoryAddon extends BasicAddon<
         );
     }
 
-    private async getAllAddonProps(
+    public async getAllAddonProps(
         args: ApiAddonRequest,
         ctx: ActionHandlerContext
     ) {
@@ -47,7 +47,7 @@ export class RepositoryAddon extends BasicAddon<
 
         for (const addon of this.addons) {
             const fn = async () => {
-                const id = addon.getProps().id;
+                const id = addon.getId();
                 try {
                     const handler = addon.getActionHandler("addon");
                     const props: AddonProps = await handler(
@@ -65,7 +65,7 @@ export class RepositoryAddon extends BasicAddon<
 
         for (const url of this.urls) {
             const fn = async () => {
-                const key = `${this.getProps().id}:url:${url}`;
+                const key = `${this.getId()}:url:${url}`;
                 const data = await ctx.cache?.get(key);
                 if (data !== null) {
                     if (data.props) result.push(data.props);

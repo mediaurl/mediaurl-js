@@ -114,6 +114,30 @@ class TunnelResponse {
     }
 }
 
+export const dummyFetchRemote: FetchRemoteFn = async (url, params) => {
+    const result: ApiTaskResult = { kind: "taskResult", id: "", status: 0 };
+    try {
+        const res = await fetch(url, params);
+        result.status = res.status;
+        result.url = res.url;
+        result.headers = res.headers;
+
+        const ct = String(res.headers.get("content-type")).toLowerCase();
+        if (ct.indexOf("application/json") >= 0) {
+            result.json = await res.json();
+        } else if (ct.indexOf("text/") === 0) {
+            result.text = await res.text();
+        } else {
+            throw new Error(
+                "Dummy fetch return values with binary type is not implemented"
+            );
+        }
+    } catch (error) {
+        result.error = error.message;
+    }
+    return new TunnelResponse(result);
+};
+
 export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
     const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
         const id = uuid4();

@@ -3,8 +3,10 @@ import * as express from "express";
 import "express-async-errors";
 import { defaults } from "lodash";
 import * as morgan from "morgan";
+import * as path from "path";
 
 import { BasicAddon } from "./addons/BasicAddon";
+import { RepositoryAddon } from "./addons/RepositoryAddon";
 import { BasicCache } from "./cache/BasicCache";
 import { LocalCache } from "./cache/LocalCache";
 import { RedisCache } from "./cache/RedisCache";
@@ -12,6 +14,7 @@ import { errorHandler } from "./error-handler";
 import {
     createFetchRemote,
     createTaskResultHandler,
+    dummyFetchRemote,
     Responder
 } from "./utils/fetch-remote";
 import { getActionValidator } from "./validators";
@@ -69,18 +72,35 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
 
 const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
     const router = express.Router();
-    router.get("/", (req, res) => {
+
+    router.get("/", async (req, res) => {
         if (req.query.wtchDiscover) {
             res.send({ watched: true });
-        } else {
-            res.send("TODO: Create addon detail page");
+            return;
         }
+
+        // let addons;
+        // if (addon.getType() === "repository") {
+        //     // TODO: Get the real requested language
+        //     const args = { language: "en" };
+        //     const ctx = {
+        //         addon,
+        //         request: req,
+        //         cache,
+        //         fetchRemote: dummyFetchRemote
+        //     };
+        //     addons = await (<RepositoryAddon>addon).getAllAddonProps(args, ctx);
+        // }
+        res.render("addon", { addon: addon.getProps() });
     });
+
     router.post("/:action", createActionHandler(addon, cache));
     if (process.env.NODE_ENV === "development") {
         router.get("/:action", createActionHandler(addon, cache));
     }
+
     router.post("/:action/task", createTaskResultHandler(addon, cache));
+
     return router;
 };
 
@@ -112,9 +132,12 @@ export const serveAddons = (
         app.use(morgan("dev"));
     }
 
+    app.set("views", path.join(__dirname, "..", "views"));
+    app.set("view engine", "pug");
+
     app.use("/", generateRouter(addons, cache));
     app.get("/", (req, res) => {
-        res.send("TODO: Create addon index page");
+        res.render("index", { addons: addons.map(addon => addon.getProps()) });
     });
     app.get("/health", (req, res) => {
         res.send("OK");
