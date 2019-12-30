@@ -3,14 +3,29 @@ const program = require("commander");
 const path = require("path");
 const { serveAddons } = require("..");
 
-program.command("serve [file]").action(file => {
-    console.log({ cwd: process.cwd() });
+const cwd = process.cwd();
 
-    const required = require(process.cwd());
+const requireAddon = pathStr => {
+    const requiredFile = require(pathStr);
+    return requiredFile.default || requiredFile;
+};
 
-    const addon = required.default || required;
+program.command("serve [files...]").action(files => {
+    // console.log({ cwd, files });
 
-    serveAddons([addon]);
+    const addons = files.length
+        ? files.map(file => {
+              return requireAddon(path.resolve(cwd, file));
+          })
+        : [requireAddon(cwd)];
+
+    try {
+        addons.forEach(addon => addon.getProps());
+    } catch (error) {
+        throw new Error(`Some of files is not Watched addon`);
+    }
+
+    serveAddons(addons);
 });
 
 program.parse(process.argv);
