@@ -6,6 +6,7 @@
     "main": "dist",
     "private": false,
     "bin": {
+        "watched-sdk": "cli/index.js",
         "wsdk": "cli/index.js"
     },
     "scripts": {
