@@ -5,6 +5,9 @@
     "repository": "https://github.com/watchedcom/sdk-javascript",
     "main": "dist",
     "private": false,
+    "bin": {
+        "wsdk": "cli/index.js"
+    },
     "scripts": {
         "test": "jest",
         "prepublishOnly": "npm run build",
@@ -15,6 +18,7 @@
         "@types/express": "^4.17.2",
         "@watchedcom/schema": "latest",
         "body-parser": "^1.19.0",
+        "commander": "^4.0.1",
         "debug": "^4.1.1",
         "express": "^4.17.1",
         "express-async-errors": "^3.1.1",
