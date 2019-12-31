@@ -57,4 +57,4 @@ const addon = watched
     return item ? item : null;
   });
 
-watched.serveAddons([addon]);
+module.exports = addon;

@@ -5,8 +5,7 @@
     "repository": "https://github.com/watchedcom/sdk-javascript",
     "main": "dist",
     "bin": {
-        "watched-sdk": "cli/index.js",
-        "wsdk": "cli/index.js"
+        "watched-sdk": "cli/index.js"
     },
     "scripts": {
         "test": "jest",

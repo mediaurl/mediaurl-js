@@ -3,28 +3,26 @@ const program = require("commander");
 const path = require("path");
 const { serveAddons } = require("..");
 
-const cwd = process.cwd();
-
 const requireAddon = pathStr => {
     const requiredFile = require(pathStr);
-    return requiredFile.default || requiredFile;
+    const addon = requiredFile.default || requiredFile;
+    try {
+        addon.getProps();
+    } catch (error) {
+        throw new Error(
+            `Script "${pathStr}" does not export a valid WATCHED addon.`
+        );
+    }
+    return addon;
 };
 
+// test with
+// cli/index.js serve examples/javascript
+
 program.command("serve [files...]").action(files => {
-    // console.log({ cwd, files });
-
-    const addons = files.length
-        ? files.map(file => {
-              return requireAddon(path.resolve(cwd, file));
-          })
-        : [requireAddon(cwd)];
-
-    try {
-        addons.forEach(addon => addon.getProps());
-    } catch (error) {
-        throw new Error(`Some of files is not Watched addon`);
-    }
-
+    if (files.length === 0) files.push(".");
+    const cwd = process.cwd();
+    const addons = files.map(file => requireAddon(path.resolve(cwd, file)));
     serveAddons(addons);
 });
 
