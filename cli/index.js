@@ -1,29 +1,48 @@
 #!/usr/bin/env node
 const program = require("commander");
+const dev = require('ts-node-dev')
+const fork = require('child_process').fork
 const path = require("path");
-const { serveAddons } = require("..");
+const {guessTsMain} = require('guess-ts-main')
 
-const requireAddon = pathStr => {
-    const requiredFile = require(pathStr);
-    const addon = requiredFile.default || requiredFile;
-    try {
-        addon.getProps();
-    } catch (error) {
-        throw new Error(
-            `Script "${pathStr}" does not export a valid WATCHED addon.`
-        );
-    }
-    return addon;
-};
+const serveScriptPath = path.resolve(
+    __dirname,
+    'serve'
+)
 
-// test with
-// cli/index.js serve examples/javascript
 
-program.command("serve [files...]").action(files => {
-    if (files.length === 0) files.push(".");
-    const cwd = process.cwd();
-    const addons = files.map(file => requireAddon(path.resolve(cwd, file)));
-    serveAddons(addons);
-});
+program
+    .option('--prod', 'Serve js files with node')
+    .command("serve [files...]")
+    .action(files => {
+        let tsConfig = null;
+
+        try {
+            tsConfig = require(
+                path.resolve(
+                    process.cwd(),
+                    'tsconfig.json'
+                )
+            )
+        } catch { }
+
+        // It's a ts project and we want to serve ts version instead
+        if (tsConfig && files.length === 0) {
+            files.push(guessTsMain(process.cwd()))
+        }
+
+        console.log({ 'Serving addons': files, 'Live reload': !program.prod });
+
+        return program.prod
+            ? fork(
+                serveScriptPath, files
+            )
+            : dev(
+                serveScriptPath,
+                files,
+                [],
+                { notify: false }
+            )
+    });
 
 program.parse(process.argv);

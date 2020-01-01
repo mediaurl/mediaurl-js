@@ -21,12 +21,15 @@
         "debug": "^4.1.1",
         "express": "^4.17.1",
         "express-async-errors": "^3.1.1",
+        "guess-ts-main": "^1.0.2",
         "lodash": "^4.17.15",
         "markdown-it": "^10.0.0",
         "morgan": "^1.9.1",
         "node-fetch": "^2.6.0",
         "pug": "^2.0.4",
         "redis": "^2.8.0",
+        "ts-node-dev": "^1.0.0-pre.44",
+        "typescript": "^3.7.4",
         "uuid": "^3.3.2"
     },
     "devDependencies": {
@@ -44,9 +47,7 @@
         "jest": "^24.9.0",
         "lint-staged": "^9.5.0",
         "prettier": "^1.19.1",
-        "ts-node-dev": "^1.0.0-pre.44",
-        "tslint": "^5.20.1",
-        "typescript": "^3.7.4"
+        "tslint": "^5.20.1"
     },
     "lint-staged": {
         "*.{js,ts,tsx,css,md}": [
