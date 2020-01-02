@@ -9,7 +9,10 @@ const requireAddons = pathStr => {
 
     const addons = sources.filter(addon => {
         try {
+            // Make sure it's a WATCHED addon
             addon.getProps();
+            addon.getType();
+            addon.getId();
             return true;
         } catch (e) {
             return false;
@@ -27,12 +30,11 @@ const requireAddons = pathStr => {
 
 const main = () => {
     const files = process.argv.slice(2);
-
     if (files.length === 0) files.push(".");
     const cwd = process.cwd();
     const addons = uniqBy(
         flatten(files.map(file => requireAddons(path.resolve(cwd, file)))),
-        _ => _.getProps().id
+        addon => addon
     );
 
     serveAddons(addons);

@@ -111,8 +111,11 @@ export const generateRouter = (
     const router = express.Router();
     router.use(bodyParser.json({ limit: "10mb" }));
 
+    const ids = new Set();
     addons.forEach(addon => {
-        const { id } = addon.getProps();
+        const id = addon.getId();
+        if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
+        ids.add(id);
         console.info(`Mounting ${id} to /${id}`);
         router.use(`/${id}`, _makeAddonRouter(addon, cache));
     });
