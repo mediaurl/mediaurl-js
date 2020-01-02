@@ -29,8 +29,13 @@ program
             : dev(startScriptPath, files, [], { notify: false });
     });
 
+program.on("command:*", function() {
+    program.outputHelp();
+    process.exit(1);
+});
+
 program.parse(process.argv);
 
 if (!process.argv.slice(2).length) {
     program.outputHelp();
-  }
+}
