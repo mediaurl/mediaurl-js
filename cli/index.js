@@ -10,6 +10,7 @@ const startScriptPath = path.resolve(__dirname, "start");
 program
     .option("--prod", "Start the server in production mode")
     .command("start [files...]")
+    .description("Start the WATCHED SDK server")
     .action(files => {
         let tsConfig = null;
 
