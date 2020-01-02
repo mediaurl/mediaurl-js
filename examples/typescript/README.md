@@ -7,10 +7,10 @@ Very simple static WATCHED typescript addon.
 ```shell
 cd examples/typescript
 npm i
-npx wsdk serve
+npx watched-sdk start
 # or to start the server for production
 npm run build
-npx wsdk serve --prod
+npx watched-sdk start --prod
 ```
 
 ## Add the addon to the WATCHED app

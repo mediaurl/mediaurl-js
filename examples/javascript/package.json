@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "src",
   "scripts": {
-    "start": "wsdk serve --prod",
-    "develop": "wsdk serve"
+    "start": "watched-sdk serve --prod",
+    "develop": "watched-sdk serve"
   },
   "dependencies": {},
   "devDependencies": {
