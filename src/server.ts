@@ -75,7 +75,7 @@ const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
 
     router.get("/", async (req, res) => {
         if (req.query.wtchDiscover) {
-            res.send({ watched: true });
+            res.send({ watched: "addon" });
             return;
         }
 
@@ -140,6 +140,13 @@ export const serveAddons = (
 
     app.use("/", generateRouter(addons, cache));
     app.get("/", (req, res) => {
+        if (req.query.wtchDiscover) {
+            res.send({
+                watched: "index",
+                addons: addons.map(addon => addon.getId())
+            });
+            return;
+        }
         res.render("index", { addons: addons.map(addon => addon.getProps()) });
     });
     app.get("/health", (req, res) => {
