@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "src",
   "scripts": {
-    "start": "node .",
-    "develop": "nodemon"
+    "start": "wsdk serve --prod",
+    "develop": "wsdk serve"
   },
   "dependencies": {},
   "devDependencies": {
