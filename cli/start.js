@@ -1,22 +1,27 @@
 const path = require("path");
-const { serveAddons } = require("../dist");
-const { BasicAddon } = require("../dist/addons/BasicAddon");
+const { flatten, uniqBy } = require("lodash");
+const { serveAddons } = require("..");
 
-const requireAddon = (addons, pathStr) => {
+const requireAddons = pathStr => {
     const requiredFile = require(pathStr);
-    const add = addon => {
-        if (addon && addon instanceof BasicAddon && !addons.includes(addon)) {
-            addons.push(addon);
+
+    const sources = [requiredFile, ...Object.values(requiredFile)];
+
+    const addons = sources.filter(addon => {
+        try {
+            addon.getProps();
+            return true;
+        } catch (e) {
+            return false;
         }
-    };
-    add(requiredFile.default);
-    add(requiredFile);
-    Object.values(requiredFile).forEach(addon => add(addon));
+    });
+
     if (addons.length === 0) {
         throw new Error(
             `Script "${pathStr}" does not export any valid WATCHED addons.`
         );
     }
+
     return addons;
 };
 
@@ -25,8 +30,11 @@ const main = () => {
 
     if (files.length === 0) files.push(".");
     const cwd = process.cwd();
-    const addons = [];
-    files.forEach(file => requireAddon(addons, path.resolve(cwd, file)));
+    const addons = uniqBy(
+        flatten(files.map(file => requireAddons(path.resolve(cwd, file)))),
+        _ => _.getProps().id
+    );
+
     serveAddons(addons);
 };
 
