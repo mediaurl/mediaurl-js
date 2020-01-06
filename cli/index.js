@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const program = require("commander");
-const dev = require("ts-node-dev");
 const fork = require("child_process").fork;
 const path = require("path");
 const { guessTsMain } = require("guess-ts-main");
@@ -27,7 +26,10 @@ program
 
         return program.prod
             ? fork(startScriptPath, files)
-            : dev(startScriptPath, files, [], { notify: false });
+            : fork(startScriptPath, [files], {
+                  execPath: "./node_modules/.bin/ts-node-dev",
+                  execArgv: ["--no-notify"]
+              });
     });
 
 program.on("command:*", function() {
