@@ -6,6 +6,8 @@ const { guessTsMain } = require("guess-ts-main");
 
 const startScriptPath = path.resolve(__dirname, "start");
 
+const cwd = process.cwd();
+
 program
     .option("--prod", "Start the server in production mode")
     .command("start [files...]")
@@ -14,22 +16,30 @@ program
         let tsConfig = null;
 
         try {
-            tsConfig = require(path.resolve(process.cwd(), "tsconfig.json"));
+            tsConfig = require(path.resolve(cwd, "tsconfig.json"));
         } catch {}
+
+        if (program.prod && files.length === 0) {
+            files.push(cwd);
+        }
 
         // It's a ts project and we want to start ts version instead
         if (tsConfig && files.length === 0) {
-            files.push(guessTsMain(process.cwd()));
+            files.push(guessTsMain(cwd));
         }
 
         console.log({ "Serving addons": files, "Live reload": !program.prod });
 
-        return program.prod
-            ? fork(startScriptPath, files)
-            : fork(startScriptPath, [files], {
-                  execPath: "./node_modules/.bin/ts-node-dev",
-                  execArgv: ["--no-notify"]
-              });
+        return fork(
+            startScriptPath,
+            files,
+            program.prod
+                ? undefined
+                : {
+                      execPath: "./node_modules/.bin/ts-node-dev",
+                      execArgv: ["--no-notify"]
+                  }
+        );
     });
 
 program.on("command:*", function() {
