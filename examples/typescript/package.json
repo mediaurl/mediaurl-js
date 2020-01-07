@@ -4,8 +4,8 @@
   "main": "dist",
   "scripts": {
     "build": "tsc",
-    "start": "watched-sdk serve --prod dist",
-    "develop": "watched-sdk serve --prod src"
+    "start": "watched-sdk start --prod dist",
+    "develop": "watched-sdk start src"
   },
   "devDependencies": {
     "ts-node-dev": "^1.0.0-pre.44",
