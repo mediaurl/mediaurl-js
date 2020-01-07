@@ -2,6 +2,7 @@
 const program = require("commander");
 const fork = require("child_process").fork;
 const path = require("path");
+const fs = require("fs");
 const { guessTsMain } = require("guess-ts-main");
 
 const startScriptPath = path.resolve(__dirname, "start");
@@ -30,13 +31,28 @@ program
 
         console.log({ "Serving addons": files, "Live reload": !program.prod });
 
+        // Workaround to support sdk-javascript to be linked to another project
+        let execPath = "./node_modules/.bin/ts-node-dev";
+        if (!fs.existsSync(execPath)) {
+            execPath = path.join(
+                __dirname,
+                "..",
+                "node_modules",
+                ".bin",
+                "ts-node-dev"
+            );
+            if (!fs.existsSync(execPath)) {
+                throw new Error(`ts-node-dev not found in any location`);
+            }
+        }
+
         return fork(
             startScriptPath,
             files,
             program.prod
                 ? undefined
                 : {
-                      execPath: "./node_modules/.bin/ts-node-dev",
+                      execPath,
                       execArgv: ["--no-notify"]
                   }
         );
