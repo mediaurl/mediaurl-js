@@ -29,7 +29,6 @@
         "pug": "^2.0.4",
         "redis": "^2.8.0",
         "ts-node-dev": "^1.0.0-pre.44",
-        "typescript": "^3.7.4",
         "uuid": "^3.3.2"
     },
     "devDependencies": {
@@ -47,7 +46,8 @@
         "jest": "^24.9.0",
         "lint-staged": "^9.5.0",
         "prettier": "^1.19.1",
-        "tslint": "^5.20.1"
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.4"
     },
     "lint-staged": {
         "*.{js,ts,tsx,css,md}": [
