@@ -4,9 +4,7 @@ import "express-async-errors";
 import { defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
-
 import { BasicAddon } from "./addons/BasicAddon";
-import { RepositoryAddon } from "./addons/RepositoryAddon";
 import { BasicCache } from "./cache/BasicCache";
 import { LocalCache } from "./cache/LocalCache";
 import { RedisCache } from "./cache/RedisCache";
@@ -14,7 +12,6 @@ import { errorHandler } from "./error-handler";
 import {
     createFetchRemote,
     createTaskResultHandler,
-    dummyFetchRemote,
     Responder
 } from "./utils/fetch-remote";
 import { getActionValidator } from "./validators";

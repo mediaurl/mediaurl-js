@@ -6,16 +6,11 @@ Very simple static WATCHED typescript addon.
 
 ```shell
 cd examples/typescript
+# Install dependencies
 npm i
-npx watched-sdk start
-# or to start the server for production
+# Start in development mode
+npm run develop
+# Start in production mode
 npm run build
-npx watched-sdk start --prod
+npm run start
 ```
-
-## Add the addon to the WATCHED app
-
-1. Find out the local IP address of your computer.
-2. Go to the "Add Addon" screen of the app.
-3. Enter the IP of your plus the addon ID. For example `192.168.1.12/example-js`.
-4. Press `Continue` and you will see the addon.

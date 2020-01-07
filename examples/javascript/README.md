@@ -8,15 +8,10 @@ However, it is recommended to use the typescript example as a starting point, to
 
 ```shell
 cd examples/javascript
+# Install dependencies
 npm i
+# Start in development mode
 npm run develop
-# or to start the server for production
-npm start
+# Start in production mode
+npm run start
 ```
-
-## Add the addon to the WATCHED app
-
-1. Find out the local IP address of your computer.
-2. Go to the "Add Addon" screen of the app.
-3. Enter the IP of your plus the addon ID. For example `192.168.1.12/example-js`.
-4. Press `Continue` and you will see the addon.

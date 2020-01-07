@@ -5,10 +5,11 @@
   "scripts": {
     "build": "tsc",
     "start": "watched-sdk start --prod dist",
-    "develop": "watched-sdk start src"
+    "develop": "watched-sdk start src",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies": {},
   "devDependencies": {
-    "ts-node-dev": "^1.0.0-pre.44",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
   }

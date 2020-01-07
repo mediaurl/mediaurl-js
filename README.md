@@ -7,3 +7,9 @@ There is also a SDK available for [python](https://github.com/watchedcom/sdk-pyt
 ## Getting started
 
 Best way to get started is to clone this repo and pick one of the `examples`.
+
+TODO: Move the examples to independent repositories.
+
+## Command line interface
+
+Please see the help output of the `watched-sdk` command line script.
