@@ -1,3 +1,4 @@
+require('dotenv/config');
 const path = require("path");
 const { flatten, uniqBy } = require("lodash");
 const { serveAddons } = require("..");
