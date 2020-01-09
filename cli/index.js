@@ -30,7 +30,12 @@ program
 
         console.log({ "Serving addons": files, "Live reload": !program.prod });
 
-        const execPath = path.resolve(cwd, 'node_modules', '.bin', 'ts-node-dev') 
+        const execPath = path.resolve(
+            cwd,
+            "node_modules",
+            ".bin",
+            "ts-node-dev"
+        );
 
         return fork(
             startScriptPath,
@@ -39,7 +44,7 @@ program
                 ? undefined
                 : {
                       execPath,
-                      execArgv: ["--no-notify"]
+                      execArgv: ["--no-notify", "--transpileOnly"]
                   }
         );
     });
