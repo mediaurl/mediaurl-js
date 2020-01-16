@@ -54,7 +54,7 @@ export class RepositoryAddon extends BasicAddon<
                         { ...args },
                         { ...ctx, addon }
                     );
-                    props.metadata = { url: `'./${id}` };
+                    props.metadata = { url: `./${id}` };
                     result.push(props);
                 } catch (error) {
                     console.warn(`Failed loading ${id}:`, error.message);
