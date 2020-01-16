@@ -13,8 +13,8 @@ export class LocalCache extends BasicCache {
         return null;
     }
 
-    public async set(key: string, value: any, ttl = 3600 * 1000) {
-        this.data[key] = [Date.now() + ttl, value];
+    public async set(key: string, value: any, ttl = 3600) {
+        this.data[key] = [Date.now() + ttl * 1000, value];
         return value;
     }
 
@@ -30,6 +30,6 @@ export class LocalCache extends BasicCache {
     }
 
     public async waitKey(key: string, timeout = 30, del = true): Promise<any> {
-        return waitKey(this, key, timeout, del, 100);
+        return waitKey(this, key, timeout * 1000, del, 100);
     }
 }
