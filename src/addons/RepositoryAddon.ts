@@ -49,7 +49,7 @@ export class RepositoryAddon extends BasicAddon<
             const fn = async () => {
                 const id = addon.getId();
                 try {
-                    const handler = addon.getActionHandler("addon");
+                    const { handler } = addon.getActionHandler("addon");
                     const props: AddonProps = await handler(
                         { ...args },
                         { ...ctx, addon }

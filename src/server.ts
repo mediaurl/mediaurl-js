@@ -36,7 +36,7 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
     const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
-        const handler = addon.getActionHandler(action);
+        const { handler, options } = addon.getActionHandler(action);
         const validator = getActionValidator(action);
         validator.request(req.body);
 
@@ -48,17 +48,50 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
 
         let statusCode = 200;
         let result;
-        try {
-            result = await handler(req.body, {
-                addon,
-                request: req,
-                cache,
-                fetchRemote: createFetchRemote(responder, cache)
-            });
-            validator.response(result);
-        } catch (error) {
-            statusCode = 500;
-            result = { error: error.message || error };
+
+        // See if the response is already in cache
+        let cacheKey = "";
+        if (options.cache.enabled) {
+            // TODO: Hash the JSON.stringify response
+            cacheKey = `${options.cache.keyPrefix}:${JSON.stringify({
+                addonId: addon.getId(),
+                action,
+                body: { ...req.body, sig: undefined }
+            })}`;
+            const data = await cache.get(cacheKey);
+            if (data) {
+                if (data.error && options.cache.cacheErrors) {
+                    statusCode = 500;
+                    result = data.error;
+                } else if (data.result) {
+                    result = data.result;
+                }
+            }
+        }
+
+        if (result === undefined) {
+            try {
+                result = await handler(req.body, {
+                    addon,
+                    request: req,
+                    cache,
+                    fetchRemote: createFetchRemote(responder, cache)
+                });
+                validator.response(result);
+                if (options.cache.enabled) {
+                    await cache.set(cacheKey, { result }, options.cache.ttl);
+                }
+            } catch (error) {
+                statusCode = 500;
+                result = { error: error.message || error };
+                if (options.cache.enabled && options.cache.cacheErrors) {
+                    await cache.set(
+                        cacheKey,
+                        { error: result },
+                        options.cache.errorTtl
+                    );
+                }
+            }
         }
 
         responder.send(statusCode, result);
