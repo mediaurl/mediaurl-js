@@ -91,6 +91,7 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
                         options.cache.errorTtl
                     );
                 }
+                console.warn(error);
             }
         }
 
