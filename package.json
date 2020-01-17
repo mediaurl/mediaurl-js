@@ -23,6 +23,7 @@
         "express": "^4.17.1",
         "express-async-errors": "^3.1.1",
         "guess-ts-main": "^1.0.2",
+        "inquirer": "^7.0.3",
         "lodash": "^4.17.15",
         "markdown-it": "^10.0.0",
         "morgan": "^1.9.1",
