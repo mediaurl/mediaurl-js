@@ -44,12 +44,8 @@ const addon = createWorkerAddon({
   id: "example1",
   name: "Typescript Example Addon",
   version: "1.0.0",
-  resources: [
-    {
-      actions: ["directory", "item", "source"],
-      itemTypes: ["movie"]
-    }
-  ]
+  actions: ["directory", "item", "source"],
+  itemTypes: ["movie"]
 })
   .registerActionHandler("directory", async (args, ctx) => {
     return {
