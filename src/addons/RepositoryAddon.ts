@@ -49,7 +49,7 @@ export class RepositoryAddon extends BasicAddon<
             const fn = async () => {
                 const id = addon.getId();
                 try {
-                    const { handler } = addon.getActionHandler("addon");
+                    const handler = addon.getActionHandler("addon");
                     const props: AddonProps = await handler(
                         { ...args },
                         { ...ctx, addon }
@@ -107,10 +107,12 @@ export class RepositoryAddon extends BasicAddon<
 
     public addAddon(addon: BasicAddon) {
         this.addons.push(addon);
+        return this;
     }
 
     public addUrl(url: Url) {
         this.urls.push(url);
+        return this;
     }
 }
 

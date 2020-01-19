@@ -5,14 +5,7 @@ import {
 } from "@watchedcom/schema";
 import { AddonTypes } from "@watchedcom/schema/dist/types";
 import { cloneDeep } from "lodash";
-import {
-    ActionHandler,
-    ActionOptions,
-    defaultActionOptions,
-    HandlerOptionsMap,
-    HandlersMap,
-    StrictActionOptions
-} from "../interfaces";
+import { ActionHandler, HandlersMap } from "../interfaces";
 
 export type BasicHandlers = {
     addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, BasicAddon>;
@@ -24,9 +17,6 @@ export abstract class BasicAddon<
 > {
     private handlersMap: HandlersMap = {
         addon: async () => this.getProps()
-    };
-    private handlerOptionsMap: HandlerOptionsMap = {
-        addon: <StrictActionOptions>cloneDeep(defaultActionOptions)
     };
 
     constructor(private readonly props: P) {}
@@ -43,38 +33,27 @@ export abstract class BasicAddon<
         return this.props.id;
     }
 
+    public getVersion(): AddonProps["version"] {
+        return this.props.version;
+    }
+
     public registerActionHandler<A extends Extract<keyof HM, string>>(
         action: A,
-        handler: HM[A],
-        options?: ActionOptions
+        handler: HM[A]
     ) {
         this.handlersMap[action] = handler;
-        this.handlerOptionsMap[action] = {
-            ...defaultActionOptions,
-            ...options,
-            cache: {
-                ...defaultActionOptions.cache,
-                ...options?.cache
-            }
-        };
         return this;
     }
 
     public unregisterActionHandler(action: keyof HandlersMap) {
         delete this.handlersMap[action];
-        delete this.handlerOptionsMap[action];
     }
 
-    public getActionHandler(
-        action: string
-    ): { handler: ActionHandler; options: StrictActionOptions } {
+    public getActionHandler(action: string) {
         const handler = this.handlersMap[action];
         if (!handler) {
             throw new Error(`No handler for "${action}" action`);
         }
-        return {
-            handler,
-            options: this.handlerOptionsMap[action]
-        };
+        return handler;
     }
 }

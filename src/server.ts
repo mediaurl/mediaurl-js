@@ -9,6 +9,7 @@ import { BasicCache } from "./cache/BasicCache";
 import { LocalCache } from "./cache/LocalCache";
 import { RedisCache } from "./cache/RedisCache";
 import { errorHandler } from "./error-handler";
+import { CacheState, defaultCacheOptions, RequestCacheFn } from "./interfaces";
 import {
     createFetchRemote,
     createTaskResultHandler,
@@ -32,11 +33,15 @@ const defaultServeOpts: ServeAddonOptions = {
     logRequests: true
 };
 
+export class CacheFoundError {
+    constructor(public result: any, public statusCode = 200) {}
+}
+
 const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
     const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
-        const { handler, options } = addon.getActionHandler(action);
+        const handler = addon.getActionHandler(action);
         const validator = getActionValidator(action);
         validator.request(req.body);
 
@@ -49,46 +54,66 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         let statusCode = 200;
         let result;
 
-        // See if the response is already in cache
-        let cacheKey = "";
-        if (options.cache.enabled) {
-            // TODO: Hash the JSON.stringify response
-            cacheKey = `${options.cache.keyPrefix}:${JSON.stringify({
+        // Remove sig from request
+        const requestData = { ...req.body };
+        delete requestData.sig;
+
+        // Request cache helper
+        const cacheState: Partial<CacheState> = {};
+        const requestCache: RequestCacheFn = async (keyData, options) => {
+            if (cacheState.options) throw new Error(`Cache is already set up`);
+            cacheState.options = { ...defaultCacheOptions, ...options };
+            // TODO: Hash this ID with a performant algorythm
+            const id = JSON.stringify({
                 addonId: addon.getId(),
+                version: addon.getVersion(),
                 action,
-                body: { ...req.body, sig: undefined }
-            })}`;
-            const data = await cache.get(cacheKey);
+                data: keyData ?? requestData
+            });
+            cacheState.key = `${addon.getId()}:${addon.getVersion()}:${id}`;
+
+            const data = await cache.get(cacheState.key);
             if (data) {
-                if (data.error && options.cache.cacheErrors) {
-                    statusCode = 500;
-                    result = data.error;
+                if (data.error && cacheState.options.cacheErrors) {
+                    throw new CacheFoundError(data.error, 500);
                 } else if (data.result) {
-                    result = data.result;
+                    throw new CacheFoundError(data.result);
                 }
             }
-        }
+        };
 
-        if (result === undefined) {
-            try {
-                result = await handler(req.body, {
-                    addon,
-                    request: req,
-                    cache,
-                    fetchRemote: createFetchRemote(responder, cache)
-                });
-                validator.response(result);
-                if (options.cache.enabled) {
-                    await cache.set(cacheKey, { result }, options.cache.ttl);
-                }
-            } catch (error) {
+        try {
+            result = await handler(requestData, {
+                addon,
+                request: req,
+                cache,
+                requestCache: requestCache,
+                fetchRemote: createFetchRemote(responder, cache)
+            });
+            validator.response(result);
+            if (cacheState.key && cacheState.options) {
+                await cache.set(
+                    cacheState.key,
+                    { result },
+                    cacheState.options.ttl
+                );
+            }
+        } catch (error) {
+            if (error instanceof CacheFoundError) {
+                result = error.result;
+                statusCode = error.statusCode;
+            } else {
                 statusCode = 500;
                 result = { error: error.message || error };
-                if (options.cache.enabled && options.cache.cacheErrors) {
+                if (
+                    cacheState.key &&
+                    cacheState.options &&
+                    cacheState.options.cacheErrors
+                ) {
                     await cache.set(
-                        cacheKey,
+                        cacheState.key,
                         { error: result },
-                        options.cache.errorTtl
+                        cacheState.options.errorTtl
                     );
                 }
                 console.warn(error);
