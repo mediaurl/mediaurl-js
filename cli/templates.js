@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs-extra");
+const { kebabCase } = require("lodash");
 
 const executeProjectTemplate = async (template, basePath, input) => {
     for (const filePath of Object.keys(template)) {
@@ -16,7 +17,7 @@ const tsConfigJson = `{
     "compilerOptions": {
         "target": "es5",
         "strictNullChecks": true,
-        "outDir": "dist",
+        "outDir": "dist"
     },
     "include": ["src/index.ts"]
 }`;
@@ -97,7 +98,7 @@ const tsProject = {
     "package.json": ({ name }) =>
         JSON.stringify(
             {
-                name: "addon-" + name,
+                name: "addon-" + kebabCase(name),
                 version: "1.0.0",
                 main: "dist",
                 scripts: {

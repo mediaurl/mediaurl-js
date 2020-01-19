@@ -5,6 +5,7 @@ const path = require("path");
 const { guessTsMain } = require("guess-ts-main");
 const inquirer = require("inquirer");
 const fs = require("fs-extra");
+const { camelCase } = require("lodash");
 
 const { executeProjectTemplate, tsProject } = require("./templates");
 
@@ -46,7 +47,7 @@ const startHandler = (files, cmdObj) => {
 
 const createHandler = async (folderName, cmdObj) => {
     const { template, force } = cmdObj;
-    console.log("inside createHandler", folderName, { template, force });
+    // console.log("inside createHandler", folderName, { template, force });
 
     const addonPath = path.resolve(process.cwd(), folderName);
 
@@ -56,8 +57,10 @@ const createHandler = async (folderName, cmdObj) => {
         throw new Error("Folder already exists");
     }
 
+    const defaultName = camelCase(folderName);
+
     const defaults = {
-        name: folderName,
+        name: defaultName,
         actions: ["directory", "item"],
         itemTypes: ["movie", "series"]
     };
@@ -82,7 +85,7 @@ const createHandler = async (folderName, cmdObj) => {
                           {
                               name: "name",
                               type: "input",
-                              default: folderName
+                              default: defaultName
                           },
                           {
                               name: "actions",
@@ -125,7 +128,7 @@ const createHandler = async (folderName, cmdObj) => {
         throw new Error("Only TS projects supported for now");
     }
 
-    console.log(userInput);
+    // console.log(userInput);
 
     await executeProjectTemplate(tsProject, addonPath, userInput);
 };
