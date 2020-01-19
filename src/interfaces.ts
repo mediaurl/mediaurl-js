@@ -15,41 +15,45 @@ import {
     ApiSubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
-
 import { BasicAddon } from "./addons/BasicAddon";
 import { BasicCache } from "./cache/BasicCache";
 import { FetchRemoteFn } from "./utils/fetch-remote";
 
-export type StrictActionOptions = {
-    cache: {
-        keyPrefix: string;
-        enabled: boolean;
-        cacheErrors: boolean;
-        ttl: number; // Cache time in seconds
-        errorTtl: number;
-    };
+export type CacheOptions = {
+    cacheErrors: boolean;
+    ttl: number; // Cache time in seconds
+    errorTtl: number;
 };
 
-export type ActionOptions = {
-    cache?: Partial<StrictActionOptions["cache"]>;
+export const defaultCacheOptions: CacheOptions = {
+    cacheErrors: true,
+    ttl: 3600,
+    errorTtl: 600
 };
 
-export const defaultActionOptions: StrictActionOptions = {
-    cache: {
-        keyPrefix: "",
-        enabled: false,
-        cacheErrors: true,
-        ttl: 3600, // Cache time in seconds
-        errorTtl: 600
-    }
+export type CacheState = {
+    options: CacheOptions;
+    key: string;
 };
+
+export type RequestCacheFn = (
+    // Defaults to `requestData`
+    keyData?: any,
+    options?: Partial<CacheOptions>
+) => Promise<void>;
 
 export interface ActionHandlerContext<
     AddonType extends BasicAddon = BasicAddon
 > {
     request: express.Request;
     addon: AddonType;
-    cache: null | BasicCache;
+    cache: BasicCache;
+    // Helper function to cache full action calls. Run this
+    // on the beginning of your action handler to check
+    // if the request is cached already.
+    // If there is a cache hit, the request will be aborted
+    // automatically.
+    requestCache: RequestCacheFn;
     fetchRemote: FetchRemoteFn;
 }
 
@@ -64,9 +68,6 @@ export type ActionHandler<
 
 export interface HandlersMap {
     [action: string]: ActionHandler;
-}
-export interface HandlerOptionsMap {
-    [action: string]: StrictActionOptions;
 }
 
 /**
