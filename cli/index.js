@@ -7,9 +7,14 @@ const inquirer = require("inquirer");
 const fs = require("fs-extra");
 const { camelCase } = require("lodash");
 
-const { executeProjectTemplate, tsProject } = require("./templates");
+const { executeProjectTemplate, tsProject, jsProject } = require("./templates");
 
 const startScriptPath = path.resolve(__dirname, "start");
+
+const projectsMap = {
+    ts: tsProject,
+    js: jsProject
+};
 
 const cwd = process.cwd();
 
@@ -20,7 +25,7 @@ const startHandler = (files, cmdObj) => {
         tsConfig = require(path.resolve(cwd, "tsconfig.json"));
     } catch {}
 
-    if (cmdObj.prod && files.length === 0) {
+    if ((cmdObj.prod && files.length === 0) || !tsConfig) {
         files.push(cwd);
     }
 
@@ -60,6 +65,7 @@ const createHandler = async (folderName, cmdObj) => {
     const defaultName = camelCase(folderName);
 
     const defaults = {
+        template: "ts",
         name: defaultName,
         actions: ["directory", "item"],
         itemTypes: ["movie", "series"]
@@ -67,70 +73,69 @@ const createHandler = async (folderName, cmdObj) => {
 
     const userInput = await inquirer
         .prompt(
-            [
-                template
-                    ? null
-                    : {
-                          type: "list",
-                          choices: [
-                              { name: "TypeScript", value: "ts" },
-                              { name: "JavaScript", value: "js" }
-                          ],
-                          name: "template",
-                          default: 0
+            force
+                ? []
+                : [
+                      template
+                          ? null
+                          : {
+                                type: "list",
+                                choices: [
+                                    { name: "TypeScript", value: "ts" },
+                                    { name: "JavaScript", value: "js" }
+                                ],
+                                name: "template",
+                                default: 0
+                            },
+                      {
+                          name: "name",
+                          type: "input",
+                          default: defaultName
                       },
-                ...(force
-                    ? []
-                    : [
-                          {
-                              name: "name",
-                              type: "input",
-                              default: defaultName
-                          },
-                          {
-                              name: "actions",
-                              type: "checkbox",
-                              choices: [
-                                  "directory",
-                                  "item",
-                                  "source",
-                                  "subtitle",
-                                  "resolve"
-                              ],
-                              default: ["directory", "item"]
-                          },
-                          {
-                              name: "itemTypes",
-                              type: "checkbox",
-                              choices: [
-                                  "movie",
-                                  "series",
-                                  "directory",
-                                  "channel",
-                                  "iptv"
-                              ],
-                              default: ["movie", "series"]
-                          },
-                          {
-                              name: "requestArgs",
-                              type: "checkbox",
-                              choices: ["imdb_id", "tmdb_id"],
-                              default: ["imdb_id", "tmdb_id"],
-                              when: ({ actions }) =>
-                                  actions.indexOf("source") !== -1
-                          }
-                      ])
-            ].filter(_ => _)
+                      {
+                          name: "actions",
+                          type: "checkbox",
+                          choices: [
+                              "directory",
+                              "item",
+                              "source",
+                              "subtitle",
+                              "resolve"
+                          ],
+                          default: ["directory", "item"]
+                      },
+                      {
+                          name: "itemTypes",
+                          type: "checkbox",
+                          choices: [
+                              "movie",
+                              "series",
+                              "directory",
+                              "channel",
+                              "iptv"
+                          ],
+                          default: ["movie", "series"]
+                      },
+                      {
+                          name: "requestArgs",
+                          type: "checkbox",
+                          choices: ["imdb_id", "tmdb_id"],
+                          default: ["imdb_id", "tmdb_id"],
+                          when: ({ actions }) =>
+                              actions.indexOf("source") !== -1
+                      }
+                  ].filter(_ => _)
         )
-        .then(responses => ({ template, ...defaults, ...responses }));
+        .then(responses => ({ ...defaults, template, ...responses }));
 
-    if (userInput.template !== "ts") {
-        throw new Error("Only TS projects supported for now");
+    const projectTemplate = projectsMap[userInput.template];
+    if (!projectTemplate) {
+        throw new Error(`${userInput.template} template not supported`);
     }
 
     // console.log(userInput);
 
-    await executeProjectTemplate(tsProject, addonPath, userInput);
+    await executeProjectTemplate(projectTemplate, addonPath, userInput);
 };
 
 program
