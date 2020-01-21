@@ -1,44 +1,41 @@
-require('dotenv/config');
+const fork = require("child_process").fork;
+const { guessTsMain } = require("guess-ts-main");
 const path = require("path");
-const { flatten, uniqBy } = require("lodash");
-const { serveAddons } = require("..");
 
-const requireAddons = pathStr => {
-    const requiredFile = require(pathStr);
+const cwd = process.cwd();
 
-    const sources = [requiredFile, ...Object.values(requiredFile)];
+const serveScriptPath = path.resolve(__dirname, "serve-entrypoint");
 
-    const addons = sources.filter(addon => {
-        try {
-            // Make sure it's a WATCHED addon
-            addon.getProps();
-            addon.getType();
-            addon.getId();
-            return true;
-        } catch (e) {
-            return false;
-        }
-    });
+const startHandler = (files, cmdObj) => {
+    let tsConfig = null;
 
-    if (addons.length === 0) {
-        throw new Error(
-            `Script "${pathStr}" does not export any valid WATCHED addons.`
-        );
+    try {
+        tsConfig = require(path.resolve(cwd, "tsconfig.json"));
+    } catch {}
+
+    if ((cmdObj.prod && files.length === 0) || !tsConfig) {
+        files.push(cwd);
     }
 
-    return addons;
-};
+    // It's a ts project and we want to start ts version instead
+    if (tsConfig && files.length === 0) {
+        files.push(guessTsMain(cwd));
+    }
 
-const main = () => {
-    const files = process.argv.slice(2);
-    if (files.length === 0) files.push(".");
-    const cwd = process.cwd();
-    const addons = uniqBy(
-        flatten(files.map(file => requireAddons(path.resolve(cwd, file)))),
-        addon => addon
+    console.log({ "Serving addons": files, "Live reload": !cmdObj.prod });
+
+    const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
+
+    return fork(
+        serveScriptPath,
+        files,
+        cmdObj.prod
+            ? undefined
+            : {
+                  execPath,
+                  execArgv: ["--no-notify", "--transpileOnly"]
+              }
     );
-
-    serveAddons(addons);
 };
 
-main();
+module.exports = { startHandler };
