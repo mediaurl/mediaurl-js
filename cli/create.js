@@ -68,9 +68,9 @@ const createHandler = async (folderName, cmdObj) => {
                           name: "itemTypes",
                           type: "checkbox",
                           choices: [
+                              // "directory",
                               "movie",
                               "series",
-                              "directory",
                               "channel",
                               "iptv"
                           ],
@@ -79,10 +79,22 @@ const createHandler = async (folderName, cmdObj) => {
                       {
                           name: "requestArgs",
                           type: "checkbox",
-                          choices: ["imdb_id", "tmdb_id"],
+                          choices: [
+                              "imdb_id",
+                              "tmdb_id",
+                              "tmdb_episode_id",
+                              "tvdb_id",
+                              "tvrage_id"
+                          ],
                           default: ["imdb_id", "tmdb_id"],
-                          when: ({ actions }) =>
-                              actions.indexOf("source") !== -1
+                          when: ({ actions }) => {
+                              for (const action of actions) {
+                                  if (["source", "subtitle"].includes(action)) {
+                                      return true;
+                                  }
+                              }
+                              return false;
+                          }
                       }
                   ].filter(_ => _)
         )
@@ -92,8 +104,6 @@ const createHandler = async (folderName, cmdObj) => {
     if (!projectTemplate) {
         throw new Error(`${userInput.template} template not supported`);
     }
-
-    // console.log(userInput);
 
     await executeProjectTemplate(projectTemplate, addonPath, userInput);
 };

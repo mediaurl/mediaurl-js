@@ -26,13 +26,13 @@ const addonProps = ({ name, requestArgs, actions, itemTypes }) => {
     return {
         id: name,
         version: "1.0.0",
-        name: name,
+        name,
         flags: {
             adult: false
         },
-        requestArgs,
         actions,
-        itemTypes
+        itemTypes,
+        requestArgs
     };
 };
 
@@ -60,7 +60,8 @@ export const ${addonVar} = createWorkerAddon(${JSON.stringify(
         4
     )});
 
-${handlersBlock(addonVar, actions)}`;
+${handlersBlock(addonVar, actions)}
+`;
 
     return content;
 };
