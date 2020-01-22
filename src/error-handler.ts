@@ -1,5 +1,8 @@
 import * as express from "express";
 
+/**
+ * Error handler used by default. Can be overriden
+ */
 export const errorHandler: express.ErrorRequestHandler = (
     error,
     req,
