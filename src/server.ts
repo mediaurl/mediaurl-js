@@ -56,8 +56,7 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         let result;
 
         // Remove sig from request
-        const requestData = { ...req.body };
-        delete requestData.sig;
+        const { sig, ...requestData } = req.body;
 
         // Request cache helper
         const cacheState: Partial<CacheState> = {};
