@@ -5,6 +5,7 @@ import {
 } from "@watchedcom/schema";
 import { AddonTypes } from "@watchedcom/schema/dist/types";
 import { cloneDeep } from "lodash";
+
 import { ActionHandler, HandlersMap } from "../interfaces";
 
 export type BasicHandlers = {

@@ -1,0 +1,11 @@
+{
+    "rules": {
+        "ordered-imports": [
+            true,
+            {
+                "grouped-imports": true,
+                "named-imports-order": "lowercase-first"
+            }
+        ]
+    }
+}

@@ -15,6 +15,7 @@ import {
     ApiSubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
+
 import { BasicAddon } from "./addons/BasicAddon";
 import { BasicCache } from "./cache/BasicCache";
 import { FetchRemoteFn } from "./utils/fetch-remote";
