@@ -10,22 +10,31 @@ const projectsMap = {
     js: jsProject
 };
 
-const createHandler = async (folderName, cmdObj) => {
-    const { template, force } = cmdObj;
+const createHandler = async (folderPath, cmdObj) => {
     // console.log("inside createHandler", folderName, { template, force });
+    const { template, force } = cmdObj;
 
-    const addonPath = path.resolve(process.cwd(), folderName);
+    const addonPath = path.resolve(process.cwd(), folderPath);
 
-    const folderExists = await fs.pathExists(addonPath);
+    const folderName = path.parse(addonPath).name;
 
-    if (folderExists) {
-        throw new Error("Folder already exists");
+    await fs.ensureDir(addonPath);
+
+    const folderFiles = await fs.readdir(addonPath);
+
+    // Folder can be empty git repo, so we need to check only visible files
+    const nonHiddenFiles = folderFiles.filter(
+        filename => !/^\./.test(filename)
+    );
+
+    if (nonHiddenFiles.length > 0) {
+        throw new Error("Folder is not empty");
     }
 
     const defaultName = camelCase(folderName);
 
     const defaults = {
-        template: "ts",
+        template: template || "ts",
         name: defaultName,
         actions: ["directory", "item"],
         itemTypes: ["movie", "series"]
@@ -98,7 +107,7 @@ const createHandler = async (folderName, cmdObj) => {
                       }
                   ].filter(_ => _)
         )
-        .then(responses => ({ ...defaults, template, ...responses }));
+        .then(responses => ({ ...defaults, ...responses }));
 
     const projectTemplate = projectsMap[userInput.template];
     if (!projectTemplate) {
