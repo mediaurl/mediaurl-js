@@ -16,9 +16,9 @@ import {
 } from "@watchedcom/schema";
 import * as express from "express";
 
-import { BasicAddon } from "./addons/BasicAddon";
-import { BasicCache } from "./cache/BasicCache";
-import { FetchRemoteFn } from "./utils/fetch-remote";
+import { BasicAddon } from "./addons";
+import { BasicCache } from "./cache";
+import { FetchRemoteFn } from "./tasks";
 
 export type CacheOptions = {
     cacheErrors: boolean;

@@ -5,17 +5,15 @@ import { defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
 
-import { BasicAddon } from "./addons/BasicAddon";
-import { BasicCache } from "./cache/BasicCache";
-import { LocalCache } from "./cache/LocalCache";
-import { RedisCache } from "./cache/RedisCache";
+import { BasicAddon } from "./addons";
+import { BasicCache, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
 import { defaultCacheOptions, CacheState, RequestCacheFn } from "./interfaces";
 import {
     createFetchRemote,
-    createTaskResultHandler,
+    createTaskResponseHandler,
     Responder
-} from "./utils/fetch-remote";
+} from "./tasks";
 import { getActionValidator } from "./validators";
 
 export interface ServeAddonOptions {
@@ -155,7 +153,7 @@ const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
         router.get("/:action", createActionHandler(addon, cache));
     }
 
-    router.post("/:action/task", createTaskResultHandler(addon, cache));
+    router.post("/:action/task", createTaskResponseHandler(cache));
 
     return router;
 };
