@@ -85,7 +85,7 @@ export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
     const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
         const task: ApiTaskFetchRequest = {
             kind: "task",
-            type: "fetchRequest",
+            type: "fetch",
             id: uuid4(),
             url,
             params
