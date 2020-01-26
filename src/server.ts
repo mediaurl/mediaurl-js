@@ -157,19 +157,6 @@ export const createRouter = (
         router.use(`/${id}`, createAddonRouter(addon, cache));
     });
 
-    router.get("/", (req, res) => {
-        if (req.query.wtchDiscover) {
-            res.send({
-                watched: "index",
-                addons: addons.map(addon => addon.getId())
-            });
-        } else {
-            res.render("index", {
-                addons: addons.map(addon => addon.getProps())
-            });
-        }
-    });
-
     return router;
 };
 
@@ -186,6 +173,19 @@ export const serveAddons = (
     app.set("view engine", "pug");
 
     app.use("/", createRouter(addons, options.cache));
+
+    app.get("/", (req, res) => {
+        if (req.query.wtchDiscover) {
+            res.send({
+                watched: "index",
+                addons: addons.map(addon => addon.getId())
+            });
+        } else {
+            res.render("index", {
+                addons: addons.map(addon => addon.getProps())
+            });
+        }
+    });
 
     app.get("/health", (req, res) => res.send("OK"));
     app.use(options.errorHandler);
