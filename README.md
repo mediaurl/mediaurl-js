@@ -12,4 +12,4 @@ TODO: Move the examples to independent repositories.
 
 ## Command line interface
 
-Please see the help output of the `watched-sdk` command line script.
+Please see the help output from the `watched-sdk` command line script.

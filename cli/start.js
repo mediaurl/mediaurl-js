@@ -8,7 +8,6 @@ const serveScriptPath = path.resolve(__dirname, "serve-entrypoint");
 
 const startHandler = (files, cmdObj) => {
     let tsConfig = null;
-
     try {
         tsConfig = require(path.resolve(cwd, "tsconfig.json"));
     } catch {}

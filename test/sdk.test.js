@@ -4,7 +4,7 @@ const exported = [
     "createWorkerAddon",
     "createRepositoryAddon",
     "createBundleAddon",
-    "generateRouter",
+    "createRouter",
     "serveAddons"
 ];
 

@@ -16,14 +16,14 @@ import {
 } from "./tasks";
 import { getActionValidator } from "./validators";
 
-export interface ServeAddonOptions {
+export interface ServeAddonsOptions {
     logRequests: boolean;
     errorHandler: express.ErrorRequestHandler;
     port: number;
     cache: BasicCache;
 }
 
-const defaultServeOpts: ServeAddonOptions = {
+const defaultServeOpts: ServeAddonsOptions = {
     errorHandler,
     port: parseInt(<string>process.env.PORT) || 3000,
     cache: process.env.REDIS_CACHE
@@ -124,46 +124,29 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
     return actionHandler;
 };
 
-const _makeAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
+const createAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
     const router = express.Router();
-
+    router.use(bodyParser.json({ limit: "10mb" }));
     router.get("/", async (req, res) => {
         if (req.query.wtchDiscover) {
             res.send({ watched: "addon" });
-            return;
+        } else {
+            res.render("addon", { addon: addon.getProps() });
         }
-
-        // let addons;
-        // if (addon.getType() === "repository") {
-        //     // TODO: Get the real requested language
-        //     const args = { language: "en" };
-        //     const ctx = {
-        //         addon,
-        //         request: req,
-        //         cache,
-        //         fetchRemote: dummyFetchRemote
-        //     };
-        //     addons = await (<RepositoryAddon>addon).getAllAddonProps(args, ctx);
-        // }
-        res.render("addon", { addon: addon.getProps() });
     });
-
     router.post("/:action", createActionHandler(addon, cache));
     if (process.env.NODE_ENV === "development") {
         router.get("/:action", createActionHandler(addon, cache));
     }
-
     router.post("/:action/task", createTaskResponseHandler(cache));
-
     return router;
 };
 
-export const generateRouter = (
+export const createRouter = (
     addons: BasicAddon[],
     cache: BasicCache
 ): express.Router => {
     const router = express.Router();
-    router.use(bodyParser.json({ limit: "10mb" }));
 
     const ids = new Set();
     addons.forEach(addon => {
@@ -171,29 +154,10 @@ export const generateRouter = (
         if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
         ids.add(id);
         console.info(`Mounting ${id} to /${id}`);
-        router.use(`/${id}`, _makeAddonRouter(addon, cache));
+        router.use(`/${id}`, createAddonRouter(addon, cache));
     });
 
-    return router;
-};
-
-export const serveAddons = (
-    addons: BasicAddon[],
-    opts?: Partial<ServeAddonOptions>
-): { app: express.Application; listenPromise: Promise<void> } => {
-    const app = express();
-    const options = defaults(opts, defaultServeOpts);
-    const { port, cache } = options;
-
-    if (options.logRequests) {
-        app.use(morgan("dev"));
-    }
-
-    app.set("views", path.join(__dirname, "..", "views"));
-    app.set("view engine", "pug");
-
-    app.use("/", generateRouter(addons, cache));
-    app.get("/", (req, res) => {
+    router.get("/", (req, res) => {
         if (req.query.wtchDiscover) {
             res.send({
                 watched: "index",
@@ -203,14 +167,30 @@ export const serveAddons = (
         }
         res.render("index", { addons: addons.map(addon => addon.getProps()) });
     });
-    app.get("/health", (req, res) => {
-        res.send("OK");
-    });
+
+    return router;
+};
+
+export const serveAddons = (
+    addons: BasicAddon[],
+    opts?: Partial<ServeAddonsOptions>
+): { app: express.Application; listenPromise: Promise<void> } => {
+    const app = express();
+    const options = defaults(opts, defaultServeOpts);
+
+    if (options.logRequests) app.use(morgan("dev"));
+
+    app.set("views", path.join(__dirname, "..", "views"));
+    app.set("view engine", "pug");
+
+    app.use("/", createRouter(addons, options.cache));
+
+    app.get("/health", (req, res) => res.send("OK"));
     app.use(options.errorHandler);
 
     const listenPromise = new Promise<void>(resolve => {
-        app.listen(port, () => {
-            console.info(`Listening on ${port}`);
+        app.listen(options.port, () => {
+            console.info(`Listening on ${options.port}`);
             resolve();
         });
     });

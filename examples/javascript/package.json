@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "main": "src",
   "scripts": {
-    "start": "watched-sdk serve --prod",
-    "develop": "watched-sdk serve",
+    "start": "watched-sdk start --prod",
+    "develop": "watched-sdk start",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {}
+  }
 }
