@@ -1,6 +1,28 @@
 html
   head
-    title Hi
+    title WATCHED Addon Server
   body
-    h1 Hello
-    p This is a WATCHED.com addon server which hosts more than one addon.
+    tt
+      h1 WATCHED Addon Server
+      ul
+        each addon in addons
+          li
+            h2= addon.name
+            p= `Version: ${addon.version}`
+            p= addon.description
+            a(class="addon-"+addon.id) Install addon
+    script(type="text/javascript")
+      - var data = addons.map(a => ({ type: a.type, name: a.name, id: a.id }));
+      .
+        !{JSON.stringify(data)}.forEach(function(a) {
+          var d = JSON.stringify({
+            kind: 'addon',
+            type: a.type,
+            name: a.name,
+            url: String(window.location).replace(/\/$/, '') + '/' + a.id
+          });
+          var e = document.getElementsByClassName('addon-'+a.id);
+          for (var i = 0; i < e.length; i++) {
+            e[i].setAttribute('href', 'https://www.watched.com/share#' + btoa(d));
+          }
+        });

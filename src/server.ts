@@ -131,7 +131,7 @@ const createAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
         if (req.query.wtchDiscover) {
             res.send({ watched: "addon" });
         } else {
-            res.render("addon", { addon: addon.getProps() });
+            res.redirect("..");
         }
     });
     router.post("/:action", createActionHandler(addon, cache));
@@ -163,9 +163,11 @@ export const createRouter = (
                 watched: "index",
                 addons: addons.map(addon => addon.getId())
             });
-            return;
+        } else {
+            res.render("index", {
+                addons: addons.map(addon => addon.getProps())
+            });
         }
-        res.render("index", { addons: addons.map(addon => addon.getProps()) });
     });
 
     return router;
