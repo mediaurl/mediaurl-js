@@ -46,7 +46,7 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
 
         const responder = new Responder(
             async (statusCode: number, body: any) => {
-                res.status(statusCode).send(body);
+                res.status(statusCode).json(body);
             }
         );
 

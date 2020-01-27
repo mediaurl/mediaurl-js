@@ -28,7 +28,6 @@ export class Responder {
             await new Promise((resolve, reject) => {
                 const on = () => {
                     if (this.queue[0] === id) {
-                        console.debug("Now it's my turn");
                         this.emitter.removeListener("event", on);
                         resolve();
                     }
@@ -118,7 +117,7 @@ export const createTaskResponseHandler = (
             true
         );
         const { statusCode, body } = JSON.parse(data);
-        res.status(statusCode).send(body);
+        res.status(statusCode).json(body);
         console.debug(`Task ${response.id} sending next response to client`);
     };
 
