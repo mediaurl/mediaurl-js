@@ -3,14 +3,14 @@ const fs = require("fs-extra");
 const { kebabCase } = require("lodash");
 
 const executeProjectTemplate = async (template, basePath, input) => {
-    for (const filePath of Object.keys(template)) {
-        const targetPath = path.resolve(basePath, ...filePath.split("/"));
-        const data = template[filePath];
-        await fs.outputFile(
-            targetPath,
-            typeof data === "function" ? data(input) : data
-        );
-    }
+  for (const filePath of Object.keys(template)) {
+    const targetPath = path.resolve(basePath, ...filePath.split("/"));
+    const data = template[filePath];
+    await fs.outputFile(
+      targetPath,
+      typeof data === "function" ? data(input) : data
+    );
+  }
 };
 
 const tsConfigJson = `{
@@ -23,101 +23,101 @@ const tsConfigJson = `{
 }`;
 
 const addonProps = ({ name, requestArgs, itemTypes }) => {
-    return {
-        id: name,
-        version: "1.0.0",
-        name,
-        itemTypes,
-        requestArgs
-    };
+  return {
+    id: name,
+    version: "1.0.0",
+    name,
+    itemTypes,
+    requestArgs
+  };
 };
 
 const handlersBlock = (addonVar, actions) =>
-    actions
-        .map(action => {
-            return `${addonVar}.registerActionHandler("${action}", ${action}Handler);`;
-        })
-        .join("\n\n");
+  actions
+    .map(action => {
+      return `${addonVar}.registerActionHandler("${action}", ${action}Handler);`;
+    })
+    .join("\n\n");
 
 const indexTs = input => {
-    const { name, actions } = input;
+  const { name, actions } = input;
 
-    const addonVar = `${name}Addon`;
+  const addonVar = `${name}Addon`;
 
-    const content = `import { createWorkerAddon } from "@watchedcom/sdk";
+  const content = `import { createWorkerAddon } from "@watchedcom/sdk";
 
 import { ${actions
-        .map(action => `${action}Handler`)
-        .join(", ")} } from "./handlers";
+    .map(action => `${action}Handler`)
+    .join(", ")} } from "./handlers";
 
 export const ${addonVar} = createWorkerAddon(${JSON.stringify(
-        addonProps(input),
-        null,
-        4
-    )});
+    addonProps(input),
+    null,
+    4
+  )});
 
 ${handlersBlock(addonVar, actions)}
 `;
 
-    return content;
+  return content;
 };
 
 const indexJs = input => {
-    const { name, actions } = input;
+  const { name, actions } = input;
 
-    const addonVar = `${name}Addon`;
+  const addonVar = `${name}Addon`;
 
-    const content = `const { createWorkerAddon } = require("@watchedcom/sdk");
+  const content = `const { createWorkerAddon } = require("@watchedcom/sdk");
 const { ${actions
-        .map(action => `${action}Handler`)
-        .join(", ")} } = require("./handlers");
+    .map(action => `${action}Handler`)
+    .join(", ")} } = require("./handlers");
 
 const ${addonVar} = createWorkerAddon(${JSON.stringify(
-        addonProps(input),
-        null,
-        4
-    )});
+    addonProps(input),
+    null,
+    4
+  )});
 
 ${handlersBlock(addonVar, actions)}
 
 module.exports = ${addonVar};
 `;
 
-    return content;
+  return content;
 };
 
 const handlersTs = ({ actions }) => {
-    const handlersBlock = actions
-        .map(
-            action =>
-                `export const ${action}Handler: WorkerHandlers["${action}"] = async (input, ctx) => {
+  const handlersBlock = actions
+    .map(
+      action =>
+        `export const ${action}Handler: WorkerHandlers["${action}"] = async (input, ctx) => {
     // ${action} action handler code goes here
     throw new Error("Not implemented");
 };`
-        )
-        .join("\n\n");
-    const content = `import { WorkerHandlers } from "@watchedcom/sdk";
+    )
+    .join("\n\n");
+  const content = `import { WorkerHandlers } from "@watchedcom/sdk";
 
 ${handlersBlock}
 `;
-    return content;
+  return content;
 };
 
 const handlersJs = ({ actions }) => {
-    const handlersBlock = actions
-        .map(
-            action =>
-                `const ${action}Handler = async (input, ctx) => {
+  const handlersBlock = actions
+    .map(
+      action =>
+        `const ${action}Handler = async (input, ctx) => {
     // ${action} action handler code goes here
     throw new Error("Not implemented");
 };`
-        )
-        .join("\n\n");
-    const content = `${handlersBlock}
+    )
+    .join("\n\n");
+  const content = `${handlersBlock}
 
 module.exports = { ${actions.map(action => `${action}Handler`).join(", ")} };
 `;
-    return content;
+  return content;
 };
 
 const envExample = `# Used in development
@@ -125,7 +125,7 @@ const envExample = `# Used in development
 NODE_ENV=development`;
 
 const readme = ({ name }) => {
-    const content = `# ${name} addon for WATCHED.com
+  const content = `# ${name} addon for WATCHED.com
 
 \`\`\`shell
 npm i
@@ -133,71 +133,71 @@ npm run develop
 \`\`\`
 `;
 
-    return content;
+  return content;
 };
 
 const packageJsonCommon = ({ name }) => {
-    return {
-        name: "addon-" + kebabCase(name),
-        version: "1.0.0"
-    };
+  return {
+    name: "addon-" + kebabCase(name),
+    version: "1.0.0"
+  };
 };
 
 const packageJsonTs = input =>
-    JSON.stringify(
-        {
-            ...packageJsonCommon(input),
-            main: "dist",
-            scripts: {
-                build: "tsc -p .",
-                start: "watched-sdk start --prod",
-                develop: "watched-sdk start"
-            },
-            dependencies: {
-                "@watchedcom/sdk": "latest"
-            },
-            devDependencies: {
-                typescript: "latest"
-            }
-        },
-        null,
-        2
-    );
+  JSON.stringify(
+    {
+      ...packageJsonCommon(input),
+      main: "dist",
+      scripts: {
+        build: "tsc -p .",
+        start: "watched-sdk start --prod",
+        develop: "watched-sdk start"
+      },
+      dependencies: {
+        "@watchedcom/sdk": "latest"
+      },
+      devDependencies: {
+        typescript: "latest"
+      }
+    },
+    null,
+    2
+  );
 
 const packageJsonJs = input =>
-    JSON.stringify(
-        {
-            ...packageJsonCommon(input),
-            main: "src/index.js",
-            scripts: {
-                start: "watched-sdk start --prod",
-                develop: "watched-sdk start"
-            },
-            dependencies: {
-                "@watchedcom/sdk": "latest"
-            }
-        },
-        null,
-        2
-    );
+  JSON.stringify(
+    {
+      ...packageJsonCommon(input),
+      main: "src/index.js",
+      scripts: {
+        start: "watched-sdk start --prod",
+        develop: "watched-sdk start"
+      },
+      dependencies: {
+        "@watchedcom/sdk": "latest"
+      }
+    },
+    null,
+    2
+  );
 
 const tsProject = {
-    "tsconfig.json": tsConfigJson,
-    "package.json": packageJsonTs,
-    ".gitignore": ["node_modules", ".env", "dist"].join("\n"),
-    "src/index.ts": indexTs,
-    "src/handlers.ts": handlersTs,
-    ".env.example": envExample,
-    "README.md": readme
+  "tsconfig.json": tsConfigJson,
+  "package.json": packageJsonTs,
+  ".gitignore": ["node_modules", ".env", "dist"].join("\n"),
+  "src/index.ts": indexTs,
+  "src/handlers.ts": handlersTs,
+  ".env.example": envExample,
+  "README.md": readme
 };
 
 const jsProject = {
-    "package.json": packageJsonJs,
-    ".gitignore": ["node_modules", ".env"].join("\n"),
-    "src/index.js": indexJs,
-    "src/handlers.js": handlersJs,
-    ".env.example": envExample,
-    "README.md": readme
+  "package.json": packageJsonJs,
+  ".gitignore": ["node_modules", ".env"].join("\n"),
+  "src/index.js": indexJs,
+  "src/handlers.js": handlersJs,
+  ".env.example": envExample,
+  "README.md": readme
 };
 
 module.exports = { executeProjectTemplate, tsProject, jsProject };

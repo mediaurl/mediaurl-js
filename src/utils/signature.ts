@@ -12,28 +12,28 @@ rl2iXzVO8gXUw97fDwIDAQAB
  * @param body express request body
  */
 export const validateSignature = (sig: string): void => {
-    if (!sig) {
-        throw new Error("No sig field passed in body");
-    }
+  if (!sig) {
+    throw new Error("No sig field passed in body");
+  }
 
-    const decodedSig = Buffer.from(sig, "base64").toString();
-    try {
-        JSON.parse(decodedSig);
-    } catch {
-        throw new Error("Malformed sig field");
-    }
+  const decodedSig = Buffer.from(sig, "base64").toString();
+  try {
+    JSON.parse(decodedSig);
+  } catch {
+    throw new Error("Malformed sig field");
+  }
 
-    const { data, signature } = JSON.parse(decodedSig);
+  const { data, signature } = JSON.parse(decodedSig);
 
-    const verifier = crypto.createVerify("SHA256");
-    verifier.update(data);
-    const isValid = verifier.verify(publicKey, signature, "base64");
-    if (!isValid) {
-        throw new Error("Invalid signature");
-    }
+  const verifier = crypto.createVerify("SHA256");
+  verifier.update(data);
+  const isValid = verifier.verify(publicKey, signature, "base64");
+  if (!isValid) {
+    throw new Error("Invalid signature");
+  }
 
-    const { validUntil } = JSON.parse(data);
-    if (new Date(validUntil) < new Date()) {
-        throw new Error("Signature data timed out");
-    }
+  const { validUntil } = JSON.parse(data);
+  if (new Date(validUntil) < new Date()) {
+    throw new Error("Signature data timed out");
+  }
 };

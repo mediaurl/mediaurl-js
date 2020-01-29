@@ -1,11 +1,5 @@
 {
-    "rules": {
-        "ordered-imports": [
-            true,
-            {
-                "grouped-imports": true,
-                "named-imports-order": "lowercase-first"
-            }
-        ]
-    }
+  "rules": {
+    "ordered-imports": [true, { "grouped-imports": true }]
+  }
 }
