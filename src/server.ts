@@ -14,6 +14,7 @@ import {
     createTaskResponseHandler,
     Responder
 } from "./tasks";
+import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
 export interface ServeAddonsOptions {
@@ -53,9 +54,12 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         let statusCode = 200;
         let result;
 
+        if (process.env.SKIP_AUTH !== "1") {
+            await validateSignature(req.body);
+        }
+
         // Remove sig from request
         const { sig, ...requestData } = req.body;
-
         // Request cache helper
         const cacheState: Partial<CacheState> = {};
         const requestCache: RequestCacheFn = async (keyData, options) => {
