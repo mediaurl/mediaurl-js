@@ -22,15 +22,11 @@ const tsConfigJson = `{
     "include": ["src/index.ts"]
 }`;
 
-const addonProps = ({ name, requestArgs, actions, itemTypes }) => {
+const addonProps = ({ name, requestArgs, itemTypes }) => {
     return {
         id: name,
         version: "1.0.0",
         name,
-        flags: {
-            adult: false
-        },
-        actions,
         itemTypes,
         requestArgs
     };

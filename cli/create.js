@@ -11,15 +11,12 @@ const projectsMap = {
 };
 
 const createHandler = async (folderPath, cmdObj) => {
-    // console.log("inside createHandler", folderName, { template, force });
     const { template, force } = cmdObj;
 
     const addonPath = path.resolve(process.cwd(), folderPath);
-
-    const folderName = path.parse(addonPath).name;
-
     await fs.ensureDir(addonPath);
 
+    const folderName = path.parse(addonPath).name;
     const folderFiles = await fs.readdir(addonPath);
 
     // Folder can be empty git repo, so we need to check only visible files
@@ -35,9 +32,9 @@ const createHandler = async (folderPath, cmdObj) => {
 
     const defaults = {
         template: template || "ts",
-        name: defaultName,
-        actions: ["directory", "item"],
-        itemTypes: ["movie", "series"]
+        name: defaultName
+        // actions: ["directory", "item"],
+        // itemTypes: ["movie", "series"]
     };
 
     const userInput = await inquirer
@@ -98,7 +95,11 @@ const createHandler = async (folderPath, cmdObj) => {
                           default: ["imdb_id", "tmdb_id"],
                           when: ({ actions }) => {
                               for (const action of actions) {
-                                  if (["source", "subtitle"].includes(action)) {
+                                  if (
+                                      ["item", "source", "subtitle"].includes(
+                                          action
+                                      )
+                                  ) {
                                       return true;
                                   }
                               }
