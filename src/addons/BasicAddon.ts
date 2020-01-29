@@ -20,7 +20,9 @@ export abstract class BasicAddon<
         addon: async () => this.getProps()
     };
 
-    constructor(private readonly props: P) {}
+    constructor(protected readonly props: P) {}
+
+    public validateAddon() {}
 
     public getProps(): P {
         return cloneDeep(this.props);
@@ -56,5 +58,9 @@ export abstract class BasicAddon<
             throw new Error(`No handler for "${action}" action`);
         }
         return handler;
+    }
+
+    public hasActionHandler(action: keyof HandlersMap) {
+        return !!this.handlersMap[action];
     }
 }

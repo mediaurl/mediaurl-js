@@ -38,6 +38,14 @@ export class RepositoryAddon extends BasicAddon<
         );
     }
 
+    public validateAddon() {
+        if (!this.addons.length && !this.urls.length) {
+            throw new Error(
+                `A repository addon needs at least one addon or url to an addon`
+            );
+        }
+    }
+
     public async getAllAddonProps(
         args: ApiAddonRequest,
         ctx: ActionHandlerContext
@@ -116,7 +124,10 @@ export class RepositoryAddon extends BasicAddon<
     }
 }
 
-export const createRepositoryAddon = makeCreateFunction({
+export const createRepositoryAddon = makeCreateFunction<
+    RepositoryAddonProps,
+    RepositoryAddon
+>({
     AddonClass: RepositoryAddon,
     type: "repository"
 });

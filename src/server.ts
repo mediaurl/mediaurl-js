@@ -37,6 +37,14 @@ export class CacheFoundError {
 }
 
 const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
+    try {
+        addon.validateAddon();
+    } catch (error) {
+        throw new Error(
+            `Validation of addon "${addon.getId()}" failed: ${error.message}`
+        );
+    }
+
     const actionHandler: express.RequestHandler = async (req, res, next) => {
         const { action } = req.params;
 
@@ -153,7 +161,7 @@ export const createRouter = (
         const id = addon.getId();
         if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
         ids.add(id);
-        console.info(`Mounting ${id} to /${id}`);
+        console.info(`Mounting addon ${id}`);
         router.use(`/${id}`, createAddonRouter(addon, cache));
     });
 
