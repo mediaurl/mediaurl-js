@@ -17,9 +17,18 @@ export class BundleAddon extends BasicAddon<BundleHandlers, BundleAddonProps> {
     constructor(p: BundleAddonProps) {
         super(p);
     }
+
+    public validateAddon() {
+        if (!this.props.requirements?.length) {
+            throw new Error(`Bundle addon needs at least on requirement`);
+        }
+    }
 }
 
-export const createBundleAddon = makeCreateFunction({
+export const createBundleAddon = makeCreateFunction<
+    BundleAddonProps,
+    BundleAddon
+>({
     AddonClass: BundleAddon,
     type: "bundle"
 });

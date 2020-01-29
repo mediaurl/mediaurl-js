@@ -49,7 +49,8 @@ class TunnelResponse {
     }
 
     async data() {
-        return Buffer.from(this.r.data ?? "", "base64");
+        if (this.r.data) return Buffer.from(this.r.data, "base64");
+        return Buffer.from(<string>this.r.text, "ascii");
     }
 }
 

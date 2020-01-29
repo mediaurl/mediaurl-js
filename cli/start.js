@@ -21,10 +21,10 @@ const startHandler = (files, cmdObj) => {
         files.push(guessTsMain(cwd));
     }
 
-    console.log({ "Serving addons": files, "Live reload": !cmdObj.prod });
+    console.info(`Serving addons: ${files.join(", ")}`);
+    console.info(`Live reload: ${!cmdObj.prod}`);
 
     const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
-
     return fork(
         serveScriptPath,
         files,
