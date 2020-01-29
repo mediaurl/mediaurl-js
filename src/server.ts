@@ -54,12 +54,12 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         let statusCode = 200;
         let result;
 
-        if (process.env.SKIP_AUTH !== "1") {
-            await validateSignature(req.body);
-        }
-
         // Remove sig from request
         const { sig, ...requestData } = req.body;
+        if (process.env.SKIP_AUTH !== "1") {
+            validateSignature(sig);
+        }
+
         // Request cache helper
         const cacheState: Partial<CacheState> = {};
         const requestCache: RequestCacheFn = async (keyData, options) => {

@@ -11,17 +11,12 @@ rl2iXzVO8gXUw97fDwIDAQAB
  * Verifies sig field
  * @param body express request body
  */
-export const validateSignature = (body: any): void => {
-    const { sig } = body;
-
+export const validateSignature = (sig: string): void => {
     if (!sig) {
         throw new Error("No sig field passed in body");
     }
 
-    console.log({ sig });
-
     const decodedSig = Buffer.from(sig, "base64").toString();
-
     try {
         JSON.parse(decodedSig);
     } catch {
@@ -31,17 +26,13 @@ export const validateSignature = (body: any): void => {
     const { data, signature } = JSON.parse(decodedSig);
 
     const verifier = crypto.createVerify("SHA256");
-
     verifier.update(data);
-
     const isValid = verifier.verify(publicKey, signature, "base64");
-
     if (!isValid) {
         throw new Error("Invalid signature");
     }
 
     const { validUntil } = JSON.parse(data);
-
     if (new Date(validUntil) < new Date()) {
         throw new Error("Signature data timed out");
     }
