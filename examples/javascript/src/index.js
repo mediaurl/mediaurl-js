@@ -33,7 +33,6 @@ const addon = watched
     id: "example-js",
     name: "Javascript Example Addon",
     version: "1.0.0",
-    actions: ["directory", "item", "source"],
     itemTypes: ["movie"]
   })
   .registerActionHandler("directory", async (args, ctx) => {

@@ -1,8 +1,8 @@
 import {
-  createWorkerAddon,
   ApiItemRequest,
   ApiSourceRequest,
   ApiSubtitleRequest,
+  createWorkerAddon,
   Item,
   Source,
   Subtitle
@@ -93,7 +93,6 @@ const addon = createWorkerAddon({
   id: "example1",
   name: "Typescript Example Addon",
   version: "1.0.0",
-  actions: ["directory", "item", "source", "subtitle"],
   itemTypes: ["movie"]
 })
   .registerActionHandler("directory", async (args, ctx) => {
