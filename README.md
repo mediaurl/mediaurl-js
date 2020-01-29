@@ -6,18 +6,18 @@ With the WATCHED.com nodejs SDK you easily can create your own addons.
 
 1. Create a new addon with our wizard:
 
-```shell
-npm @watchedcom/sdk create my-addon
-```
+   ```shell
+   npm @watchedcom/sdk create my-addon
+   ```
 
-Follow the steps of the wizard. We strongly recommend to use the `typescript` template, but you also can stick to raw javascript instead.
+   Follow the steps of the wizard. We strongly recommend to use the `typescript` template, but you also can stick to raw javascript instead.
 
 2. Install dependencies:
 
-```shell
-cd my-addon
-npm install
-```
+   ```shell
+   cd my-addon
+   npm install
+   ```
 
 3. Your addon is ready. You can now edit your code, and then head over to the next step.
 
@@ -25,11 +25,11 @@ npm install
 
 1. Start the development server:
 
-```shell
-npm run develop
-```
+   ```shell
+   npm run develop
+   ```
 
-This server will automatically restart itself when you make changes in your code.
+   This server will automatically restart itself when you make changes in your code.
 
 2. Open the WATCHED app on your mobile and go to the `Add Addon` screen, where you can enter a URL.
 

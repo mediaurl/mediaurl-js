@@ -1,18 +1,18 @@
 import {
-    ApiAddonRequest,
-    ApiAddonResponse,
-    ApiDirectoryRequest,
-    ApiDirectoryResponse,
-    ApiItemRequest,
-    ApiItemResponse,
-    ApiRepositoryRequest,
-    ApiRepositoryResponse,
-    ApiResolveRequest,
-    ApiResolveResponse,
-    ApiSourceRequest,
-    ApiSourceResponse,
-    ApiSubtitleRequest,
-    ApiSubtitleResponse
+  ApiAddonRequest,
+  ApiAddonResponse,
+  ApiDirectoryRequest,
+  ApiDirectoryResponse,
+  ApiItemRequest,
+  ApiItemResponse,
+  ApiRepositoryRequest,
+  ApiRepositoryResponse,
+  ApiResolveRequest,
+  ApiResolveResponse,
+  ApiSourceRequest,
+  ApiSourceResponse,
+  ApiSubtitleRequest,
+  ApiSubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
 
@@ -21,54 +21,54 @@ import { BasicCache } from "./cache";
 import { FetchRemoteFn } from "./tasks";
 
 export type CacheOptions = {
-    cacheErrors: boolean;
-    ttl: number; // Cache time in seconds
-    errorTtl: number;
+  cacheErrors: boolean;
+  ttl: number; // Cache time in seconds
+  errorTtl: number;
 };
 
 export const defaultCacheOptions: CacheOptions = {
-    cacheErrors: true,
-    ttl: 3600,
-    errorTtl: 600
+  cacheErrors: true,
+  ttl: 3600,
+  errorTtl: 600
 };
 
 export type CacheState = {
-    options: CacheOptions;
-    key: string;
+  options: CacheOptions;
+  key: string;
 };
 
 export type RequestCacheFn = (
-    // Defaults to `requestData`
-    keyData?: any,
-    options?: Partial<CacheOptions>
+  // Defaults to `requestData`
+  keyData?: any,
+  options?: Partial<CacheOptions>
 ) => Promise<void>;
 
 export interface ActionHandlerContext<
-    AddonType extends BasicAddon = BasicAddon
+  AddonType extends BasicAddon = BasicAddon
 > {
-    request: express.Request;
-    addon: AddonType;
-    cache: BasicCache;
-    // Helper function to cache full action calls. Run this
-    // on the beginning of your action handler to check
-    // if the request is cached already.
-    // If there is a cache hit, the request will be aborted
-    // automatically.
-    requestCache: RequestCacheFn;
-    fetchRemote: FetchRemoteFn;
+  request: express.Request;
+  addon: AddonType;
+  cache: BasicCache;
+  // Helper function to cache full action calls. Run this
+  // on the beginning of your action handler to check
+  // if the request is cached already.
+  // If there is a cache hit, the request will be aborted
+  // automatically.
+  requestCache: RequestCacheFn;
+  fetchRemote: FetchRemoteFn;
 }
 
 export type ActionHandler<
-    InputType = any,
-    OutputType = any,
-    AddonType extends BasicAddon = BasicAddon
+  InputType = any,
+  OutputType = any,
+  AddonType extends BasicAddon = BasicAddon
 > = (
-    input: InputType,
-    context: ActionHandlerContext<AddonType>
+  input: InputType,
+  context: ActionHandlerContext<AddonType>
 ) => Promise<OutputType>;
 
 export interface HandlersMap {
-    [action: string]: ActionHandler;
+  [action: string]: ActionHandler;
 }
 
 /**
@@ -76,13 +76,13 @@ export interface HandlersMap {
  * It's base type to pick from (by action)
  */
 export type ActionHandlers<T extends BasicAddon> = {
-    addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, T>;
+  addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, T>;
 
-    repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse, T>;
+  repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse, T>;
 
-    directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse, T>;
-    item: ActionHandler<ApiItemRequest, ApiItemResponse, T>;
-    source: ActionHandler<ApiSourceRequest, ApiSourceResponse, T>;
-    subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse, T>;
-    resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse, T>;
+  directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse, T>;
+  item: ActionHandler<ApiItemRequest, ApiItemResponse, T>;
+  source: ActionHandler<ApiSourceRequest, ApiSourceResponse, T>;
+  subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse, T>;
+  resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse, T>;
 };
