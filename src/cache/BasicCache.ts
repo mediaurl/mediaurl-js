@@ -3,7 +3,7 @@ export class BasicCache {
     throw new Error(`Not implemented`);
   }
 
-  public async set(key: any, value: any, ttl = 3600) {
+  public async set(key: any, value: any, ttl = 3600 * 1000) {
     throw new Error(`Not implemented`);
   }
 
@@ -13,7 +13,11 @@ export class BasicCache {
 
   public async cleanup() {}
 
-  public async waitKey(key: any, timeout = 30, del = true): Promise<any> {
+  public async waitKey(
+    key: any,
+    timeout = 30 * 1000,
+    del = true
+  ): Promise<any> {
     throw new Error(`Not implemented`);
   }
 }

@@ -23,16 +23,16 @@ import { FetchRemoteFn } from "./tasks";
 export type CacheOptions = {
   // Should errors be cached? Defaults to true.
   cacheErrors: boolean;
-  // TTL in seconds. Defaults to 1 hours.
+  // TTL in milliseconds. Defaults to 1 hours.
   ttl: number;
-  // TTL for error responses in seconds. Defaults to 10 minutes.
+  // TTL for error responses in milliseconds. Defaults to 10 minutes.
   errorTtl: number;
 };
 
 export const defaultCacheOptions: CacheOptions = {
   cacheErrors: true,
-  ttl: 3600,
-  errorTtl: 600
+  ttl: 3600 * 1000,
+  errorTtl: 600 * 1000
 };
 
 export type CacheState = {

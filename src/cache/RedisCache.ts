@@ -27,7 +27,7 @@ export class RedisCache extends BasicCache {
 
   public async set(key: any, value: any, ttl = 3600 * 1000) {
     key = createKey(key);
-    await this.client.setex(key, ttl, JSON.stringify(value));
+    await this.client.setex(key, ttl / 1000, JSON.stringify(value));
     return value;
   }
 
@@ -36,7 +36,11 @@ export class RedisCache extends BasicCache {
     this.client.del(key);
   }
 
-  public async waitKey(key: any, timeout = 30, del = true): Promise<any> {
+  public async waitKey(
+    key: any,
+    timeout = 30 * 1000,
+    del = true
+  ): Promise<any> {
     key = createKey(key);
     return waitKey(this, key, timeout, del, 200);
   }
