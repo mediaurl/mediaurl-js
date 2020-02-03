@@ -21,8 +21,11 @@ import { BasicCache } from "./cache";
 import { FetchRemoteFn } from "./tasks";
 
 export type CacheOptions = {
+  // Should errors be cached? Defaults to true.
   cacheErrors: boolean;
-  ttl: number; // Cache time in seconds
+  // TTL in seconds. Defaults to 1 hours.
+  ttl: number;
+  // TTL for error responses in seconds. Defaults to 10 minutes.
   errorTtl: number;
 };
 
@@ -38,7 +41,7 @@ export type CacheState = {
 };
 
 export type RequestCacheFn = (
-  // Defaults to `requestData`
+  // Data which will be used as the key for caching. Defaults to the full request data.
   keyData?: any,
   options?: Partial<CacheOptions>
 ) => Promise<void>;

@@ -7,6 +7,7 @@ import * as path from "path";
 
 import { BasicAddon } from "./addons";
 import { BasicCache, LocalCache, RedisCache } from "./cache";
+import { createKey } from "./cache/createKey";
 import { errorHandler } from "./error-handler";
 import { CacheState, defaultCacheOptions, RequestCacheFn } from "./interfaces";
 import {
@@ -71,14 +72,12 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
     const requestCache: RequestCacheFn = async (keyData, options) => {
       if (cacheState.options) throw new Error(`Cache is already set up`);
       cacheState.options = { ...defaultCacheOptions, ...options };
-      // TODO: Hash this ID with a performant algorythm
-      const id = JSON.stringify({
+      cacheState.key = createKey({
         addonId: addon.getId(),
         version: addon.getVersion(),
         action,
         data: keyData ?? requestData
       });
-      cacheState.key = `${addon.getId()}:${addon.getVersion()}:${id}`;
 
       const data = await cache.get(cacheState.key);
       if (data) {
