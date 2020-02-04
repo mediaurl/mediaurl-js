@@ -17,7 +17,7 @@ import {
 import * as express from "express";
 
 import { BasicAddon } from "./addons";
-import { BasicCache } from "./cache";
+import { CacheHandler } from "./cache";
 import { FetchRemoteFn } from "./tasks";
 
 export type CacheOptions = {
@@ -27,22 +27,29 @@ export type CacheOptions = {
   ttl: number;
   // TTL for error responses in milliseconds. Defaults to 10 minutes.
   errorTtl: number;
+  // Prefix. Defaults to addon id, version and current action
+  prefix: null | any;
 };
 
 export const defaultCacheOptions: CacheOptions = {
   cacheErrors: true,
   ttl: 3600 * 1000,
-  errorTtl: 600 * 1000
+  errorTtl: 600 * 1000,
+  prefix: null
 };
 
-export type CacheState = {
-  options: CacheOptions;
-  key: string;
+export type InlineCacheContext = {
+  set: (key: any, value: any, ttl: null | CacheOptions["ttl"]) => Promise<void>;
+  setError: (
+    key: any,
+    value: any,
+    errorTtl: null | CacheOptions["errorTtl"]
+  ) => Promise<void>;
 };
 
 export type RequestCacheFn = (
   // Data which will be used as the key for caching. Defaults to the full request data.
-  keyData?: any,
+  key?: any,
   options?: Partial<CacheOptions>
 ) => Promise<void>;
 
@@ -51,7 +58,7 @@ export interface ActionHandlerContext<
 > {
   request: express.Request;
   addon: AddonType;
-  cache: BasicCache;
+  cache: CacheHandler;
   // Helper function to cache full action calls. Run this
   // on the beginning of your action handler to check
   // if the request is cached already.

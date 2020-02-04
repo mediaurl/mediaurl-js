@@ -6,10 +6,9 @@ import * as morgan from "morgan";
 import * as path from "path";
 
 import { BasicAddon } from "./addons";
-import { BasicCache, LocalCache, RedisCache } from "./cache";
-import { createKey } from "./cache/createKey";
+import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
-import { CacheState, defaultCacheOptions, RequestCacheFn } from "./interfaces";
+import { RequestCacheFn } from "./interfaces";
 import {
   createFetchRemote,
   createTaskResponseHandler,
@@ -22,23 +21,26 @@ export interface ServeAddonsOptions {
   logRequests: boolean;
   errorHandler: express.ErrorRequestHandler;
   port: number;
-  cache: BasicCache;
+  cache: CacheHandler;
 }
 
 const defaultServeOpts: ServeAddonsOptions = {
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
-  cache: process.env.REDIS_CACHE
-    ? new RedisCache({ url: process.env.REDIS_CACHE })
-    : new LocalCache(),
+  cache: new CacheHandler(
+    process.env.REDIS_CACHE
+      ? new RedisCache({ url: process.env.REDIS_CACHE })
+      : new LocalCache()
+  ),
   logRequests: true
 };
 
-export class CacheFoundError {
-  constructor(public result: any, public statusCode = 200) {}
-}
+type CacheState = {
+  key: string;
+  cache: CacheHandler;
+};
 
-const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
+const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   try {
     addon.validateAddon();
   } catch (error) {
@@ -58,35 +60,25 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
       res.status(statusCode).json(body);
     });
 
-    let statusCode = 200;
-    let result;
-
     // Remove sig from request
     const { sig, ...requestData } = req.body;
     if (process.env.SKIP_AUTH !== "1") {
       validateSignature(sig);
     }
 
-    // Request cache helper
-    const cacheState: Partial<CacheState> = {};
-    const requestCache: RequestCacheFn = async (keyData, options) => {
-      if (cacheState.options) throw new Error(`Cache is already set up`);
-      cacheState.options = { ...defaultCacheOptions, ...options };
-      cacheState.key = createKey({
-        addonId: addon.getId(),
-        version: addon.getVersion(),
-        action,
-        data: keyData ?? requestData
-      });
+    let statusCode = 200;
+    let result;
 
-      const data = await cache.get(cacheState.key);
-      if (data) {
-        if (data.error && cacheState.options.cacheErrors) {
-          throw new CacheFoundError(data.error, 500);
-        } else if (data.result) {
-          throw new CacheFoundError(data.result);
-        }
-      }
+    cache = cache.clone({
+      prefix: [addon.getId(), addon.getVersion(), action]
+    });
+
+    // Request cache helper
+    let inlineCache: any = null;
+    const requestCache: RequestCacheFn = async (key, options) => {
+      if (inlineCache) throw new Error(`Request cache is already set up`);
+      const c = cache.clone(options);
+      inlineCache = await c.inline(key);
     };
 
     try {
@@ -98,27 +90,18 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
         fetchRemote: createFetchRemote(responder, cache)
       });
       validator.response(result);
-      if (cacheState.key && cacheState.options) {
-        await cache.set(cacheState.key, { result }, cacheState.options.ttl);
-      }
+      if (inlineCache) await inlineCache.set(result);
     } catch (error) {
       if (error instanceof CacheFoundError) {
-        result = error.result;
-        statusCode = error.statusCode;
-      } else {
-        statusCode = 500;
-        result = { error: error.message || error };
-        if (
-          cacheState.key &&
-          cacheState.options &&
-          cacheState.options.cacheErrors
-        ) {
-          await cache.set(
-            cacheState.key,
-            { error: result },
-            cacheState.options.errorTtl
-          );
+        if (error.result) {
+          result = error.result;
+        } else {
+          statusCode = 500;
+          error = { error: error.error };
         }
+      } else {
+        if (inlineCache) await inlineCache.setError(error);
+        result = { error: error.message || error };
         console.warn(error);
       }
     }
@@ -129,7 +112,7 @@ const createActionHandler = (addon: BasicAddon, cache: BasicCache) => {
   return actionHandler;
 };
 
-const createAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
+const createAddonRouter = (addon: BasicAddon, cache: CacheHandler) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
@@ -149,7 +132,7 @@ const createAddonRouter = (addon: BasicAddon, cache: BasicCache) => {
 
 export const createRouter = (
   addons: BasicAddon[],
-  cache: BasicCache
+  cache: CacheHandler
 ): express.Router => {
   const router = express.Router();
 

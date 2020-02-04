@@ -1,7 +1,7 @@
 import { ApiTaskFetchRequest, ApiTaskFetchResponse } from "@watchedcom/schema";
 import * as uuid4 from "uuid/v4";
 
-import { BasicCache } from "../cache";
+import { CacheHandler } from "../cache";
 
 import { Responder, sendTask } from "./utils";
 
@@ -82,7 +82,10 @@ class TunnelResponse {
 //     return new TunnelResponse(response);
 // };
 
-export const createFetchRemote = (responder: Responder, cache: BasicCache) => {
+export const createFetchRemote = (
+  responder: Responder,
+  cache: CacheHandler
+) => {
   const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
     const task: ApiTaskFetchRequest = {
       kind: "task",

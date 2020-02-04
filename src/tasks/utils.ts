@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import * as uuid4 from "uuid/v4";
 
-import { BasicCache } from "../cache";
+import { CacheHandler } from "../cache";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;
 
@@ -59,7 +59,7 @@ export class Responder {
 
 export const sendTask = async (
   responder: Responder,
-  cache: BasicCache,
+  cache: CacheHandler,
   task: ApiTaskRequest,
   timeout = 30 * 1000
 ): Promise<ApiTaskResponse> => {
@@ -89,7 +89,7 @@ export const sendTask = async (
 };
 
 export const createTaskResponseHandler = (
-  cache: BasicCache,
+  cache: CacheHandler,
   timeout = 120 * 1000
 ) => {
   const taskHandler: RequestHandler = async (req, res) => {

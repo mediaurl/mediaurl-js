@@ -12,12 +12,4 @@ export class BasicCache {
   }
 
   public async cleanup() {}
-
-  public async waitKey(
-    key: any,
-    timeout = 30 * 1000,
-    del = true
-  ): Promise<any> {
-    throw new Error(`Not implemented`);
-  }
 }
