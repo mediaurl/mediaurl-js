@@ -114,10 +114,13 @@ export class CacheHandler {
     }
 
     return <InlineCacheContext>{
-      async set(result, ttl: CacheOptions["ttl"] | null = null) {
+      set: async (result, ttl: CacheOptions["ttl"] | null = null) => {
         await this.set(key, { result }, ttl);
       },
-      async setError(error, errorTtl: CacheOptions["errorTtl"] | null = null) {
+      setError: async (
+        error,
+        errorTtl: CacheOptions["errorTtl"] | null = null
+      ) => {
         await this.setError(key, { error: error?.message || error }, errorTtl);
       }
     };
