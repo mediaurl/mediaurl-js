@@ -1,8 +1,8 @@
-const path = require("path");
-const fs = require("fs-extra");
-const { kebabCase } = require("lodash");
+import * as fs from "fs-extra";
+import { kebabCase } from "lodash";
+import * as path from "path";
 
-const executeProjectTemplate = async (template, basePath, input) => {
+export const executeProjectTemplate = async (template, basePath, input) => {
   for (const filePath of Object.keys(template)) {
     const targetPath = path.resolve(basePath, ...filePath.split("/"));
     const data = template[filePath];
@@ -90,7 +90,7 @@ npm run develop
 
 const packageJson = input => {
   const ts = input.template === "ts";
-  let data = {
+  let data: any = {
     name: "addon-" + kebabCase(input.name),
     version: "1.0.0",
     main: ts ? "dist" : "src/index.js",
@@ -146,7 +146,13 @@ const tsConfigJson = () =>
     2
   );
 
-const templateMap = {
+type TemplateMap = {
+  [k: string]: {
+    [k: string]: string | ((...args) => string);
+  };
+};
+
+export const templateMap: TemplateMap = {
   js: {
     "README.md": readme,
     "package.json": packageJson,
@@ -163,5 +169,3 @@ const templateMap = {
     "src/index.ts": tsIndex
   }
 };
-
-module.exports = { executeProjectTemplate, templateMap };

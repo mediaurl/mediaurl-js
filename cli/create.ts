@@ -1,11 +1,10 @@
-const path = require("path");
-const inquirer = require("inquirer");
-const fs = require("fs-extra");
-const { camelCase } = require("lodash");
+import * as fs from "fs-extra";
+import * as inquirer from "inquirer";
+import { camelCase } from "lodash";
+import * as path from "path";
+import { executeProjectTemplate, templateMap } from "./templates";
 
-const { executeProjectTemplate, templateMap } = require("./templates");
-
-const createHandler = async (folderPath, cmdObj) => {
+export const createHandler = async (folderPath: string, cmdObj: any) => {
   const { template, force } = cmdObj;
 
   const addonPath = path.resolve(process.cwd(), folderPath);
@@ -107,5 +106,3 @@ const createHandler = async (folderPath, cmdObj) => {
   console.log("npm install");
   console.log("to install all needed modules.");
 };
-
-module.exports = { createHandler };

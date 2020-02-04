@@ -1,7 +1,7 @@
-require("dotenv/config");
-const path = require("path");
-const { flatten, uniqBy } = require("lodash");
-const { serveAddons } = require("../dist");
+import "dotenv/config";
+import { flatten, uniqBy } from "lodash";
+import * as path from "path";
+import { serveAddons } from "../src";
 
 const requireAddons = pathStr => {
   const requiredFile = require(pathStr);

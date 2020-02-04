@@ -1,12 +1,12 @@
-const fork = require("child_process").fork;
-const { guessTsMain } = require("guess-ts-main");
-const path = require("path");
+import { fork } from "child_process";
+import { guessTsMain } from "guess-ts-main";
+import * as path from "path";
 
 const cwd = process.cwd();
 
 const serveScriptPath = path.resolve(__dirname, "serve-entrypoint");
 
-const startHandler = (files, cmdObj) => {
+export const startHandler = (files: string[], cmdObj: any) => {
   let tsConfig = null;
   try {
     tsConfig = require(path.resolve(cwd, "tsconfig.json"));
@@ -21,11 +21,8 @@ const startHandler = (files, cmdObj) => {
     files.push(guessTsMain(cwd));
   }
 
-  console.info(`Serving addons: ${files.join(", ")}`);
-  console.info(`Live reload: ${!cmdObj.prod}`);
-
   const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
-  return fork(
+  fork(
     serveScriptPath,
     files,
     cmdObj.prod
@@ -36,5 +33,3 @@ const startHandler = (files, cmdObj) => {
         }
   );
 };
-
-module.exports = { startHandler };
