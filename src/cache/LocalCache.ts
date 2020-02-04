@@ -12,7 +12,7 @@ export class LocalCache extends BasicCache {
     return null;
   }
 
-  public async set(key: string, value: any, ttl = 3600 * 1000) {
+  public async set(key: string, value: any, ttl: number) {
     this.data[key] = [Date.now() + ttl, value];
     return value;
   }

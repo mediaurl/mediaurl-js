@@ -62,9 +62,10 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
 
     // Remove sig from request
     const { sig, ...requestData } = req.body;
-    if (process.env.SKIP_AUTH !== "1") {
-      validateSignature(sig);
-    }
+    const sigData =
+      process.env.SKIP_AUTH === "1" || action === "addon"
+        ? null
+        : validateSignature(sig);
 
     let statusCode = 200;
     let result;
@@ -83,8 +84,12 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
 
     try {
       result = await handler(requestData, {
-        addon,
         request: req,
+        sig: {
+          raw: sig,
+          data: sigData
+        },
+        addon,
         cache,
         requestCache: requestCache,
         fetchRemote: createFetchRemote(responder, cache)

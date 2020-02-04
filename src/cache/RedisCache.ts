@@ -22,7 +22,7 @@ export class RedisCache extends BasicCache {
     return null;
   }
 
-  public async set(key: string, value: any, ttl = 3600 * 1000) {
+  public async set(key: string, value: any, ttl: number) {
     await this.client.setex(key, ttl / 1000, JSON.stringify(value));
     return value;
   }

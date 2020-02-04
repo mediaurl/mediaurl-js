@@ -1,9 +1,9 @@
 import {
   Addon as AddonProps,
-  ApiAddonRequest,
-  ApiRepositoryRequest,
+  AddonRequest,
   RepositoryAddon as RepositoryAddonProps,
-  RepositoryAddonActions
+  RepositoryAddonActions,
+  RepositoryRequest
 } from "@watchedcom/schema";
 import fetch from "node-fetch";
 
@@ -32,7 +32,7 @@ export class RepositoryAddon extends BasicAddon<
 
     this.registerActionHandler(
       "repository",
-      async (args: ApiRepositoryRequest, ctx: ActionHandlerContext) => {
+      async (args: RepositoryRequest, ctx: ActionHandlerContext) => {
         return this.getAllAddonProps(args, ctx);
       }
     );
@@ -47,7 +47,7 @@ export class RepositoryAddon extends BasicAddon<
   }
 
   public async getAllAddonProps(
-    args: ApiAddonRequest,
+    input: AddonRequest,
     ctx: ActionHandlerContext
   ) {
     const result: AddonProps[] = [];
@@ -59,7 +59,7 @@ export class RepositoryAddon extends BasicAddon<
         try {
           const handler = addon.getActionHandler("addon");
           const props: AddonProps = await handler(
-            { ...args },
+            { ...input },
             { ...ctx, addon }
           );
           props.metadata = { url: `./${id}` };
@@ -83,7 +83,7 @@ export class RepositoryAddon extends BasicAddon<
           const res = await fetch(`${url.replace(/\/$/, "")}/addon`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(args)
+            body: JSON.stringify(input)
           });
           if (!res.ok) {
             throw new Error(`Get status code ${res.status}`);

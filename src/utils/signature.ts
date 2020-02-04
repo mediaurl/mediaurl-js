@@ -32,8 +32,10 @@ export const validateSignature = (sig: string): void => {
     throw new Error("Invalid signature");
   }
 
-  const { validUntil } = JSON.parse(data);
-  if (new Date(validUntil) < new Date()) {
+  const result = JSON.parse(data);
+  if (new Date(result.validUntil) < new Date()) {
     throw new Error("Signature data timed out");
   }
+
+  return result;
 };

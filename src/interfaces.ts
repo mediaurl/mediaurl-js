@@ -1,18 +1,18 @@
 import {
-  ApiAddonRequest,
-  ApiAddonResponse,
-  ApiDirectoryRequest,
-  ApiDirectoryResponse,
-  ApiItemRequest,
-  ApiItemResponse,
-  ApiRepositoryRequest,
-  ApiRepositoryResponse,
-  ApiResolveRequest,
-  ApiResolveResponse,
-  ApiSourceRequest,
-  ApiSourceResponse,
-  ApiSubtitleRequest,
-  ApiSubtitleResponse
+  AddonRequest,
+  AddonResponse,
+  DirectoryRequest,
+  DirectoryResponse,
+  ItemRequest,
+  ItemResponse,
+  RepositoryRequest,
+  RepositoryResponse,
+  ResolveRequest,
+  ResolveResponse,
+  SourceRequest,
+  SourceResponse,
+  SubtitleRequest,
+  SubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
 
@@ -57,6 +57,10 @@ export interface ActionHandlerContext<
   AddonType extends BasicAddon = BasicAddon
 > {
   request: express.Request;
+  sig: {
+    raw: string;
+    data: any;
+  };
   addon: AddonType;
   cache: CacheHandler;
   // Helper function to cache full action calls. Run this
@@ -86,13 +90,13 @@ export interface HandlersMap {
  * It's base type to pick from (by action)
  */
 export type ActionHandlers<T extends BasicAddon> = {
-  addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, T>;
+  addon: ActionHandler<AddonRequest, AddonResponse, T>;
 
-  repository: ActionHandler<ApiRepositoryRequest, ApiRepositoryResponse, T>;
+  repository: ActionHandler<RepositoryRequest, RepositoryResponse, T>;
 
-  directory: ActionHandler<ApiDirectoryRequest, ApiDirectoryResponse, T>;
-  item: ActionHandler<ApiItemRequest, ApiItemResponse, T>;
-  source: ActionHandler<ApiSourceRequest, ApiSourceResponse, T>;
-  subtitle: ActionHandler<ApiSubtitleRequest, ApiSubtitleResponse, T>;
-  resolve: ActionHandler<ApiResolveRequest, ApiResolveResponse, T>;
+  directory: ActionHandler<DirectoryRequest, DirectoryResponse, T>;
+  item: ActionHandler<ItemRequest, ItemResponse, T>;
+  source: ActionHandler<SourceRequest, SourceResponse, T>;
+  subtitle: ActionHandler<SubtitleRequest, SubtitleResponse, T>;
+  resolve: ActionHandler<ResolveRequest, ResolveResponse, T>;
 };

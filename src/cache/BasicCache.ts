@@ -3,7 +3,7 @@ export class BasicCache {
     throw new Error(`Not implemented`);
   }
 
-  public async set(key: any, value: any, ttl = 3600 * 1000) {
+  public async set(key: any, value: any, ttl: number) {
     throw new Error(`Not implemented`);
   }
 
