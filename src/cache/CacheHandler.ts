@@ -44,23 +44,15 @@ export class CacheHandler {
     return await this.engine.get(key);
   }
 
-  public async set(
-    key: any,
-    value: any,
-    ttl: null | CacheOptions["ttl"] = null
-  ) {
+  public async set(key: any, value: any) {
     key = this.createKey(key);
-    await this.engine.set(key, value, ttl ?? this.options.ttl);
+    await this.engine.set(key, value, this.options.ttl);
   }
 
-  public async setError(
-    key: any,
-    value: any,
-    errorTtl: null | CacheOptions["errorTtl"] = null
-  ) {
+  public async setError(key: any, value: any) {
     if (this.options.cacheErrors) {
       key = this.createKey(key);
-      await this.engine.set(key, value, errorTtl ?? this.options.errorTtl);
+      await this.engine.set(key, value, this.options.errorTtl);
     }
   }
 
@@ -73,6 +65,8 @@ export class CacheHandler {
     await this.engine.cleanup();
   }
 
+  // Function which will cache an async function call.
+  // Depending on the options, it also will cache exceptions.
   public async call(key: any, fn: () => Promise<any>) {
     if (key === null) return await fn();
 
@@ -97,6 +91,8 @@ export class CacheHandler {
     }
   }
 
+  // This function will abort the current action handler function
+  // if there is a cache hit
   public async inline(key: any) {
     key = this.createKey(key);
 
@@ -110,11 +106,11 @@ export class CacheHandler {
     }
 
     return <InlineCacheContext>{
-      set: async (result, ttl = null) => {
-        await this.set(key, { result }, ttl);
+      async set(result) {
+        await this.set(key, { result });
       },
-      setError: async (error, errorTtl = null) => {
-        await this.setError(key, { error: error?.message || error }, errorTtl);
+      async setError(error) {
+        await this.setError(key, { error: error?.message || error });
       }
     };
   }
