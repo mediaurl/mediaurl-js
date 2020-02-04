@@ -1,4 +1,4 @@
-import { ApiTaskRequest, ApiTaskResponse } from "@watchedcom/schema";
+import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import * as uuid4 from "uuid/v4";
@@ -60,9 +60,9 @@ export class Responder {
 export const sendTask = async (
   responder: Responder,
   cache: CacheHandler,
-  task: ApiTaskRequest,
+  task: TaskRequest,
   timeout = 30 * 1000
-): Promise<ApiTaskResponse> => {
+): Promise<TaskResponse> => {
   // getServerValidators().task.request(task);
   console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait:${task.id}`, "1", timeout * 2);
@@ -93,7 +93,7 @@ export const createTaskResponseHandler = (
   timeout = 120 * 1000
 ) => {
   const taskHandler: RequestHandler = async (req, res) => {
-    const response: ApiTaskResponse = req.body;
+    const response: TaskResponse = req.body;
     // getServerValidators().task.response(response);
     console.debug(`Task ${response.id} received response from client`);
 

@@ -1,6 +1,6 @@
 import {
-  ApiResolveRequest,
-  ApiResolveResponse,
+  ResolveRequest,
+  ResolveResponse,
   WorkerAddon as WorkerAddonProps,
   WorkerAddonActions,
   WorkerAddonResourceActions
@@ -26,9 +26,9 @@ const resourceActions: WorkerAddonResourceActions[] = [
 
 type ResolverHandlerFn = (
   match: RegExpExecArray,
-  input: ApiResolveRequest,
+  input: ResolveRequest,
   ctx: ActionHandlerContext
-) => Promise<ApiResolveResponse>;
+) => Promise<ResolveResponse>;
 
 type Resolver = {
   pattern: RegExp[];

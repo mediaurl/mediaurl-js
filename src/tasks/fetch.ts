@@ -1,4 +1,4 @@
-import { ApiTaskFetchRequest, ApiTaskFetchResponse } from "@watchedcom/schema";
+import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
 import * as uuid4 from "uuid/v4";
 
 import { CacheHandler } from "../cache";
@@ -6,12 +6,12 @@ import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./utils";
 
 export type FetchRemoteFn = (
-  url: ApiTaskFetchRequest["url"],
-  params?: ApiTaskFetchRequest["params"]
+  url: TaskFetchRequest["url"],
+  params?: TaskFetchRequest["params"]
 ) => Promise<TunnelResponse>;
 
 class TunnelResponse {
-  constructor(private r: ApiTaskFetchResponse) {
+  constructor(private r: TaskFetchResponse) {
     this.r = r;
   }
 
@@ -55,7 +55,7 @@ class TunnelResponse {
 }
 
 // export const dummyFetchRemote: FetchRemoteFn = async (url, params) => {
-//     const response: ApiTaskFetchResponse = {
+//     const response: TaskFetchResponse = {
 //         type: "fetchResponse",
 //         id: "",
 //         status: 0
@@ -87,14 +87,14 @@ export const createFetchRemote = (
   cache: CacheHandler
 ) => {
   const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
-    const task: ApiTaskFetchRequest = {
+    const task: TaskFetchRequest = {
       kind: "task",
       type: "fetch",
       id: uuid4(),
       url,
       params
     };
-    const response = <ApiTaskFetchResponse>(
+    const response = <TaskFetchResponse>(
       await sendTask(responder, cache, task, timeout)
     );
 

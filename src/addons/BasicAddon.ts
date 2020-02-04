@@ -1,15 +1,15 @@
 import {
   Addon as AddonProps,
-  AddonTypes,
-  ApiAddonRequest,
-  ApiAddonResponse
+  AddonRequest,
+  AddonResponse,
+  AddonTypes
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 
 import { ActionHandler, HandlersMap } from "../interfaces";
 
 export type BasicHandlers = {
-  addon: ActionHandler<ApiAddonRequest, ApiAddonResponse, BasicAddon>;
+  addon: ActionHandler<AddonRequest, AddonResponse, BasicAddon>;
 };
 
 export abstract class BasicAddon<

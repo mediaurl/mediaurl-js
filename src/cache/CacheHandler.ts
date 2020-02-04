@@ -44,15 +44,23 @@ export class CacheHandler {
     return await this.engine.get(key);
   }
 
-  public async set(key: any, value: any) {
+  public async set(
+    key: any,
+    value: any,
+    ttl: CacheOptions["ttl"] | null = null
+  ) {
     key = this.createKey(key);
-    await this.engine.set(key, value, this.options.ttl);
+    await this.engine.set(key, value, ttl ?? this.options.ttl);
   }
 
-  public async setError(key: any, value: any) {
+  public async setError(
+    key: any,
+    value: any,
+    errorTtl: CacheOptions["errorTtl"] | null = null
+  ) {
     if (this.options.cacheErrors) {
       key = this.createKey(key);
-      await this.engine.set(key, value, this.options.errorTtl);
+      await this.engine.set(key, value, errorTtl ?? this.options.errorTtl);
     }
   }
 
@@ -106,11 +114,11 @@ export class CacheHandler {
     }
 
     return <InlineCacheContext>{
-      async set(result) {
-        await this.set(key, { result });
+      async set(result, ttl: CacheOptions["ttl"] | null = null) {
+        await this.set(key, { result }, ttl);
       },
-      async setError(error) {
-        await this.setError(key, { error: error?.message || error });
+      async setError(error, errorTtl: CacheOptions["errorTtl"] | null = null) {
+        await this.setError(key, { error: error?.message || error }, errorTtl);
       }
     };
   }
