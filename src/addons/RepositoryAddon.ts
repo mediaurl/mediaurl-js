@@ -6,11 +6,9 @@ import {
   RepositoryRequest
 } from "@watchedcom/schema";
 import fetch from "node-fetch";
-
 import { ActionHandlerContext, ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 import { validateAddonProps } from "../validators";
-
 import { BasicAddon } from "./BasicAddon";
 
 export type RepositoryHandlers = Pick<

@@ -1,14 +1,16 @@
 import {
-  ApiItemRequest,
-  ApiSourceRequest,
-  ApiSubtitleRequest,
   createWorkerAddon,
-  Item,
+  ItemRequest,
+  MainItem,
+  PlayableItem,
   Source,
-  Subtitle
-} from "../../../dist";
+  SourceRequest,
+  Subtitle,
+  SubtitleRequest
+} from "../../../src";
 
-const EXAMPLE_ITEMS: Item[] = [
+// Export needed for tests
+export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
@@ -38,7 +40,8 @@ type ExampleSources = {
   [k: string]: Source[];
 };
 
-const EXAMPLE_SOURCES: ExampleSources = {
+// Export needed for tests
+export const EXAMPLE_SOURCES: ExampleSources = {
   id1235: [
     {
       type: "url",
@@ -68,7 +71,8 @@ type ExampleSubtitle = {
   [k: string]: Subtitle[];
 };
 
-const EXAMPLE_SUBTITLES: ExampleSubtitle = {
+// Export needed for tests
+export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
   elephant: [
     {
       id: "vtt",
@@ -89,7 +93,7 @@ const EXAMPLE_SUBTITLES: ExampleSubtitle = {
   ]
 };
 
-const addon = createWorkerAddon({
+export const addon = createWorkerAddon({
   id: "example1",
   name: "Typescript Example Addon",
   version: "1.0.0",
@@ -101,22 +105,21 @@ const addon = createWorkerAddon({
       hasMore: false
     };
   })
-  .registerActionHandler("item", async (args: ApiItemRequest, ctx) => {
+  .registerActionHandler("item", async (args: ItemRequest, ctx) => {
     const id = args.ids["example1"];
     const item = EXAMPLE_ITEMS.find(item => item.ids["example1"] === id);
     if (!item) throw new Error("Not found");
     return item;
   })
-  .registerActionHandler("source", async (args: ApiSourceRequest, ctx) => {
+  .registerActionHandler("source", async (args: SourceRequest, ctx) => {
     const id = args.ids["example1"];
     const sources = EXAMPLE_SOURCES[id];
     return sources ?? [];
   })
-  .registerActionHandler("subtitle", async (args: ApiSubtitleRequest, ctx) => {
+  .registerActionHandler("subtitle", async (args: SubtitleRequest, ctx) => {
     // ids.id is an alias for ids["addon-id"]
     const id = args.ids.id;
+    await ctx.requestCache(id);
     const subtitles = EXAMPLE_SUBTITLES[id];
     return subtitles ?? [];
   });
-
-export default addon;

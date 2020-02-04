@@ -8,4 +8,4 @@ export {
   WorkerHandlers
 } from "./addons";
 export * from "./interfaces";
-export { createRouter, serveAddons } from "./server";
+export { createApp, createRouter, serveAddons } from "./server";

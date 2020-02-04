@@ -15,7 +15,6 @@ import {
   SubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
-
 import { BasicAddon } from "./addons";
 import { CacheHandler } from "./cache";
 import { FetchRemoteFn } from "./tasks";

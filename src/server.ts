@@ -4,7 +4,6 @@ import "express-async-errors";
 import { defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
-
 import { BasicAddon } from "./addons";
 import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
@@ -153,15 +152,16 @@ export const createRouter = (
   return router;
 };
 
-export const serveAddons = (
+export const createApp = (
   addons: BasicAddon[],
   opts?: Partial<ServeAddonsOptions>
-): { app: express.Application; listenPromise: Promise<void> } => {
+): express.Application => {
   const app = express();
   const options = defaults(opts, defaultServeOpts);
 
   if (options.logRequests) app.use(morgan("dev"));
 
+  app.set("port", options.port);
   app.set("views", path.join(__dirname, "..", "views"));
   app.set("view engine", "pug");
 
@@ -183,9 +183,18 @@ export const serveAddons = (
   app.get("/health", (req, res) => res.send("OK"));
   app.use(options.errorHandler);
 
+  return app;
+};
+
+export const serveAddons = (
+  addons: BasicAddon[],
+  opts?: Partial<ServeAddonsOptions>
+): { app: express.Application; listenPromise: Promise<void> } => {
+  const app = createApp(addons, opts);
+
   const listenPromise = new Promise<void>(resolve => {
-    app.listen(options.port, () => {
-      console.info(`Listening on ${options.port}`);
+    app.listen(() => {
+      console.info(`Listening on ${app.get("port")}`);
       resolve();
     });
   });

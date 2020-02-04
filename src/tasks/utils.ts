@@ -2,7 +2,6 @@ import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import * as uuid4 from "uuid/v4";
-
 import { CacheHandler } from "../cache";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;

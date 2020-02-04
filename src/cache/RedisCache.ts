@@ -1,6 +1,5 @@
 import * as redis from "redis";
 import { promisify } from "util";
-
 import { BasicCache } from "./BasicCache";
 
 export class RedisCache extends BasicCache {

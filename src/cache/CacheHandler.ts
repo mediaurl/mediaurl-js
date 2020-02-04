@@ -1,11 +1,9 @@
 import { createHash } from "crypto";
-
 import {
   CacheOptions,
   defaultCacheOptions,
   InlineCacheContext
 } from "../interfaces";
-
 import { BasicCache } from "./BasicCache";
 
 // Internal error which will be raised when the `inline` function had a hit

@@ -1,5 +1,5 @@
 {
   "rules": {
-    "ordered-imports": [true, { "grouped-imports": true }]
+    "ordered-imports": [true]
   }
 }

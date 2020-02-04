@@ -11,7 +11,7 @@ rl2iXzVO8gXUw97fDwIDAQAB
  * Verifies sig field
  * @param body express request body
  */
-export const validateSignature = (sig: string): void => {
+export const validateSignature = (sig: string): any => {
   if (!sig) {
     throw new Error("No sig field passed in body");
   }
