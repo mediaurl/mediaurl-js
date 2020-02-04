@@ -193,7 +193,7 @@ export const serveAddons = (
   const app = createApp(addons, opts);
 
   const listenPromise = new Promise<void>(resolve => {
-    app.listen(() => {
+    app.listen(app.get("port"), () => {
       console.info(`Listening on ${app.get("port")}`);
       resolve();
     });
