@@ -1,4 +1,5 @@
 import {
+  DirectoryRequest,
   ResolveRequest,
   ResolveResponse,
   WorkerAddon as WorkerAddonProps,
@@ -22,6 +23,10 @@ const resourceActions: WorkerAddonResourceActions[] = [
   "resolve"
 ];
 
+type WorkerAddonTestData = {
+  directory: DirectoryRequest[];
+};
+
 type ResolverHandlerFn = (
   match: RegExpExecArray,
   input: ResolveRequest,
@@ -35,6 +40,7 @@ type Resolver = {
 
 export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
   private resolvers: Resolver[];
+  private testData: WorkerAddonTestData;
 
   constructor(props: WorkerAddonProps) {
     super(props);
@@ -109,6 +115,14 @@ export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
     }
 
     return this;
+  }
+
+  public setTestData(testData: WorkerAddonTestData) {
+    this.testData = testData;
+  }
+
+  public getTestData() {
+    return this.testData;
   }
 }
 
