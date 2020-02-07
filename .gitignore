@@ -3,6 +3,8 @@ settings.json
 sandbox.js
 sandbox.ts
 
+dist
+
 # Logs
 logs
 *.log

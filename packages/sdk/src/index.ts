@@ -9,4 +9,3 @@ export {
 } from "./addons";
 export * from "./interfaces";
 export { createApp, createRouter, serveAddons } from "./server";
-export { testAddon } from "./test-addon";

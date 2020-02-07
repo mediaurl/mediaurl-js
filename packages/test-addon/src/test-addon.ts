@@ -12,8 +12,8 @@ import {
 } from "@watchedcom/schema";
 import * as assert from "assert";
 import * as request from "supertest";
-import { BasicAddon, WorkerAddon } from "./addons";
-import { createApp } from "./server";
+import { BasicAddon, WorkerAddon } from "../../sdk/src/addons";
+import { createApp } from "../../sdk/src/server";
 
 export const testAddon = (addon: BasicAddon) => {
   describe(`Addon ${addon.getId()}`, () => {

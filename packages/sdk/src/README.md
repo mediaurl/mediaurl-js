@@ -1,0 +1,3 @@
+```
+npx lerna bootstrap --hoist
+```
