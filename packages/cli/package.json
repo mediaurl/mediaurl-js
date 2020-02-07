@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.149",
     "@watchedcom/schema": "^0.7.3",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   }
 }
