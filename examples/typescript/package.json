@@ -6,10 +6,12 @@
     "build": "tsc",
     "start": "watched-sdk start --prod dist",
     "develop": "watched-sdk start src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {},
   "devDependencies": {
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
   }

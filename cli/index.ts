@@ -4,19 +4,19 @@ import { createHandler } from "./create";
 import { startHandler } from "./start";
 
 commander
+  .command("create <name>")
+  .description("Create WATCHED addon folder")
+  .option("--template <template>", "js|ts")
+  .option("--force")
+  .action(createHandler);
+
+commander
   .command("start [files...]")
   .option("--prod", "Start the server in production mode")
   .description("Start the WATCHED SDK server")
   .action((files: string, cmdObj: any) =>
     startHandler(Array.isArray(files) ? files : [files], cmdObj)
   );
-
-commander
-  .command("create <name>")
-  .description("Create WATCHED addon folder")
-  .option("--template <template>", "js|ts")
-  .option("--force")
-  .action(createHandler);
 
 commander.on("command:*", function() {
   commander.outputHelp();

@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist && tsc && chmod +x dist/cli/index.js",
-    "prepublishOnly": "npm run build"
+    "build": "tsc",
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
     "@types/express": "^4.17.2",

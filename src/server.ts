@@ -101,10 +101,11 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
           result = error.result;
         } else {
           statusCode = 500;
-          error = { error: error.error };
+          result = { error: error.error };
         }
       } else {
         if (inlineCache) await inlineCache.setError(error);
+        statusCode = 500;
         result = { error: error.message || error };
         console.warn(error);
       }

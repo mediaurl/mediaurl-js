@@ -28,7 +28,8 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
     actions: ["directory", "item"],
     itemTypes: ["movie", "series"],
     requestArgs: [],
-    lintConfig: true
+    lintConfig: true,
+    test: true
   };
 
   const userInput = await inquirer
@@ -89,6 +90,12 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
               type: "confirm",
               message: "Install linting libraries and git hooks?",
               default: defaults.lintConfig
+            },
+            {
+              name: "test",
+              type: "confirm",
+              message: "Setup automatic addon tests using jest?",
+              default: defaults.test
             }
           ]
     )

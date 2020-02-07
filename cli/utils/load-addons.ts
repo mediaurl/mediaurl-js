@@ -1,14 +1,12 @@
-import "dotenv/config";
 import { flatten, uniqBy } from "lodash";
 import * as path from "path";
-import { serveAddons } from "../src";
+import { BasicAddon } from "../../src/addons";
 
-const requireAddons = pathStr => {
+const requireAddons = (pathStr: string) => {
   const requiredFile = require(pathStr);
-
   const sources = [requiredFile, ...Object.values(requiredFile)];
 
-  const addons = sources.filter(addon => {
+  const addons: BasicAddon[] = sources.filter((addon: BasicAddon) => {
     try {
       // Make sure it's a WATCHED addon
       addon.getProps();
@@ -19,7 +17,6 @@ const requireAddons = pathStr => {
       return false;
     }
   });
-
   if (addons.length === 0) {
     throw new Error(
       `Script "${pathStr}" does not export any valid WATCHED addons.`
@@ -29,16 +26,11 @@ const requireAddons = pathStr => {
   return addons;
 };
 
-const main = () => {
-  const files = process.argv.slice(2);
+export const loadAddons = (files: string[]) => {
   if (files.length === 0) files.push(".");
   const cwd = process.cwd();
-  const addons = uniqBy(
+  return uniqBy(
     flatten(files.map(file => requireAddons(path.resolve(cwd, file)))),
     addon => addon
   );
-
-  serveAddons(addons);
 };
-
-main();

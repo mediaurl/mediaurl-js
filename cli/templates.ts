@@ -47,6 +47,18 @@ ${indexHandlers(addonVar, actions)}
   return content;
 };
 
+const tsIndexTest = input => {
+  const { name } = input;
+  const addonVar = `${name}Addon`;
+  const content = `import { testAddon } from "@watchedcom/sdk";
+import { ${addonVar} } from "./index";
+
+testAddon(${addonVar});
+`;
+
+  return content;
+};
+
 const jsIndex = input => {
   const { name, actions } = input;
   const addonVar = `${name}Addon`;
@@ -61,6 +73,18 @@ const ${addonVar} = createWorkerAddon(${JSON.stringify(
 ${indexHandlers(addonVar, actions)}
 
 module.exports = ${addonVar};
+`;
+
+  return content;
+};
+
+const jsIndexTest = input => {
+  const { name } = input;
+  const addonVar = `${name}Addon`;
+  const content = `const { testAddon } = require("@watchedcom/sdk");
+const ${addonVar} = require("./index");
+
+testAddon(${addonVar});
 `;
 
   return content;
@@ -97,18 +121,21 @@ const packageJson = input => {
     scripts: {
       build: ts ? "tsc -p ." : undefined,
       start: "watched-sdk start --prod",
-      develop: "watched-sdk start"
+      develop: "watched-sdk start",
+      test: input.test ? "jest" : undefined
     },
     dependencies: {
       "@watchedcom/sdk": "latest"
     }
   };
+
   if (ts) {
     data.devDependencies = {
       ...data.devDependencies,
       typescript: "latest"
     };
   }
+
   if (input.lintConfig) {
     data.devDependencies = {
       ...data.devDependencies,
@@ -127,6 +154,21 @@ const packageJson = input => {
         "*.{js,ts,tsx,css,md}": ["prettier --write", "git add"]
       }
     };
+  }
+
+  if (input.test) {
+    data.devDependencies = {
+      ...data.devDependencies,
+      jest: "latest",
+      supertest: "latest"
+    };
+    if (ts) {
+      data.devDependencies = {
+        ...data.devDependencies,
+        "ts-jest": "latest",
+        "@types/jest": "latest"
+      };
+    }
   }
 
   return JSON.stringify(data, null, 2);
@@ -152,13 +194,24 @@ type TemplateMap = {
   };
 };
 
+const jestConfig = input => {
+  if (!input.test) return "";
+  const preset = input.template === "ts" ? "typescript" : "javascript";
+  return `module.exports = {
+  preset: "./node_modules/@watchedcom/sdk/jest/${preset}.js",
+};
+`;
+};
+
 export const templateMap: TemplateMap = {
   js: {
     "README.md": readme,
     "package.json": packageJson,
     ".gitignore": ["node_modules", ".env"].join("\n"),
     ".env.example": envExample,
-    "src/index.js": jsIndex
+    "jest.config.js": jestConfig,
+    "src/index.js": jsIndex,
+    "src/index.test.js": jsIndexTest
   },
   ts: {
     "README.md": readme,
@@ -166,6 +219,8 @@ export const templateMap: TemplateMap = {
     ".gitignore": ["node_modules", ".env", "dist"].join("\n"),
     ".env.example": envExample,
     "tsconfig.json": tsConfigJson,
-    "src/index.ts": tsIndex
+    "jest.config.js": jestConfig,
+    "src/index.ts": tsIndex,
+    "src/index.test.ts": tsIndexTest
   }
 };
