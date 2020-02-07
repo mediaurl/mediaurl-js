@@ -53,6 +53,9 @@ const tsIndexTest = input => {
   const content = `import { testAddon } from "@watchedcom/sdk";
 import { ${addonVar} } from "./index";
 
+// Depending on your addon, change the test timeout
+jest.setTimeout(30000);
+
 testAddon(${addonVar});
 `;
 
@@ -83,6 +86,9 @@ const jsIndexTest = input => {
   const addonVar = `${name}Addon`;
   const content = `const { testAddon } = require("@watchedcom/sdk");
 const ${addonVar} = require("./index");
+
+// Depending on your addon, change the test timeout
+jest.setTimeout(30000);
 
 testAddon(${addonVar});
 `;

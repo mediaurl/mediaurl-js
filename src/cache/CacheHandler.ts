@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import {
   CacheOptions,
+  CacheOptionsParam,
   defaultCacheOptions,
   InlineCacheContext
 } from "../interfaces";
@@ -11,19 +12,35 @@ export class CacheFoundError {
   constructor(public result: any, public error: null | Error) {}
 }
 
+const handleOptions = (options?: CacheOptionsParam) => {
+  if (typeof options === "number") {
+    return { ttl: options, errorTtl: options / 2 };
+  }
+  return options;
+};
+
 export class CacheHandler {
   public options: CacheOptions;
 
-  constructor(private engine: BasicCache, options?: Partial<CacheOptions>) {
-    this.options = { ...defaultCacheOptions, ...options };
+  constructor(private engine: BasicCache, options?: CacheOptionsParam) {
+    this.options = {
+      ...defaultCacheOptions,
+      ...handleOptions(options)
+    };
   }
 
-  public clone(options?: Partial<CacheOptions>) {
-    return new CacheHandler(this.engine, { ...this.options, ...options });
+  public clone(options?: CacheOptionsParam) {
+    return new CacheHandler(this.engine, {
+      ...this.options,
+      ...handleOptions(options)
+    });
   }
 
-  public setOptions(options: Partial<CacheOptions>) {
-    this.options = { ...this.options, ...options };
+  public setOptions(options: CacheOptionsParam) {
+    this.options = {
+      ...this.options,
+      ...handleOptions(options)
+    };
   }
 
   public createKey(key: any) {

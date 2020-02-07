@@ -1,5 +1,7 @@
 import {
+  DirectoryItem,
   DirectoryRequest,
+  PlayableItem,
   ResolveRequest,
   ResolveResponse,
   WorkerAddon as WorkerAddonProps,
@@ -24,7 +26,8 @@ const resourceActions: WorkerAddonResourceActions[] = [
 ];
 
 type WorkerAddonTestData = {
-  directory: DirectoryRequest[];
+  directories?: DirectoryItem[];
+  items?: PlayableItem[];
 };
 
 type ResolverHandlerFn = (
@@ -40,7 +43,7 @@ type Resolver = {
 
 export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
   private resolvers: Resolver[];
-  private testData: WorkerAddonTestData;
+  private testData: WorkerAddonTestData = {};
 
   constructor(props: WorkerAddonProps) {
     super(props);

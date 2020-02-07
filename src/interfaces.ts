@@ -46,10 +46,12 @@ export type InlineCacheContext = {
   ) => Promise<void>;
 };
 
+export type CacheOptionsParam = Partial<CacheOptions> | number;
+
 export type RequestCacheFn = (
   // Data which will be used as the key for caching. Defaults to the full request data.
   key?: any,
-  options?: Partial<CacheOptions>
+  options?: CacheOptionsParam
 ) => Promise<void>;
 
 export interface ActionHandlerContext<

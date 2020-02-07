@@ -3,6 +3,7 @@ import {
   DirectoryItem,
   DirectoryRequest,
   ItemRequest,
+  MainItem,
   PlayableItem,
   RepositoryRequest,
   SourceRequest,
@@ -11,7 +12,7 @@ import {
 } from "@watchedcom/schema";
 import * as assert from "assert";
 import * as request from "supertest";
-import { BasicAddon } from "./addons";
+import { BasicAddon, WorkerAddon } from "./addons";
 import { createApp } from "./server";
 
 export const testAddon = (addon: BasicAddon) => {
@@ -44,8 +45,15 @@ export const testAddon = (addon: BasicAddon) => {
       });
     } else if (type === "worker") {
       test("worker actions", async done => {
-        const directories: DirectoryItem[] = [];
-        const items: PlayableItem[] = [];
+        const testData = (<WorkerAddon>addon).getTestData();
+        const directories = [...(testData.directories ?? [])];
+        const items = [...(testData.items ?? [])];
+
+        const addItem = (item: MainItem) => {
+          if (item.type === "directory" && directories.length < 10)
+            directories.push(item);
+          else if (items.length < 10) items.push(<PlayableItem>item);
+        };
 
         if (addon.getProps().actions.includes("directory")) {
           console.log('directory "root"');
@@ -57,13 +65,11 @@ export const testAddon = (addon: BasicAddon) => {
             })
             .expect(200);
           assert(!!res.body.items);
-          for (const item of res.body.items) {
-            if (item.type === "directory") directories.push(item);
-            else items.push(item);
-          }
+          res.body.items.forEach(addItem);
+          console.log(`subtitle "root": Found ${res.body.items.length}`);
 
           for (const directory of directories) {
-            console.log(`directory "${directory.id}"`);
+            console.log(`directory "${directory.name}"`);
             const res = await app
               .post(`/${addon.getId()}/directory`)
               .send(<DirectoryRequest>{
@@ -72,10 +78,10 @@ export const testAddon = (addon: BasicAddon) => {
               })
               .expect(200);
             assert(!!res.body.items);
-            for (const item of res.body.items) {
-              if (item.type === "directory") directories.push(item);
-              else items.push(item);
-            }
+            res.body.items.forEach(addItem);
+            console.log(
+              `subtitle "${directory.name}": Found ${res.body.items.length}`
+            );
           }
         }
 
@@ -115,6 +121,7 @@ export const testAddon = (addon: BasicAddon) => {
               .post(`/${addon.getId()}/item`)
               .send(itemRequest(item))
               .expect(200);
+            console.log(`item "${item.name}": Found ${!!res.body}`);
           }
         }
 
@@ -125,6 +132,7 @@ export const testAddon = (addon: BasicAddon) => {
               .post(`/${addon.getId()}/source`)
               .send(sourceRequest(item))
               .expect(200);
+            console.log(`source "${item.name}": Found ${res.body.length}`);
           }
         }
 
@@ -135,6 +143,7 @@ export const testAddon = (addon: BasicAddon) => {
               .post(`/${addon.getId()}/subtitle`)
               .send(sourceRequest(item))
               .expect(200);
+            console.log(`subtitle "${item.name}": Found ${res.body.length}`);
           }
         }
 
