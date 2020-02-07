@@ -1,6 +1,7 @@
 {
   "name": "@watchedcom/cli",
   "main": "dist",
+  "version": "0.0.0",
   "bin": {
     "watched-sdk": "./"
   },

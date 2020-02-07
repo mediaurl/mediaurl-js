@@ -1,5 +1,6 @@
 {
   "name": "@watchedcom/test-addon",
+  "version": "0.0.0",
   "dependencies": {
     "@watchedcom/sdk": "^0.8.0"
   },
