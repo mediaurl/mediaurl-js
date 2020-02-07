@@ -3,7 +3,7 @@
   "main": "dist",
   "version": "0.9.0",
   "bin": {
-    "watched-sdk": "./"
+    "watched-sdk": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc"
