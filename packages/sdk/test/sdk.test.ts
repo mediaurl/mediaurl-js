@@ -4,8 +4,7 @@ import {
   createRepositoryAddon,
   createRouter,
   createWorkerAddon,
-  serveAddons,
-  testAddon
+  serveAddons
 } from "../src";
 
 const exported = [
@@ -14,8 +13,7 @@ const exported = [
   createBundleAddon,
   createRouter,
   createApp,
-  serveAddons,
-  testAddon
+  serveAddons
 ];
 
 test("SDK should export all needed methods and properties", () => {

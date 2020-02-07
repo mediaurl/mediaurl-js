@@ -1,5 +1,4 @@
 import * as request from "supertest";
-import * as addon from "../examples/typescript/src/example1";
 import {
   AddonRequest,
   createApp,
@@ -7,6 +6,7 @@ import {
   ItemRequest,
   SourceRequest
 } from "../src";
+import * as addon from "./example-addon";
 
 const requestEnd = (done: (err?: Error) => void, log: boolean = false) => (
   err: Error,

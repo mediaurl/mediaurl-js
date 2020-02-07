@@ -35,10 +35,11 @@
     "@types/morgan": "^1.7.37",
     "@types/node-fetch": "^2.5.4",
     "@types/redis": "^2.8.14",
+    "@types/supertest": "^2.0.8",
     "@types/uuid": "^3.4.6",
     "jest": "^25.1.0",
+    "supertest": "^4.0.2",
     "ts-jest": "^25.2.0",
-    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
   "lint-staged": {
