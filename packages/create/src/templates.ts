@@ -47,16 +47,20 @@ ${indexHandlers(addonVar, actions)}
   return content;
 };
 
+const testHandler = addonVar => `// Depending on your addon, change the test timeout
+jest.setTimeout(30000);
+
+test("Test addon ${addonVar}", done => {
+  testAddon(${addonVar}).then(done).catch(done);
+});`;
+
 const tsIndexTest = input => {
   const { name } = input;
   const addonVar = `${name}Addon`;
-  const content = `import { testAddon } from "@watchedcom/sdk";
+  const content = `import { testAddon } from "@watchedcom/test";
 import { ${addonVar} } from "./index";
 
-// Depending on your addon, change the test timeout
-jest.setTimeout(30000);
-
-testAddon(${addonVar});
+${testHandler(addonVar)}
 `;
 
   return content;
@@ -87,10 +91,7 @@ const jsIndexTest = input => {
   const content = `const { testAddon } = require("@watchedcom/sdk");
 const ${addonVar} = require("./index");
 
-// Depending on your addon, change the test timeout
-jest.setTimeout(30000);
-
-testAddon(${addonVar});
+${testHandler(addonVar)}
 `;
 
   return content;
@@ -167,7 +168,7 @@ const packageJson = input => {
       ...data.devDependencies,
       jest: "latest",
       supertest: "latest",
-      "@watchedcom/addon-test": "latest"
+      "@watchedcom/test": "latest"
     };
     if (ts) {
       data.devDependencies = {
@@ -205,7 +206,7 @@ const jestConfig = input => {
   if (!input.test) return "";
   const preset = input.template === "ts" ? "typescript" : "javascript";
   return `module.exports = {
-  preset: "./node_modules/@watchedcom/addon-test/jest-presets/${preset}.js",
+  preset: "./node_modules/@watchedcom/test/jest-presets/${preset}.js",
 };
 `;
 };

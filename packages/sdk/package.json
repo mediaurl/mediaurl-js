@@ -2,15 +2,14 @@
   "name": "@watchedcom/sdk",
   "description": "WATCHED.com Javascript SDK",
   "version": "0.9.1",
-  "repository": "https://github.com/watchedcom/sdk-javascript",
   "main": "dist",
+  "bin": {
+    "watched-sdk": "dist/scripts/index.js"
+  },
   "scripts": {
     "test": "jest",
     "build": "tsc",
     "prepublishOnly": "rm -rf dist && npm run build"
-  },
-  "bin": {
-    "watched-sdk": "dist/scripts/index.js"
   },
   "dependencies": {
     "@types/express": "^4.17.2",
