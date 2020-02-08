@@ -50,8 +50,10 @@ ${indexHandlers(addonVar, actions)}
 const testHandler = addonVar => `// Depending on your addon, change the test timeout
 jest.setTimeout(30000);
 
-test("Test addon ${addonVar}", done => {
-  testAddon(${addonVar}).then(done).catch(done);
+test(\`Test addon "\${${addonVar}.getId()}"\`, done => {
+  testAddon(${addonVar})
+    .then(done)
+    .catch(done);
 });`;
 
 const tsIndexTest = input => {
@@ -126,7 +128,7 @@ const packageJson = input => {
     version: "1.0.0",
     main: ts ? "dist" : "src/index.js",
     scripts: {
-      build: ts ? "tsc -p ." : undefined,
+      build: ts ? "tsc" : undefined,
       start: "watched-sdk start --prod",
       develop: "watched-sdk start",
       test: input.test ? "jest" : undefined

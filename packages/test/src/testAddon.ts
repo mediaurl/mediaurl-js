@@ -26,7 +26,7 @@ export const testAddon = async (addon: BasicAddon) => {
   await app
     .post(`/${addon.getId()}/addon`)
     .send(<AddonRequest>{ ...requestDefaults })
-    .expect(200, addon.getProps());
+    .expect(200);
 
   const type = addon.getType();
 
