@@ -166,7 +166,8 @@ const packageJson = input => {
     data.devDependencies = {
       ...data.devDependencies,
       jest: "latest",
-      supertest: "latest"
+      supertest: "latest",
+      "@watchedcom/addon-test": "latest"
     };
     if (ts) {
       data.devDependencies = {
@@ -204,7 +205,7 @@ const jestConfig = input => {
   if (!input.test) return "";
   const preset = input.template === "ts" ? "typescript" : "javascript";
   return `module.exports = {
-  preset: "./node_modules/@watchedcom/sdk/jest/${preset}.js",
+  preset: "./node_modules/@watchedcom/addon-test/jest-presets/${preset}.js",
 };
 `;
 };
