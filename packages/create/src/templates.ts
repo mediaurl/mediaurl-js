@@ -57,6 +57,7 @@ test(\`Test addon "\${${addonVar}.getId()}"\`, done => {
 });`;
 
 const tsIndexTest = input => {
+  if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
   const content = `import { testAddon } from "@watchedcom/test";
@@ -88,6 +89,7 @@ module.exports = ${addonVar};
 };
 
 const jsIndexTest = input => {
+  if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
   const content = `const { testAddon } = require("@watchedcom/sdk");
