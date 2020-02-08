@@ -5,7 +5,6 @@ import * as path from "path";
 export const forkEntrypoint = (
   files: string[],
   isProduction: boolean = false,
-  entrypoint: string,
   execBin: string,
   execArgv?: string[]
 ) => {
@@ -25,7 +24,7 @@ export const forkEntrypoint = (
     files.push(guessTsMain(cwd));
   }
 
-  const scriptPath = path.resolve(__dirname, "..", entrypoint);
+  const scriptPath = path.resolve(__dirname, "start-entrypoint");
   const execPath = path.resolve(cwd, "node_modules", ".bin", execBin);
   console.warn(scriptPath, files);
 

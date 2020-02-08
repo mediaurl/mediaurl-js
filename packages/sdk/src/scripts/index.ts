@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 import * as commander from "commander";
-import { createHandler } from "./create";
-import { startHandler } from "./start";
+import { forkEntrypoint } from "./utils/fork-entrypoint";
 
-commander
-  .command("create <name>")
-  .description("Create WATCHED addon folder")
-  .option("--template <template>", "js|ts")
-  .option("--force")
-  .action(createHandler);
+export const startHandler = (files: string[], cmdObj: any) => {
+  forkEntrypoint(files, cmdObj.prod, "ts-node-dev", [
+    "--no-notify",
+    "--transpileOnly"
+  ]);
+};
 
 commander
   .command("start [files...]")

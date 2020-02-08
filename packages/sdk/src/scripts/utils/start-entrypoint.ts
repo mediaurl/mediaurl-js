@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { serveAddons } from "../src";
-import { loadAddons } from "./utils/load-addons";
+import { serveAddons } from "../..";
+import { loadAddons } from "./load-addons";
 
 const main = () => {
   const files = process.argv.slice(2);
