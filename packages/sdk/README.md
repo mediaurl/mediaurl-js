@@ -7,7 +7,7 @@ With the WATCHED.com nodejs SDK you easily can create your own addons.
 1. Create a new addon with our wizard:
 
    ```shell
-   npm @watchedcom/sdk create my-addon
+   npx @watchedcom/create my-addon
    ```
 
    Follow the steps of the wizard. We strongly recommend to use the `typescript` template, but you also can stick to raw javascript instead.
