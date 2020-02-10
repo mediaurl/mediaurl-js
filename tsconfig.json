@@ -1,9 +1,6 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "strictNullChecks": true,
-    "declaration": true,
-    "outDir": "dist"
-  },
-  "include": ["cli", "src"]
+    "compilerOptions": {
+        "target": "es5",
+        "strictNullChecks": true
+    }
 }
