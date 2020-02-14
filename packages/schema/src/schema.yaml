@@ -1,0 +1,1254 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+definitions:
+  UnixTimestamp:
+    type: number
+    minimum: 0
+  Year:
+    type: number
+    # minimum: 0
+    # maximum: 3000
+  TranslatedText:
+    description: |
+      Text which can be translated to various locales.
+      Either specify a simple string, or an object in the form
+      of `{"en": "Some text", "de": "Anderer Text"}`.
+    oneOf:
+      - type: string
+      - type: object
+        additionalProperties: false
+        patternProperties:
+          "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
+            type: string
+  Url:
+    type: string
+  ImageShape:
+    description: Shape of an image.
+    type: string
+    enum: [regular, square, landscape]
+    default: regular
+  Image:
+    description: Definition of an image.
+    $ref: "#/definitions/Url"
+  Country:
+    description: Country in ISO-3166-1 format.
+    anyOf:
+      - type: string
+        pattern: "^[A-Z]{2}$"
+      - type: string
+  Regions:
+    type: object
+    properties:
+      allowed:
+        description: |
+          Allowed regions. If the array is empty, it's
+          considered as available everywhere.
+        type: array
+        items:
+          $ref: "#/definitions/Country"
+          default: []
+      forbidden:
+        description: |
+          Forbidden regions.
+        type: array
+        items:
+          $ref: "#/definitions/Country"
+        default: []
+    additionalProperties: false
+    default: {}
+  GenericId:
+    description: A ID for an object. Can be numeric or a string.
+    anyOf:
+      - type: number
+      - type: string
+  Language:
+    description: Language in ISO-639-1 format.
+    type: string
+    pattern: "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$"
+  Subtitle:
+    description: Subtitles for sources.
+    type: object
+    properties:
+      id:
+        description:
+          ID of this subtitle. By default the `url` is used. In some cases
+          the `url` parameter changes on every call, so `id` is needed
+          to prevent duplicate subtitles in the app.
+        $ref: "#/definitions/GenericId"
+      name:
+        description: Optional informations about this subtitle.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      language:
+        $ref: "#/definitions/Language"
+      type:
+        description: Subtitle type.
+        type: string
+        enum: [srt, ttml, vtt]
+      url:
+        $ref: "#/definitions/Url"
+    required: [language, type, url]
+  Source:
+    description: |
+      A source defines a location where the item can be viewed.
+      This can be a link to a stream or an external link to a website.
+      Some links need pre-processing before they can be played. For that,
+      please see the `resolve` function.
+    type: object
+    properties:
+      type:
+        description: Type of this source. Can be `url` or `externalUrl`.
+        type: string
+        enum: [url, externalUrl]
+        default: url
+      id:
+        description:
+          ID of this source. By default the `url` is used. In some cases
+          the `url` parameter changes on every call, so `id` is needed
+          to prevent duplicate sources in the app.
+        $ref: "#/definitions/GenericId"
+      url:
+        description: URL to this source.
+        $ref: "#/definitions/Url"
+      name:
+        description: Optional name of this source.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      logo:
+        description: Logo which will be displayed in the source list.
+        $ref: "#/definitions/Image"
+      language:
+        description: |
+          If this source is only available in one language,
+          you can set it here.
+        $ref: "#/definitions/Language"
+      subtitles:
+        type: array
+        items:
+          $ref: "#/definitions/Subtitle"
+      subtitlesExclusive:
+        description: |
+          If true, only this subtitles are offered to the user.
+          The app will not try to find more subtitles via other addons.
+        type: boolean
+        default: false
+      infos:
+        description: |
+          Infos displayed for this source. This is optional
+          and mostly used for type `externalUrl`.
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [free, subscription, rent, purchase]
+              default: free
+            label:
+              type: string
+            currency:
+              type: string
+              pattern: "^[A-Z]{3}$"
+            price:
+              type: number
+          required: [type]
+        default: []
+      regions:
+        $ref: "#/definitions/Regions"
+    required: [type, url]
+  ItemTypes:
+    description: Valid item types.
+    type: string
+    enum: [directory, movie, series, channel, iptv]
+  AllItemTypes:
+    description: Valid item types.
+    oneOf:
+      - $ref: "#/definitions/ItemTypes"
+      - type: string
+        enum: [episode]
+  ItemImages:
+    description: Item images.
+    type: object
+    properties:
+      logo:
+        $ref: "#/definitions/Image"
+      poster:
+        $ref: "#/definitions/Image"
+      backdrop:
+        $ref: "#/definitions/Image"
+      background:
+        $ref: "#/definitions/Image"
+  DirectoryOptions:
+    description: Options on how to display images.
+    type: object
+    additionalProperties: false
+    properties:
+      imageShape:
+        description: |
+          Shape of the images.
+          If not set, a value depening on the item type is used.
+        $ref: "#/definitions/ImageShape"
+      displayName:
+        description: |
+          Display the item name over the image.
+          If not set, a value depening on the item type is used.
+        type: boolean
+  VirtualDirectoryItem:
+    type: object
+    properties:
+      id:
+        description: ID of this directory item.
+        $ref: "#/definitions/GenericId"
+        default: ""
+      name:
+        description: Name of item.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      description:
+        description: Description of item.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      images:
+        $ref: "#/definitions/ItemImages"
+      itemTypes:
+        description: |
+          Item types returned by this directory. If not set,
+          it will fallback to the addon item types.
+        type: array
+        items:
+          $ref: "#/definitions/ItemTypes"
+      options:
+        $ref: "#/definitions/DirectoryOptions"
+      features:
+        description: Directory features.
+        oneOf:
+          - $ref: "#/definitions/DirectoryFeatures"
+      args:
+        oneOf:
+          - $ref: "#/definitions/DirectoryArguments"
+        default: {}
+    required: [id]
+  DirectoryItem:
+    description: An item which points to a directory.
+    type: object
+    allOf:
+      - $ref: "#/definitions/VirtualDirectoryItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [directory]
+        required: [type]
+  ItemIDs:
+    description: |
+      Different IDs assigned to this item, for example
+      `{ imdb_id: tt1234567, tmdb_id: 1234 }`.
+      For most addons, it is recommended to use the addon
+      ID as key for `ids`, for example:
+      `{ 'example.com-addon': 'someid12345' }`.
+      However, the key `id` will be internally translated to
+      the addon ID, so `{ id: 'someid12345' }` is the same
+      as above.
+    type: object
+    patternProperties:
+      string:
+        $ref: "#/definitions/GenericId"
+  VirtualItem:
+    type: object
+    properties:
+      ids:
+        $ref: "#/definitions/ItemIDs"
+      name:
+        description: Name of item.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      description:
+        description: Description of item.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      releaseDate:
+        description: Release date as unix timestamp or parseable string.
+        oneOf:
+          - $ref: "#/definitions/UnixTimestamp"
+          - type: string
+      images:
+        $ref: "#/definitions/ItemImages"
+      videos:
+        description: List of videos like trailers or interviews.
+        type: array
+        items:
+          $ref: "#/definitions/Source"
+        default: []
+      sources:
+        description: List of source objects.
+        type: array
+        items:
+          $ref: "#/definitions/Source"
+        default: []
+    required: [ids]
+  VirtualMovieItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          year:
+            description: Production year. If not provided, releaseDate will be used.
+            $ref: "#/definitions/Year"
+          runtime:
+            description: Runtime in miliseconds.
+            $ref: "#/definitions/UnixTimestamp"
+          production:
+            description: Production compnaies.
+            type: array
+            items:
+              type: string
+            default: []
+          countries:
+            description: Country list in ISO-3166-1 format.
+            type: array
+            items:
+              $ref: "#/definitions/Country"
+            default: []
+          spokenLanguages:
+            description: List of spoken languages in ISO-639-1 format.
+            type: array
+            items:
+              $ref: "#/definitions/Language"
+            default: []
+          genres:
+            description: Genre list.
+            type: array
+            items:
+              type: string
+            default: []
+          writer:
+            description: List of writers.
+            type: array
+            items:
+              type: string
+            default: []
+          director:
+            description: List of directors.
+            type: array
+            items:
+              type: string
+            default: []
+          cast:
+            description: List of cast.
+            type: array
+            items:
+              oneOf:
+                - type: string
+                - type: object
+                  additionalProperties: false
+                  properties:
+                    name:
+                      type: string
+                    gender:
+                      type: string
+                    character:
+                      type: string
+                  required: [name]
+            default: []
+          homepage:
+            description: Homepage.
+            type: string
+          awards:
+            description: Status about any awards.
+            type: string
+          ratings:
+            description: Object with different rating values.
+            type: object
+  MovieItem:
+    allOf:
+      - $ref: "#/definitions/VirtualMovieItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [movie]
+        required: [type]
+  SeriesItem:
+    allOf:
+      - $ref: "#/definitions/VirtualMovieItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [series]
+          episodes:
+            description: List of episode objects.
+            type: array
+            items:
+              $ref: "#/definitions/SeriesEpisodeItem"
+        required: [type]
+  SeriesEpisodeItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          season:
+            description: Season number. For specials, use 0.
+            type: number
+            minimum: 0
+            maximum: 100000
+          episode:
+            description: Episode number.
+            type: number
+            minimum: 0
+            maximum: 100000
+        required: [season, episode]
+  ChannelItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [channel]
+        required: [type]
+  IptvItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [iptv]
+          epg:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  description: Start timestamp in UTC seconds.
+                  $ref: "#/definitions/UnixTimestamp"
+                stop:
+                  description: Stop timestamp in UTC seconds.
+                  $ref: "#/definitions/UnixTimestamp"
+                name:
+                  description: Name of the show.
+                  oneOf:
+                    - $ref: "#/definitions/TranslatedText"
+                description:
+                  $ref: "#/definitions/TranslatedText"
+                categories:
+                  type: array
+                  items:
+                    $ref: "#/definitions/TranslatedText"
+                poster:
+                  $ref: "#/definitions/Image"
+              required: [start, stop, name]
+            default: []
+        required: [type]
+  # Item:
+  #   description: All items, including `Directory`.
+  #   anyOf:
+  #     - $ref: "#/definitions/DirectoryItem"
+  #     - $ref: "#/definitions/MovieItem"
+  #     - $ref: "#/definitions/SeriesItem"
+  #     - $ref: "#/definitions/ChannelItem"
+  #     - $ref: "#/definitions/IptvItem"
+  PlayableItem:
+    description: All items which could be played, excludes `Directory`.
+    anyOf:
+      - $ref: "#/definitions/MovieItem"
+      - $ref: "#/definitions/SeriesItem"
+      - $ref: "#/definitions/ChannelItem"
+      - $ref: "#/definitions/IptvItem"
+  MainItem:
+    description: All items, including `Directory`.
+    anyOf:
+      - $ref: "#/definitions/DirectoryItem"
+      - $ref: "#/definitions/PlayableItem"
+  SubItem:
+    anyOf:
+      - $ref: "#/definitions/SeriesEpisodeItem"
+  CompatibleDirectoryFeature:
+    description: List of compatible filters or sort keys, if not set, all will be used.
+    type: array
+    items:
+      type: string
+  DirectoryFeatures:
+    description: Directory features like search, sort and filter.
+    type: object
+    additionalProperties: false
+    properties:
+      search:
+        description: Search options.
+        type: object
+        additionalProperties: false
+        properties:
+          enabled:
+            type: boolean
+            default: false
+          compatibleSort:
+            $ref: "#/definitions/CompatibleDirectoryFeature"
+          compatibleFilter:
+            $ref: "#/definitions/CompatibleDirectoryFeature"
+      sort:
+        description: Different sort columns and their caption including translations.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              $ref: "#/definitions/GenericId"
+            name:
+              $ref: "#/definitions/TranslatedText"
+            compatibleFilter:
+              $ref: "#/definitions/CompatibleDirectoryFeature"
+      filter:
+        description: Different sort column and their caption including translations.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              $ref: "#/definitions/GenericId"
+            name:
+              $ref: "#/definitions/TranslatedText"
+            multiselect:
+              description: If this is true, an array will be returned
+              type: boolean
+              default: false
+            values:
+              description: Values used by filters (Genres, countries, ...).
+              type: array
+              items:
+                oneOf:
+                  - type: object
+                    additionalProperties: false
+                    properties:
+                      key:
+                        type: string
+                      value:
+                        $ref: "#/definitions/TranslatedText"
+                    required: [key, value]
+                  - $ref: "#/definitions/TranslatedText"
+            defaultValue:
+              description: |
+                Default value of this filter, should be TranslatedText or
+                the key of a filter. Have to be one of `values`.
+              anyOf:
+                - $ref: "#/definitions/TranslatedText"
+                - type: string
+          required: [id, name, values]
+  AddonTypes:
+    description: Valid addon types.
+    type: string
+    enum: [repository, worker, iptv, bundle]
+  BasicAddonActions:
+    type: string
+    enum: [addon]
+  RepositoryAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+      - type: string
+        enum: [repository]
+  WorkerAddonResourceActions:
+    type: string
+    enum: [directory, item, source, subtitle, resolve]
+  WorkerAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+      - $ref: "#/definitions/WorkerAddonResourceActions"
+  IptvAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+  BundleAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+  VirtualAddon:
+    type: object
+    properties:
+      id:
+        description: ID of this addon.
+        type: string
+      name:
+        description: Name of this addon, optionally localized.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      version:
+        description: Version in semver format.
+        type: string
+        example: "1.0.0"
+      logo:
+        description: Addon logo, can be a relative path to the addon URL.
+        $ref: "#/definitions/Image"
+      homepage:
+        description: Homepage.
+        $ref: "#/definitions/Url"
+      description:
+        description: Short description of this addon.
+        oneOf:
+          - $ref: "#/definitions/TranslatedText"
+      flags:
+        description: Flags.
+        type: object
+        properties:
+          adult:
+            description: Have to be `true` if this addon provides adult content.
+            type: boolean
+        default:
+          adult: false
+      regions:
+        description: Regions where this addon is available
+        $ref: "#/definitions/Regions"
+      metadata:
+        description: Internally used.
+        type: object
+    required: [id, name, version]
+  RepositoryAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [repository]
+        required: [type]
+  WorkerAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [worker]
+          actions:
+            description: |
+              Worker addon actions.
+              If the action `directory` is set, but no `dashboards`
+              are defined, the app will create a default dashboard.
+            type: array
+            items:
+              $ref: "#/definitions/WorkerAddonResourceActions"
+          itemTypes:
+            description: |
+              Item types this addon provised.
+              This is needed for the actions `directory`, `item`,
+              `source` and `subtitle`.
+            type: array
+            items:
+              $ref: "#/definitions/ItemTypes"
+            default: []
+          requestArgs:
+            description: |
+              Required item properties for `item`, `source`
+              and `subtitle` requests. See `ItemRequest`
+              for a list of supported keys. All keys except
+              `name`, `year`, `releaseDate`, `season` and `episode`
+              are treated as an ID. Use an array to require a
+              combination of keys.
+              Example:
+                [
+                  "id/tmdb", // Need item.ids.tmdb
+                  "id/imdb_id", // Need item.ids.tmdb
+                  "otherid", // Need item.ids.otherid
+                  ["name", "year"], // Need item.name and item.year
+                  ["name", "releaseDate"], // Need item.name and item.releaseDate
+                ]
+              By default an ID named after `Addon.id` will be matched as well.
+              type: array
+            items:
+              oneOf:
+                - type: array
+                  items:
+                    type: string
+                - type: string
+            default: []
+          urlPatterns:
+            description: |
+              URL patterns which match against `Source.url` URL's.
+              If a pattern matches, the addon's `resolve` action is called.
+              By default all URL's matching the pattern `{addonId}://` will
+              call your addon.
+            type: array
+            items:
+              type: string
+            default: []
+          defaultDirectoryOptions:
+            $ref: "#/definitions/DirectoryOptions"
+          defaultDirectoryFeatures:
+            $ref: "#/definitions/DirectoryFeatures"
+          dashboards:
+            description: |
+              Predefined dashboards. This dashboards get's updated
+              when the addon is updated, the dashboard configuration
+              is preserved.
+            type: array
+            items:
+              allOf:
+                - $ref: "#/definitions/VirtualDirectoryItem"
+                - type: object
+                  properties:
+                    config:
+                      $ref: "#/definitions/DashboardConfig"
+            default: []
+        required: [type, actions]
+  IptvAddon:
+    description: |
+      Model for the IPTV engine. This is internally converted
+      to a worker addon.
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [iptv]
+          url:
+            description: URL to the playlist.
+            $ref: "#/definitions/Url"
+          refreshInterval:
+            description: Playlist refresh interval in hours.
+            type: number
+            minimum: 1
+            maximum: 1000
+            default: 12
+        required: [type, url]
+  BundleAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [bundle]
+          requirements:
+            description: |
+              List of required addons.
+              The values can be a URL to an addon, an addon ID
+              or an addon ID with engine definition.
+              Eg:
+              - https://example.com/watched/v1/some.addon.id
+              - https://example.com/watched/v1/another.addon.id
+              - stremio/https://example.com/watched/stremioaddon/manifest.json
+              - addon.id.that.exists.in.an.avaliable.repository
+              - stremio/another.engine.addon
+              - { "engine": "stremio", "id": "addon.id" }
+              - { "engine": "watched", "id": "watched.addon.id" }
+              - { "id": "another.watched.addon.id" }
+              - { "engine": "stremio", "url": "https://exmaple.com/link/to/stremio/addon" }
+            type: array
+            items:
+              oneOf:
+                - type: string
+                - type: object
+                  properties:
+                    engine:
+                      type: string
+                      enum: [watched, stremio]
+                      default: watched
+                    id:
+                      $ref: "#/definitions/GenericId"
+                    url:
+                      $ref: "#/definitions/Url"
+          dashboards:
+            description: |
+              Predefined dashboards. This dashboards get's applied only
+              once during bundle installation.
+            type: array
+            items:
+              allOf:
+                - $ref: "#/definitions/VirtualDirectoryItem"
+                - type: object
+                  properties:
+                    addonId:
+                      description: |
+                        If this dashboard should be executed with another addon,
+                        specify the ID here.
+                      type: string
+                    id:
+                      description: |
+                        ID of this dashboard.
+                        To overwrite (or reconfigure) other dashboards, set
+                        this to an already existing dashboard. The found object
+                        then is merged with this one.
+                      type: string
+                    config:
+                      $ref: "#/definitions/DashboardConfig"
+                  required: [addonId]
+            default: []
+        required: [type, requirements]
+  DashboardConfig:
+    description: Configuration of this dashboard.
+    type: object
+    additionalProperties: false
+    properties:
+      showOnHomescreen:
+        type: boolean
+    default: {}
+  Addon:
+    description: Automatically selects the fitting addon model.
+    anyOf:
+      - $ref: "#/definitions/RepositoryAddon"
+      - $ref: "#/definitions/WorkerAddon"
+      - $ref: "#/definitions/IptvAddon"
+      - $ref: "#/definitions/BundleAddon"
+  Error:
+    description: |
+      Possible return value of all API functions. If the
+      error value is "empty", the response is treated as
+      not found and will be ignored.
+    type: object
+    properties:
+      error:
+        type: string
+    required: [error]
+  # Task fetch
+  TaskFetchRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum: [fetch]
+      url:
+        $ref: "#/definitions/Url"
+      params:
+        type: object
+        additionalProperties: false
+        properties:
+          method:
+            type: string
+            enum: [GET, POST, PUT, OPTIONS, DELETE, CONNECT]
+            default: GET
+          headers:
+            type: object
+          body:
+            type: string
+          redirect:
+            type: string
+            enum: [follow, manual, error]
+            default: follow
+      body:
+        description: Download the response body.
+        type: boolean
+        default: true
+    required: [type, url]
+  TaskFetchResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum: [fetch]
+      error:
+        type: string
+      status:
+        type: number
+      url:
+        $ref: "#/definitions/Url"
+      headers:
+        type: object
+      json:
+        oneOf:
+          - type: string
+          - type: number
+          - type: array
+          - type: object
+      text:
+        type: string
+      data:
+        description: Base64 encoded raw data.
+        type: string
+    required: [type, status]
+  # Task recaptcha
+  TaskRecaptchaRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum: [recaptcha]
+      url:
+        description: URL associated with the app (This is the domain url that you registered on Google Admin Console when getting a siteKey)
+        $ref: "#/definitions/Url"
+      siteKey:
+        description: A string representing the siteKey provided in the Google reCaptcha admin console.
+        type: string
+      version:
+        description: |
+          - v2: Normal reCaptcha may often require the user to click on a "I am not a robot" checkbox and solve a challenge
+          - v3: Invisible reCaptcha do not require the users to solve a challenge. Refer to the reCaptcha V3 documentation for further information
+        type: string
+        enum: [v2, v3]
+      action:
+        description: A string representing the ReCaptcha action (Refer to the ReCaptcha v3 document)
+        type: string
+    required: [type, url, siteKey]
+  TaskRecaptchaResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        type: string
+        enum: [recaptcha]
+      error:
+        type: string
+      token:
+        type: string
+    required: [type]
+  # Tasks handlers
+  TaskRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      kind:
+        type: string
+        enum: [taskRequest]
+      id:
+        type: string
+      data:
+        oneOf:
+          - $ref: "#/definitions/TaskFetchRequest"
+          - $ref: "#/definitions/TaskRecaptchaRequest"
+    required: [kind, id, data]
+  TaskResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      kind:
+        type: string
+        enum: [taskResponse]
+      id:
+        type: string
+      data:
+        oneOf:
+          - $ref: "#/definitions/TaskFetchResponse"
+          - $ref: "#/definitions/TaskRecaptchaResponse"
+    required: [kind, id, data]
+  # ...
+  DefaultAddonRequest:
+    type: object
+    properties:
+      language:
+        $ref: "#/definitions/Language"
+        default: en
+      region:
+        $ref: "#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  DirectoryArguments:
+    description: Request parameters for a directory call.
+    type: object
+    properties:
+      adult:
+        description: Show adult items in search result.
+        type: boolean
+        default: false
+      search:
+        description: Search query string.
+        type: string
+      sort:
+        description: Sort the list by this column.
+        type: string
+      filter:
+        description: Filter values.
+        type: object
+      page:
+        description: Page of the result list.
+        type: number
+        minimum: 1
+        default: 1
+  ResolvedUrl:
+    description: A response of `source` or `subtitle` functions.
+    type: object
+    properties:
+      name:
+        description: Name of this resolved URL. Will be displayed in player.
+        $ref: "#/definitions/TranslatedText"
+      quality:
+        description: Quality of this URL. Will be displayed in video player settings.
+        type: string
+      url:
+        $ref: "#/definitions/Url"
+      headers:
+        type: object
+        default: {}
+    required: [url]
+  ShareDataAddon:
+    type: object
+    additionalProperties: false
+    properties:
+      kind:
+        type: string
+        enum: [addon]
+      type:
+        $ref: "#/definitions/AddonTypes"
+      name:
+        type: string
+      key:
+        type: string
+      url:
+        $ref: "#/definitions/Url"
+    required: [kind, type, url]
+  ShareDataItem:
+    type: object
+    additionalProperties: false
+    properties:
+      kind:
+        type: string
+        enum: [item]
+      type:
+        $ref: "#/definitions/ItemTypes"
+      name:
+        type: string
+      id:
+        description: Used with directories.
+        $ref: "#/definitions/GenericId"
+      ids:
+        description: Used with all items except directories.
+        oneOf:
+          - $ref: "#/definitions/ItemIDs"
+      addons:
+        type: array
+        items:
+          $ref: "#/definitions/Url"
+        default: []
+    required: [kind, type]
+  ShareData:
+    oneOf:
+      - $ref: "#/definitions/ShareDataAddon"
+      - $ref: "#/definitions/ShareDataItem"
+  AddonRequest:
+    description: Get detailed infos about an addon.
+    type: object
+    properties:
+      language:
+        $ref: "#/definitions/Language"
+        default: en
+      region:
+        $ref: "#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  AddonResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - $ref: "#/definitions/Addon"
+  RepositoryRequest:
+    description: Get list of addons in this repository.
+    type: object
+    properties:
+      language:
+        $ref: "#/definitions/Language"
+        default: en
+      region:
+        $ref: "#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  RepositoryResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "#/definitions/Addon"
+  DirectoryRequest:
+    allOf:
+      - $ref: "#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          id:
+            description:
+              ID of the `Directory` object. Defaults to an empty string
+              which means the root directory is requested.
+            $ref: "#/definitions/GenericId"
+            default: ""
+        required: [id]
+      - $ref: "#/definitions/DirectoryArguments"
+  DirectoryResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - type: object
+        properties:
+          options:
+            description: Overwrite options of a directory or addon.
+            oneOf:
+              - $ref: "#/definitions/DirectoryOptions"
+          features:
+            description: Overwrite features of a directory or addon.
+            oneOf:
+              - $ref: "#/definitions/DirectoryFeatures"
+          items:
+            type: array
+            items:
+              $ref: "#/definitions/MainItem"
+          hasMore:
+            description: Set to `true` if there are more items to request.
+            type: boolean
+            default: null
+        required: [items]
+  ItemRequest:
+    description: Request parameters for a item request.
+    allOf:
+      - $ref: "#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          type:
+            $ref: "#/definitions/ItemTypes"
+          ids:
+            $ref: "#/definitions/ItemIDs"
+          name:
+            description: Name of this item.
+            type: string
+          releaseDate:
+            description: Release date as unix timestamp or parseable string.
+            oneOf:
+              - $ref: "#/definitions/UnixTimestamp"
+              - type: string
+          year:
+            description: Release year.
+            $ref: "#/definitions/Year"
+        required: [type, ids]
+  ItemResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - $ref: "#/definitions/PlayableItem"
+      - type: "null"
+  SourceRequest:
+    allOf:
+      - $ref: "#/definitions/ItemRequest"
+      - type: object
+        properties:
+          subItem:
+            description: |
+              Metadata about the requested sub item. Currently
+              this happens on requested episodes of series.
+            type: object
+            properties:
+              ids:
+                $ref: "#/definitions/ItemIDs"
+              name:
+                description: Name of this sub item.
+                type: string
+              releaseDate:
+                description: Release date as unix timestamp or parseable string.
+                oneOf:
+                  - $ref: "#/definitions/UnixTimestamp"
+                  - type: string
+              season:
+                description: In casse of an episode, the season number.
+                type: number
+                minimum: 0
+                maximum: 100000
+              episode:
+                description: In casse of an episode, the episode number.
+                type: number
+                minimum: 0
+                maximum: 100000
+            required: [season, episode]
+  SourceResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "#/definitions/Source"
+      - type: "null"
+  SubtitleRequest:
+    oneOf:
+      - $ref: "#/definitions/SourceRequest"
+  SubtitleResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "#/definitions/Subtitle"
+      - type: "null"
+  ResolveRequest:
+    type: object
+    properties:
+      region:
+        $ref: "#/definitions/Country"
+        default: "XX"
+      type:
+        description: Object type.
+        type: string
+        enum: [source, subtitle]
+      id:
+        description: Source or subtitle ID.
+        $ref: "#/definitions/GenericId"
+      url:
+        $ref: "#/definitions/Url"
+    required: [type, url]
+  ResolveResponse:
+    oneOf:
+      - $ref: "#/definitions/Error"
+      - $ref: "#/definitions/TaskRequest"
+      - $ref: "#/definitions/Url"
+      - $ref: "#/definitions/ResolvedUrl"
+      - type: array
+        description: You also can return more than one resolved result.
+        items:
+          oneOf:
+            - $ref: "#/definitions/Url"
+            - $ref: "#/definitions/ResolvedUrl"
+      - type: "null"
+
+# openapi definitions to display schema in swagger-ui
+openapi: 3.0.0
+info:
+  title: WATCHED.com Addon API
+  version: 1.0.0
+components:
+  schemas:
+    RepositoryAddon:
+      $ref: "#/definitions/RepositoryAddon"
+    WorkerAddon:
+      $ref: "#/definitions/WorkerAddon"
+    IptvAddon:
+      $ref: "#/definitions/IptvAddon"
+    BundleAddon:
+      $ref: "#/definitions/BundleAddon"
+    DirectoryItem:
+      $ref: "#/definitions/DirectoryItem"
+    MovieItem:
+      $ref: "#/definitions/MovieItem"
+    SeriesItem:
+      $ref: "#/definitions/SeriesItem"
+    ChannelItem:
+      $ref: "#/definitions/ChannelItem"
+    IptvItem:
+      $ref: "#/definitions/IptvItem"
+    Source:
+      $ref: "#/definitions/Source"
+    Subtitle:
+      $ref: "#/definitions/Subtitle"
+    ResolvedUrl:
+      $ref: "#/definitions/ResolvedUrl"
+    AddonRequest:
+      $ref: "#/definitions/AddonRequest"
+    AddonResponse:
+      $ref: "#/definitions/AddonResponse"
+    RepositoryRequest:
+      $ref: "#/definitions/RepositoryRequest"
+    RepositoryResponse:
+      $ref: "#/definitions/RepositoryResponse"
+    DirectoryRequest:
+      $ref: "#/definitions/DirectoryRequest"
+    DirectoryResponse:
+      $ref: "#/definitions/DirectoryResponse"
+    ItemRequest:
+      $ref: "#/definitions/ItemRequest"
+    ItemResponse:
+      $ref: "#/definitions/ItemResponse"
+    SourceRequest:
+      $ref: "#/definitions/SourceRequest"
+    SourceResponse:
+      $ref: "#/definitions/SourceResponse"
+    SubtitleRequest:
+      $ref: "#/definitions/SubtitleRequest"
+    SubtitleResponse:
+      $ref: "#/definitions/SubtitleResponse"
+    ResolveRequest:
+      $ref: "#/definitions/ResolveRequest"
+    ResolveResponse:
+      $ref: "#/definitions/ResolveResponse"

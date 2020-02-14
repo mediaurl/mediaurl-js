@@ -59,9 +59,14 @@ export class Responder {
 export const sendTask = async (
   responder: Responder,
   cache: CacheHandler,
-  task: TaskRequest,
+  taskRequestData: TaskRequest["data"],
   timeout = 30 * 1000
-): Promise<TaskResponse> => {
+): Promise<TaskResponse["data"]> => {
+  const task: TaskRequest = {
+    kind: "taskRequest",
+    id: uuid4(),
+    data: taskRequestData
+  };
   // getServerValidators().task.request(task);
   console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait:${task.id}`, "1", timeout * 2);
@@ -104,7 +109,7 @@ export const createTaskResponseHandler = (
 
     // Set the response
     const responseChannel = uuid4();
-    const raw = JSON.stringify({ responseChannel, response });
+    const raw = JSON.stringify({ responseChannel, response: response.data });
     await cache.set(`task.response:${response.id}`, raw);
 
     // Wait for the response

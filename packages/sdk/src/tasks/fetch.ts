@@ -5,7 +5,8 @@ import { Responder, sendTask } from "./utils";
 
 export type FetchFn = (
   url: TaskFetchRequest["url"],
-  params?: TaskFetchRequest["params"]
+  params?: TaskFetchRequest["params"],
+  timeout?: number
 ) => Promise<TunnelResponse>;
 
 class TunnelResponse {
@@ -83,9 +84,7 @@ class TunnelResponse {
 export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
   const fetch: FetchFn = async (url, params, timeout = 30 * 1000) => {
     const task: TaskFetchRequest = {
-      kind: "task",
       type: "fetch",
-      id: uuid4(),
       url,
       params
     };

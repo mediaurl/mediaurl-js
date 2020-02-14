@@ -123,10 +123,13 @@ addonWorkerExample.registerActionHandler(
   "source",
   async (args: SourceRequest, ctx) => {
     const id = args.ids["watched.worker-example"];
-    const token = await ctx.recaptcha(
-      "view-source:https://recaptcha-demo.appspot.com/recaptcha-v2-checkbox.php",
-      "6LfW6wATAAAAAHLqO2pb8bDBahxlMxNdo9g947u9"
-    );
+    console.warn(await ctx.fetch("https://google.com/"));
+    const token = await ctx.recaptcha({
+      url:
+        "view-source:https://recaptcha-demo.appspot.com/recaptcha-v2-checkbox.php",
+      siteKey: "6LfW6wATAAAAAHLqO2pb8bDBahxlMxNdo9g947u9"
+    });
+    console.warn(`Recaptcha token: ${token}`);
     const sources = EXAMPLE_SOURCES[id];
     return sources ?? [];
   }
