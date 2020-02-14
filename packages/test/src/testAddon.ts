@@ -1,5 +1,6 @@
 import {
   AddonRequest,
+  createApp,
   DirectoryRequest,
   ItemRequest,
   MainItem,
@@ -8,8 +9,7 @@ import {
   SourceRequest,
   SubItem,
   SubtitleRequest
-} from "@watchedcom/schema";
-import { createApp } from "@watchedcom/sdk";
+} from "@watchedcom/sdk";
 import { BasicAddon, WorkerAddon } from "@watchedcom/sdk/dist/addons";
 import * as assert from "assert";
 import * as request from "supertest";

@@ -171,13 +171,12 @@ const packageJson = input => {
     data.devDependencies = {
       ...data.devDependencies,
       jest: "latest",
-      supertest: "latest",
+      "ts-jest": "latest",
       "@watchedcom/test": "latest"
     };
     if (ts) {
       data.devDependencies = {
         ...data.devDependencies,
-        "ts-jest": "latest",
         "@types/jest": "latest"
       };
     }

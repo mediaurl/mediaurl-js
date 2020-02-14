@@ -9,7 +9,8 @@ import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
 import { RequestCacheFn } from "./interfaces";
 import {
-  createFetchRemote,
+  createTaskFetch,
+  createTaskRecaptcha,
   createTaskResponseHandler,
   Responder
 } from "./tasks";
@@ -90,8 +91,9 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
         },
         addon,
         cache,
-        requestCache: requestCache,
-        fetchRemote: createFetchRemote(responder, cache)
+        requestCache,
+        fetch: createTaskFetch(responder, cache),
+        recaptcha: createTaskRecaptcha(responder, cache)
       });
       validator.response(result);
       if (inlineCache) await inlineCache.set(result);

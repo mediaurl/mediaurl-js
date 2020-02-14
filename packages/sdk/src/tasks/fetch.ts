@@ -3,7 +3,7 @@ import * as uuid4 from "uuid/v4";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./utils";
 
-export type FetchRemoteFn = (
+export type FetchFn = (
   url: TaskFetchRequest["url"],
   params?: TaskFetchRequest["params"]
 ) => Promise<TunnelResponse>;
@@ -52,7 +52,7 @@ class TunnelResponse {
   }
 }
 
-// export const dummyFetchRemote: FetchRemoteFn = async (url, params) => {
+// export const dummyFetch: FetchFn = async (url, params) => {
 //     const response: TaskFetchResponse = {
 //         type: "fetchResponse",
 //         id: "",
@@ -80,11 +80,8 @@ class TunnelResponse {
 //     return new TunnelResponse(response);
 // };
 
-export const createFetchRemote = (
-  responder: Responder,
-  cache: CacheHandler
-) => {
-  const fetch: FetchRemoteFn = async (url, params, timeout = 30 * 1000) => {
+export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
+  const fetch: FetchFn = async (url, params, timeout = 30 * 1000) => {
     const task: TaskFetchRequest = {
       kind: "task",
       type: "fetch",
