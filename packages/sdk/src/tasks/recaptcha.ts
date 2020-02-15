@@ -20,7 +20,7 @@ export const createTaskRecaptcha = (
   cache: CacheHandler
 ) => {
   const recaptcha: RecaptchaFn = async (data, timeout = 60 * 1000) => {
-    const task: TaskRecaptchaRequest = {
+    const task = <TaskRecaptchaRequest>{
       ...defaults,
       ...data,
       type: "recaptcha"
