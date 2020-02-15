@@ -17,7 +17,7 @@ import {
 import * as express from "express";
 import { BasicAddon } from "./addons";
 import { CacheHandler } from "./cache";
-import { FetchRemoteFn } from "./tasks";
+import { FetchFn, RecaptchaFn } from "./tasks";
 
 export type CacheOptions = {
   // Should errors be cached? Defaults to true.
@@ -70,7 +70,10 @@ export interface ActionHandlerContext<
   // If there is a cache hit, the request will be aborted
   // automatically.
   requestCache: RequestCacheFn;
-  fetchRemote: FetchRemoteFn;
+  // Fetch an URL via the client app.
+  fetch: FetchFn;
+  // Solve a recaptcha via the client app.
+  recaptcha: RecaptchaFn;
 }
 
 export type ActionHandler<

@@ -2,6 +2,7 @@ import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import * as uuid4 from "uuid/v4";
+import { BasicAddon } from "../addons";
 import { CacheHandler } from "../cache";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;
@@ -18,10 +19,10 @@ export class Responder {
   }
 
   async send(statusCode: number, body: any, queueTimeout = 30 * 1000) {
-    const id = uuid4();
+    const id = uuid4().toString();
     this.queue.push(id);
     if (this.queue[0] !== id) {
-      console.debug(`Queue length ${this.queue.length}, waiting for my turn`);
+      console.debug(`Task queue length ${this.queue.length}, waiting...`);
       await new Promise((resolve, reject) => {
         const on = () => {
           if (this.queue[0] === id) {
@@ -59,11 +60,16 @@ export class Responder {
 export const sendTask = async (
   responder: Responder,
   cache: CacheHandler,
-  task: TaskRequest,
+  taskRequestData: TaskRequest["data"],
   timeout = 30 * 1000
-): Promise<TaskResponse> => {
+): Promise<TaskResponse["data"]> => {
+  const task: TaskRequest = {
+    kind: "taskRequest",
+    id: uuid4().toString(),
+    data: taskRequestData
+  };
   // getServerValidators().task.request(task);
-  console.debug(`Task ${task.id} is starting`);
+  // console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait:${task.id}`, "1", timeout * 2);
   await responder.send(200, task);
 
@@ -75,7 +81,7 @@ export const sendTask = async (
   );
   const { responseChannel, response } = JSON.parse(data);
   // getServerValidators().task.response(response);
-  console.debug(`Task ${task.id} resolved`);
+  // console.debug(`Task ${task.id} resolved`);
 
   // Set new valid responder
   responder.setTransport(async (statusCode, body) => {
@@ -83,29 +89,38 @@ export const sendTask = async (
     await cache.set(`task.response:${responseChannel}`, data, timeout);
   });
 
+  // Check for errors
+  if (response.type === "error")
+    throw new Error(`Client error: ${response.error}`);
+
   // Return response
   return response;
 };
 
 export const createTaskResponseHandler = (
+  addon: BasicAddon,
   cache: CacheHandler,
   timeout = 120 * 1000
 ) => {
   const taskHandler: RequestHandler = async (req, res) => {
-    const response: TaskResponse = req.body;
+    cache = cache.clone({
+      prefix: [addon.getId(), addon.getVersion(), req.params.action]
+    });
+
+    const task: TaskResponse = req.body;
     // getServerValidators().task.response(response);
-    console.debug(`Task ${response.id} received response from client`);
+    // console.debug(`Task ${task.id} received response from client`);
 
     // Make sure the key exists to prevent spamming
-    if (!(await cache.get(`task.wait:${response.id}`))) {
-      throw new Error(`Task wait key ${response.id} does not exist`);
+    if (!(await cache.get(`task.wait:${task.id}`))) {
+      throw new Error(`Task wait key ${task.id} does not exist`);
     }
-    await cache.delete(`task.wait:${response.id}`);
+    await cache.delete(`task.wait:${task.id}`);
 
     // Set the response
-    const responseChannel = uuid4();
-    const raw = JSON.stringify({ responseChannel, response });
-    await cache.set(`task.response:${response.id}`, raw);
+    const responseChannel = uuid4().toString();
+    const raw = JSON.stringify({ responseChannel, response: task.data });
+    await cache.set(`task.response:${task.id}`, raw);
 
     // Wait for the response
     const data = await cache.waitKey(
@@ -115,7 +130,7 @@ export const createTaskResponseHandler = (
     );
     const { statusCode, body } = JSON.parse(data);
     res.status(statusCode).json(body);
-    console.debug(`Task ${response.id} sending next response to client`);
+    // console.debug(`Task ${task.id} sending next response to client`);
   };
 
   return taskHandler;

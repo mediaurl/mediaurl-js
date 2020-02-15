@@ -9,7 +9,8 @@ import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
 import { RequestCacheFn } from "./interfaces";
 import {
-  createFetchRemote,
+  createTaskFetch,
+  createTaskRecaptcha,
   createTaskResponseHandler,
   Responder
 } from "./tasks";
@@ -34,11 +35,6 @@ const defaultServeOpts: ServeAddonsOptions = {
   logRequests: true
 };
 
-type CacheState = {
-  key: string;
-  cache: CacheHandler;
-};
-
 const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   try {
     addon.validateAddon();
@@ -48,7 +44,7 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
     );
   }
 
-  const actionHandler: express.RequestHandler = async (req, res, next) => {
+  const actionHandler: express.RequestHandler = async (req, res) => {
     const { action } = req.params;
 
     const handler = addon.getActionHandler(action);
@@ -90,8 +86,9 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
         },
         addon,
         cache,
-        requestCache: requestCache,
-        fetchRemote: createFetchRemote(responder, cache)
+        requestCache,
+        fetch: createTaskFetch(responder, cache),
+        recaptcha: createTaskRecaptcha(responder, cache)
       });
       validator.response(result);
       if (inlineCache) await inlineCache.set(result);
@@ -131,7 +128,7 @@ const createAddonRouter = (addon: BasicAddon, cache: CacheHandler) => {
   if (process.env.NODE_ENV === "development") {
     router.get("/:action", createActionHandler(addon, cache));
   }
-  router.post("/:action/task", createTaskResponseHandler(cache));
+  router.post("/:action/task", createTaskResponseHandler(addon, cache));
   return router;
 };
 

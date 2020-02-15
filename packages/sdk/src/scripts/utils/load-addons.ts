@@ -1,6 +1,6 @@
-import { BasicAddon } from "@watchedcom/sdk";
 import { flatten, uniqBy } from "lodash";
 import * as path from "path";
+import { BasicAddon } from "../../addons";
 
 const requireAddons = (pathStr: string) => {
   const requiredFile = require(pathStr);

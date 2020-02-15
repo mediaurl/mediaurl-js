@@ -57,6 +57,7 @@ test(\`Test addon "\${${addonVar}.getId()}"\`, done => {
 });`;
 
 const tsIndexTest = input => {
+  if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
   const content = `import { testAddon } from "@watchedcom/test";
@@ -88,6 +89,7 @@ module.exports = ${addonVar};
 };
 
 const jsIndexTest = input => {
+  if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
   const content = `const { testAddon } = require("@watchedcom/sdk");
@@ -169,13 +171,12 @@ const packageJson = input => {
     data.devDependencies = {
       ...data.devDependencies,
       jest: "latest",
-      supertest: "latest",
+      "ts-jest": "latest",
       "@watchedcom/test": "latest"
     };
     if (ts) {
       data.devDependencies = {
         ...data.devDependencies,
-        "ts-jest": "latest",
         "@types/jest": "latest"
       };
     }

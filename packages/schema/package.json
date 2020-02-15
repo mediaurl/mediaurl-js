@@ -1,0 +1,27 @@
+{
+  "name": "@watchedcom/schema",
+  "description": "WATCHED.com JSON Schema",
+  "version": "0.10.3",
+  "main": "dist",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "rm -rf dist && mkdir -p dist && npm run build:tsc && npm run build:schema && npm run build:types",
+    "build:tsc": "tsc",
+    "build:schema": "node ./buildSchema.js",
+    "build:types": "node ./buildTypes.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "ajv": "^6.10.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/node": "^12.12.17",
+    "jest": "^24.9.0",
+    "js-yaml": "^3.13.1",
+    "json-schema-ref-parser": "^7.1.2",
+    "json-schema-to-typescript": "^8.0.0",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.5"
+  }
+}
