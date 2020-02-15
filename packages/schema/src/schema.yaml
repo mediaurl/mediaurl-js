@@ -798,10 +798,19 @@ definitions:
       error:
         type: string
     required: [error]
+  # Task error
+  TaskErrorResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [error]
+      error:
+        type: string
+    required: [type, error]
   # Task fetch
   TaskFetchRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -824,6 +833,7 @@ definitions:
             type: string
             enum: [follow, manual, error]
             default: follow
+        default: {}
       body:
         description: Download the response body.
         type: boolean
@@ -831,7 +841,6 @@ definitions:
     required: [type, url]
   TaskFetchResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -859,7 +868,6 @@ definitions:
   # Task recaptcha
   TaskRecaptchaRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -882,7 +890,6 @@ definitions:
     required: [type, url, siteKey]
   TaskRecaptchaResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -895,7 +902,6 @@ definitions:
   # Tasks handlers
   TaskRequest:
     type: object
-    additionalProperties: false
     properties:
       kind:
         type: string
@@ -909,7 +915,6 @@ definitions:
     required: [kind, id, data]
   TaskResponse:
     type: object
-    additionalProperties: false
     properties:
       kind:
         type: string
@@ -918,6 +923,7 @@ definitions:
         type: string
       data:
         oneOf:
+          - $ref: "#/definitions/TaskErrorResponse"
           - $ref: "#/definitions/TaskFetchResponse"
           - $ref: "#/definitions/TaskRecaptchaResponse"
     required: [kind, id, data]

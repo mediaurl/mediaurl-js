@@ -21,8 +21,7 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      // ID is an alias for "watched.worker-example" (the addon ID)
-      id: "id1235"
+      "watched.worker-example": "id1235"
     },
     name: "Big Buck Bunny"
   },
@@ -123,13 +122,6 @@ addonWorkerExample.registerActionHandler(
   "source",
   async (args: SourceRequest, ctx) => {
     const id = args.ids["watched.worker-example"];
-    console.warn(await ctx.fetch("https://google.com/"));
-    const token = await ctx.recaptcha({
-      url:
-        "view-source:https://recaptcha-demo.appspot.com/recaptcha-v2-checkbox.php",
-      siteKey: "6LfW6wATAAAAAHLqO2pb8bDBahxlMxNdo9g947u9"
-    });
-    console.warn(`Recaptcha token: ${token}`);
     const sources = EXAMPLE_SOURCES[id];
     return sources ?? [];
   }
@@ -138,7 +130,7 @@ addonWorkerExample.registerActionHandler(
 addonWorkerExample.registerActionHandler(
   "subtitle",
   async (args: SubtitleRequest, ctx) => {
-    // ids.id is an alias for ids["addon-id"]
+    // ids.id is an alias for ids["watched.worker-example"] (the addon ID)
     const id = args.ids.id;
     await ctx.requestCache(id);
     const subtitles = EXAMPLE_SUBTITLES[id];

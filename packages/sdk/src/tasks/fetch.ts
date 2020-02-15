@@ -1,5 +1,4 @@
 import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
-import * as uuid4 from "uuid/v4";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./utils";
 

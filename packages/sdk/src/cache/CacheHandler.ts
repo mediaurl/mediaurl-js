@@ -12,6 +12,8 @@ export class CacheFoundError {
   constructor(public result: any, public error: null | Error) {}
 }
 
+export class WaitTimedOut extends Error {}
+
 const handleOptions = (options?: CacheOptionsParam) => {
   if (typeof options === "number") {
     return { ttl: options, errorTtl: options / 2 };
@@ -43,12 +45,13 @@ export class CacheHandler {
     };
   }
 
+  // Prevent too long cache variables, and add cache prefixes
   public createKey(key: any) {
     if (typeof key === "string" && key.indexOf(":") === 0) return key;
     const data = this.options.prefix ? [this.options.prefix, key] : key;
 
     const str = typeof data === "string" ? data : JSON.stringify(data);
-    if (str.length < 70) return str;
+    if (str.length < 70) return ":" + str;
     const hash = createHash("sha256");
     hash.update(str);
     return ":" + hash.digest().toString("hex");
@@ -151,7 +154,7 @@ export class CacheHandler {
         return result;
       }
       if (Date.now() - t > timeout) {
-        throw new Error("Remote request timed out");
+        throw new WaitTimedOut("Wait timed out");
       }
       await new Promise(resolve => setTimeout(resolve, sleep));
     }

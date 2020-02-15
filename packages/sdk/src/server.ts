@@ -35,11 +35,6 @@ const defaultServeOpts: ServeAddonsOptions = {
   logRequests: true
 };
 
-type CacheState = {
-  key: string;
-  cache: CacheHandler;
-};
-
 const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   try {
     addon.validateAddon();
@@ -49,7 +44,7 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
     );
   }
 
-  const actionHandler: express.RequestHandler = async (req, res, next) => {
+  const actionHandler: express.RequestHandler = async (req, res) => {
     const { action } = req.params;
 
     const handler = addon.getActionHandler(action);
@@ -133,7 +128,7 @@ const createAddonRouter = (addon: BasicAddon, cache: CacheHandler) => {
   if (process.env.NODE_ENV === "development") {
     router.get("/:action", createActionHandler(addon, cache));
   }
-  router.post("/:action/task", createTaskResponseHandler(cache));
+  router.post("/:action/task", createTaskResponseHandler(addon, cache));
   return router;
 };
 
