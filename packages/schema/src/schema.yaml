@@ -882,8 +882,8 @@ definitions:
         description: |
           - v2: Normal reCaptcha may often require the user to click on a "I am not a robot" checkbox and solve a challenge
           - v3: Invisible reCaptcha do not require the users to solve a challenge. Refer to the reCaptcha V3 documentation for further information
-        type: string
-        enum: [v2, v3]
+        type: number
+        enum: [2, 3]
       action:
         description: A string representing the ReCaptcha action (Refer to the ReCaptcha v3 document)
         type: string
@@ -894,11 +894,9 @@ definitions:
       type:
         type: string
         enum: [recaptcha]
-      error:
-        type: string
       token:
         type: string
-    required: [type]
+    required: [type, token]
   # Tasks handlers
   TaskRequest:
     type: object

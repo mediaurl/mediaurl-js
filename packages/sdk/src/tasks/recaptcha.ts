@@ -11,7 +11,7 @@ export type RecaptchaFn = (
 ) => Promise<string>;
 
 const defaults: Partial<TaskRecaptchaRequest> = {
-  version: "v2",
+  version: 2,
   action: ""
 };
 
@@ -28,8 +28,6 @@ export const createTaskRecaptcha = (
     const res = <TaskRecaptchaResponse>(
       await sendTask(responder, cache, task, timeout)
     );
-    if (res.error) throw new Error(res.error);
-    if (!res.token) throw new Error("No recaptcha token returned");
     return res.token;
   };
   return recaptcha;
