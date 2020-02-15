@@ -1,6 +1,5 @@
 import {
   DirectoryItem,
-  DirectoryRequest,
   PlayableItem,
   ResolveRequest,
   ResolveResponse,
@@ -22,7 +21,8 @@ const resourceActions: WorkerAddonResourceActions[] = [
   "item",
   "source",
   "subtitle",
-  "resolve"
+  "resolve",
+  "captcha"
 ];
 
 type WorkerAddonTestData = {

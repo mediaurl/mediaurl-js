@@ -1,0 +1,76 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+definitions:
+  UnixTimestamp:
+    type: number
+    minimum: 0
+  Year:
+    type: number
+    # minimum: 0
+    # maximum: 3000
+  TranslatedText:
+    description: |
+      Text which can be translated to various locales.
+      Either specify a simple string, or an object in the form
+      of `{"en": "Some text", "de": "Anderer Text"}`.
+    oneOf:
+      - type: string
+      - type: object
+        additionalProperties: false
+        patternProperties:
+          "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
+            type: string
+  Url:
+    type: string
+  ImageShape:
+    description: Shape of an image.
+    type: string
+    enum: [regular, square, landscape]
+    default: regular
+  Image:
+    description: Definition of an image.
+    $ref: "#/definitions/Url"
+  Country:
+    description: Country in ISO-3166-1 format.
+    anyOf:
+      - type: string
+        pattern: "^[A-Z]{2}$"
+      - type: string
+  Regions:
+    type: object
+    properties:
+      allowed:
+        description: |
+          Allowed regions. If the array is empty, it's
+          considered as available everywhere.
+        type: array
+        items:
+          $ref: "#/definitions/Country"
+          default: []
+      forbidden:
+        description: |
+          Forbidden regions.
+        type: array
+        items:
+          $ref: "#/definitions/Country"
+        default: []
+    additionalProperties: false
+    default: {}
+  GenericId:
+    description: A ID for an object. Can be numeric or a string.
+    anyOf:
+      - type: number
+      - type: string
+  Language:
+    description: Language in ISO-639-1 format.
+    type: string
+    pattern: "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$"
+  Error:
+    description: |
+      Possible return value of all API functions. If the
+      error value is "empty", the response is treated as
+      not found and will be ignored.
+    type: object
+    properties:
+      error:
+        type: string
+    required: [error]

@@ -1,6 +1,8 @@
 import {
   AddonRequest,
   AddonResponse,
+  CaptchaRequest,
+  CaptchaResponse,
   DirectoryRequest,
   DirectoryResponse,
   ItemRequest,
@@ -103,4 +105,5 @@ export type ActionHandlers<T extends BasicAddon> = {
   source: ActionHandler<SourceRequest, SourceResponse, T>;
   subtitle: ActionHandler<SubtitleRequest, SubtitleResponse, T>;
   resolve: ActionHandler<ResolveRequest, ResolveResponse, T>;
+  captcha: ActionHandler<CaptchaRequest, CaptchaResponse, T>;
 };

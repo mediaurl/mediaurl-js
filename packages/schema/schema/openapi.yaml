@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: WATCHED.com Addon API
+  version: 1.0.0
+components:
+  schemas:
+    RepositoryAddon:
+      $ref: "addons.yaml#/definitions/RepositoryAddon"
+    WorkerAddon:
+      $ref: "addons.yaml#/definitions/WorkerAddon"
+    IptvAddon:
+      $ref: "addons.yaml#/definitions/IptvAddon"
+    BundleAddon:
+      $ref: "addons.yaml#/definitions/BundleAddon"
+    DirectoryItem:
+      $ref: "items.yaml#/definitions/DirectoryItem"
+    MovieItem:
+      $ref: "items.yaml#/definitions/MovieItem"
+    SeriesItem:
+      $ref: "items.yaml#/definitions/SeriesItem"
+    ChannelItem:
+      $ref: "items.yaml#/definitions/ChannelItem"
+    IptvItem:
+      $ref: "items.yaml#/definitions/IptvItem"
+    Source:
+      $ref: "objects.yaml#/definitions/Source"
+    Subtitle:
+      $ref: "objects.yaml#/definitions/Subtitle"
+    ResolvedUrl:
+      $ref: "objects.yaml#/definitions/ResolvedUrl"
+    AddonRequest:
+      $ref: "api.yaml#/definitions/AddonRequest"
+    AddonResponse:
+      $ref: "api.yaml#/definitions/AddonResponse"
+    RepositoryRequest:
+      $ref: "api.yaml#/definitions/RepositoryRequest"
+    RepositoryResponse:
+      $ref: "api.yaml#/definitions/RepositoryResponse"
+    DirectoryRequest:
+      $ref: "api.yaml#/definitions/DirectoryRequest"
+    DirectoryResponse:
+      $ref: "api.yaml#/definitions/DirectoryResponse"
+    ItemRequest:
+      $ref: "api.yaml#/definitions/ItemRequest"
+    ItemResponse:
+      $ref: "api.yaml#/definitions/ItemResponse"
+    SourceRequest:
+      $ref: "api.yaml#/definitions/SourceRequest"
+    SourceResponse:
+      $ref: "api.yaml#/definitions/SourceResponse"
+    SubtitleRequest:
+      $ref: "api.yaml#/definitions/SubtitleRequest"
+    SubtitleResponse:
+      $ref: "api.yaml#/definitions/SubtitleResponse"
+    ResolveRequest:
+      $ref: "api.yaml#/definitions/ResolveRequest"
+    ResolveResponse:
+      $ref: "api.yaml#/definitions/ResolveResponse"
+    CaptchaRequest:
+      $ref: "api.yaml#/definitions/CaptchaRequest"
+    CaptchaResponse:
+      $ref: "api.yaml#/definitions/CaptchaResponse"

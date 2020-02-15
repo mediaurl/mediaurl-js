@@ -1,0 +1,200 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+definitions:
+  # Helpers
+  DefaultAddonRequest:
+    type: object
+    properties:
+      language:
+        $ref: "general.yaml#/definitions/Language"
+        default: en
+      region:
+        $ref: "general.yaml#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  # Api requests and responses
+  AddonRequest:
+    description: Get detailed infos about an addon.
+    type: object
+    properties:
+      language:
+        $ref: "general.yaml#/definitions/Language"
+        default: en
+      region:
+        $ref: "general.yaml#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  AddonResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "addons.yaml#/definitions/Addon"
+  RepositoryRequest:
+    description: Get list of addons in this repository.
+    type: object
+    properties:
+      language:
+        $ref: "general.yaml#/definitions/Language"
+        default: en
+      region:
+        $ref: "general.yaml#/definitions/Country"
+        default: "XX"
+    required: [language, region]
+  RepositoryResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "general.yaml#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "addons.yaml#/definitions/Addon"
+  DirectoryRequest:
+    allOf:
+      - $ref: "items.yaml#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          id:
+            description:
+              ID of the `Directory` object. Defaults to an empty string
+              which means the root directory is requested.
+            $ref: "general.yaml#/definitions/GenericId"
+            default: ""
+        required: [id]
+      - $ref: "items.yaml#/definitions/DirectoryArguments"
+  DirectoryResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - type: object
+        properties:
+          options:
+            description: Overwrite options of a directory or addon.
+            oneOf:
+              - $ref: "items.yaml#/definitions/DirectoryOptions"
+          features:
+            description: Overwrite features of a directory or addon.
+            oneOf:
+              - $ref: "items.yaml#/definitions/DirectoryFeatures"
+          items:
+            type: array
+            items:
+              $ref: "items.yaml#/definitions/MainItem"
+          hasMore:
+            description: Set to `true` if there are more items to request.
+            type: boolean
+            default: null
+        required: [items]
+  ItemRequest:
+    description: Request parameters for a item request.
+    allOf:
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          type:
+            $ref: "items.yaml#/definitions/ItemTypes"
+          ids:
+            $ref: "items.yaml#/definitions/ItemIDs"
+          name:
+            description: Name of this item.
+            type: string
+          releaseDate:
+            description: Release date as unix timestamp or parseable string.
+            oneOf:
+              - $ref: "general.yaml#/definitions/UnixTimestamp"
+              - type: string
+          year:
+            description: Release year.
+            $ref: "general.yaml#/definitions/Year"
+        required: [type, ids]
+  ItemResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "items.yaml#/definitions/PlayableItem"
+      - type: "null"
+  SourceRequest:
+    allOf:
+      - $ref: "items.yaml#/definitions/ItemRequest"
+      - type: object
+        properties:
+          subItem:
+            description: |
+              Metadata about the requested sub item. Currently
+              this happens on requested episodes of series.
+            type: object
+            properties:
+              ids:
+                $ref: "items.yaml#/definitions/ItemIDs"
+              name:
+                description: Name of this sub item.
+                type: string
+              releaseDate:
+                description: Release date as unix timestamp or parseable string.
+                oneOf:
+                  - $ref: "general.yaml#/definitions/UnixTimestamp"
+                  - type: string
+              season:
+                description: In casse of an episode, the season number.
+                type: number
+                minimum: 0
+                maximum: 100000
+              episode:
+                description: In casse of an episode, the episode number.
+                type: number
+                minimum: 0
+                maximum: 100000
+            required: [season, episode]
+  SourceResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "objects.yaml#/definitions/Source"
+      - type: "null"
+  SubtitleRequest:
+    oneOf:
+      - $ref: "#/definitions/SourceRequest"
+  SubtitleResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - type: array
+        items:
+          $ref: "objects.yaml#/definitions/Subtitle"
+      - type: "null"
+  ResolveRequest:
+    type: object
+    properties:
+      region:
+        $ref: "general.yaml#/definitions/Country"
+        default: "XX"
+      type:
+        description: Object type.
+        type: string
+        enum: [source, subtitle]
+      id:
+        description: Source or subtitle ID.
+        $ref: "general.yaml#/definitions/GenericId"
+      url:
+        $ref: "general.yaml#/definitions/Url"
+    required: [type, url]
+  ResolveResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "general.yaml#/definitions/Url"
+      - $ref: "objects.yaml#/definitions/ResolvedUrl"
+      - type: array
+        description: You also can return more than one resolved result.
+        items:
+          oneOf:
+            - $ref: "general.yaml#/definitions/Url"
+            - $ref: "objects.yaml#/definitions/ResolvedUrl"
+      - type: "null"
+  CaptchaRequest:
+    oneOf:
+      - $ref: "tasks.yaml#/definitions/TaskRecaptchaRequest"
+  CaptchaResponse:
+    oneOf:
+      - $ref: "general.yaml#/definitions/Error"
+      - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"

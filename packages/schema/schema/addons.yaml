@@ -1,0 +1,264 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+definitions:
+  AddonTypes:
+    description: Valid addon types.
+    type: string
+    enum: [repository, worker, iptv, bundle]
+  BasicAddonActions:
+    type: string
+    enum: [addon]
+  RepositoryAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+      - type: string
+        enum: [repository]
+  WorkerAddonResourceActions:
+    type: string
+    enum: [directory, item, source, subtitle, resolve, captcha]
+  WorkerAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+      - $ref: "#/definitions/WorkerAddonResourceActions"
+  IptvAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+  BundleAddonActions:
+    oneOf:
+      - $ref: "#/definitions/BasicAddonActions"
+  VirtualAddon:
+    type: object
+    properties:
+      id:
+        description: ID of this addon.
+        type: string
+      name:
+        description: Name of this addon, optionally localized.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      version:
+        description: Version in semver format.
+        type: string
+        example: "1.0.0"
+      logo:
+        description: Addon logo, can be a relative path to the addon URL.
+        $ref: "general.yaml#/definitions/Image"
+      homepage:
+        description: Homepage.
+        $ref: "general.yaml#/definitions/Url"
+      description:
+        description: Short description of this addon.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      flags:
+        description: Flags.
+        type: object
+        properties:
+          adult:
+            description: Have to be `true` if this addon provides adult content.
+            type: boolean
+        default:
+          adult: false
+      regions:
+        description: Regions where this addon is available
+        $ref: "general.yaml#/definitions/Regions"
+      metadata:
+        description: Internally used.
+        type: object
+    required: [id, name, version]
+  RepositoryAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [repository]
+        required: [type]
+  WorkerAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [worker]
+          actions:
+            description: |
+              Worker addon actions.
+              If the action `directory` is set, but no `dashboards`
+              are defined, the app will create a default dashboard.
+            type: array
+            items:
+              $ref: "#/definitions/WorkerAddonResourceActions"
+          itemTypes:
+            description: |
+              Actions: `directory`, `item`, `source`, `subtitle`
+              Item types this addon provised.
+              This is needed for the actions `directory`, `item`,
+              `source` and `subtitle`.
+            type: array
+            items:
+              $ref: "items.yaml#/definitions/ItemTypes"
+            default: []
+          requestArgs:
+            description: |
+              Actions: `item`, `source`, `subtitle`
+              See `ItemRequest` for a list of supported keys. All
+              keys except `name`, `year`, `releaseDate`, `season`
+              and `episode` are treated as an ID. Use an array to
+              require a combination of keys.
+              Example:
+                [
+                  "id/tmdb", // Need item.ids.tmdb
+                  "id/imdb_id", // Need item.ids.tmdb
+                  "otherid", // Need item.ids.otherid
+                  ["name", "year"], // Need item.name and item.year
+                  ["name", "releaseDate"], // Need item.name and item.releaseDate
+                ]
+              By default an ID named after `Addon.id` will be matched as well.
+              type: array
+            items:
+              oneOf:
+                - type: array
+                  items:
+                    type: string
+                - type: string
+            default: []
+          urlPatterns:
+            description: |
+              Actions: `resolve`
+              URL patterns which match against `Source.url` URL's.
+              If a pattern matches, the addon's `resolve` action is called.
+              By default all URL's matching the pattern `{addonId}://` will
+              call your addon.
+            type: array
+            items:
+              type: string
+            default: []
+          captchaTypes:
+            description: |
+              Actions: `captcha`
+              Captcha types this addon can handle.
+            type: array
+            items:
+              $ref: "tasks.yaml#/definitions/CaptchaTypes"
+            default: []
+          defaultDirectoryOptions:
+            $ref: "items.yaml#/definitions/DirectoryOptions"
+          defaultDirectoryFeatures:
+            $ref: "items.yaml#/definitions/DirectoryFeatures"
+          dashboards:
+            description: |
+              Predefined dashboards. This dashboards get's updated
+              when the addon is updated, the dashboard configuration
+              is preserved.
+            type: array
+            items:
+              allOf:
+                - $ref: "items.yaml#/definitions/VirtualDirectoryItem"
+                - type: object
+                  properties:
+                    config:
+                      $ref: "#/definitions/DashboardConfig"
+            default: []
+        required: [type, actions]
+  IptvAddon:
+    description: |
+      Model for the IPTV engine. This is internally converted
+      to a worker addon.
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [iptv]
+          url:
+            description: URL to the playlist.
+            $ref: "general.yaml#/definitions/Url"
+          refreshInterval:
+            description: Playlist refresh interval in hours.
+            type: number
+            minimum: 1
+            maximum: 1000
+            default: 12
+        required: [type, url]
+  BundleAddon:
+    allOf:
+      - $ref: "#/definitions/VirtualAddon"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [bundle]
+          requirements:
+            description: |
+              List of required addons.
+              The values can be a URL to an addon, an addon ID
+              or an addon ID with engine definition.
+              Eg:
+              - https://example.com/watched/v1/some.addon.id
+              - https://example.com/watched/v1/another.addon.id
+              - stremio/https://example.com/watched/stremioaddon/manifest.json
+              - addon.id.that.exists.in.an.avaliable.repository
+              - stremio/another.engine.addon
+              - { "engine": "stremio", "id": "addon.id" }
+              - { "engine": "watched", "id": "watched.addon.id" }
+              - { "id": "another.watched.addon.id" }
+              - { "engine": "stremio", "url": "https://exmaple.com/link/to/stremio/addon" }
+            type: array
+            items:
+              oneOf:
+                - type: string
+                - type: object
+                  properties:
+                    engine:
+                      type: string
+                      enum: [watched, stremio]
+                      default: watched
+                    id:
+                      $ref: "general.yaml#/definitions/GenericId"
+                    url:
+                      $ref: "general.yaml#/definitions/Url"
+          dashboards:
+            description: |
+              Predefined dashboards. This dashboards get's applied only
+              once during bundle installation.
+            type: array
+            items:
+              allOf:
+                - $ref: "items.yaml#/definitions/VirtualDirectoryItem"
+                - type: object
+                  properties:
+                    addonId:
+                      description: |
+                        If this dashboard should be executed with another addon,
+                        specify the ID here.
+                      type: string
+                    id:
+                      description: |
+                        ID of this dashboard.
+                        To overwrite (or reconfigure) other dashboards, set
+                        this to an already existing dashboard. The found object
+                        then is merged with this one.
+                      type: string
+                    config:
+                      $ref: "#/definitions/DashboardConfig"
+                  required: [addonId]
+            default: []
+        required: [type, requirements]
+  DashboardConfig:
+    description: Configuration of this dashboard.
+    type: object
+    additionalProperties: false
+    properties:
+      showOnHomescreen:
+        type: boolean
+    default: {}
+  Addon:
+    description: Automatically selects the fitting addon model.
+    anyOf:
+      - $ref: "#/definitions/RepositoryAddon"
+      - $ref: "#/definitions/WorkerAddon"
+      - $ref: "#/definitions/IptvAddon"
+      - $ref: "#/definitions/BundleAddon"

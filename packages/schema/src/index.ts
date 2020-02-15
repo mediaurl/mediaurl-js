@@ -116,6 +116,11 @@ function init(schemas: any) {
         addonType: "worker",
         request: createValidator(schemas, "in", "ResolveRequest"),
         response: createValidator(schemas, "out", "ResolveResponse")
+      },
+      captcha: {
+        addonType: "worker",
+        request: createValidator(schemas, "in", "CaptchaRequest"),
+        response: createValidator(schemas, "out", "CaptchaResponse")
       }
     },
     task: {

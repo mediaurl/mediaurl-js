@@ -1,0 +1,404 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+definitions:
+  ItemTypes:
+    description: Valid item types.
+    type: string
+    enum: [directory, movie, series, channel, iptv]
+  AllItemTypes:
+    description: Valid item types.
+    oneOf:
+      - $ref: "#/definitions/ItemTypes"
+      - type: string
+        enum: [episode]
+  ItemImages:
+    description: Item images.
+    type: object
+    properties:
+      logo:
+        $ref: "general.yaml#/definitions/Image"
+      poster:
+        $ref: "general.yaml#/definitions/Image"
+      backdrop:
+        $ref: "general.yaml#/definitions/Image"
+      background:
+        $ref: "general.yaml#/definitions/Image"
+  DirectoryOptions:
+    description: Options on how to display images.
+    type: object
+    additionalProperties: false
+    properties:
+      imageShape:
+        description: |
+          Shape of the images.
+          If not set, a value depening on the item type is used.
+          $ref: "general.yaml#/definitions/ImageShape"
+      displayName:
+        description: |
+          Display the item name over the image.
+          If not set, a value depening on the item type is used.
+        type: boolean
+  DirectoryArguments:
+    description: Request parameters for a directory call.
+    type: object
+    properties:
+      adult:
+        description: Show adult items in search result.
+        type: boolean
+        default: false
+      search:
+        description: Search query string.
+        type: string
+      sort:
+        description: Sort the list by this column.
+        type: string
+      filter:
+        description: Filter values.
+        type: object
+      page:
+        description: Page of the result list.
+        type: number
+        minimum: 1
+        default: 1
+  VirtualDirectoryItem:
+    type: object
+    properties:
+      id:
+        description: ID of this directory item.
+        $ref: "general.yaml#/definitions/GenericId"
+        default: ""
+      name:
+        description: Name of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      description:
+        description: Description of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      images:
+        $ref: "#/definitions/ItemImages"
+      itemTypes:
+        description: |
+          Item types returned by this directory. If not set,
+          it will fallback to the addon item types.
+        type: array
+        items:
+          $ref: "#/definitions/ItemTypes"
+      options:
+        $ref: "#/definitions/DirectoryOptions"
+      features:
+        description: Directory features.
+        oneOf:
+          - $ref: "#/definitions/DirectoryFeatures"
+      args:
+        oneOf:
+          - $ref: "#/definitions/DirectoryArguments"
+        default: {}
+    required: [id]
+  DirectoryItem:
+    description: An item which points to a directory.
+    type: object
+    allOf:
+      - $ref: "#/definitions/VirtualDirectoryItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [directory]
+        required: [type]
+  ItemIDs:
+    description: |
+      Different IDs assigned to this item, for example
+      `{ imdb_id: tt1234567, tmdb_id: 1234 }`.
+      For most addons, it is recommended to use the addon
+      ID as key for `ids`, for example:
+      `{ 'example.com-addon': 'someid12345' }`.
+      However, the key `id` will be internally translated to
+      the addon ID, so `{ id: 'someid12345' }` is the same
+      as above.
+    type: object
+    patternProperties:
+      string:
+        $ref: "general.yaml#/definitions/GenericId"
+  VirtualItem:
+    type: object
+    properties:
+      ids:
+        $ref: "#/definitions/ItemIDs"
+      name:
+        description: Name of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      description:
+        description: Description of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      releaseDate:
+        description: Release date as unix timestamp or parseable string.
+        oneOf:
+          - $ref: "general.yaml#/definitions/UnixTimestamp"
+          - type: string
+      images:
+        $ref: "#/definitions/ItemImages"
+      videos:
+        description: List of videos like trailers or interviews.
+        type: array
+        items:
+          $ref: "objects.yaml#/definitions/Source"
+        default: []
+      sources:
+        description: List of source objects.
+        type: array
+        items:
+          $ref: "objects.yaml#/definitions/Source"
+        default: []
+    required: [ids]
+  VirtualMovieItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          year:
+            description: Production year. If not provided, releaseDate will be used.
+            $ref: "general.yaml#/definitions/Year"
+          runtime:
+            description: Runtime in miliseconds.
+            $ref: "general.yaml#/definitions/UnixTimestamp"
+          production:
+            description: Production compnaies.
+            type: array
+            items:
+              type: string
+            default: []
+          countries:
+            description: Country list in ISO-3166-1 format.
+            type: array
+            items:
+              $ref: "general.yaml#/definitions/Country"
+            default: []
+          spokenLanguages:
+            description: List of spoken languages in ISO-639-1 format.
+            type: array
+            items:
+              $ref: "general.yaml#/definitions/Language"
+            default: []
+          genres:
+            description: Genre list.
+            type: array
+            items:
+              type: string
+            default: []
+          writer:
+            description: List of writers.
+            type: array
+            items:
+              type: string
+            default: []
+          director:
+            description: List of directors.
+            type: array
+            items:
+              type: string
+            default: []
+          cast:
+            description: List of cast.
+            type: array
+            items:
+              oneOf:
+                - type: string
+                - type: object
+                  additionalProperties: false
+                  properties:
+                    name:
+                      type: string
+                    gender:
+                      type: string
+                    character:
+                      type: string
+                  required: [name]
+            default: []
+          homepage:
+            description: Homepage.
+            type: string
+          awards:
+            description: Status about any awards.
+            type: string
+          ratings:
+            description: Object with different rating values.
+            type: object
+  MovieItem:
+    allOf:
+      - $ref: "#/definitions/VirtualMovieItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [movie]
+        required: [type]
+  SeriesItem:
+    allOf:
+      - $ref: "#/definitions/VirtualMovieItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [series]
+          episodes:
+            description: List of episode objects.
+            type: array
+            items:
+              $ref: "#/definitions/SeriesEpisodeItem"
+        required: [type]
+  SeriesEpisodeItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          season:
+            description: Season number. For specials, use 0.
+            type: number
+            minimum: 0
+            maximum: 100000
+          episode:
+            description: Episode number.
+            type: number
+            minimum: 0
+            maximum: 100000
+        required: [season, episode]
+  ChannelItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [channel]
+        required: [type]
+  IptvItem:
+    allOf:
+      - $ref: "#/definitions/VirtualItem"
+      - type: object
+        properties:
+          type:
+            type: string
+            enum: [iptv]
+          epg:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  description: Start timestamp in UTC seconds.
+                  $ref: "general.yaml#/definitions/UnixTimestamp"
+                stop:
+                  description: Stop timestamp in UTC seconds.
+                  $ref: "general.yaml#/definitions/UnixTimestamp"
+                name:
+                  description: Name of the show.
+                  oneOf:
+                    - $ref: "general.yaml#/definitions/TranslatedText"
+                description:
+                  $ref: "general.yaml#/definitions/TranslatedText"
+                categories:
+                  type: array
+                  items:
+                    $ref: "general.yaml#/definitions/TranslatedText"
+                poster:
+                  $ref: "general.yaml#/definitions/Image"
+              required: [start, stop, name]
+            default: []
+        required: [type]
+  # Item:
+  #   description: All items, including `Directory`.
+  #   anyOf:
+  #     - $ref: "#/definitions/DirectoryItem"
+  #     - $ref: "#/definitions/MovieItem"
+  #     - $ref: "#/definitions/SeriesItem"
+  #     - $ref: "#/definitions/ChannelItem"
+  #     - $ref: "#/definitions/IptvItem"
+  PlayableItem:
+    description: All items which could be played, excludes `Directory`.
+    anyOf:
+      - $ref: "#/definitions/MovieItem"
+      - $ref: "#/definitions/SeriesItem"
+      - $ref: "#/definitions/ChannelItem"
+      - $ref: "#/definitions/IptvItem"
+  MainItem:
+    description: All items, including `Directory`.
+    anyOf:
+      - $ref: "#/definitions/DirectoryItem"
+      - $ref: "#/definitions/PlayableItem"
+  SubItem:
+    anyOf:
+      - $ref: "#/definitions/SeriesEpisodeItem"
+  CompatibleDirectoryFeature:
+    description: List of compatible filters or sort keys, if not set, all will be used.
+    type: array
+    items:
+      type: string
+  DirectoryFeatures:
+    description: Directory features like search, sort and filter.
+    type: object
+    additionalProperties: false
+    properties:
+      search:
+        description: Search options.
+        type: object
+        additionalProperties: false
+        properties:
+          enabled:
+            type: boolean
+            default: false
+          compatibleSort:
+            $ref: "#/definitions/CompatibleDirectoryFeature"
+          compatibleFilter:
+            $ref: "#/definitions/CompatibleDirectoryFeature"
+      sort:
+        description: Different sort columns and their caption including translations.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              $ref: "general.yaml#/definitions/GenericId"
+            name:
+              $ref: "general.yaml#/definitions/TranslatedText"
+            compatibleFilter:
+              $ref: "#/definitions/CompatibleDirectoryFeature"
+      filter:
+        description: Different sort column and their caption including translations.
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              $ref: "general.yaml#/definitions/GenericId"
+            name:
+              $ref: "general.yaml#/definitions/TranslatedText"
+            multiselect:
+              description: If this is true, an array will be returned
+              type: boolean
+              default: false
+            values:
+              description: Values used by filters (Genres, countries, ...).
+              type: array
+              items:
+                oneOf:
+                  - type: object
+                    additionalProperties: false
+                    properties:
+                      key:
+                        type: string
+                      value:
+                        $ref: "general.yaml#/definitions/TranslatedText"
+                    required: [key, value]
+                  - $ref: "general.yaml#/definitions/TranslatedText"
+            defaultValue:
+              description: |
+                Default value of this filter, should be TranslatedText or
+                the key of a filter. Have to be one of `values`.
+              anyOf:
+                - $ref: "general.yaml#/definitions/TranslatedText"
+                - type: string
+          required: [id, name, values]

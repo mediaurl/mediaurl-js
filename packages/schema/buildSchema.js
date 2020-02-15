@@ -2,10 +2,8 @@
 const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
+const schema = require("./src/schema");
 
-const schema = yaml.safeLoad(
-  fs.readFileSync(path.join(__dirname, "src", "schema.yaml"))
-);
 const json = JSON.stringify(schema, null, 2);
 fs.writeFileSync(path.join(__dirname, "dist", "schema.json"), json);
 fs.writeFileSync(
