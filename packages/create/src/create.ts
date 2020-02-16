@@ -74,7 +74,14 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
             {
               name: "requestArgs",
               type: "checkbox",
-              choices: ["imdb_id", "tmdb_id", "tvdb_id", "tvrage_id"],
+              choices: [
+                ["name", "year"],
+                ["name", "releaseDate"],
+                "imdb_id",
+                "tmdb_id",
+                "tvdb_id",
+                "tvrage_id"
+              ],
               default: defaults.requestArgs,
               when: ({ actions }) => {
                 for (const action of actions) {
