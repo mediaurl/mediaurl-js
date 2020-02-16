@@ -22,23 +22,7 @@ export const startHandler = (files: string[], cmdObj: any) => {
   }
 
   const scriptPath = path.resolve(__dirname, "utils", "start-entrypoint");
-  let execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
-  // Workaround to allow running `watched-sdk develop` from packages inside
-  // this monorepo.
-  try {
-    require(execPath);
-  } catch (error) {
-    const temp = path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "node_modules",
-      ".bin",
-      "ts-node-dev"
-    );
-    if (temp === execPath) throw error;
-    execPath = temp;
-  }
+  const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
 
   fork(
     scriptPath,
