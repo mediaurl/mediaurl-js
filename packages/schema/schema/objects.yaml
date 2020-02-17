@@ -49,14 +49,20 @@ definitions:
         description: Optional name of this source.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
+      format:
+        description: |
+          The video format. This is good to have since some formats have
+          playback issues on some devices.
+        type: string
       logo:
         description: Logo which will be displayed in the source list.
         $ref: "general.yaml#/definitions/Image"
-      language:
+      languages:
         description: |
-          If this source is only available in one language,
-          you can set it here.
-        $ref: "general.yaml#/definitions/Language"
+          Languages of this source.
+        type: array
+        items:
+          $ref: "general.yaml#/definitions/Language"
       subtitles:
         type: array
         items:

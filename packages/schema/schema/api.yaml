@@ -103,7 +103,7 @@ definitions:
           year:
             description: Release year.
             $ref: "general.yaml#/definitions/Year"
-        required: [type, ids]
+        required: [type, ids, name]
   ItemResponse:
     oneOf:
       - $ref: "general.yaml#/definitions/Error"
@@ -112,7 +112,8 @@ definitions:
       - type: "null"
   SourceRequest:
     allOf:
-      - $ref: "items.yaml#/definitions/ItemRequest"
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "addons.yaml#/definitions/ItemRequest"
       - type: object
         properties:
           subItem:
@@ -141,7 +142,8 @@ definitions:
                 type: number
                 minimum: 0
                 maximum: 100000
-            required: [season, episode]
+            default: {}
+        required: [subItem]
   SourceResponse:
     oneOf:
       - $ref: "general.yaml#/definitions/Error"
@@ -198,3 +200,4 @@ definitions:
       - $ref: "general.yaml#/definitions/Error"
       - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
+      - type: "null"
