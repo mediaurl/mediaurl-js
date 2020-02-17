@@ -64,20 +64,21 @@ export type CacheOptions = {
   storeRefreshErrors: boolean;
   /**
    * This value is for the `call` and `inline` functions.
-   * It is unnecesarry to run a function twice at the same time with
-   * the same caching key.
-   * To prevent race conditions like this, the request will be locked
-   * until either the lock is released or a result is written to the
-   * key.
-   * To disable this feature, set it to `null` (default).
-   * To enable it, set this to a timeout in miliseconds, or `forever` to wait
-   * forever.
+   * To prevent race conditions like two users requesting the same key at
+   * the same time, the executing will wait until either the lock is
+   * released or a result is written to the key.
+   * The timeout should be little more than the usual execution time of
+   * the function.
+   *
+   * To disable this feature, set it to `null`.
+   * Set this to a timeout in miliseconds, or to `forever`.
+   * The default is to wait for 30 seconds.
    */
-  lockTimeout: null | number | CacheForever;
+  simultanLockTimeout: null | number | CacheForever;
   /**
-   * See the `sleep` parameter of the `waitKey` function.
+   * The `sleep` parameter of the `waitKey` function.
    */
-  lockTimoueSleep: number;
+  simultanLockTimeoutSleep: number;
   /**
    * Prefix. Defaults to addon id, version and action.
    */
@@ -89,8 +90,8 @@ export const defaultCacheOptions: CacheOptions = {
   errorTtl: 600 * 1000,
   refreshInterval: null,
   storeRefreshErrors: false,
-  lockTimeout: null,
-  lockTimoueSleep: 200,
+  simultanLockTimeout: 30 * 1000,
+  simultanLockTimeoutSleep: 250,
   prefix: null
 };
 

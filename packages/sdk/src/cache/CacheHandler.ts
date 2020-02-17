@@ -119,7 +119,7 @@ export class CacheHandler {
   }
 
   private async lockRequest(key: string) {
-    if (this.options.lockTimeout === null) return undefined;
+    if (this.options.simultanLockTimeout === null) return undefined;
     if (await this.engine.exists(`${key}:call-lock`)) {
       // Wait for a result to be set, instead of the call-lock key.
       // The call-lock key is only used to check if there is a lock
@@ -127,9 +127,9 @@ export class CacheHandler {
       try {
         return await this.waitKey(
           key,
-          this.options.lockTimeout,
+          this.options.simultanLockTimeout,
           false,
-          this.options.lockTimoueSleep
+          this.options.simultanLockTimeoutSleep
         );
       } catch (error) {
         if (error.message !== "Wait timed out") throw error;
@@ -159,8 +159,12 @@ export class CacheHandler {
       }
     }
 
-    if (this.options.lockTimeout) {
-      await this.engine.set(`${key}:call-lock`, 1, this.options.lockTimeout);
+    if (this.options.simultanLockTimeout) {
+      await this.engine.set(
+        `${key}:call-lock`,
+        1,
+        this.options.simultanLockTimeout
+      );
     }
 
     try {
@@ -171,7 +175,7 @@ export class CacheHandler {
       await this.setError(key, { error: error.message || error });
       throw error;
     } finally {
-      if (this.options.lockTimeout) {
+      if (this.options.simultanLockTimeout) {
         await this.engine.delete(`${key}:call-lock`);
       }
     }
@@ -203,8 +207,12 @@ export class CacheHandler {
     }
 
     let releaseLock = async () => {};
-    if (this.options.lockTimeout) {
-      await this.engine.set(`${key}:call-lock`, 1, this.options.lockTimeout);
+    if (this.options.simultanLockTimeout) {
+      await this.engine.set(
+        `${key}:call-lock`,
+        1,
+        this.options.simultanLockTimeout
+      );
       releaseLock = async () => await this.engine.delete(`${key}:call-lock`);
     }
 
@@ -230,7 +238,7 @@ export class CacheHandler {
     key: any,
     timeout: number | CacheForever = 30 * 1000,
     del = true,
-    sleep = 200
+    sleep = 250
   ) {
     key = this.createKey(key);
     const t = Date.now();

@@ -32,13 +32,9 @@ describe("CacheHandler", () => {
   });
 
   test("createKey", () => {
-    expect(Buffer.from(cache.createKey("hello")).toString("base64")).toBe(
-      "OlsiZm9vYmFyIiwiaGVsbG8iXQ=="
-    );
-    expect(
-      Buffer.from(cache.createKey(["hello".repeat(100)])).toString("base64")
-    ).toBe(
-      "OsKVw4lrw6w4G8OhLgjDksKJw5PDjcKawo3Di8KcwqUJwrNgZcOeccOpf8K5Y23CvF3CqA=="
+    expect(cache.createKey("hello")).toBe(':["foobar","hello"]');
+    expect(cache.createKey(["hello".repeat(100)])).toBe(
+      ":lclr7Dgb4S4I0onTzZqNy5ylCbNgZd5x6X+5Y228Xag="
     );
   });
 
@@ -204,7 +200,10 @@ describe("CacheHandler", () => {
   });
 
   test("call success locked", async done => {
-    cache.setOptions({ lockTimeout: 200, lockTimoueSleep: 10 });
+    cache.setOptions({
+      simultanLockTimeout: 200,
+      simultanLockTimeoutSleep: 10
+    });
     const t1 = Date.now();
     const t2 = Date.now();
     expect(cache.call("hello", fn1))
@@ -232,7 +231,10 @@ describe("CacheHandler", () => {
   });
 
   test("call success locked timeout", async done => {
-    cache.setOptions({ lockTimeout: functionWait / 2, lockTimoueSleep: 10 });
+    cache.setOptions({
+      simultanLockTimeout: functionWait / 2,
+      simultanLockTimeoutSleep: 10
+    });
     const t1 = Date.now();
     const t2 = Date.now();
     expect(cache.call("hello", fn1))
@@ -256,8 +258,8 @@ describe("CacheHandler", () => {
 
   test("call success locked with error and refresh error store", async done => {
     cache.setOptions({
-      lockTimeout: functionWait / 2,
-      lockTimoueSleep: 10,
+      simultanLockTimeout: functionWait / 2,
+      simultanLockTimeoutSleep: 10,
       refreshInterval,
       storeRefreshErrors: true
     });
@@ -283,8 +285,8 @@ describe("CacheHandler", () => {
 
   test("call success locked with error and refresh without store", async done => {
     cache.setOptions({
-      lockTimeout: functionWait / 2,
-      lockTimoueSleep: 10,
+      simultanLockTimeout: functionWait / 2,
+      simultanLockTimeoutSleep: 10,
       refreshInterval,
       storeRefreshErrors: false
     });
