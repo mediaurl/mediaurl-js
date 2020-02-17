@@ -56,10 +56,10 @@ export class CacheHandler {
     const data = this.options.prefix ? [this.options.prefix, key] : key;
 
     const str = typeof data === "string" ? data : JSON.stringify(data);
-    if (str.length < 35) return ":" + str;
+    if (str.length < 40) return ":" + str;
     const hash = createHash("sha256");
     hash.update(str);
-    return ":" + hash.digest().toString("latin1");
+    return ":" + hash.digest().toString("base64");
   }
 
   public async get(key: any): Promise<any> {
@@ -134,6 +134,7 @@ export class CacheHandler {
       } catch (error) {
         if (error.message !== "Wait timed out") throw error;
         console.warn(`Cache lock timed out`);
+        return undefined;
       }
     }
   }
@@ -195,8 +196,8 @@ export class CacheHandler {
 
     if (data !== undefined) {
       if (data.error && this.options.errorTtl !== null) {
-        throw new CacheFoundError(null, new Error(data.error));
-      } else if (data.result) {
+        throw new CacheFoundError(undefined, new Error(data.error));
+      } else if (data.result !== undefined) {
         throw new CacheFoundError(data.result, null);
       }
     }
@@ -222,6 +223,9 @@ export class CacheHandler {
     };
   }
 
+  /**
+   * Wait for a key to exists.
+   */
   public async waitKey(
     key: any,
     timeout: number | CacheForever = 30 * 1000,

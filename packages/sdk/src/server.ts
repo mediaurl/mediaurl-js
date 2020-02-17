@@ -94,7 +94,7 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
       if (inlineCache) await inlineCache.set(result);
     } catch (error) {
       if (error instanceof CacheFoundError) {
-        if (error.result) {
+        if (error.result !== undefined) {
           result = error.result;
         } else {
           statusCode = 500;

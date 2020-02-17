@@ -59,7 +59,7 @@ export type CacheOptions = {
   refreshInterval: null | number;
   /**
    * When the current cache is getting refreshed and an error occoured,
-   * should this overwrite the current value? Defaults to false.
+   * should this overwrite the current value? Defaults to `false`.
    */
   storeRefreshErrors: boolean;
   /**
