@@ -21,37 +21,96 @@ import { BasicAddon } from "./addons";
 import { CacheHandler } from "./cache";
 import { FetchFn, RecaptchaFn } from "./tasks";
 
+export type CacheForever = "forever";
+
 export type CacheOptions = {
-  // Should errors be cached? Defaults to true.
-  cacheErrors: boolean;
-  // TTL in milliseconds. Defaults to 1 hours.
-  ttl: number;
-  // TTL for error responses in milliseconds. Defaults to 10 minutes.
-  errorTtl: number;
-  // Prefix. Defaults to addon id, version and current action
+  /**
+   * TTL in milliseconds. Defaults to 1 hours. When this is
+   * a function, the cache value will be passed as parameter.
+   * This can be useful to for example set a special TTL on
+   * an empty value.
+   * To disable caching, set this to `null`.
+   * To cache forever, set this to `forever`.
+   */
+  ttl:
+    | null
+    | number
+    | CacheForever
+    | ((value: any) => null | number | CacheForever);
+  /**
+   * TTL for errors in milliseconds. Defaults to 10 minutes.
+   * When it's a function, the error will be passed as parameter.
+   * To disable error caching, set this to `null`.
+   * To disable caching, set this to `null`.
+   * To cache forever, set this to `forever`.
+   */
+  errorTtl:
+    | null
+    | number
+    | CacheForever
+    | ((error: any) => null | number | CacheForever);
+  /**
+   * After this amount of miliseconds, the cache will be refreshed once.
+   * Next requests will still access the currently cached value.
+   * This value should be below `ttl`, and maybe also below `errorTtl`.
+   * This functionality can be very useful to prevent race conditions
+   * and to maintain a stable cache database.
+   */
+  refreshInterval: null | number;
+  /**
+   * When the current cache is getting refreshed and an error occoured,
+   * should this overwrite the current value? Defaults to false.
+   */
+  storeRefreshErrors: boolean;
+  /**
+   * This value is for the `call` and `inline` functions.
+   * It is unnecesarry to run a function twice at the same time with
+   * the same caching key.
+   * To prevent race conditions like this, the request will be locked
+   * until either the lock is released or a result is written to the
+   * key.
+   * To disable this feature, set it to `null` (default).
+   * To enable it, set this to a timeout in miliseconds, or `forever` to wait
+   * forever.
+   */
+  lockTimeout: null | number | CacheForever;
+  /**
+   * See the `sleep` parameter of the `waitKey` function.
+   */
+  lockTimoueSleep: number;
+  /**
+   * Prefix. Defaults to addon id, version and action.
+   */
   prefix: null | any;
 };
 
 export const defaultCacheOptions: CacheOptions = {
-  cacheErrors: true,
   ttl: 3600 * 1000,
   errorTtl: 600 * 1000,
+  refreshInterval: null,
+  storeRefreshErrors: false,
+  lockTimeout: null,
+  lockTimoueSleep: 200,
   prefix: null
 };
 
 export type InlineCacheContext = {
-  set: (key: any, value: any, ttl: null | CacheOptions["ttl"]) => Promise<void>;
+  set: (key: any, value: any, ttl: CacheOptions["ttl"]) => Promise<void>;
   setError: (
     key: any,
     value: any,
-    errorTtl: null | CacheOptions["errorTtl"]
+    errorTtl: CacheOptions["errorTtl"]
   ) => Promise<void>;
 };
 
 export type CacheOptionsParam = Partial<CacheOptions> | number;
 
 export type RequestCacheFn = (
-  // Data which will be used as the key for caching. Defaults to the full request data.
+  /**
+   * Data which will be used as the key for caching. Defaults to the full request data.
+   * You should only use the the variables from the action handler's `input` parameter
+   * which you are using in your script.
+   */
   key?: any,
   options?: CacheOptionsParam
 ) => Promise<void>;
@@ -66,15 +125,21 @@ export interface ActionHandlerContext<
   };
   addon: AddonType;
   cache: CacheHandler;
-  // Helper function to cache full action calls. Run this
-  // on the beginning of your action handler to check
-  // if the request is cached already.
-  // If there is a cache hit, the request will be aborted
-  // automatically.
+  /**
+   * Helper function to cache full action calls. Run this
+   * on the beginning of your action handler to check
+   * if the request is cached already.
+   * If there is a cache hit, the request will be aborted
+   * automatically.
+   */
   requestCache: RequestCacheFn;
-  // Fetch an URL via the client app.
+  /**
+   * Fetch an URL via the client app.
+   */
   fetch: FetchFn;
-  // Solve a recaptcha via the client app.
+  /**
+   * Solve a recaptcha via the client app.
+   */
   recaptcha: RecaptchaFn;
 }
 
@@ -92,8 +157,8 @@ export interface HandlersMap {
 }
 
 /**
- * Should include all available handlers
- * It's base type to pick from (by action)
+ * Should include all available handlers.
+ * It's base type to pick from (by action).
  */
 export type ActionHandlers<T extends BasicAddon> = {
   addon: ActionHandler<AddonRequest, AddonResponse, T>;
