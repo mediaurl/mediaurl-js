@@ -31,7 +31,7 @@ definitions:
         description: |
           Shape of the images.
           If not set, a value depening on the item type is used.
-          $ref: "general.yaml#/definitions/ImageShape"
+        $ref: "general.yaml#/definitions/ImageShape"
       displayName:
         description: |
           Display the item name over the image.
