@@ -1,3 +1,4 @@
+import { spawnSync } from "child_process";
 import * as fs from "fs-extra";
 import * as inquirer from "inquirer";
 import { camelCase } from "lodash";
@@ -113,10 +114,19 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
     throw new Error(`${userInput.template} template not supported`);
   }
 
+  console.log("[=] Creating addon structure");
   await executeProjectTemplate(projectTemplate, addonPath, userInput);
 
   if (!force) console.log();
-  console.log("Your addon is set up. Change to it's directory now and run");
-  console.log("npm install");
-  console.log("to install all needed modules.");
+
+  console.log("[=] Updating dependencies");
+  spawnSync("npx", ["npm-check-updates", "-u"], {
+    stdio: "inherit",
+    cwd: addonPath
+  });
+
+  console.log("[=] Installing dependencies");
+  spawnSync("npm", ["i"], { stdio: "inherit", cwd: addonPath });
+
+  console.log("[=] Your addon is ready and set up :-)");
 };

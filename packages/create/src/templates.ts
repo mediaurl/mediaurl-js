@@ -136,23 +136,23 @@ const packageJson = input => {
       test: input.test ? "jest" : undefined
     },
     dependencies: {
-      "@watchedcom/sdk": "latest"
+      "@watchedcom/sdk": "^0.0.0"
     }
   };
 
   if (ts) {
     data.devDependencies = {
       ...data.devDependencies,
-      typescript: "latest"
+      typescript: "^0.0.0"
     };
   }
 
   if (input.lintConfig) {
     data.devDependencies = {
       ...data.devDependencies,
-      husky: "latest",
-      "lint-staged": "latest",
-      prettier: "latest"
+      husky: "^0.0.0",
+      "lint-staged": "^0.0.0",
+      prettier: "^0.0.0"
     };
     data = {
       ...data,
@@ -170,14 +170,14 @@ const packageJson = input => {
   if (input.test) {
     data.devDependencies = {
       ...data.devDependencies,
-      jest: "latest",
-      "ts-jest": "latest",
-      "@watchedcom/test": "latest"
+      jest: "^0.0.0",
+      "ts-jest": "^0.0.0",
+      "@watchedcom/test": "^0.0.0"
     };
     if (ts) {
       data.devDependencies = {
         ...data.devDependencies,
-        "@types/jest": "latest"
+        "@types/jest": "^0.0.0"
       };
     }
   }
