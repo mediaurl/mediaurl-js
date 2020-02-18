@@ -1,6 +1,5 @@
 import {
-  DirectoryItem,
-  PlayableItem,
+  MainItem,
   ResolveRequest,
   ResolveResponse,
   WorkerAddon as WorkerAddonProps,
@@ -26,8 +25,11 @@ const resourceActions: WorkerAddonResourceActions[] = [
 ];
 
 type WorkerAddonTestData = {
-  directories?: DirectoryItem[];
-  items?: PlayableItem[];
+  items: MainItem[];
+};
+
+const defaultWorkerAddonTestData = {
+  items: []
 };
 
 type ResolverHandlerFn = (
@@ -43,7 +45,7 @@ type Resolver = {
 
 export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
   private resolvers: Resolver[];
-  private testData: WorkerAddonTestData = {};
+  private testData: WorkerAddonTestData = { ...defaultWorkerAddonTestData };
 
   constructor(props: WorkerAddonProps) {
     super(props);
@@ -120,8 +122,8 @@ export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
     return this;
   }
 
-  public setTestData(testData: WorkerAddonTestData) {
-    this.testData = testData;
+  public setTestData(testData: Partial<WorkerAddonTestData>) {
+    this.testData = { ...this.testData, ...testData };
   }
 
   public getTestData() {
