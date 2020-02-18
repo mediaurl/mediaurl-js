@@ -1,6 +1,6 @@
 {
   "name": "addon-example",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "main": "dist",
   "private": true,
   "scripts": {
@@ -10,11 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
-    "@watchedcom/sdk": "^0.12.2"
+    "@watchedcom/sdk": "^0.12.3"
   },
   "devDependencies": {
     "@types/jest": "^25.1.1",
-    "@watchedcom/test": "^0.12.2",
+    "@watchedcom/test": "^0.12.3",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.0",
     "typescript": "^3.7.5"
