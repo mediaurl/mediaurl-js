@@ -72,8 +72,8 @@ export class RepositoryAddon extends BasicAddon<
     for (const url of this.urls) {
       const fn = async () => {
         const key = `${this.getId()}:url:${url}`;
-        const data = await ctx.cache?.get(key);
-        if (data !== null) {
+        const data = await ctx.cache.get(key);
+        if (data !== undefined) {
           if (data.props) result.push(data.props);
           return;
         }
@@ -90,10 +90,10 @@ export class RepositoryAddon extends BasicAddon<
           props.metadata = { ...props.metadata, url };
           validateAddonProps(props);
           result.push(props);
-          ctx.cache?.set(key, { props });
+          ctx.cache.set(key, { props });
         } catch (error) {
           console.warn(`Failed loading ${url}:`, error.message);
-          ctx.cache?.set(key, { error: true });
+          ctx.cache.set(key, { error: true });
         }
       };
       promises.push(fn());
