@@ -22,15 +22,7 @@ export const startHandler = (files: string[], cmdObj: any) => {
   }
 
   const scriptPath = path.resolve(__dirname, "utils", "start-entrypoint");
-  // const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
-  const execPath = path.resolve(
-    __dirname,
-    "..",
-    "..",
-    "node_modules",
-    ".bin",
-    "ts-node-dev"
-  );
+  const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
 
   fork(
     scriptPath,
