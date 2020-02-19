@@ -18,6 +18,7 @@ import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
 export interface ServeAddonsOptions {
+  singleMode: boolean;
   logRequests: boolean;
   errorHandler: express.ErrorRequestHandler;
   port: number;
@@ -25,14 +26,15 @@ export interface ServeAddonsOptions {
 }
 
 const defaultServeOpts: ServeAddonsOptions = {
+  singleMode: false,
+  logRequests: true,
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
   cache: new CacheHandler(
     process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
       : new LocalCache()
-  ),
-  logRequests: true
+  )
 };
 
 const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
@@ -114,38 +116,77 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   return actionHandler;
 };
 
-const createAddonRouter = (addon: BasicAddon, cache: CacheHandler) => {
+const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
     if (req.query.wtchDiscover) {
       res.send({ watched: "addon" });
+    } else if (options.singleMode) {
+      // In single mode, render the index page
+      res.render("index", {
+        addons: [addon.getProps()],
+        options
+      });
     } else {
+      // Redirect to index page
       res.redirect("..");
     }
   });
-  router.post("/:action", createActionHandler(addon, cache));
+
+  router.post("/:action", createActionHandler(addon, options.cache));
   if (process.env.NODE_ENV === "development") {
-    router.get("/:action", createActionHandler(addon, cache));
+    // Allow GET requests in development mode
+    router.get("/:action", createActionHandler(addon, options.cache));
   }
-  router.post("/:action/task", createTaskResponseHandler(addon, cache));
+  router.post("/:action/task", createTaskResponseHandler(addon, options.cache));
   return router;
 };
 
-export const createRouter = (
+export const createSingleAddonRouter = (
   addons: BasicAddon[],
-  cache: CacheHandler
-): express.Router => {
+  options: ServeAddonsOptions
+) => {
+  if (addons.length > 1) {
+    throw new Error(
+      `The single addon router only supports one addon at a time.` +
+        `You tried to start the server with ${addons.length} addons.`
+    );
+  }
+
+  console.info(`Mounting addon ${addons[0].getId()} on /`);
+  return createAddonRouter(addons[0], options);
+};
+
+export const createMultiAddonRouter = (
+  addons: BasicAddon[],
+  options: ServeAddonsOptions
+) => {
   const router = express.Router();
 
+  router.get("/", (req, res) => {
+    if (req.query.wtchDiscover) {
+      res.send({
+        watched: "index",
+        addons: addons.map(addon => addon.getId()),
+        options
+      });
+    } else {
+      res.render("index", {
+        addons: addons.map(addon => addon.getProps()),
+        options
+      });
+    }
+  });
+
   const ids = new Set();
-  addons.forEach(addon => {
+  for (const addon of addons) {
     const id = addon.getId();
     if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
     ids.add(id);
     console.info(`Mounting addon ${id}`);
-    router.use(`/${id}`, createAddonRouter(addon, cache));
-  });
+    router.use(`/${id}`, createAddonRouter(addon, options));
+  }
 
   return router;
 };
@@ -163,20 +204,12 @@ export const createApp = (
   app.set("views", path.join(__dirname, "..", "views"));
   app.set("view engine", "pug");
 
-  app.use("/", createRouter(addons, options.cache));
-
-  app.get("/", (req, res) => {
-    if (req.query.wtchDiscover) {
-      res.send({
-        watched: "index",
-        addons: addons.map(addon => addon.getId())
-      });
-    } else {
-      res.render("index", {
-        addons: addons.map(addon => addon.getProps())
-      });
-    }
-  });
+  if (options.singleMode) {
+    app.use("/", createSingleAddonRouter(addons, options));
+  } else {
+    // Mount all addons on /<id>
+    app.use("/", createMultiAddonRouter(addons, options));
+  }
 
   app.get("/health", (req, res) => res.send("OK"));
   app.use(options.errorHandler);

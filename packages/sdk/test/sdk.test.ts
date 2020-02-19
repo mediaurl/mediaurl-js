@@ -1,19 +1,21 @@
 import {
   createApp,
   createBundleAddon,
+  createMultiAddonRouter,
   createRepositoryAddon,
-  createRouter,
+  createSingleAddonRouter,
   createWorkerAddon,
   serveAddons
 } from "../src";
 
 const exported = [
-  createWorkerAddon,
-  createRepositoryAddon,
-  createBundleAddon,
-  createRouter,
   createApp,
-  serveAddons
+  createSingleAddonRouter,
+  createMultiAddonRouter,
+  serveAddons,
+  createBundleAddon,
+  createRepositoryAddon,
+  createWorkerAddon
 ];
 
 test("SDK should export all needed methods and properties", () => {

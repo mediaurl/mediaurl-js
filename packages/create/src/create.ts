@@ -117,8 +117,6 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
   console.log("[=] Creating addon structure");
   await executeProjectTemplate(projectTemplate, addonPath, userInput);
 
-  if (!force) console.log();
-
   console.log("[=] Updating dependencies");
   spawnSync("npx", ["npm-check-updates", "-u"], {
     stdio: "inherit",

@@ -22,11 +22,19 @@ export const startHandler = (files: string[], cmdObj: any) => {
   }
 
   const scriptPath = path.resolve(__dirname, "utils", "start-entrypoint");
-  const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
+  // const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
+  const execPath = path.resolve(
+    __dirname,
+    "..",
+    "..",
+    "node_modules",
+    ".bin",
+    "ts-node-dev"
+  );
 
   fork(
     scriptPath,
-    files,
+    [cmdObj.single ? "single" : "multi", ...files],
     cmdObj.prod || !tsConfig
       ? undefined
       : { execPath, execArgv: ["--no-notify", "--transpileOnly"] }
@@ -36,6 +44,10 @@ export const startHandler = (files: string[], cmdObj: any) => {
 commander
   .command("start [files...]")
   .option("--prod", "Start the server in production mode")
+  .option(
+    "--single",
+    "Start a single addon server. The addon will be mounted on /"
+  )
   .description("Start the WATCHED SDK server")
   .action((files: string, cmdObj: any) =>
     startHandler(Array.isArray(files) ? files : [files], cmdObj)

@@ -3,9 +3,13 @@ import { serveAddons } from "../..";
 import { loadAddons } from "./load-addons";
 
 const main = () => {
-  const files = process.argv.slice(2);
+  const mode = process.argv[2];
+  console.warn("mode", mode);
+  const files = process.argv.slice(3);
   const addons = loadAddons(files);
-  serveAddons(addons);
+  serveAddons(addons, {
+    singleMode: mode === "single"
+  });
 };
 
 main();

@@ -14,12 +14,14 @@ html
     script(type="text/javascript")
       - var data = addons.map(a => ({ type: a.type, name: a.name, id: a.id }));
       .
+        var singleMode = #{options.singleMode};
         !{JSON.stringify(data)}.forEach(function(a) {
+          var url = String(window.location).replace(/\/$/, '') + '/' + (singleMode ? '' : a.id);
           var d = JSON.stringify({
             kind: 'addon',
             type: a.type,
             name: a.name,
-            url: String(window.location).replace(/\/$/, '') + '/' + a.id
+            url: url
           });
           var e = document.getElementsByClassName('addon-'+a.id);
           for (var i = 0; i < e.length; i++) {
