@@ -20,6 +20,9 @@ definitions:
         description: Subtitle type.
         type: string
         enum: [srt, ttml, vtt]
+      encoding:
+        description: Enconding of the subtitle file.
+        type: string
       url:
         $ref: "general.yaml#/definitions/Url"
     required: [language, type, url]
