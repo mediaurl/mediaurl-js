@@ -62,7 +62,7 @@ export class CacheHandler {
     return ":" + hash.digest().toString("base64");
   }
 
-  public async get(key: any): Promise<any> {
+  public async get<T = any>(key: any): Promise<T | undefined> {
     key = this.createKey(key);
     if (this.options.refreshInterval) {
       const locked = await this.engine.get(`${key}:refresh`);
@@ -143,7 +143,7 @@ export class CacheHandler {
    * Function which will cache an async function call.
    * Depending on the options, it also will cache exceptions.
    */
-  public async call(key: any, fn: () => Promise<any>) {
+  public async call<T = any>(key: any, fn: () => Promise<T>): Promise<T> {
     if (key === null) return await fn();
 
     key = this.createKey(key);
