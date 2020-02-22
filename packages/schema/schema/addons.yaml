@@ -39,8 +39,16 @@ definitions:
         description: Version in semver format.
         type: string
         example: "1.0.0"
-      logo:
-        description: Addon logo, can be a relative path to the addon URL.
+      poster:
+        description: |
+          Image which will be displayed on the addon detail page.
+          Can be a relative path to the addon URL.
+        $ref: "general.yaml#/definitions/Image"
+      icon:
+        description: |
+          Addon icon which is displayed on the addon index page and
+          source list.
+          Can be a relative path to the addon URL.
         $ref: "general.yaml#/definitions/Image"
       homepage:
         description: Homepage.

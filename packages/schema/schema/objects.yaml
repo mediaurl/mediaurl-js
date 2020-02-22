@@ -57,8 +57,10 @@ definitions:
           The video format. This is good to have since some formats have
           playback issues on some devices.
         type: string
-      logo:
-        description: Logo which will be displayed in the source list.
+      icon:
+        description: |
+          Icon which will be displayed on the source list. The default source
+          icon is the addon icon.
         $ref: "general.yaml#/definitions/Image"
       languages:
         description: |
