@@ -29,7 +29,7 @@ export class RedisCache extends BasicCache {
   }
 
   public async set(key: string, value: any, ttl: number | CacheForever) {
-    if (ttl === "forever") await this.client.setex(key, JSON.stringify(value));
+    if (ttl === "forever") await this.client.set(key, JSON.stringify(value));
     else await this.client.setex(key, ttl / 1000, JSON.stringify(value));
   }
 
