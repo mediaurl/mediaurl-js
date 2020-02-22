@@ -15,7 +15,7 @@ const addonProps = ({ name, requestArgs, itemTypes }) => {
   return {
     id: name,
     name,
-    version: "1.0.0",
+    version: "0.0.0",
     itemTypes: itemTypes.length > 0 ? itemTypes : undefined,
     requestArgs: requestArgs.length > 0 ? requestArgs : undefined
   };

@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import {
   CacheForever,
   CacheOptions,
@@ -49,17 +48,10 @@ export class CacheHandler {
   }
 
   /**
-   * Add cache prefixes and prevent too long cache keys.
+   * Convert the current key to an engine compatible key
    */
   public createKey(key: any) {
-    if (typeof key === "string" && key.indexOf(":") === 0) return key;
-    const data = this.options.prefix ? [this.options.prefix, key] : key;
-
-    const str = typeof data === "string" ? data : JSON.stringify(data);
-    if (str.length < 40) return ":" + str;
-    const hash = createHash("sha256");
-    hash.update(str);
-    return ":" + hash.digest().toString("base64");
+    return this.engine.createKey(this.options.prefix, key);
   }
 
   public async get<T = any>(key: any): Promise<T | undefined> {
