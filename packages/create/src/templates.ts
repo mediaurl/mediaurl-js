@@ -16,8 +16,11 @@ const addonProps = ({ name, requestArgs, itemTypes }) => {
     id: name,
     name,
     version: "0.0.0",
-    itemTypes: itemTypes.length > 0 ? itemTypes : undefined,
-    requestArgs: requestArgs.length > 0 ? requestArgs : undefined
+    itemTypes: itemTypes.length === 0 ? undefined : itemTypes,
+    requestArgs:
+      requestArgs.length === 0
+        ? undefined
+        : requestArgs.map(arg => (/,/.test(arg) ? arg.split(",") : arg))
   };
 };
 
