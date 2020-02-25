@@ -134,7 +134,6 @@ definitions:
               showOnHomescreen:
                 type: boolean
             default: {}
-        required: [addonId]
   ItemIDs:
     description: |
       Different IDs assigned to this item, for example
