@@ -25,8 +25,6 @@ definitions:
         enum: [item]
       type:
         $ref: "items.yaml#/definitions/ItemTypes"
-      name:
-        type: string
       id:
         description: Used with directories.
         $ref: "general.yaml#/definitions/GenericId"
@@ -39,6 +37,14 @@ definitions:
         items:
           $ref: "general.yaml#/definitions/Url"
         default: []
+      name:
+        type: string
+      releaseDate:
+        oneOf:
+          - $ref: "general.yaml#/definitions/UnixTimestamp"
+          - type: string
+      year:
+        $ref: "general.yaml#/definitions/Year"
     required: [kind, type]
   ShareData:
     oneOf:
