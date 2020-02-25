@@ -105,6 +105,36 @@ definitions:
             type: string
             enum: [directory]
         required: [type]
+  DashboardItem:
+    description: |
+      Lists which can be displayed on the dashboard. This items
+      are defined inside the addon.
+    type: object
+    allOf:
+      - $ref: "items.yaml#/definitions/VirtualDirectoryItem"
+      - type: object
+        properties:
+          addonId:
+            description: |
+              If this dashboard should be executed with another addon,
+              specify the ID here.
+            type: string
+          id:
+            description: |
+              ID of this dashboard.
+              To overwrite (or reconfigure) other dashboards, set
+              this to an already existing dashboard. The found object
+              then is merged with this one.
+            type: string
+          config:
+            description: Configuration of this dashboard.
+            type: object
+            additionalProperties: false
+            properties:
+              showOnHomescreen:
+                type: boolean
+            default: {}
+        required: [addonId]
   ItemIDs:
     description: |
       Different IDs assigned to this item, for example

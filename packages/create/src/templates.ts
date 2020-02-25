@@ -130,7 +130,7 @@ const packageJson = input => {
   const ts = input.template === "ts";
   let data: any = {
     name: "addon-" + kebabCase(input.name),
-    version: "1.0.0",
+    version: "0.0.0",
     main: ts ? "dist" : "src/index.js",
     scripts: {
       build: ts ? "tsc" : undefined,

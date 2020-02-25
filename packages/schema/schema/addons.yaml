@@ -162,12 +162,7 @@ definitions:
               is preserved.
             type: array
             items:
-              allOf:
-                - $ref: "items.yaml#/definitions/VirtualDirectoryItem"
-                - type: object
-                  properties:
-                    config:
-                      $ref: "#/definitions/DashboardConfig"
+              $ref: "items.yaml#/definitions/DashboardItem"
             default: []
         required: [type, actions]
   IptvAddon:
@@ -234,35 +229,9 @@ definitions:
               once during bundle installation.
             type: array
             items:
-              allOf:
-                - $ref: "items.yaml#/definitions/VirtualDirectoryItem"
-                - type: object
-                  properties:
-                    addonId:
-                      description: |
-                        If this dashboard should be executed with another addon,
-                        specify the ID here.
-                      type: string
-                    id:
-                      description: |
-                        ID of this dashboard.
-                        To overwrite (or reconfigure) other dashboards, set
-                        this to an already existing dashboard. The found object
-                        then is merged with this one.
-                      type: string
-                    config:
-                      $ref: "#/definitions/DashboardConfig"
-                  required: [addonId]
+              $ref: "items.yaml#/definitions/DashboardItem"
             default: []
         required: [type, requirements]
-  DashboardConfig:
-    description: Configuration of this dashboard.
-    type: object
-    additionalProperties: false
-    properties:
-      showOnHomescreen:
-        type: boolean
-    default: {}
   Addon:
     description: Automatically selects the fitting addon model.
     anyOf:

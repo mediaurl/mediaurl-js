@@ -118,8 +118,7 @@ definitions:
         properties:
           episode:
             description: |
-              Metadata about the requested sub item. Currently
-              this happens on requested episodes of series.
+              Metadata about the requested episode of a series item.
             type: object
             properties:
               ids:
