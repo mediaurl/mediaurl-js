@@ -28,7 +28,7 @@ const itemDefaults = {
     example1: "elephant"
   },
   name: "Elephants Dream",
-  subItem: {}
+  episode: {}
 };
 
 const app = request(createApp([addon.addon]));

@@ -2,7 +2,7 @@ import { createRepositoryAddon } from "@watchedcom/sdk";
 import { addonWorkerExample as exampleAddon } from "./workerExample";
 
 export const addonRepoExample = createRepositoryAddon({
-  id: "watched.repo-example",
+  id: "watched-repo-example",
   name: "Example Repository",
   version: "1.0.0"
 });

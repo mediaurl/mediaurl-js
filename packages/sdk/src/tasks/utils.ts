@@ -1,7 +1,7 @@
 import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import { RequestHandler } from "express";
-import * as uuid4 from "uuid/v4";
+import { v4 as uuid4 } from "uuid";
 import { BasicAddon } from "../addons";
 import { CacheHandler } from "../cache";
 

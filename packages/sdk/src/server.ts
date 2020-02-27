@@ -47,25 +47,34 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
-    const { action } = req.params;
+    const requestData =
+      req.method === "POST"
+        ? req.body
+        : req.query.data
+        ? JSON.parse(req.query.data)
+        : {};
 
+    const action = req.params.action.replace(/\.watched$/, "");
     const handler = addon.getActionHandler(action);
     const validator = getActionValidator(action);
-    validator.request(req.body);
+    validator.request(requestData);
 
-    const responder = new Responder(async (statusCode: number, body: any) => {
-      res.status(statusCode).json(body);
-    });
-
-    // Remove sig from request
-    const { sig, ...requestData } = req.body;
+    // Get sig contents
+    let sig: string;
+    if (requestData.sig) {
+      // Legacy
+      sig = requestData.sig;
+      delete requestData.sig;
+    } else {
+      sig = <string>req.headers["watched-sig"] ?? "";
+    }
     const sigData =
       process.env.SKIP_AUTH === "1" || action === "addon"
         ? null
         : validateSignature(sig);
 
     let statusCode = 200;
-    let result;
+    let result: any;
 
     cache = cache.clone({
       prefix: [addon.getId(), addon.getVersion(), action]
@@ -79,6 +88,12 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
       inlineCache = await c.inline(key);
     };
 
+    // Responder object
+    const responder = new Responder(async (statusCode: number, body: any) => {
+      res.status(statusCode).json(body);
+    });
+
+    // Handle the request
     try {
       result = await handler(requestData, {
         request: req,
@@ -121,9 +136,11 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
     if (req.query.wtchDiscover) {
+      // Legacy. Will be replaced by a GET /addon.watched call
       res.send({ watched: "addon" });
     } else if (options.singleMode) {
       // In single mode, render the index page
+      // TODO: Get addon props from the action handler `addon`
       res.render("index", {
         addons: [addon.getProps()],
         options
@@ -134,12 +151,19 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
     }
   });
 
-  router.post("/:action", createActionHandler(addon, options.cache));
-  if (process.env.NODE_ENV === "development") {
-    // Allow GET requests in development mode
-    router.get("/:action", createActionHandler(addon, options.cache));
-  }
-  router.post("/:action/task", createTaskResponseHandler(addon, options.cache));
+  const actionHandler = createActionHandler(addon, options.cache);
+  const taskHandler = createTaskResponseHandler(addon, options.cache);
+
+  router.get("/:action", actionHandler);
+  router.get("/:action-task", taskHandler);
+  router.post("/:action", actionHandler);
+  router.post("/:action-task", taskHandler);
+
+  router.get("/:action.watched", actionHandler);
+  router.get("/:action-task.watched", taskHandler);
+  router.post("/:action.watched", actionHandler);
+  router.post("/:action-task.watched", taskHandler);
+
   return router;
 };
 
@@ -166,17 +190,27 @@ export const createMultiAddonRouter = (
 
   router.get("/", (req, res) => {
     if (req.query.wtchDiscover) {
+      // Legacy. Will be replaced by a GET /addon.watched call
+      // Send all addon id's
       res.send({
         watched: "index",
-        addons: addons.map(addon => addon.getId()),
-        options
+        addons: addons.map(addon => addon.getId())
       });
     } else {
+      // TODO: Get get addon props from the action handler `addon`
       res.render("index", {
         addons: addons.map(addon => addon.getProps()),
         options
       });
     }
+  });
+
+  router.get("/addon.watched", (req, res) => {
+    // New discovery which replaces wtchDiscover
+    res.send({
+      type: "server",
+      addons: addons.map(addon => addon.getId())
+    });
   });
 
   const ids = new Set();

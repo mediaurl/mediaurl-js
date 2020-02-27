@@ -13,7 +13,7 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      "watched.worker-example": "id1234"
+      "watched-worker-example": "id1234"
     },
     name: "Example Item 1",
     description: "This item does not have any sources."
@@ -21,14 +21,14 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      "watched.worker-example": "id1235"
+      "watched-worker-example": "id1235"
     },
     name: "Big Buck Bunny"
   },
   {
     type: "movie",
     ids: {
-      "watched.worker-example": "elephant"
+      "watched-worker-example": "elephant"
     },
     name: "Elephants Dream",
     description: "Dream of elephants?"
@@ -93,7 +93,7 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
 };
 
 export const addonWorkerExample = createWorkerAddon({
-  id: "watched.worker-example",
+  id: "watched-worker-example",
   name: "Typescript Example Addon",
   version: "1.0.0",
   itemTypes: ["movie"]
@@ -109,9 +109,9 @@ addonWorkerExample.registerActionHandler("directory", async (args, ctx) => {
 addonWorkerExample.registerActionHandler(
   "item",
   async (args: ItemRequest, ctx) => {
-    const id = args.ids["watched.worker-example"];
+    const id = args.ids["watched-worker-example"];
     const item = EXAMPLE_ITEMS.find(
-      item => item.ids["watched.worker-example"] === id
+      item => item.ids["watched-worker-example"] === id
     );
     if (!item) throw new Error("Not found");
     return item;
@@ -121,7 +121,7 @@ addonWorkerExample.registerActionHandler(
 addonWorkerExample.registerActionHandler(
   "source",
   async (args: SourceRequest, ctx) => {
-    const id = args.ids["watched.worker-example"];
+    const id = args.ids["watched-worker-example"];
     const sources = EXAMPLE_SOURCES[id];
     return sources ?? [];
   }
@@ -130,7 +130,7 @@ addonWorkerExample.registerActionHandler(
 addonWorkerExample.registerActionHandler(
   "subtitle",
   async (args: SubtitleRequest, ctx) => {
-    // ids.id is an alias for ids["watched.worker-example"] (the addon ID)
+    // ids.id is an alias for ids["watched-worker-example"] (the addon ID)
     const id = args.ids.id;
     await ctx.requestCache(id);
     const subtitles = EXAMPLE_SUBTITLES[id];
