@@ -116,7 +116,7 @@ export const testAddon = async (addon: BasicAddon) => {
     const sourceRequest = (item: PlayableItem, subItem?: SubItem) =>
       <SourceRequest | SubtitleRequest>{
         ...itemRequest(item),
-        subItem: subItem
+        episode: subItem
           ? {
               ids: {
                 ...subItem.ids,
