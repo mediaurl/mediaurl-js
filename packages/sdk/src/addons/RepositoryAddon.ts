@@ -58,7 +58,13 @@ export class RepositoryAddon extends BasicAddon<
           const handler = addon.getActionHandler("addon");
           const props: AddonProps = await handler(
             { ...input },
-            { ...ctx, addon }
+            {
+              ...ctx,
+              cache: ctx.cache.clone({
+                prefix: [addon.getId(), addon.getVersion(), "addon"]
+              })
+            },
+            addon
           );
           props.metadata = { url: `./${id}` };
           result.push(props);

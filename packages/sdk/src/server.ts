@@ -95,18 +95,21 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
 
     // Handle the request
     try {
-      result = await handler(requestData, {
-        request: req,
-        sig: {
-          raw: sig,
-          data: sigData
+      result = await handler(
+        requestData,
+        {
+          request: req,
+          sig: {
+            raw: sig,
+            data: sigData
+          },
+          cache,
+          requestCache,
+          fetch: createTaskFetch(responder, cache),
+          recaptcha: createTaskRecaptcha(responder, cache)
         },
-        addon,
-        cache,
-        requestCache,
-        fetch: createTaskFetch(responder, cache),
-        recaptcha: createTaskRecaptcha(responder, cache)
-      });
+        addon
+      );
       validator.response(result);
       if (inlineCache) await inlineCache.set(result);
     } catch (error) {

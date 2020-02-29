@@ -116,15 +116,12 @@ export type RequestCacheFn = (
   options?: CacheOptionsParam
 ) => Promise<void>;
 
-export interface ActionHandlerContext<
-  AddonType extends BasicAddon = BasicAddon
-> {
+export interface ActionHandlerContext {
   request: express.Request;
   sig: {
     raw: string;
     data: any;
   };
-  addon: AddonType;
   cache: CacheHandler;
   /**
    * Helper function to cache full action calls. Run this
@@ -147,10 +144,11 @@ export interface ActionHandlerContext<
 export type ActionHandler<
   InputType = any,
   OutputType = any,
-  AddonType extends BasicAddon = BasicAddon
+  AddonClass extends BasicAddon = BasicAddon
 > = (
   input: InputType,
-  context: ActionHandlerContext<AddonType>
+  context: ActionHandlerContext,
+  addon: AddonClass
 ) => Promise<OutputType>;
 
 export interface HandlersMap {

@@ -18,7 +18,7 @@ export class BundleAddon extends BasicAddon<BundleHandlers, BundleAddonProps> {
 
   public validateAddon() {
     if (!this.props.requirements?.length) {
-      throw new Error(`Bundle addon needs at least on requirement`);
+      throw new Error(`Bundle addon needs at least one requirement`);
     }
   }
 }
