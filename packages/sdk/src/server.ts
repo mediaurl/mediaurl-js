@@ -7,7 +7,8 @@ import * as path from "path";
 import { BasicAddon } from "./addons";
 import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
-import { RequestCacheFn } from "./interfaces";
+import { DummyI18nHandler } from "./i18n";
+import { I18nHandler, RequestCacheFn } from "./interfaces";
 import {
   createTaskFetch,
   createTaskRecaptcha,
@@ -23,6 +24,7 @@ export interface ServeAddonsOptions {
   errorHandler: express.ErrorRequestHandler;
   port: number;
   cache: CacheHandler;
+  i18n: I18nHandler;
 }
 
 const defaultServeOpts: ServeAddonsOptions = {
@@ -34,10 +36,15 @@ const defaultServeOpts: ServeAddonsOptions = {
     process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
       : new LocalCache()
-  )
+  ),
+  i18n: new DummyI18nHandler()
 };
 
-const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
+const createActionHandler = (
+  addon: BasicAddon,
+  cache: CacheHandler,
+  i18n: I18nHandler
+) => {
   try {
     addon.validateAddon();
   } catch (error) {
@@ -47,7 +54,7 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
-    const requestData =
+    const input =
       req.method === "POST"
         ? req.body
         : req.query.data
@@ -57,14 +64,14 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
     const action = req.params.action.replace(/\.watched$/, "");
     const handler = addon.getActionHandler(action);
     const validator = getActionValidator(action);
-    validator.request(requestData);
+    validator.request(input);
 
     // Get sig contents
     let sig: string;
-    if (requestData.sig) {
+    if (input.sig) {
       // Legacy
-      sig = requestData.sig;
-      delete requestData.sig;
+      sig = input.sig;
+      delete input.sig;
     } else {
       sig = <string>req.headers["watched-sig"] ?? "";
     }
@@ -95,18 +102,19 @@ const createActionHandler = (addon: BasicAddon, cache: CacheHandler) => {
 
     // Handle the request
     try {
+      const myI18n = i18n.getInstance();
+      if (input?.language) await myI18n.changeLanguage(input.language);
       result = await handler(
-        requestData,
+        input,
         {
           request: req,
-          sig: {
-            raw: sig,
-            data: sigData
-          },
+          sig: sigData,
           cache,
           requestCache,
           fetch: createTaskFetch(responder, cache),
-          recaptcha: createTaskRecaptcha(responder, cache)
+          recaptcha: createTaskRecaptcha(responder, cache),
+          i18n,
+          t: (key, defaultValue) => i18n.t(key, defaultValue)
         },
         addon
       );
@@ -154,7 +162,7 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
     }
   });
 
-  const actionHandler = createActionHandler(addon, options.cache);
+  const actionHandler = createActionHandler(addon, options.cache, options.i18n);
   const taskHandler = createTaskResponseHandler(addon, options.cache);
 
   router.get("/:action", actionHandler);
@@ -230,9 +238,10 @@ export const createMultiAddonRouter = (
 
 export const createApp = (
   addons: BasicAddon[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<ServeAddonsOptions>,
+  app?: express.Application
 ): express.Application => {
-  const app = express();
+  if (!app) app = express();
   const options = defaults(opts, defaultServeOpts);
 
   if (options.logRequests) app.use(morgan("dev"));
@@ -256,16 +265,17 @@ export const createApp = (
 
 export const serveAddons = (
   addons: BasicAddon[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<ServeAddonsOptions>,
+  app?: express.Application
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const app = createApp(addons, opts);
+  const myApp = createApp(addons, opts, app);
 
   const listenPromise = new Promise<void>(resolve => {
-    app.listen(app.get("port"), () => {
-      console.info(`Listening on ${app.get("port")}`);
+    myApp.listen(myApp.get("port"), () => {
+      console.info(`Listening on ${myApp.get("port")}`);
       resolve();
     });
   });
 
-  return { app, listenPromise };
+  return { app: myApp, listenPromise };
 };

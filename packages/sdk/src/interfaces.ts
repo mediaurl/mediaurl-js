@@ -116,12 +116,28 @@ export type RequestCacheFn = (
   options?: CacheOptionsParam
 ) => Promise<void>;
 
+/**
+ * An interface to handle translations. An instance of this object
+ * will be passed to the `ActionHandlerContext`.
+ */
+export interface I18nHandler {
+  /**
+   * Clone the i18n object
+   */
+  getInstance(): I18nHandler;
+  /**
+   * Change the language of the current i18n clone
+   */
+  changeLanguage(language: string): void | Promise<void>;
+  /**
+   * Translate a string
+   */
+  t(key: string, defaultValue?: string): string;
+}
+
 export interface ActionHandlerContext {
   request: express.Request;
-  sig: {
-    raw: string;
-    data: any;
-  };
+  sig: any;
   cache: CacheHandler;
   /**
    * Helper function to cache full action calls. Run this
@@ -139,6 +155,15 @@ export interface ActionHandlerContext {
    * Solve a recaptcha via the client app.
    */
   recaptcha: RecaptchaFn;
+  /**
+   * Handle translations. Note that you have to set
+   * up the 18n handler yourself.
+   */
+  i18n: I18nHandler;
+  /**
+   * Shorthand for i18n.t
+   */
+  t: I18nHandler["t"];
 }
 
 export type ActionHandler<
