@@ -1,9 +1,9 @@
-import { Addon as AddonProps } from "@watchedcom/schema";
+import { Addon } from "@watchedcom/schema";
 import { validateAddonProps } from "../validators";
 
-export const makeCreateFunction = <P extends AddonProps, C>(opts: {
+export const makeCreateFunction = <P extends Addon, C>(opts: {
   AddonClass: { new (props: P): C };
-  type: AddonProps["type"];
+  type: Addon["type"];
   defaults?: Partial<P>;
 }) => {
   const createAddon = (props: Partial<P>): C => {

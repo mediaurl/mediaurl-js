@@ -99,7 +99,7 @@ export const addonWorkerExample = createWorkerAddon({
   itemTypes: ["movie"]
 });
 
-addonWorkerExample.registerActionHandler("directory", async (args, ctx) => {
+addonWorkerExample.registerActionHandler("directory", async (input, ctx) => {
   return {
     items: EXAMPLE_ITEMS,
     hasMore: false
@@ -108,8 +108,8 @@ addonWorkerExample.registerActionHandler("directory", async (args, ctx) => {
 
 addonWorkerExample.registerActionHandler(
   "item",
-  async (args: ItemRequest, ctx) => {
-    const id = args.ids["watched-worker-example"];
+  async (input: ItemRequest, ctx) => {
+    const id = input.ids["watched-worker-example"];
     const item = EXAMPLE_ITEMS.find(
       item => item.ids["watched-worker-example"] === id
     );
@@ -120,8 +120,8 @@ addonWorkerExample.registerActionHandler(
 
 addonWorkerExample.registerActionHandler(
   "source",
-  async (args: SourceRequest, ctx) => {
-    const id = args.ids["watched-worker-example"];
+  async (input: SourceRequest, ctx) => {
+    const id = input.ids["watched-worker-example"];
     const sources = EXAMPLE_SOURCES[id];
     return sources ?? [];
   }
@@ -129,9 +129,9 @@ addonWorkerExample.registerActionHandler(
 
 addonWorkerExample.registerActionHandler(
   "subtitle",
-  async (args: SubtitleRequest, ctx) => {
+  async (input: SubtitleRequest, ctx) => {
     // ids.id is an alias for ids["watched-worker-example"] (the addon ID)
-    const id = args.ids.id;
+    const id = input.ids.id;
     await ctx.requestCache(id);
     const subtitles = EXAMPLE_SUBTITLES[id];
     return subtitles ?? [];

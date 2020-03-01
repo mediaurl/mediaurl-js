@@ -4,7 +4,7 @@ import "express-async-errors";
 import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
-import { BasicAddon } from "./addons";
+import { BasicAddonClass } from "./addons";
 import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
 import { RequestCacheFn } from "./interfaces";
@@ -63,7 +63,7 @@ const defaultServeOpts: ServeAddonsOptions = {
 let requestRecorder: RequestRecorder;
 
 const createActionHandler = (
-  addon: BasicAddon,
+  addon: BasicAddonClass,
   cache: CacheHandler,
   requestRecorderPath: null | string
 ) => {
@@ -178,7 +178,10 @@ const createActionHandler = (
   return actionHandler;
 };
 
-const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
+const createAddonRouter = (
+  addon: BasicAddonClass,
+  options: ServeAddonsOptions
+) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
@@ -220,7 +223,7 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
 };
 
 export const createSingleAddonRouter = (
-  addons: BasicAddon[],
+  addons: BasicAddonClass[],
   options: ServeAddonsOptions
 ) => {
   if (addons.length > 1) {
@@ -235,7 +238,7 @@ export const createSingleAddonRouter = (
 };
 
 export const createMultiAddonRouter = (
-  addons: BasicAddon[],
+  addons: BasicAddonClass[],
   options: ServeAddonsOptions
 ) => {
   const router = express.Router();
@@ -278,7 +281,7 @@ export const createMultiAddonRouter = (
 };
 
 export const createApp = (
-  addons: BasicAddon[],
+  addons: BasicAddonClass[],
   opts?: Partial<ServeAddonsOptions>
 ): express.Application => {
   const app = express();
@@ -304,7 +307,7 @@ export const createApp = (
 };
 
 export const serveAddons = (
-  addons: BasicAddon[],
+  addons: BasicAddonClass[],
   opts?: Partial<ServeAddonsOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
   const app = createApp(addons, opts);

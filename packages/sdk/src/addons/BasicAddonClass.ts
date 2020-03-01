@@ -1,5 +1,5 @@
 import {
-  Addon as AddonProps,
+  Addon,
   AddonRequest,
   AddonResponse,
   AddonTypes
@@ -8,12 +8,12 @@ import { cloneDeep } from "lodash";
 import { ActionHandler, HandlersMap } from "../interfaces";
 
 export type BasicHandlers = {
-  addon: ActionHandler<AddonRequest, AddonResponse, BasicAddon>;
+  addon: ActionHandler<AddonRequest, AddonResponse, BasicAddonClass>;
 };
 
-export abstract class BasicAddon<
+export abstract class BasicAddonClass<
   HM extends HandlersMap = BasicHandlers,
-  P extends AddonProps = AddonProps
+  P extends Addon = Addon
 > {
   private handlersMap: HandlersMap = {
     addon: async () => this.getProps()
@@ -31,11 +31,11 @@ export abstract class BasicAddon<
     return this.props.type;
   }
 
-  public getId(): AddonProps["id"] {
+  public getId(): Addon["id"] {
     return this.props.id;
   }
 
-  public getVersion(): AddonProps["version"] {
+  public getVersion(): Addon["version"] {
     return this.props.version;
   }
 

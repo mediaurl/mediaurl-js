@@ -1,18 +1,18 @@
-import {
-  BundleAddon as BundleAddonProps,
-  BundleAddonActions
-} from "@watchedcom/schema";
+import { BundleAddon, BundleAddonActions } from "@watchedcom/schema";
 import { ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
-import { BasicAddon } from "./BasicAddon";
+import { BasicAddonClass } from "./BasicAddonClass";
 
 export type BundleHandlers = Pick<
-  ActionHandlers<BundleAddon>,
+  ActionHandlers<BundleAddonClass>,
   BundleAddonActions
 >;
 
-export class BundleAddon extends BasicAddon<BundleHandlers, BundleAddonProps> {
-  constructor(p: BundleAddonProps) {
+export class BundleAddonClass extends BasicAddonClass<
+  BundleHandlers,
+  BundleAddon
+> {
+  constructor(p: BundleAddon) {
     super(p);
   }
 
@@ -24,9 +24,9 @@ export class BundleAddon extends BasicAddon<BundleHandlers, BundleAddonProps> {
 }
 
 export const createBundleAddon = makeCreateFunction<
-  BundleAddonProps,
-  BundleAddon
+  BundleAddon,
+  BundleAddonClass
 >({
-  AddonClass: BundleAddon,
+  AddonClass: BundleAddonClass,
   type: "bundle"
 });

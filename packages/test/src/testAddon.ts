@@ -16,14 +16,14 @@ import {
   SubtitleRequest,
   WorkerAddonActions
 } from "@watchedcom/sdk";
-import { BasicAddon, WorkerAddon } from "@watchedcom/sdk/dist/addons";
+import { BasicAddonClass, WorkerAddonClass } from "@watchedcom/sdk";
 import * as assert from "assert";
 import * as request from "supertest";
 
 export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;
 
-  constructor(public readonly addon: BasicAddon) {
+  constructor(public readonly addon: BasicAddonClass) {
     this.app = request(createApp([this.addon]));
   }
 
@@ -44,7 +44,7 @@ export class AddonTest {
   }
 }
 
-export const testAddon = async (addon: BasicAddon) => {
+export const testAddon = async (addon: BasicAddonClass) => {
   const requestDefaults = {
     sig: "mock",
     language: "en",
@@ -60,7 +60,7 @@ export const testAddon = async (addon: BasicAddon) => {
   if (type === "repository") {
     await app.call<RepositoryRequest>("repository", { ...requestDefaults });
   } else if (type === "worker") {
-    const testData = (<WorkerAddon>addon).getTestData();
+    const testData = (<WorkerAddonClass>addon).getTestData();
     const directories = <DirectoryItem[]>(
       testData.items.filter(item => item.type === "directory")
     );

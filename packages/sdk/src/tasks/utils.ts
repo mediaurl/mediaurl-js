@@ -2,7 +2,7 @@ import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import { v4 as uuid4 } from "uuid";
-import { BasicAddon } from "../addons";
+import { BasicAddonClass } from "../addons";
 import { CacheHandler } from "../cache";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;
@@ -98,7 +98,7 @@ export const sendTask = async (
 };
 
 export const createTaskResponseHandler = (
-  addon: BasicAddon,
+  addon: BasicAddonClass,
   cache: CacheHandler,
   timeout = 120 * 1000
 ) => {

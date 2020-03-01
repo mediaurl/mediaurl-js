@@ -1,5 +1,5 @@
 import {
-  Addon as AddonProps,
+  Addon,
   AddonRequest,
   RepositoryAddon as RepositoryAddonProps,
   RepositoryAddonActions,
@@ -9,20 +9,20 @@ import fetch from "node-fetch";
 import { ActionHandlerContext, ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 import { validateAddonProps } from "../validators";
-import { BasicAddon } from "./BasicAddon";
+import { BasicAddonClass } from "./BasicAddonClass";
 
 export type RepositoryHandlers = Pick<
-  ActionHandlers<RepositoryAddon>,
+  ActionHandlers<RepositoryAddonClass>,
   RepositoryAddonActions
 >;
 
 type Url = string;
 
-export class RepositoryAddon extends BasicAddon<
+export class RepositoryAddonClass extends BasicAddonClass<
   RepositoryHandlers,
   RepositoryAddonProps
 > {
-  private addons: BasicAddon[] = [];
+  private addons: BasicAddonClass[] = [];
   private urls: Url[] = [];
 
   constructor(p: RepositoryAddonProps) {
@@ -48,7 +48,7 @@ export class RepositoryAddon extends BasicAddon<
     input: AddonRequest,
     ctx: ActionHandlerContext
   ) {
-    const result: AddonProps[] = [];
+    const result: Addon[] = [];
     const promises: Promise<void>[] = [];
 
     for (const addon of this.addons) {
@@ -56,7 +56,7 @@ export class RepositoryAddon extends BasicAddon<
         const id = addon.getId();
         try {
           const handler = addon.getActionHandler("addon");
-          const props: AddonProps = await handler(
+          const props: Addon = await handler(
             { ...input },
             {
               ...ctx,
@@ -109,7 +109,7 @@ export class RepositoryAddon extends BasicAddon<
     return result;
   }
 
-  public async _resolveAddonUrl(url: Url): Promise<AddonProps> {
+  public async _resolveAddonUrl(url: Url): Promise<Addon> {
     return {} as any;
   }
 
@@ -117,7 +117,7 @@ export class RepositoryAddon extends BasicAddon<
     return this.addons;
   }
 
-  public addAddon(addon: BasicAddon) {
+  public addAddon(addon: BasicAddonClass) {
     this.addons.push(addon);
     return this;
   }
@@ -130,8 +130,8 @@ export class RepositoryAddon extends BasicAddon<
 
 export const createRepositoryAddon = makeCreateFunction<
   RepositoryAddonProps,
-  RepositoryAddon
+  RepositoryAddonClass
 >({
-  AddonClass: RepositoryAddon,
+  AddonClass: RepositoryAddonClass,
   type: "repository"
 });

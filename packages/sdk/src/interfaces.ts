@@ -17,7 +17,7 @@ import {
   SubtitleResponse
 } from "@watchedcom/schema";
 import * as express from "express";
-import { BasicAddon } from "./addons";
+import { BasicAddonClass } from "./addons";
 import { CacheHandler } from "./cache";
 import { FetchFn, RecaptchaFn } from "./tasks";
 
@@ -144,7 +144,7 @@ export interface ActionHandlerContext {
 export type ActionHandler<
   InputType = any,
   OutputType = any,
-  AddonClass extends BasicAddon = BasicAddon
+  AddonClass extends BasicAddonClass = BasicAddonClass
 > = (
   input: InputType,
   context: ActionHandlerContext,
@@ -159,7 +159,7 @@ export interface HandlersMap {
  * Should include all available handlers.
  * It's base type to pick from (by action).
  */
-export type ActionHandlers<T extends BasicAddon> = {
+export type ActionHandlers<T extends BasicAddonClass> = {
   addon: ActionHandler<AddonRequest, AddonResponse, T>;
 
   repository: ActionHandler<RepositoryRequest, RepositoryResponse, T>;

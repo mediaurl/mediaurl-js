@@ -2,16 +2,16 @@ import {
   MainItem,
   ResolveRequest,
   ResolveResponse,
-  WorkerAddon as WorkerAddonProps,
+  WorkerAddon,
   WorkerAddonActions,
   WorkerAddonResourceActions
 } from "@watchedcom/schema";
 import { ActionHandlerContext, ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
-import { BasicAddon } from "./BasicAddon";
+import { BasicAddonClass } from "./BasicAddonClass";
 
 export type WorkerHandlers = Pick<
-  ActionHandlers<WorkerAddon>,
+  ActionHandlers<WorkerAddonClass>,
   WorkerAddonActions
 >;
 
@@ -43,11 +43,14 @@ type Resolver = {
   handler: ResolverHandlerFn;
 };
 
-export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
+export class WorkerAddonClass extends BasicAddonClass<
+  WorkerHandlers,
+  WorkerAddon
+> {
   private resolvers: Resolver[];
   private testData: WorkerAddonTestData = { ...defaultWorkerAddonTestData };
 
-  constructor(props: WorkerAddonProps) {
+  constructor(props: WorkerAddon) {
     super(props);
     this.resolvers = [];
   }
@@ -132,10 +135,10 @@ export class WorkerAddon extends BasicAddon<WorkerHandlers, WorkerAddonProps> {
 }
 
 export const createWorkerAddon = makeCreateFunction<
-  WorkerAddonProps,
-  WorkerAddon
+  WorkerAddon,
+  WorkerAddonClass
 >({
-  AddonClass: WorkerAddon,
+  AddonClass: WorkerAddonClass,
   type: "worker",
   defaults: { actions: [] }
 });

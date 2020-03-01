@@ -1,14 +1,14 @@
 export * from "@watchedcom/schema";
 export {
-  BasicAddon,
-  BundleAddon,
+  BasicAddonClass,
+  BundleAddonClass,
   BundleHandlers,
   createBundleAddon,
   createRepositoryAddon,
   createWorkerAddon,
-  RepositoryAddon,
+  RepositoryAddonClass,
   RepositoryHandlers,
-  WorkerAddon,
+  WorkerAddonClass,
   WorkerHandlers
 } from "./addons";
 export * from "./interfaces";

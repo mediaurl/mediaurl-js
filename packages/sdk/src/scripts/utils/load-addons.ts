@@ -1,12 +1,12 @@
 import { flatten, uniqBy } from "lodash";
 import * as path from "path";
-import { BasicAddon } from "../../addons";
+import { BasicAddonClass } from "../../addons";
 
 const requireAddons = (pathStr: string) => {
   const requiredFile = require(pathStr);
   const sources = [requiredFile, ...Object.values(requiredFile)];
 
-  const addons: BasicAddon[] = sources.filter((addon: BasicAddon) => {
+  const addons: BasicAddonClass[] = sources.filter((addon: BasicAddonClass) => {
     try {
       // Make sure it's a WATCHED addon
       addon.getProps();
