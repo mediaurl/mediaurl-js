@@ -1,7 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
-import { defaults } from "lodash";
+import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
 import { BasicAddon } from "./addons";
@@ -15,21 +15,47 @@ import {
   createTaskResponseHandler,
   Responder
 } from "./tasks";
+import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
-export interface ServeAddonsOptions {
+export type ServeAddonsOptions = {
+  /**
+   * Start the server in single addon mode (default: true)
+   */
   singleMode: boolean;
+  /**
+   * Log HTTP requests (default: true)
+   */
   logRequests: boolean;
+  /**
+   * Write requests to the addon server to a file which can
+   * be replayed later. This is very useful for testing or
+   * to create test cases.
+   */
+  requestRecorderPath: null | string;
+  /**
+   * Express error handler
+   */
   errorHandler: express.ErrorRequestHandler;
+  /**
+   * Listen port
+   */
   port: number;
+  /**
+   * Cache handler
+   */
   cache: CacheHandler;
+  /**
+   * I18n handler
+   */
   i18n: I18nHandler;
-}
+};
 
 const defaultServeOpts: ServeAddonsOptions = {
   singleMode: false,
   logRequests: true,
+  requestRecorderPath: null,
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
   cache: new CacheHandler(
@@ -40,10 +66,13 @@ const defaultServeOpts: ServeAddonsOptions = {
   i18n: new DummyI18nHandler()
 };
 
+let requestRecorder: RequestRecorder;
+
 const createActionHandler = (
   addon: BasicAddon,
   cache: CacheHandler,
-  i18n: I18nHandler
+  i18n: I18nHandler,
+  requestRecorderPath: null | string
 ) => {
   try {
     addon.validateAddon();
@@ -51,6 +80,11 @@ const createActionHandler = (
     throw new Error(
       `Validation of addon "${addon.getId()}" failed: ${error.message}`
     );
+  }
+
+  if (requestRecorderPath && !requestRecorder) {
+    console.warn(`Logging requests to ${requestRecorderPath}`);
+    requestRecorder = new RequestRecorder(requestRecorderPath);
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
@@ -80,9 +114,14 @@ const createActionHandler = (
         ? null
         : validateSignature(sig);
 
-    let statusCode = 200;
-    let result: any;
+    // Store request data for recording
+    const record: Partial<RecordData> = {};
+    if (requestRecorder) {
+      record.action = action;
+      record.input = cloneDeep(input);
+    }
 
+    // Get a cache handler instance
     cache = cache.clone({
       prefix: [addon.getId(), addon.getVersion(), action]
     });
@@ -101,6 +140,8 @@ const createActionHandler = (
     });
 
     // Handle the request
+    let statusCode = 200;
+    let result: any;
     try {
       const myI18n = i18n.getInstance();
       if (input?.language) await myI18n.changeLanguage(input.language);
@@ -136,6 +177,12 @@ const createActionHandler = (
       }
     }
 
+    if (requestRecorder) {
+      record.statusCode = statusCode;
+      record.result = result;
+      await requestRecorder.write(<RecordData>record);
+    }
+
     responder.send(statusCode, result);
   };
 
@@ -147,7 +194,7 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
     if (req.query.wtchDiscover) {
-      // Legacy. Will be replaced by a GET /addon.watched call
+      // Legacy. Got replaced by a GET /addon.watched call
       res.send({ watched: "addon" });
     } else if (options.singleMode) {
       // In single mode, render the index page
@@ -162,9 +209,15 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
     }
   });
 
-  const actionHandler = createActionHandler(addon, options.cache, options.i18n);
+  const actionHandler = createActionHandler(
+    addon,
+    options.cache,
+    options.i18n,
+    options.requestRecorderPath
+  );
   const taskHandler = createTaskResponseHandler(addon, options.cache);
 
+  // Legacy
   router.get("/:action", actionHandler);
   router.get("/:action-task", taskHandler);
   router.post("/:action", actionHandler);
@@ -201,7 +254,7 @@ export const createMultiAddonRouter = (
 
   router.get("/", (req, res) => {
     if (req.query.wtchDiscover) {
-      // Legacy. Will be replaced by a GET /addon.watched call
+      // Legacy. Got replaced by a GET /addon.watched call
       // Send all addon id's
       res.send({
         watched: "index",

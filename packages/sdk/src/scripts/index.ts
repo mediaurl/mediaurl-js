@@ -3,6 +3,7 @@ import { fork } from "child_process";
 import * as commander from "commander";
 import { guessTsMain } from "guess-ts-main";
 import path = require("path");
+import { ServeAddonsOptions } from "../server";
 
 export const startHandler = (files: string[], cmdObj: any) => {
   const cwd = process.cwd();
@@ -24,9 +25,14 @@ export const startHandler = (files: string[], cmdObj: any) => {
   const scriptPath = path.resolve(__dirname, "utils", "start-entrypoint");
   const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
 
+  const opts = <Partial<ServeAddonsOptions>>{
+    single: cmdObj.single ? true : false,
+    requestRecorderPath: cmdObj.record ? cmdObj.record : null
+  };
+
   fork(
     scriptPath,
-    [cmdObj.single ? "single" : "multi", ...files],
+    [JSON.stringify(opts), ...files],
     cmdObj.prod || !tsConfig
       ? undefined
       : { execPath, execArgv: ["--no-notify", "--transpileOnly"] }
@@ -39,6 +45,10 @@ commander
   .option(
     "--single",
     "Start a single addon server. The addon will be mounted on /"
+  )
+  .option(
+    "--record <path>",
+    "Record all requests and responses so they can be used for testing"
   )
   .description("Start the WATCHED SDK server")
   .action((files: string, cmdObj: any) =>
