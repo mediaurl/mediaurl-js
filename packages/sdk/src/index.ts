@@ -1,17 +1,21 @@
 export * from "@watchedcom/schema";
 export {
+  BasicAddon,
+  BundleAddon,
   BundleHandlers,
   createBundleAddon,
   createRepositoryAddon,
   createWorkerAddon,
+  RepositoryAddon,
   RepositoryHandlers,
+  WorkerAddon,
   WorkerHandlers
 } from "./addons";
 export * from "./interfaces";
 export {
   createApp,
-  createSingleAddonRouter,
   createMultiAddonRouter,
+  createSingleAddonRouter,
   serveAddons
 } from "./server";
 export { translateDeep } from "./utils/translate-deep";
