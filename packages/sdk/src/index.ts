@@ -10,8 +10,8 @@ export {
 export * from "./interfaces";
 export {
   createApp,
-  createMultiAddonRouter,
   createSingleAddonRouter,
+  createMultiAddonRouter,
   serveAddons
 } from "./server";
 export { translateDeep } from "./utils/translate-deep";

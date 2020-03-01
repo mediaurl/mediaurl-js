@@ -1,9 +1,9 @@
-import { I18nHandler } from "../interfaces";
-
 const nextPath = (path: string, sub: string | number) => {
   if (path) path += ".";
   return (path += sub);
 };
+
+type TFunction = (key: string, defaultValue?: string) => string;
 
 /**
  * Utility function to translate strings within an object or array.
@@ -23,10 +23,11 @@ const nextPath = (path: string, sub: string | number) => {
  */
 export const translateDeep = (
   object: any,
-  t: I18nHandler["t"],
-  triggerPrefix: string = "i18n:",
-  path: string = ""
+  t: TFunction,
+  path: string = "",
+  triggerPrefix: string = "i18n:"
 ) => {
+  console.warn(path, object);
   if (typeof object === "string") {
     if (object.indexOf(triggerPrefix) === 0) {
       object = object.substring(triggerPrefix.length);
@@ -36,7 +37,7 @@ export const translateDeep = (
   } else if (typeof object === "object") {
     if (Array.isArray(object)) {
       return object.map((value, index) =>
-        translateDeep(value, t, triggerPrefix, nextPath(path, index))
+        translateDeep(value, t, nextPath(path, index), triggerPrefix)
       );
     }
     const n = {};
@@ -44,8 +45,8 @@ export const translateDeep = (
       n[key] = translateDeep(
         object[key],
         t,
-        triggerPrefix,
-        nextPath(path, key)
+        nextPath(path, key),
+        triggerPrefix
       );
     }
     return n;

@@ -7,8 +7,7 @@ import * as path from "path";
 import { BasicAddon } from "./addons";
 import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
 import { errorHandler } from "./error-handler";
-import { DummyI18nHandler } from "./i18n";
-import { I18nHandler, RequestCacheFn } from "./interfaces";
+import { RequestCacheFn } from "./interfaces";
 import {
   createTaskFetch,
   createTaskRecaptcha,
@@ -46,10 +45,6 @@ export type ServeAddonsOptions = {
    * Cache handler
    */
   cache: CacheHandler;
-  /**
-   * I18n handler
-   */
-  i18n: I18nHandler;
 };
 
 const defaultServeOpts: ServeAddonsOptions = {
@@ -62,8 +57,7 @@ const defaultServeOpts: ServeAddonsOptions = {
     process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
       : new LocalCache()
-  ),
-  i18n: new DummyI18nHandler()
+  )
 };
 
 let requestRecorder: RequestRecorder;
@@ -71,7 +65,6 @@ let requestRecorder: RequestRecorder;
 const createActionHandler = (
   addon: BasicAddon,
   cache: CacheHandler,
-  i18n: I18nHandler,
   requestRecorderPath: null | string
 ) => {
   try {
@@ -143,8 +136,6 @@ const createActionHandler = (
     let statusCode = 200;
     let result: any;
     try {
-      const myI18n = i18n.getInstance();
-      if (input?.language) await myI18n.changeLanguage(input.language);
       result = await handler(
         input,
         {
@@ -153,9 +144,7 @@ const createActionHandler = (
           cache,
           requestCache,
           fetch: createTaskFetch(responder, cache),
-          recaptcha: createTaskRecaptcha(responder, cache),
-          i18n,
-          t: (key, defaultValue) => i18n.t(key, defaultValue)
+          recaptcha: createTaskRecaptcha(responder, cache)
         },
         addon
       );
@@ -212,7 +201,6 @@ const createAddonRouter = (addon: BasicAddon, options: ServeAddonsOptions) => {
   const actionHandler = createActionHandler(
     addon,
     options.cache,
-    options.i18n,
     options.requestRecorderPath
   );
   const taskHandler = createTaskResponseHandler(addon, options.cache);
@@ -291,10 +279,9 @@ export const createMultiAddonRouter = (
 
 export const createApp = (
   addons: BasicAddon[],
-  opts?: Partial<ServeAddonsOptions>,
-  app?: express.Application
+  opts?: Partial<ServeAddonsOptions>
 ): express.Application => {
-  if (!app) app = express();
+  const app = express();
   const options = defaults(opts, defaultServeOpts);
 
   if (options.logRequests) app.use(morgan("dev"));
@@ -318,17 +305,16 @@ export const createApp = (
 
 export const serveAddons = (
   addons: BasicAddon[],
-  opts?: Partial<ServeAddonsOptions>,
-  app?: express.Application
+  opts?: Partial<ServeAddonsOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const myApp = createApp(addons, opts, app);
+  const app = createApp(addons, opts);
 
   const listenPromise = new Promise<void>(resolve => {
-    myApp.listen(myApp.get("port"), () => {
-      console.info(`Listening on ${myApp.get("port")}`);
+    app.listen(app.get("port"), () => {
+      console.info(`Listening on ${app.get("port")}`);
       resolve();
     });
   });
 
-  return { app: myApp, listenPromise };
+  return { app, listenPromise };
 };
