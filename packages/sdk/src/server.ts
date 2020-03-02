@@ -229,7 +229,7 @@ export const createSingleAddonRouter = (
 ) => {
   if (addons.length > 1) {
     throw new Error(
-      `The single addon router only supports one addon at a time.` +
+      `The single addon router only supports one addon at a time. ` +
         `You tried to start the server with ${addons.length} addons.`
     );
   }
@@ -286,8 +286,7 @@ export const createApp = (
   opts?: Partial<ServeAddonsOptions>
 ): express.Application => {
   const app = express();
-  const options = defaults(opts, defaultServeOpts);
-
+  const options: ServeAddonsOptions = defaults(opts, defaultServeOpts);
   if (options.logRequests) app.use(morgan("dev"));
 
   app.set("port", options.port);

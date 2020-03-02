@@ -30,7 +30,7 @@ export const startHandler = (files: string[], cmdObj: any) => {
   const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
 
   const opts = <Partial<ServeAddonsOptions>>{
-    single: cmdObj.single ? true : false,
+    singleMode: cmdObj.single ? true : false,
     requestRecorderPath: cmdObj.record ? cmdObj.record : null
   };
 
