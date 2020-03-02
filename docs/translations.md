@@ -9,10 +9,10 @@ This type supports either a string of text, or a mapping of language=>text pairs
 
 ```json
 {
-  "sometext": "This is some text",
+  "sometext": "This is some text which is not translated",
   "othertext": {
     "en": "This is some english text",
-    "de": "Das ist deutscher Text",
+    "de": "Das ist die deutsche Übersetzung",
     "cn": "这是一些中文文本"
   }
 }
@@ -139,6 +139,8 @@ After this you can deploy your addon without using locize. This has many benefit
 Imagine you want to translate the `name` property of this addon:
 
 ```javascript
+import { createWorkerAddon } from "@watchedcom/sdk";
+
 export const myAddon = createWorkerAddon({
   id: "i18n-example",
   name: "Name of this addon"
@@ -148,6 +150,8 @@ export const myAddon = createWorkerAddon({
 We created a helper function named `translateDeep` for cases like this. This function works similar to the `lodash.cloneDeep` function, but translates all strings beginning with a specific prefix (by default `i18n:`) using the `t` parameter.
 
 ```javascript
+import { createWorkerAddon, translateDeep } from "@watchedcom/sdk";
+
 export const myAddon = createWorkerAddon({
   id: "i18n-example",
   name: "i18n:Name of this addon"
