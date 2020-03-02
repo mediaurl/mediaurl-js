@@ -1,9 +1,14 @@
+import { TranslatedText } from "@watchedcom/schema";
+
 const nextPath = (path: string, sub: string | number) => {
   if (path) path += ".";
   return (path += sub);
 };
 
-type TFunction = (key: string, defaultValue?: string) => string;
+type TFunction = (
+  key: string,
+  defaultValue?: string
+) => string | TranslatedText;
 
 /**
  * Utility function to translate strings within an object or array.

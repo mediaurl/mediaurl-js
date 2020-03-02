@@ -12,11 +12,12 @@ export class BundleAddonClass extends BasicAddonClass<
   BundleHandlers,
   BundleAddon
 > {
-  constructor(p: BundleAddon) {
-    super(p);
+  constructor(props: BundleAddon) {
+    super(props);
   }
 
   public validateAddon() {
+    super.validateAddon();
     if (!this.props.requirements?.length) {
       throw new Error(`Bundle addon needs at least one requirement`);
     }

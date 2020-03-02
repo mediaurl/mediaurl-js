@@ -1,19 +1,18 @@
 import { Addon } from "@watchedcom/schema";
-import { validateAddonProps } from "../validators";
 
-export const makeCreateFunction = <P extends Addon, C>(opts: {
+type Opts<P, C> = {
   AddonClass: { new (props: P): C };
   type: Addon["type"];
   defaults?: Partial<P>;
-}) => {
+};
+
+export const makeCreateFunction = <P extends Addon, C>(opts: Opts<P, C>) => {
   const createAddon = (props: Partial<P>): C => {
-    const addonProps = validateAddonProps<P>({
+    return new opts.AddonClass(<P>{
       ...opts.defaults,
       ...props,
       type: opts.type
     });
-    const addon = new opts.AddonClass(addonProps);
-    return addon;
   };
 
   return createAddon;

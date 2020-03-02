@@ -56,6 +56,7 @@ export class WorkerAddonClass extends BasicAddonClass<
   }
 
   public validateAddon() {
+    super.validateAddon();
     if (!this.props.actions.length) {
       throw new Error(`A worker addon needs at least one action`);
     }

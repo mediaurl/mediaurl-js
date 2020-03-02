@@ -61,7 +61,7 @@ Inside your action handler, you can use this to get an instance to the `t` funct
 
 ```javascript
 import { i18n } from "./i18n";
-const t = await i18n.changeLanguage(input.language);
+const t = await i18n.cloneInstance().changeLanguage(input.language);
 const translated = t("some.key", "Some default text");
 ```
 
@@ -151,6 +151,7 @@ We created a helper function named `translateDeep` for cases like this. This fun
 
 ```javascript
 import { createWorkerAddon, translateDeep } from "@watchedcom/sdk";
+import { i18n } from "./i18n";
 
 export const myAddon = createWorkerAddon({
   id: "i18n-example",
@@ -158,7 +159,7 @@ export const myAddon = createWorkerAddon({
 });
 
 myAddon.registerActionHandler("addon", async (input, ctx, addon) => {
-  const t = await i18n.changeLanguage(input.language);
+  const t = await i18n.cloneInstance().changeLanguage(input.language);
   return translateDeep(addon.getProps(), t);
 });
 ```

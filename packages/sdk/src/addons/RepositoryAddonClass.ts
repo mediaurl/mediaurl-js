@@ -25,8 +25,8 @@ export class RepositoryAddonClass extends BasicAddonClass<
   private addons: BasicAddonClass[] = [];
   private urls: Url[] = [];
 
-  constructor(p: RepositoryAddonProps) {
-    super(p);
+  constructor(props: RepositoryAddonProps) {
+    super(props);
 
     this.registerActionHandler(
       "repository",
@@ -37,6 +37,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
   }
 
   public validateAddon() {
+    super.validateAddon();
     if (!this.addons.length && !this.urls.length) {
       throw new Error(
         `A repository addon needs at least one addon or url to an addon`

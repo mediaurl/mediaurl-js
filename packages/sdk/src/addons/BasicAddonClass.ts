@@ -6,6 +6,7 @@ import {
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 import { ActionHandler, HandlersMap } from "../interfaces";
+import { validateAddonProps } from "../validators";
 
 export type BasicHandlers = {
   addon: ActionHandler<AddonRequest, AddonResponse, BasicAddonClass>;
@@ -21,7 +22,9 @@ export abstract class BasicAddonClass<
 
   constructor(protected readonly props: P) {}
 
-  public validateAddon() {}
+  public validateAddon() {
+    validateAddonProps(this.getProps());
+  }
 
   public getProps(): P {
     return cloneDeep(this.props);
