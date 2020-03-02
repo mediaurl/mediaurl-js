@@ -133,3 +133,28 @@ npm run update-locize
 ```
 
 After this you can deploy your addon without using locize. This has many benefits, especially for serverless environments.
+
+## Applying translations to an object
+
+Imagine you want to translate the `name` property of this addon:
+
+```javascript
+export const myAddon = createWorkerAddon({
+  id: "i18n-example",
+  name: "Name of this addon"
+});
+```
+
+We created a helper function named `translateDeep` for cases like this. This function works similar to the `lodash.cloneDeep` function, but translates all strings beginning with a specific prefix (by default `i18n:`) using the `t` parameter.
+
+```javascript
+export const myAddon = createWorkerAddon({
+  id: "i18n-example",
+  name: "i18n:Name of this addon"
+});
+
+myAddon.registerActionHandler("addon", async (input, ctx, addon) => {
+  const t = await i18n.changeLanguage(input.language);
+  return translateDeep(addon.getProps(), t);
+});
+```
