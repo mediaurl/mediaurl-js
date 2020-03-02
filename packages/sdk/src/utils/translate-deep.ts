@@ -27,7 +27,6 @@ export const translateDeep = (
   path: string = "",
   triggerPrefix: string = "i18n:"
 ) => {
-  console.warn(path, object);
   if (typeof object === "string") {
     if (object.indexOf(triggerPrefix) === 0) {
       object = object.substring(triggerPrefix.length);
