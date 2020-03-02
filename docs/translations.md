@@ -18,6 +18,10 @@ This type supports either a string of text, or a mapping of language=>text pairs
 }
 ```
 
+## Using `@watchedcom/i18n`
+
+Short after this documentation was written, I created a little helper module for `i18next`. Please see the documentation at `packages/i18n/README.md`.
+
 ## Using `i18next`
 
 The [i18next](https://www.i18next.com/) module is an easy way to translate projects of any size.

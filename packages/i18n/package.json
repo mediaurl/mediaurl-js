@@ -1,0 +1,23 @@
+{
+  "name": "@watchedcom/i18n",
+  "description": "WATCHED.com tools for translations",
+  "version": "0.16.5",
+  "main": "dist",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "prepublishOnly": "rm -rf dist && npm run build"
+  },
+  "dependencies": {
+    "i18next": "^19.3.2",
+    "i18next-node-fs-backend": "^2.1.3",
+    "i18next-node-locize-backend": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/i18next-node-fs-backend": "^2.1.0",
+    "@watchedcom/sdk": "^0.16.5",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
+  }
+}
