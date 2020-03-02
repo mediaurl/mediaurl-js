@@ -6,6 +6,10 @@ import path = require("path");
 import { ServeAddonsOptions } from "../server";
 
 export const startHandler = (files: string[], cmdObj: any) => {
+  if (cmdObj.record && cmdObj.prod) {
+    throw new Error("Request recording is only available in development mode");
+  }
+
   const cwd = process.cwd();
 
   let tsConfig = null;

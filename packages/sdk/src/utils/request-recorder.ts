@@ -9,20 +9,28 @@ export type RecordData = {
 
 export class RequestRecorder {
   private readonly stream: WriteStream;
+  private i: number;
 
   constructor(private readonly path: string) {
     this.stream = createWriteStream(path, { flags: "w" });
+    this.i = 0;
   }
 
-  async write(data: RecordData) {
+  public async write(data: RecordData) {
     await new Promise((resolve, reject) =>
-      this.stream.write(JSON.stringify(data) + "\n", (error?: Error) =>
-        error ? reject(error) : resolve()
+      this.stream.write(
+        JSON.stringify(data, null, 2) + "\n---\n",
+        (error?: Error) => (error ? reject(error) : resolve())
       )
     );
+    this.i++;
   }
 
-  close() {
+  public getI() {
+    return this.i;
+  }
+
+  public close() {
     this.stream.close();
   }
 }

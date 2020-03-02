@@ -170,6 +170,9 @@ const createActionHandler = (
       record.statusCode = statusCode;
       record.result = result;
       await requestRecorder.write(<RecordData>record);
+      console.warn(
+        `Recorded request ${requestRecorder.getI()}: action=${action}, statusCode=${statusCode}`
+      );
     }
 
     responder.send(statusCode, result);
