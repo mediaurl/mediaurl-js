@@ -19,3 +19,4 @@ export {
   serveAddons
 } from "./server";
 export { translateDeep } from "./utils/translate-deep";
+export { RecordData } from "./utils/request-recorder";

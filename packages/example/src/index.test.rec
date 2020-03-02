@@ -1,0 +1,437 @@
+{
+  "addon": "watched-repo-example",
+  "action": "addon",
+  "input": {
+    "language": "en",
+    "region": "CH"
+  },
+  "statusCode": 200,
+  "result": {
+    "id": "watched-repo-example",
+    "name": "Example Repository",
+    "version": "1.0.0",
+    "type": "repository"
+  },
+  "i": 0
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "addon",
+  "input": {
+    "language": "en",
+    "region": "CH"
+  },
+  "statusCode": 200,
+  "result": {
+    "actions": [
+      "directory",
+      "item",
+      "source",
+      "subtitle"
+    ],
+    "id": "watched-worker-example",
+    "name": "Typescript Example Addon",
+    "version": "1.0.0",
+    "itemTypes": [
+      "movie"
+    ],
+    "type": "worker"
+  },
+  "i": 1
+}
+---
+{
+  "addon": "watched-repo-example",
+  "action": "repository",
+  "input": {
+    "language": "en",
+    "region": "CH"
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "actions": [
+        "directory",
+        "item",
+        "source",
+        "subtitle"
+      ],
+      "id": "watched-worker-example",
+      "name": "Typescript Example Addon",
+      "version": "1.0.0",
+      "itemTypes": [
+        "movie"
+      ],
+      "type": "worker",
+      "metadata": {
+        "url": "./watched-worker-example"
+      }
+    }
+  ],
+  "i": 2
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "directory",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "id": "",
+    "search": "",
+    "sort": "",
+    "filter": {},
+    "page": 1,
+    "adult": false
+  },
+  "statusCode": 200,
+  "result": {
+    "items": [
+      {
+        "type": "movie",
+        "ids": {
+          "watched-worker-example": "id1234"
+        },
+        "name": "Example Item 1",
+        "description": "This item does not have any sources."
+      },
+      {
+        "type": "movie",
+        "ids": {
+          "watched-worker-example": "id1235"
+        },
+        "name": "Big Buck Bunny"
+      },
+      {
+        "type": "movie",
+        "ids": {
+          "watched-worker-example": "elephant"
+        },
+        "name": "Elephants Dream",
+        "description": "Dream of elephants?"
+      }
+    ],
+    "hasMore": false
+  },
+  "i": 3
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "item",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234",
+      "id": "id1234"
+    },
+    "name": "Example Item 1",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": {
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234"
+    },
+    "name": "Example Item 1",
+    "description": "This item does not have any sources."
+  },
+  "i": 4
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "source",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234",
+      "id": "id1234"
+    },
+    "name": "Example Item 1",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [],
+  "i": 5
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "item",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234",
+      "id": "id1234"
+    },
+    "name": "Example Item 1",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": {
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234"
+    },
+    "name": "Example Item 1",
+    "description": "This item does not have any sources."
+  },
+  "i": 6
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "source",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1234",
+      "id": "id1234"
+    },
+    "name": "Example Item 1",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [],
+  "i": 7
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "item",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1235",
+      "id": "id1235"
+    },
+    "name": "Big Buck Bunny",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": {
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1235"
+    },
+    "name": "Big Buck Bunny"
+  },
+  "i": 8
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "source",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1235",
+      "id": "id1235"
+    },
+    "name": "Big Buck Bunny",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "type": "url",
+      "id": "",
+      "name": "Source 1",
+      "url": "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
+    }
+  ],
+  "i": 9
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "subtitle",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "id1235",
+      "id": "id1235"
+    },
+    "name": "Big Buck Bunny",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [],
+  "i": 10
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "item",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant",
+      "id": "elephant"
+    },
+    "name": "Elephants Dream",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": {
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant"
+    },
+    "name": "Elephants Dream",
+    "description": "Dream of elephants?"
+  },
+  "i": 11
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "source",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant",
+      "id": "elephant"
+    },
+    "name": "Elephants Dream",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "type": "url",
+      "name": "mp4",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.mp4"
+    },
+    {
+      "type": "url",
+      "name": "webm",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
+    }
+  ],
+  "i": 12
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "subtitle",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant",
+      "id": "elephant"
+    },
+    "name": "Elephants Dream",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "id": "vtt",
+      "name": "VTT",
+      "language": "en",
+      "type": "vtt",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
+    },
+    {
+      "id": "ttml",
+      "name": "TTML",
+      "language": "en",
+      "type": "ttml",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ],
+  "i": 13
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "subtitle",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant",
+      "id": "elephant"
+    },
+    "name": "Elephants Dream",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "id": "vtt",
+      "name": "VTT",
+      "language": "en",
+      "type": "vtt",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
+    },
+    {
+      "id": "ttml",
+      "name": "TTML",
+      "language": "en",
+      "type": "ttml",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ],
+  "i": 14
+}
+---
+{
+  "addon": "watched-worker-example",
+  "action": "subtitle",
+  "input": {
+    "language": "en",
+    "region": "CH",
+    "type": "movie",
+    "ids": {
+      "watched-worker-example": "elephant",
+      "id": "elephant"
+    },
+    "name": "Elephants Dream",
+    "episode": {}
+  },
+  "statusCode": 200,
+  "result": [
+    {
+      "id": "vtt",
+      "name": "VTT",
+      "language": "en",
+      "type": "vtt",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
+    },
+    {
+      "id": "ttml",
+      "name": "TTML",
+      "language": "en",
+      "type": "ttml",
+      "url": "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ],
+  "i": 15
+}
+---

@@ -1,6 +1,8 @@
 import { createWriteStream, WriteStream } from "fs";
 
 export type RecordData = {
+  i: number;
+  addon: string;
   action: string;
   input: any;
   statusCode: number;
@@ -17,17 +19,16 @@ export class RequestRecorder {
   }
 
   public async write(data: RecordData) {
+    data.i = this.i++;
     await new Promise((resolve, reject) =>
       this.stream.write(
         JSON.stringify(data, null, 2) + "\n---\n",
         (error?: Error) => (error ? reject(error) : resolve())
       )
     );
-    this.i++;
-  }
-
-  public getI() {
-    return this.i;
+    console.warn(
+      `Recorded request ${data.i}: action=${data.action}, statusCode=${data.statusCode}`
+    );
   }
 
   public close() {

@@ -110,6 +110,7 @@ const createActionHandler = (
     // Store request data for recording
     const record: Partial<RecordData> = {};
     if (requestRecorder) {
+      record.addon = addon.getId();
       record.action = action;
       record.input = cloneDeep(input);
     }
@@ -170,9 +171,6 @@ const createActionHandler = (
       record.statusCode = statusCode;
       record.result = result;
       await requestRecorder.write(<RecordData>record);
-      console.warn(
-        `Recorded request ${requestRecorder.getI()}: action=${action}, statusCode=${statusCode}`
-      );
     }
 
     responder.send(statusCode, result);
