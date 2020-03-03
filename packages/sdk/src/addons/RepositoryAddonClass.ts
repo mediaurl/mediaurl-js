@@ -78,7 +78,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
 
     for (const url of this.urls) {
       const fn = async () => {
-        const key = `${this.getId()}:url:${url}`;
+        const key = [this.getId(), url, input.language, input.region];
         const data = await ctx.cache.get(key);
         if (data !== undefined) {
           if (data.props) result.push(data.props);
