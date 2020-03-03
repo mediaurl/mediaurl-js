@@ -90,7 +90,15 @@ export default (async () => {
 
 ## Download translations from locize
 
-If you choose to use locize, add this script to your `package.json`. It will download the newest translations and stores them locally. This has many benefits when you are using a serverless environment for deployment.
+If you choose to use locize, you should add your translations to your prjecct root, especially when you are using a serverless environment.
+
+First install the `locize-cli`:
+
+```shell
+npm i --save-dev locize-cli
+```
+
+Then modify your `package.json`:
 
 ```json
 {
