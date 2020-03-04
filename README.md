@@ -1,36 +1,72 @@
-# WATCHED.com Javascript Monorepo
+# WATCHED.com SDK and tools
 
 This monorepo includes all javascript modules needed to create easily addons for WATCHED.
 
-## Create your own addon
+## Status of this project
 
-With the WATCHED.com nodejs SDK you easily can create your own addons.
+The WATCHED API is still not yet stable, so there might be further updates which will require you to update or change your code.
 
-### Getting started
+## Getting started
 
-1. Create a new addon with our wizard:
+The most easy way to create a new addon is with our wizard:
 
-   ```shell
-   npx @watchedcom/create my-addon
-   ```
+```shell
+npx @watchedcom/create my-addon
+```
 
-   Follow the steps of the wizard. We strongly recommend to use the `typescript` template.
+Now check out the `src/index.ts` script and make some changes. Then start the addon server:
 
-2. Your addon is ready. You can now edit your code, and then head over to the next step.
+```shell
+npm run develop
+```
 
-### Test your addon
+### Test with the WATCHED app
 
-1. Start the development server:
+1. Open the WATCHED app on your mobile and go to the `Add Addon` screen, where you can enter a URL.
+2. Enter the IP address of your computer. For example `192.168.1.123`, or with port number `192.168.1.123:1234`. On local IP addresses, the port `3000` as well as some other default ports are omitted.
 
-   ```shell
-   npm run develop
-   ```
+### Testing with the `testAddon` function
 
-   This server will automatically restart itself when you make changes in your code.
+This function will try to figure out some actions your addon provides and is doing some tests. It's an easy and quick way, especially for addons which provide a `directory` action.
 
-2. Open the WATCHED app on your mobile and go to the `Add Addon` screen, where you can enter a URL.
+Our addon creation wizard can create such a test automatically for you. Run this test with:
 
-3. Enter the IP address of your computer. For example `192.168.1.123`, or with port number `192.168.1.123:1234`. On local IP addresses, the port `3000` as well as some other default ports are omitted.
+```shell
+npm run test
+```
+
+### Record and replay requests
+
+This might be the best choice to create a new addon. Start your developemnt server in the following way:
+
+```shell
+npm run develop -- --record somefilename.record
+```
+
+Now browse around your addon in the WATCHED app. All requests made to the addon will be written to `somefilename.record`.
+
+The next step is to create a test case, for example `src/record.test.ts`:
+
+```javascript
+import { replayRecording } from "@watchedcom/test/src/replayRecording";
+import { yourAddon } from "./index";
+
+test(`Replay recorded actions`, done => {
+  replayRecording([yourAddon], "somefilename.record")
+    .then(done)
+    .catch(done);
+});
+```
+
+Now run the tests, preferred in `watch` mode:
+
+```shell
+npm run test -- --watch
+```
+
+## Translate your addon
+
+For some suggestions regarind translations, please see `docs/translations.md`.
 
 ### Deploy your addon
 
@@ -43,3 +79,5 @@ Clone this repo and bootstrap it with `lerna`:
 ```shell
 npx lerna bootstrap --hoist
 ```
+
+TODO: Add more infos on how to start developing.
