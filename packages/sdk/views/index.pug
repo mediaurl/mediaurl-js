@@ -1,3 +1,4 @@
+doctype html
 html
   head
     title WATCHED Addon Server
@@ -7,12 +8,15 @@ html
       ul
         each addon in addons
           li
-            h2= addon.name
+            h2
+              a(class="addon-"+addon.id)
+                = addon.name ? selectT(addon.name) : addon.id
             p= `Version: ${addon.version}`
-            p= addon.description
-            a(class="addon-"+addon.id) Install addon
+            if addon.description
+              p= selectT(addon.description)
+    include base64.pug
     script(type="text/javascript")
-      - var data = addons.map(a => ({ type: a.type, name: a.name, id: a.id }));
+      - var data = addons.map(a => ({ type: a.type, name: a.name ? selectT(a.name) : a.id, id: a.id }));
       .
         var singleMode = #{options.singleMode};
         !{JSON.stringify(data)}.forEach(function(a) {
@@ -25,6 +29,6 @@ html
           });
           var e = document.getElementsByClassName('addon-'+a.id);
           for (var i = 0; i < e.length; i++) {
-            e[i].setAttribute('href', 'https://www.watched.com/share#' + btoa(d));
+            e[i].setAttribute('href', 'https://www.watched.com/share#' + Base64.encode(d));
           }
         });

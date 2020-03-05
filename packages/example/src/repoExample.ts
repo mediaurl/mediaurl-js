@@ -3,7 +3,12 @@ import { addonWorkerExample as exampleAddon } from "./workerExample";
 
 export const addonRepoExample = createRepositoryAddon({
   id: "watched-repo-example",
-  name: "Example Repository",
+  name: {
+    cn: "示例存储库",
+    de: "Beispiel Repository",
+    en: "Example Repository",
+    ru: "Пример репозитория"
+  },
   version: "1.0.0"
 });
 

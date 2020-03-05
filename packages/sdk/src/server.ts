@@ -1,3 +1,4 @@
+import { TranslatedText } from "@watchedcom/schema";
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
@@ -292,6 +293,15 @@ export const createApp = (
   app.set("port", options.port);
   app.set("views", path.join(__dirname, "..", "views"));
   app.set("view engine", "pug");
+
+  app.locals.selectT = (s: TranslatedText) => {
+    if (typeof s === "string") return s;
+    if (typeof s !== "object") return JSON.stringify(s);
+    // TODO: Detect browser language
+    if (s.en) return s.en;
+    const lng = Object.keys(s)[0];
+    return s[lng];
+  };
 
   if (options.singleMode) {
     app.use("/", createSingleAddonRouter(addons, options));
