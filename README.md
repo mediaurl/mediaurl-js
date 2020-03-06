@@ -68,7 +68,7 @@ npm run test -- --watch
 
 For some suggestions regarind translations, please see `docs/translations.md`.
 
-### Deploy your addon
+## Deploy your addon
 
 To make your addon open to the public, you need to run it somewhere on the internet. We are working on giving an as easy as possible tutorial for a wide range of affordable or free hosting providers.
 

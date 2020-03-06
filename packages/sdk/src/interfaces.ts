@@ -119,8 +119,20 @@ export type RequestCacheFn = (
 export interface ActionHandlerContext {
   request: express.Request;
   sig: {
-    raw: string;
-    data: any;
+    time: number;
+    validUntil: number;
+    user: string;
+    status: "guest" | "free" | "pro";
+    verified: boolean;
+    ips: string[];
+    error?: string;
+    app: {
+      platform: string;
+      version: string;
+      ok: boolean;
+      [k: string]: any;
+    };
+    [k: string]: any;
   };
   cache: CacheHandler;
   /**
