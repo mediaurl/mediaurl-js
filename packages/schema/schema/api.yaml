@@ -147,6 +147,7 @@ definitions:
     oneOf:
       - $ref: "general.yaml#/definitions/Error"
       - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "objects.yaml#/definitions/Source"
       - type: array
         items:
           $ref: "objects.yaml#/definitions/Source"
@@ -158,6 +159,7 @@ definitions:
     oneOf:
       - $ref: "general.yaml#/definitions/Error"
       - $ref: "tasks.yaml#/definitions/TaskRequest"
+      - $ref: "objects.yaml#/definitions/Subtitle"
       - type: array
         items:
           $ref: "objects.yaml#/definitions/Subtitle"
