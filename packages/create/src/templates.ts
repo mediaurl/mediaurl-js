@@ -129,7 +129,7 @@ npm run develop
 const packageJson = input => {
   const ts = input.template === "ts";
   let data: any = {
-    name: "addon-" + kebabCase(input.name),
+    name: "watched-addon-" + kebabCase(input.name),
     version: "0.0.0",
     main: ts ? "dist" : "src/index.js",
     scripts: {
