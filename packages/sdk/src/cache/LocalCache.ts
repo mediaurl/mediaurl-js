@@ -1,4 +1,3 @@
-import { CacheForever } from "../interfaces";
 import { BasicCache } from "./BasicCache";
 
 export class LocalCache extends BasicCache {
@@ -17,8 +16,8 @@ export class LocalCache extends BasicCache {
     return undefined;
   }
 
-  public async set(key: string, value: any, ttl: number | CacheForever) {
-    this.data[key] = [ttl === "forever" ? -1 : Date.now() + ttl, value];
+  public async set(key: string, value: any, ttl: number) {
+    this.data[key] = [ttl === Infinity ? -1 : Date.now() + ttl, value];
     return value;
   }
 

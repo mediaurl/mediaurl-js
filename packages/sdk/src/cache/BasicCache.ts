@@ -1,5 +1,4 @@
 import { createHash } from "crypto";
-import { CacheForever } from "../interfaces";
 
 export class BasicCache {
   public async exists(key: any): Promise<any> {
@@ -10,7 +9,7 @@ export class BasicCache {
     throw new Error(`Not implemented`);
   }
 
-  public async set(key: any, value: any, ttl: number | CacheForever) {
+  public async set(key: any, value: any, ttl: number) {
     throw new Error(`Not implemented`);
   }
 

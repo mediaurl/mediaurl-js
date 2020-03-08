@@ -1,5 +1,4 @@
 import {
-  CacheForever,
   CacheOptions,
   CacheOptionsParam,
   defaultCacheOptions,
@@ -71,7 +70,7 @@ export class CacheHandler {
     return await this.engine.get(key);
   }
 
-  private async _set(key: string, value: any, ttl: number | CacheForever) {
+  private async _set(key: string, value: any, ttl: number) {
     await this.engine.set(key, value, ttl);
     if (this.options.refreshInterval)
       await this.engine.set(`${key}:refresh`, 1, this.options.refreshInterval);
@@ -228,7 +227,7 @@ export class CacheHandler {
    */
   public async waitKey(
     key: any,
-    timeout: number | CacheForever = 30 * 1000,
+    timeout: number = 30 * 1000,
     del = true,
     sleep = 250
   ) {
@@ -240,7 +239,7 @@ export class CacheHandler {
         if (del) await this.delete(key);
         return result;
       }
-      if (timeout !== "forever" && Date.now() - t > timeout) {
+      if (timeout !== Infinity && Date.now() - t > timeout) {
         throw new WaitTimedOut("Wait timed out");
       }
       await new Promise(resolve => setTimeout(resolve, sleep));

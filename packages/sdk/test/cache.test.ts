@@ -64,14 +64,14 @@ describe("CacheHandler", () => {
   });
 
   test("set forever", async done => {
-    cache.setOptions({ ttl: "forever" });
+    cache.setOptions({ ttl: Infinity });
     await expect(cache.set("hello", "1")).resolves.toBeUndefined();
     await expect(cache.get("hello")).resolves.toBe("1");
     done();
   });
 
   test("setError forever", async done => {
-    cache.setOptions({ errorTtl: "forever" });
+    cache.setOptions({ errorTtl: Infinity });
     await expect(cache.setError("hello", "1")).resolves.toBeUndefined();
     await expect(cache.get("hello")).resolves.toBe("1");
     done();

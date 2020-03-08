@@ -21,8 +21,6 @@ import { BasicAddonClass } from "./addons";
 import { CacheHandler } from "./cache";
 import { FetchFn, RecaptchaFn } from "./tasks";
 
-export type CacheForever = "forever";
-
 export type CacheOptions = {
   /**
    * TTL in milliseconds. Defaults to 1 hours. When this is
@@ -30,25 +28,17 @@ export type CacheOptions = {
    * This can be useful to for example set a special TTL on
    * an empty value.
    * To disable caching, set this to `null`.
-   * To cache forever, set this to `forever`.
+   * To cache forever, set this to `Infinity`.
    */
-  ttl:
-    | null
-    | number
-    | CacheForever
-    | ((value: any) => null | number | CacheForever);
+  ttl: null | number | ((value: any) => null | number);
   /**
    * TTL for errors in milliseconds. Defaults to 10 minutes.
    * When it's a function, the error will be passed as parameter.
    * To disable error caching, set this to `null`.
    * To disable caching, set this to `null`.
-   * To cache forever, set this to `forever`.
+   * To cache forever, set this to `Infinity`.
    */
-  errorTtl:
-    | null
-    | number
-    | CacheForever
-    | ((error: any) => null | number | CacheForever);
+  errorTtl: null | number | ((error: any) => null | number);
   /**
    * After this amount of miliseconds, the cache will be refreshed once.
    * Next requests will still access the currently cached value.
@@ -71,10 +61,10 @@ export type CacheOptions = {
    * the function.
    *
    * To disable this feature, set it to `null`.
-   * Set this to a timeout in miliseconds, or to `forever`.
+   * Set this to a timeout in miliseconds, or to `Infinity`.
    * The default is to wait for 30 seconds.
    */
-  simultanLockTimeout: null | number | CacheForever;
+  simultanLockTimeout: null | number;
   /**
    * The `sleep` parameter of the `waitKey` function.
    */

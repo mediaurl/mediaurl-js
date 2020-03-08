@@ -1,6 +1,5 @@
 import * as redis from "redis";
 import { promisify } from "util";
-import { CacheForever } from "../interfaces";
 import { BasicCache } from "./BasicCache";
 
 export class RedisCache extends BasicCache {
@@ -28,8 +27,8 @@ export class RedisCache extends BasicCache {
     return undefined;
   }
 
-  public async set(key: string, value: any, ttl: number | CacheForever) {
-    if (ttl === "forever") await this.client.set(key, JSON.stringify(value));
+  public async set(key: string, value: any, ttl: number) {
+    if (ttl === Infinity) await this.client.set(key, JSON.stringify(value));
     else await this.client.setex(key, ttl / 1000, JSON.stringify(value));
   }
 
