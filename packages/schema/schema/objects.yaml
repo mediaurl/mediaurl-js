@@ -112,6 +112,11 @@ definitions:
       quality:
         description: Quality of this URL. Will be displayed in video player settings.
         type: string
+      format:
+        description: |
+          The video format. This is good to have since some formats have
+          playback issues on some devices.
+        type: string
       url:
         $ref: "general.yaml#/definitions/Url"
       headers:
