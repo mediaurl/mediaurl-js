@@ -48,7 +48,7 @@ Now browse around your addon in the WATCHED app. All requests made to the addon 
 The next step is to create a test case, for example `src/record.test.ts`:
 
 ```javascript
-import { replayRecording } from "@watchedcom/test/src/replayRecording";
+import { replayRecording } from "@watchedcom/test";
 import { yourAddon } from "./index";
 
 test(`Replay recorded actions`, done => {
