@@ -1,9 +1,32 @@
 #!/usr/bin/env node
 import { fork } from "child_process";
-import * as commander from "commander";
+import * as program from "commander";
 import { guessTsMain } from "guess-ts-main";
 import path = require("path");
 import { ServeAddonsOptions } from "../server";
+
+const startScript = (
+  script: string,
+  args: string[],
+  production: boolean,
+  tsArgs: string[]
+) => {
+  fork(
+    path.resolve(__dirname, "utils", script),
+    args,
+    production
+      ? undefined
+      : {
+          execPath: path.resolve(
+            process.cwd(),
+            "node_modules",
+            ".bin",
+            "ts-node-dev"
+          ),
+          execArgv: ["--no-notify", "--transpileOnly", ...tsArgs]
+        }
+  );
+};
 
 export const startHandler = (files: string[], cmdObj: any) => {
   if (cmdObj.record && cmdObj.prod) {
@@ -26,46 +49,62 @@ export const startHandler = (files: string[], cmdObj: any) => {
     files.push(guessTsMain(cwd));
   }
 
-  const scriptPath = path.resolve(__dirname, "utils", "start-entrypoint");
-  const execPath = path.resolve(cwd, "node_modules", ".bin", "ts-node-dev");
-
   const opts = <Partial<ServeAddonsOptions>>{
     singleMode: cmdObj.single ? true : false,
     requestRecorderPath: cmdObj.record ? cmdObj.record : null
   };
 
-  fork(
-    scriptPath,
+  startScript(
+    "start-entrypoint",
     [JSON.stringify(opts), ...files],
-    cmdObj.prod || !tsConfig
-      ? undefined
-      : { execPath, execArgv: ["--no-notify", "--transpileOnly"] }
+    cmdObj.prod || !tsConfig,
+    []
   );
 };
 
-commander
+export const replayHandler = (files: string[], cmdObj: any) => {
+  startScript(
+    "replay-entrypoint",
+    [cmdObj.record, ...files],
+    false,
+    cmdObj.watch ? ["--respawn", "--watch", "."] : []
+  );
+};
+
+program.version(require("../../package.json").version);
+
+program
   .command("start [files...]")
-  .option("--prod", "Start the server in production mode")
+  .description("Start the WATCHED SDK server")
+  .option("-p, --prod", "Start the server in production mode")
   .option(
-    "--single",
+    "-s, --single",
     "Start a single addon server. The addon will be mounted on /"
   )
   .option(
-    "--record <path>",
-    "Record all requests and responses so they can be used for testing"
+    "-r, --record <record-file>",
+    "Record all requests and responses so they can be used for testing. Not available with --prod"
   )
-  .description("Start the WATCHED SDK server")
   .action((files: string, cmdObj: any) =>
     startHandler(Array.isArray(files) ? files : [files], cmdObj)
   );
 
-commander.on("command:*", function() {
-  commander.outputHelp();
+program
+  .command("replay [files...]")
+  .description("Replay a previously recorded session")
+  .requiredOption("-r, --record <record-file>", "The previously recorded file")
+  .option("-w, --watch", "Watch for changes and re-run the script")
+  .action((files: string, cmdObj: any) =>
+    replayHandler(Array.isArray(files) ? files : [files], cmdObj)
+  );
+
+program.on("command:*", function() {
+  program.outputHelp();
   process.exit(1);
 });
 
-commander.parse(process.argv);
+program.parse(process.argv);
 
 if (!process.argv.slice(2).length) {
-  commander.outputHelp();
+  program.outputHelp();
 }

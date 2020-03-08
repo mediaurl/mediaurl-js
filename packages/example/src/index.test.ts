@@ -1,5 +1,5 @@
+import { replayRequests } from "@watchedcom/sdk";
 import { testAddon } from "@watchedcom/test";
-import { replayRecording } from "@watchedcom/test/src/replayRecording";
 import { addonRepoExample } from "./repoExample";
 import { addonWorkerExample } from "./workerExample";
 
@@ -16,7 +16,7 @@ test(`Test addon "${addonRepoExample.getId()}"`, done => {
 });
 
 test(`Replay recorded actions`, done => {
-  replayRecording([addonRepoExample, addonWorkerExample], "src/index.test.rec")
+  replayRequests([addonRepoExample, addonWorkerExample], "src/index")
     .then(done)
     .catch(done);
 });

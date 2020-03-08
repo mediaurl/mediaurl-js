@@ -18,5 +18,5 @@ export {
   createSingleAddonRouter,
   serveAddons
 } from "./server";
+export { RecordData, replayRequests } from "./utils/request-recorder";
 export { translateDeep } from "./utils/translate-deep";
-export { RecordData } from "./utils/request-recorder";

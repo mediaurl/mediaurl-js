@@ -40,28 +40,36 @@ npm run test
 This might be the best choice to create a new addon. Start your developemnt server in the following way:
 
 ```shell
-npm run develop -- --record somefilename.record
+npm run develop -- --record test-session
 ```
 
-Now browse around your addon in the WATCHED app. All requests made to the addon will be written to `somefilename.record`.
+This should create a file named `test-session.record.js`. To replay this, you have two options.
 
-The next step is to create a test case, for example `src/record.test.ts`:
+#### 1. Via command line
+
+```shell
+npm run replay --record test-session
+```
+
+#### 2. Create a test case
+
+Create a test case file, for example `src/record.test.ts`:
 
 ```javascript
-import { replayRecording } from "@watchedcom/test";
+import { replayRequests } from "@watchedcom/sdk";
 import { yourAddon } from "./index";
 
 test(`Replay recorded actions`, done => {
-  replayRecording([yourAddon], "somefilename.record")
+  replayRequests([yourAddon], "test-session.record.js")
     .then(done)
     .catch(done);
 });
 ```
 
-Now run the tests, preferred in `watch` mode:
+Now run the tests:
 
 ```shell
-npm run test -- --watch
+npm run test
 ```
 
 ## Translate your addon
