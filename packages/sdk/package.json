@@ -1,7 +1,7 @@
 {
   "name": "@watchedcom/sdk",
   "description": "WATCHED.com Javascript SDK",
-  "version": "0.17.3",
+  "version": "0.18.0",
   "main": "dist",
   "bin": {
     "watched-sdk": "dist/scripts/index.js"
@@ -12,7 +12,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@watchedcom/schema": "^0.17.3",
+    "@watchedcom/schema": "^0.18.0",
     "body-parser": "^1.19.0",
     "commander": "^4.1.1",
     "debug": "^4.1.1",
