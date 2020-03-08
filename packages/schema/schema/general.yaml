@@ -21,6 +21,7 @@ definitions:
             type: string
   Url:
     type: string
+    pattern: "^.*:.*$"
   ImageShape:
     description: Shape of an image.
     type: string

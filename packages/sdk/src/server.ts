@@ -150,6 +150,12 @@ const createActionHandler = (
         },
         addon
       );
+      switch (action) {
+        case "resolve":
+        case "captcha":
+          if (result === null) throw new Error("Nothing found");
+          break;
+      }
       validator.response(result);
       if (inlineCache) await inlineCache.set(result);
     } catch (error) {
