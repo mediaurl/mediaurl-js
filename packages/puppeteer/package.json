@@ -1,0 +1,20 @@
+{
+  "name": "@watchedcom/puppeteer",
+  "description": "Puppeteer helper module",
+  "version": "0.18.2",
+  "main": "dist",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@watchedcom/sdk": "^0.18.2",
+    "generic-pool": "^3.7.1",
+    "puppeteer-core": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/generic-pool": "^3.1.9",
+    "@types/node-fetch": "^2.5.5",
+    "@types/puppeteer-core": "^2.0.0",
+    "typescript": "^3.8.3"
+  }
+}
