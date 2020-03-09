@@ -7,6 +7,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@types/puppeteer-core": "^2.0.0",
     "@watchedcom/sdk": "^0.18.2",
     "generic-pool": "^3.7.1",
     "puppeteer-core": "^2.1.1"
@@ -14,7 +15,6 @@
   "devDependencies": {
     "@types/generic-pool": "^3.1.9",
     "@types/node-fetch": "^2.5.5",
-    "@types/puppeteer-core": "^2.0.0",
     "typescript": "^3.8.3"
   }
 }

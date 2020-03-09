@@ -4,6 +4,10 @@ import { HttpMethod, Page, Request, RespondOptions } from "puppeteer-core";
 
 export type RuleAction = "allow" | "proxy" | "deny";
 
+export type ActionFn = (
+  request: Request
+) => PromiseLike<RuleAction | RespondOptions | undefined | null | void>;
+
 export type Rule = {
   /**
    * Resource type where this rule should be triggered.
@@ -29,17 +33,13 @@ export type Rule = {
    *
    * Can be an async callback function which can have the following return types:
    * `undefined`: The `defaultAction` will be used.
-   * `RuleAction`: One of `allow`, `proxy` or `deny`.
+   * `RuleAction`: One of the actions listed above.
    * `RespondOptions`: This object will be cached if `cache` is `true` and
    * will be returned to the browser.
    *
    * Default: `deny`
    */
-  action:
-    | RuleAction
-    | ((
-        request: Request
-      ) => PromiseLike<RuleAction | RespondOptions | undefined>);
+  action: undefined | RuleAction | ActionFn;
   /**
    * Cache requests.
    * Default: `false`
@@ -180,7 +180,7 @@ export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
         const res = await rule.action(request);
         if (typeof res === "string") {
           action = res;
-        } else if (res !== undefined) {
+        } else if (res) {
           action = "noop";
           response = res;
         }
