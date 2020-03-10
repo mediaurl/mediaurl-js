@@ -136,7 +136,12 @@ const packageJson = input => {
       build: ts ? "tsc" : undefined,
       start: "watched-sdk start --prod",
       develop: "watched-sdk start",
-      test: input.test ? "jest" : undefined
+      ...(input.test
+        ? {
+            test: "jest",
+            "test:watch": "jest --watch"
+          }
+        : undefined)
     },
     dependencies: {
       "@watchedcom/sdk": "^0.0.0"

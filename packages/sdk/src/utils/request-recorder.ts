@@ -58,7 +58,7 @@ export const replayRequests = async (
   const app = request(createApp(addons));
   for (const data of recordData) {
     await app
-      .post(`/${data.addon}/${data.action}`)
+      .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
       .expect(data.statusCode, data.result);
   }

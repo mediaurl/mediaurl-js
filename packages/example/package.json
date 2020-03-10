@@ -1,5 +1,5 @@
 {
-  "name": "addon-example",
+  "name": "watched-addon-example",
   "version": "0.18.3",
   "main": "dist",
   "private": true,
@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "watched-sdk start --prod",
     "develop": "watched-sdk start",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@watchedcom/sdk": "^0.18.3"

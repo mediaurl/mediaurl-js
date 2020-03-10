@@ -1,20 +1,10 @@
-import {
-  createWorkerAddon,
-  ItemRequest,
-  MainItem,
-  PlayableItem,
-  Source,
-  SourceRequest,
-  Subtitle,
-  SubtitleRequest
-} from "../src";
+import { PlayableItem, Source, Subtitle } from "@watchedcom/sdk";
 
-// Export needed for tests
 export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      example1: "id1234"
+      "watched-worker-example": "id1234"
     },
     name: "Example Item 1",
     description: "This item does not have any sources."
@@ -22,14 +12,14 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      example1: "id1235"
+      "watched-worker-example": "id1235"
     },
     name: "Big Buck Bunny"
   },
   {
     type: "movie",
     ids: {
-      example1: "elephant"
+      "watched-worker-example": "elephant"
     },
     name: "Elephants Dream",
     description: "Dream of elephants?"
@@ -92,34 +82,3 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
     }
   ]
 };
-
-export const addon = createWorkerAddon({
-  id: "example1",
-  name: "Typescript Example Addon",
-  version: "1.0.0",
-  itemTypes: ["movie"]
-})
-  .registerActionHandler("directory", async (args, ctx) => {
-    return {
-      items: EXAMPLE_ITEMS,
-      hasMore: false
-    };
-  })
-  .registerActionHandler("item", async (args: ItemRequest, ctx) => {
-    const id = args.ids["example1"];
-    const item = EXAMPLE_ITEMS.find(item => item.ids["example1"] === id);
-    if (!item) throw new Error("Not found");
-    return item;
-  })
-  .registerActionHandler("source", async (args: SourceRequest, ctx) => {
-    const id = args.ids["example1"];
-    const sources = EXAMPLE_SOURCES[id];
-    return sources ?? [];
-  })
-  .registerActionHandler("subtitle", async (args: SubtitleRequest, ctx) => {
-    // ids.id is an alias for ids["addon-id"]
-    const id = args.ids.id;
-    await ctx.requestCache(id);
-    const subtitles = EXAMPLE_SUBTITLES[id];
-    return subtitles ?? [];
-  });
