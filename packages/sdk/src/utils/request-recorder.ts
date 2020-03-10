@@ -12,18 +12,25 @@ export type RecordData = {
   result: any;
 };
 
-const getPath = (recordPath: string) => {
+const getFile = (recordPath: string) => {
   if (!/\.record\.js$/.test(recordPath)) recordPath += ".record.js";
-  return path.resolve(recordPath);
+  else if (!/\.js$/.test(recordPath)) recordPath += ".js";
+  return recordPath;
+};
+
+const getPath = (recordPath: string) => {
+  return path.resolve(getFile(recordPath));
 };
 
 export class RequestRecorder {
+  public readonly path: string;
   private readonly stream: WriteStream;
   private w: (data: string) => Promise<unknown>;
   private i: number;
 
-  constructor(private readonly recordPath: string) {
-    this.stream = createWriteStream(getPath(recordPath), { flags: "w" });
+  constructor(recordPath: string) {
+    this.path = getFile(recordPath);
+    this.stream = createWriteStream(getPath(this.path), { flags: "w" });
     this.w = async (data: string) =>
       new Promise((resolve, reject) =>
         this.stream.write(data, (error?: Error) =>
