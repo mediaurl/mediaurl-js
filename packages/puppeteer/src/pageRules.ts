@@ -46,10 +46,10 @@ export type Rule = {
    */
   cache: boolean;
   /**
-   * Surpress all log messages.
-   * Default: `false`
+   * Surpress all log messages. When not set, the default value from
+   * 'options.silentByDefault' will be used.
    */
-  silent: boolean;
+  silent: boolean | undefined;
 };
 
 const defaultRule: Rule = {
@@ -58,46 +58,7 @@ const defaultRule: Rule = {
   url: null,
   action: "deny",
   cache: false,
-  silent: false
-};
-
-const compileRules = (rules: Partial<Rule>[]) =>
-  rules.map(rule => {
-    rule = { ...defaultRule, ...rule };
-    return {
-      check: (resourceType: string, method: Rule["method"], url: string) => {
-        if (rule.resourceType && rule.resourceType !== resourceType) {
-          return false;
-        }
-        if (rule.method && rule.method !== method) {
-          return false;
-        }
-        if (rule.url) {
-          const urls = Array.isArray(rule.url) ? rule.url : [rule.url];
-          const res = urls.find(u => {
-            if (typeof u === "string") return url.includes(u);
-            return u.test(url);
-          });
-          if (!res) return false;
-        }
-        return true;
-      },
-      action: rule.action,
-      cache: rule.cache,
-      silent: rule.silent
-    };
-  });
-
-const defaultRules = {
-  pre: compileRules([
-    { url: /^data:/, action: "allow", silent: true },
-    { url: /^wss?:/, action: "deny" }
-  ]),
-  static: compileRules([
-    { resourceType: "stylesheet", action: "deny", silent: true },
-    { resourceType: "image", action: "deny", silent: true },
-    { resourceType: "other", action: "deny" }
-  ])
+  silent: undefined
 };
 
 export type PageRuleOptions = {
@@ -125,23 +86,68 @@ export type PageRuleOptions = {
    * Default: []
    */
   rules?: Partial<Rule>[];
+  /**
+   * Surpress all log messages.
+   * Default: `false`
+   */
+  silentByDefault: boolean;
 };
 
 const defaultOptions: Partial<PageRuleOptions> = {
   blockStatic: true,
   defaultAction: "deny",
   blockPopups: false,
-  rules: []
+  rules: [],
+  silentByDefault: false
+};
+
+const compileRules = (rules: Partial<Rule>[], options: PageRuleOptions) =>
+  rules.map(rule => {
+    rule = { ...defaultRule, ...rule };
+    return {
+      check: (resourceType: string, method: Rule["method"], url: string) => {
+        if (rule.resourceType && rule.resourceType !== resourceType) {
+          return false;
+        }
+        if (rule.method && rule.method !== method) {
+          return false;
+        }
+        if (rule.url) {
+          const urls = Array.isArray(rule.url) ? rule.url : [rule.url];
+          const res = urls.find(u => {
+            if (typeof u === "string") return url.includes(u);
+            return u.test(url);
+          });
+          if (!res) return false;
+        }
+        return true;
+      },
+      action: rule.action,
+      cache: rule.cache,
+      silent: rule.silent === undefined ? options.silentByDefault : rule.silent
+    };
+  });
+
+const defaultRules = {
+  pre: <Partial<Rule>[]>[
+    { url: /^data:/, action: "allow", silent: true },
+    { url: /^wss?:/, action: "deny" }
+  ],
+  static: <Partial<Rule>[]>[
+    { resourceType: "stylesheet", action: "deny", silent: true },
+    { resourceType: "image", action: "deny", silent: true },
+    { resourceType: "other", action: "deny" }
+  ]
 };
 
 export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
   const opts = <PageRuleOptions>{ ...defaultOptions, ...options };
 
   const allRules = [
-    ...defaultRules.pre,
-    ...compileRules(opts.rules ?? []),
-    ...(opts.blockStatic ? defaultRules.static : []),
-    ...compileRules([{ action: opts.defaultAction }])
+    ...compileRules(defaultRules.pre, opts),
+    ...compileRules(opts.rules ?? [], opts),
+    ...compileRules(opts.blockStatic ? defaultRules.static : [], opts),
+    ...compileRules([{ action: opts.defaultAction }], opts)
   ];
 
   if (opts.blockPopups) {
