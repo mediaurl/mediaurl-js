@@ -104,7 +104,7 @@ export const createTaskResponseHandler = (
 ) => {
   const taskHandler: RequestHandler = async (req, res) => {
     cache = cache.clone({
-      prefix: [addon.getId(), addon.getVersion(), req.params.action]
+      prefix: [addon.getId(), addon.getVersion(), req.params[0]]
     });
 
     const task: TaskResponse = req.body;

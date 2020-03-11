@@ -97,7 +97,7 @@ const createActionHandler = (
         ? JSON.parse(req.query.data)
         : {};
 
-    const action = req.params.action.replace(/\.watched$/, "");
+    const action = req.params[0];
     const handler = addon.getActionHandler(action);
     const validator = getActionValidator(action);
     validator.request(input);
@@ -225,15 +225,19 @@ const createAddonRouter = (
   const taskHandler = createTaskResponseHandler(addon, options.cache);
 
   // Legacy
-  router.get("/:action", actionHandler);
-  router.get("/:action-task", taskHandler);
-  router.post("/:action", actionHandler);
-  router.post("/:action-task", taskHandler);
+  // router.get("/:action", actionHandler);
+  // router.get("/:action-task", taskHandler);
+  // router.post("/:action", actionHandler);
+  // router.post("/:action-task", taskHandler);
 
-  router.get("/:action.watched", actionHandler);
-  router.get("/:action-task.watched", taskHandler);
-  router.post("/:action.watched", actionHandler);
-  router.post("/:action-task.watched", taskHandler);
+  router.get(/^\/([^/]*?)(?:-(task))?(?:\.watched)?$/, (req, res, next) => {
+    if (req.params[1] === "task") taskHandler(req, res, next);
+    else actionHandler(req, res, next);
+  });
+  router.post(/^\/([^/]*?)(?:-(task))?(?:\.watched)?$/, (req, res, next) => {
+    if (req.params[1] === "task") taskHandler(req, res, next);
+    else actionHandler(req, res, next);
+  });
 
   return router;
 };
