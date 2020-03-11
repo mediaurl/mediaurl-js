@@ -57,11 +57,11 @@ export class CacheHandler {
     if (this.options.disableGet) return undefined;
     key = this.createKey(key);
     if (this.options.refreshInterval) {
-      const locked = await this.engine.get(`${key}:refresh`);
+      const locked = await this.engine.get(`${key}-refresh`);
       if (!locked) {
         // Set this key now so the next request will hit the cache again
         await this.engine.set(
-          `${key}:refresh`,
+          `${key}-refresh`,
           1,
           this.options.refreshInterval
         );
