@@ -115,7 +115,7 @@ const createActionHandler = (
 
     const migrationData = {};
     if (migrations[action]?.request) {
-      input = await migrations[action].request(migrationData, sigData, input);
+      input = migrations[action].request(migrationData, sigData, input);
     }
 
     const handler = addon.getActionHandler(action);
@@ -171,7 +171,7 @@ const createActionHandler = (
           break;
       }
       if (migrations[action]?.response) {
-        output = await migrations[action].response(
+        output = migrations[action].response(
           migrationData,
           sigData,
           input,
