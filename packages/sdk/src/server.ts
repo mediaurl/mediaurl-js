@@ -150,9 +150,9 @@ const createActionHandler = (
 
     // Handle the request
     let statusCode = 200;
-    let result: any;
+    let output: any;
     try {
-      result = await handler(
+      output = await handler(
         input,
         {
           request: req,
@@ -167,42 +167,42 @@ const createActionHandler = (
       switch (action) {
         case "resolve":
         case "captcha":
-          if (result === null) throw new Error("Nothing found");
+          if (output === null) throw new Error("Nothing found");
           break;
       }
       if (migrations[action]?.response) {
-        result = await migrations[action].response(
+        output = await migrations[action].response(
           migrationData,
           sigData,
           input,
-          result
+          output
         );
       }
-      validator.response(result);
-      if (inlineCache) await inlineCache.set(result);
+      validator.response(output);
+      if (inlineCache) await inlineCache.set(output);
     } catch (error) {
       if (error instanceof CacheFoundError) {
         if (error.result !== undefined) {
-          result = error.result;
+          output = error.result;
         } else {
           statusCode = 500;
-          result = { error: error.error };
+          output = { error: error.error };
         }
       } else {
         if (inlineCache) await inlineCache.setError(error);
         statusCode = 500;
-        result = { error: error.message || error };
+        output = { error: error.message || error };
         console.warn(error);
       }
     }
 
     if (requestRecorder) {
       record.statusCode = statusCode;
-      record.result = result;
+      record.output = output;
       await requestRecorder.write(<RecordData>record);
     }
 
-    responder.send(statusCode, result);
+    responder.send(statusCode, output);
   };
 
   return actionHandler;

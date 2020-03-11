@@ -9,7 +9,7 @@ export type RecordData = {
   action: string;
   input: any;
   statusCode: number;
-  result: any;
+  output: any;
 };
 
 const getFile = (recordPath: string) => {
@@ -67,6 +67,6 @@ export const replayRequests = async (
     await app
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
-      .expect(data.statusCode, data.result);
+      .expect(data.statusCode, data.output);
   }
 };

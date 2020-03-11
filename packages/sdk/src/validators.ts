@@ -12,8 +12,7 @@ const handleError = (action: string, error: Error) => {
 /** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
 export const validateAddonProps = <T extends Addon>(input: any): T => {
   try {
-    const result: T = getServerValidators().models.addon(input);
-    return result;
+    return getServerValidators().models.addon(input);
   } catch (error) {
     throw handleError("addon", error);
   }

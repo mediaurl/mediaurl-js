@@ -7,7 +7,7 @@ module.exports.push({
     region: "CH"
   },
   statusCode: 200,
-  result: {
+  output: {
     id: "watched-repo-example",
     name: {
       cn: "示例存储库",
@@ -28,7 +28,7 @@ module.exports.push({
     region: "CH"
   },
   statusCode: 200,
-  result: {
+  output: {
     actions: ["directory", "item", "source", "subtitle"],
     id: "watched-worker-example",
     name: "Typescript Example Addon",
@@ -46,7 +46,7 @@ module.exports.push({
     region: "CH"
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       actions: ["directory", "item", "source", "subtitle"],
       id: "watched-worker-example",
@@ -75,7 +75,7 @@ module.exports.push({
     adult: false
   },
   statusCode: 200,
-  result: {
+  output: {
     items: [
       {
         type: "movie",
@@ -120,7 +120,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: {
+  output: {
     type: "movie",
     ids: {
       "watched-worker-example": "id1234"
@@ -145,7 +145,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [],
+  output: [],
   i: 5
 });
 module.exports.push({
@@ -163,7 +163,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: {
+  output: {
     type: "movie",
     ids: {
       "watched-worker-example": "id1235"
@@ -187,7 +187,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       type: "url",
       id: "",
@@ -213,7 +213,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [],
+  output: [],
   i: 8
 });
 module.exports.push({
@@ -231,7 +231,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: {
+  output: {
     type: "movie",
     ids: {
       "watched-worker-example": "elephant"
@@ -256,7 +256,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       type: "url",
       name: "mp4",
@@ -287,7 +287,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       id: "vtt",
       name: "VTT",
@@ -322,7 +322,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       id: "vtt",
       name: "VTT",
@@ -357,7 +357,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  result: [
+  output: [
     {
       id: "vtt",
       name: "VTT",
