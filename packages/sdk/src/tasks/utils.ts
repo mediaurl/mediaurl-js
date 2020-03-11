@@ -70,12 +70,12 @@ export const sendTask = async (
   };
   // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
-  await cache.set(`task.wait:${task.id}`, "1", timeout * 2);
+  await cache.set(`task.wait-${task.id}`, "1", timeout * 2);
   await responder.send(200, task);
 
   // Wait for the response
   const data: any = await cache.waitKey(
-    `task.response:${task.id}`,
+    `task.response-${task.id}`,
     timeout,
     true
   );
@@ -86,7 +86,7 @@ export const sendTask = async (
   // Set new valid responder
   responder.setTransport(async (statusCode, body) => {
     const data = JSON.stringify({ statusCode, body });
-    await cache.set(`task.response:${responseChannel}`, data, timeout);
+    await cache.set(`task.response-${responseChannel}`, data, timeout);
   });
 
   // Check for errors
@@ -104,7 +104,7 @@ export const createTaskResponseHandler = (
 ) => {
   const taskHandler: RequestHandler = async (req, res) => {
     cache = cache.clone({
-      prefix: [addon.getId(), addon.getVersion(), req.params[0]]
+      prefix: [addon.getId(), addon.getMajorVersion(), req.params[0]]
     });
 
     const task: TaskResponse = req.body;
@@ -112,19 +112,19 @@ export const createTaskResponseHandler = (
     // console.debug(`Task ${task.id} received response from client`);
 
     // Make sure the key exists to prevent spamming
-    if (!(await cache.get(`task.wait:${task.id}`))) {
+    if (!(await cache.get(`task.wait-${task.id}`))) {
       throw new Error(`Task wait key ${task.id} does not exist`);
     }
-    await cache.delete(`task.wait:${task.id}`);
+    await cache.delete(`task.wait-${task.id}`);
 
     // Set the response
     const responseChannel = uuid4().toString();
     const raw = JSON.stringify({ responseChannel, response: task.data });
-    await cache.set(`task.response:${task.id}`, raw);
+    await cache.set(`task.response-${task.id}`, raw);
 
     // Wait for the response
     const data = await cache.waitKey(
-      `task.response:${responseChannel}`,
+      `task.response-${responseChannel}`,
       timeout,
       true
     );

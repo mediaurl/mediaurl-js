@@ -5,6 +5,7 @@ import {
   AddonTypes
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
+import * as semver from "semver";
 import { ActionHandler, HandlersMap } from "../interfaces";
 import { validateAddonProps } from "../validators";
 
@@ -40,6 +41,16 @@ export abstract class BasicAddonClass<
 
   public getVersion(): Addon["version"] {
     return this.props.version;
+  }
+
+  public getMajorVersion(): number {
+    const majorVersion = semver.parse(this.props.version)?.major;
+    if (majorVersion === undefined) {
+      throw new Error(
+        `Failed getting major version from  "${this.props.version}" of addon "${this.props.id}"`
+      );
+    }
+    return majorVersion;
   }
 
   public registerActionHandler<A extends Extract<keyof HM, string>>(
