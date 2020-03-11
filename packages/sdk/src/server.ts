@@ -5,6 +5,7 @@ import "express-async-errors";
 import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
+import * as semver from "semver";
 import { BasicAddonClass } from "./addons";
 import {
   CacheFoundError,
@@ -89,6 +90,13 @@ const createActionHandler = (
     console.warn(`Logging requests to ${requestRecorder.path}`);
   }
 
+  const majorVersion = semver.parse(addon.getVersion())?.major;
+  if (majorVersion === undefined) {
+    throw new Error(
+      `Failed getting major version from  "${addon.getVersion()}" of addon "${addon.getId()}"`
+    );
+  }
+
   const actionHandler: express.RequestHandler = async (req, res) => {
     const input =
       req.method === "POST"
@@ -126,7 +134,7 @@ const createActionHandler = (
 
     // Get a cache handler instance
     cache = cache.clone({
-      prefix: [addon.getId(), addon.getVersion(), action]
+      prefix: [addon.getId(), majorVersion, action]
     });
 
     // Request cache helper
@@ -223,12 +231,6 @@ const createAddonRouter = (
     options.requestRecorderPath
   );
   const taskHandler = createTaskResponseHandler(addon, options.cache);
-
-  // Legacy
-  // router.get("/:action", actionHandler);
-  // router.get("/:action-task", taskHandler);
-  // router.post("/:action", actionHandler);
-  // router.post("/:action-task", taskHandler);
 
   router.get(/^\/([^/]*?)(?:-(task))?(?:\.watched)?$/, (req, res, next) => {
     if (req.params[1] === "task") taskHandler(req, res, next);

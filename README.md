@@ -88,6 +88,8 @@ To make your addon open to the public, you need to run it somewhere on the inter
 
 Caching can have many benefits for server processes. With the `ctx.cache` function you have access to an `CacheHandler` instance. Please see the function documentation for more infos about this.
 
+By default, all cache keys get's prefixed with the addon ID, the addon's major version code and the current action. You can change this by changing the `prefix` option.
+
 Currently there are the following caching engines available:
 
 ### `MemoryCache`
@@ -105,7 +107,7 @@ npm run develop
 
 ### `RedisCache`
 
-This cache engine is using the [redis](https://www.npmjs.com/package/redis) package. IURLt get's activated when setting the environment variable `REDIS_CACHE` to a redis connection .
+This cache engine is using the [redis](https://www.npmjs.com/package/redis) package. To activate it, set the environment variable `REDIS_CACHE` to a redis connection URL.
 
 ```shell
 export REDIS_CACHE=redis://localhost
