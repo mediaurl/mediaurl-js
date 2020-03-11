@@ -3,7 +3,8 @@ import { Addon, getServerValidators } from "@watchedcom/schema";
 const handleError = (action: string, error: Error) => {
   console.error(error.message);
   console.error(
-    `Data validation of action ${action} failed.\nCheck out our schema at https://www.watched.com/swagger`
+    `Data validation of action ${action} failed.\n` +
+      `Check out our schema at https://www.watched.com/swagger`
   );
   return new Error("Validation error");
 };

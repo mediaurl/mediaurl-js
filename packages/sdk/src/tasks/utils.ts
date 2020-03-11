@@ -68,7 +68,7 @@ export const sendTask = async (
     id: uuid4().toString(),
     data: taskRequestData
   };
-  // getServerValidators().task.request(task);
+  // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait:${task.id}`, "1", timeout * 2);
   await responder.send(200, task);
@@ -80,7 +80,7 @@ export const sendTask = async (
     true
   );
   const { responseChannel, response } = JSON.parse(data);
-  // getServerValidators().task.response(response);
+  // getServerValidators().models.task.response(response);
   // console.debug(`Task ${task.id} resolved`);
 
   // Set new valid responder
@@ -108,7 +108,7 @@ export const createTaskResponseHandler = (
     });
 
     const task: TaskResponse = req.body;
-    // getServerValidators().task.response(response);
+    // getServerValidators().models.task.response(task);
     // console.debug(`Task ${task.id} received response from client`);
 
     // Make sure the key exists to prevent spamming

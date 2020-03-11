@@ -25,8 +25,6 @@ definitions:
     required: [language, region]
   AddonResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "addons.yaml#/definitions/Addon"
   RepositoryRequest:
     description: Get list of addons in this repository.
@@ -40,12 +38,9 @@ definitions:
         default: "XX"
     required: [language, region]
   RepositoryResponse:
-    oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "general.yaml#/definitions/TaskRequest"
-      - type: array
-        items:
-          $ref: "addons.yaml#/definitions/Addon"
+    type: array
+    items:
+      $ref: "addons.yaml#/definitions/Addon"
   DirectoryRequest:
     allOf:
       - $ref: "items.yaml#/definitions/DefaultAddonRequest"
@@ -60,28 +55,25 @@ definitions:
         required: [id]
       - $ref: "items.yaml#/definitions/DirectoryArguments"
   DirectoryResponse:
-    oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
-      - type: object
-        properties:
-          options:
-            description: Overwrite options of a directory or addon.
-            oneOf:
-              - $ref: "items.yaml#/definitions/DirectoryOptions"
-          features:
-            description: Overwrite features of a directory or addon.
-            oneOf:
-              - $ref: "items.yaml#/definitions/DirectoryFeatures"
-          items:
-            type: array
-            items:
-              $ref: "items.yaml#/definitions/MainItem"
-          hasMore:
-            description: Set to `true` if there are more items to request.
-            type: boolean
-            default: null
-        required: [items]
+    type: object
+    properties:
+      options:
+        description: Overwrite options of a directory or addon.
+        oneOf:
+          - $ref: "items.yaml#/definitions/DirectoryOptions"
+      features:
+        description: Overwrite features of a directory or addon.
+        oneOf:
+          - $ref: "items.yaml#/definitions/DirectoryFeatures"
+      items:
+        type: array
+        items:
+          $ref: "items.yaml#/definitions/MainItem"
+      hasMore:
+        description: Set to `true` if there are more items to request.
+        type: boolean
+        default: null
+    required: [items]
   ItemRequest:
     description: Request parameters for a item request.
     allOf:
@@ -106,8 +98,6 @@ definitions:
         required: [type, ids, name]
   ItemResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "items.yaml#/definitions/PlayableItem"
       - type: "null"
   SourceRequest:
@@ -145,8 +135,6 @@ definitions:
         required: [episode]
   SourceResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "objects.yaml#/definitions/Source"
       - type: array
         items:
@@ -157,8 +145,6 @@ definitions:
       - $ref: "#/definitions/SourceRequest"
   SubtitleResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "objects.yaml#/definitions/Subtitle"
       - type: array
         items:
@@ -182,8 +168,6 @@ definitions:
     required: [type, url]
   ResolveResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "general.yaml#/definitions/Url"
       - $ref: "objects.yaml#/definitions/ResolvedUrl"
       - type: array
@@ -198,7 +182,5 @@ definitions:
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaRequest"
   CaptchaResponse:
     oneOf:
-      - $ref: "general.yaml#/definitions/Error"
-      - $ref: "tasks.yaml#/definitions/TaskRequest"
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
       - type: "null"

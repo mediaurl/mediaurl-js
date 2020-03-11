@@ -21,7 +21,7 @@ definitions:
             type: string
   Url:
     type: string
-    pattern: "^.*:.*$"
+    pattern: "[:/]" # There should be at least a colon or slash in a URL
   ImageShape:
     description: Shape of an image.
     type: string
@@ -55,7 +55,7 @@ definitions:
           $ref: "#/definitions/Country"
         default: []
     additionalProperties: false
-    default: {}
+    # default: {}
   GenericId:
     description: A ID for an object. Can be numeric or a string.
     anyOf:

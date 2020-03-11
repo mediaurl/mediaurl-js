@@ -1,37 +1,6 @@
 import * as Ajv from "ajv";
 import { Schema } from "./helpers";
-
-const schema = require("./schema");
-
-const defaultOptions: Ajv.Options = {
-  coerceTypes: true
-};
-
-const schemaWithDefaults = new Schema({
-  schema,
-  schemaOptions: {
-    ...defaultOptions,
-    useDefaults: "empty"
-  }
-});
-
-const schemaWithoutDefaults = new Schema({
-  schema,
-  schemaOptions: {
-    ...defaultOptions,
-    useDefaults: false
-  }
-});
-
-const serverValidators = init({
-  in: schemaWithDefaults,
-  out: schemaWithoutDefaults
-});
-
-const clientValidators = init({
-  in: schemaWithoutDefaults,
-  out: schemaWithDefaults
-});
+import schema from "./schema";
 
 function createValidator(schemas: any, type: string, definition: string) {
   const validate = schemas[type].get(definition);
@@ -79,7 +48,12 @@ function init(schemas: any) {
         all: createValidator(schemas, "out", "SubItem")
       },
       source: createValidator(schemas, "out", "Source"),
-      subtitle: createValidator(schemas, "out", "Subtitle")
+      subtitle: createValidator(schemas, "out", "Subtitle"),
+      error: createValidator(schemas, "out", "Error"),
+      task: {
+        request: createValidator(schemas, "out", "TaskRequest"),
+        response: createValidator(schemas, "in", "TaskResponse")
+      }
     },
     actions: {
       addon: {
@@ -122,10 +96,6 @@ function init(schemas: any) {
         request: createValidator(schemas, "in", "CaptchaRequest"),
         response: createValidator(schemas, "out", "CaptchaResponse")
       }
-    },
-    task: {
-      request: createValidator(schemas, "out", "TaskRequest"),
-      response: createValidator(schemas, "in", "TaskResponse")
     }
   };
 
@@ -135,6 +105,36 @@ function init(schemas: any) {
 
   return v;
 }
+
+const defaultOptions: Ajv.Options = {
+  coerceTypes: true
+};
+
+const schemaWithDefaults = new Schema({
+  schema,
+  schemaOptions: {
+    ...defaultOptions,
+    useDefaults: "empty"
+  }
+});
+
+const schemaWithoutDefaults = new Schema({
+  schema,
+  schemaOptions: {
+    ...defaultOptions,
+    useDefaults: false
+  }
+});
+
+const serverValidators = init({
+  in: schemaWithDefaults,
+  out: schemaWithoutDefaults
+});
+
+const clientValidators = init({
+  in: schemaWithoutDefaults,
+  out: schemaWithDefaults
+});
 
 export const getServerValidators = () => {
   return serverValidators;

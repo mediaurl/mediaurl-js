@@ -38,7 +38,6 @@ definitions:
       version:
         description: Version in semver format.
         type: string
-        example: "1.0.0"
       poster:
         description: |
           Image which will be displayed on the addon detail page.
