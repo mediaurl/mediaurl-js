@@ -10,6 +10,9 @@
     "tslint": "^6.0.0",
     "typescript": "^3.8.3"
   },
+  "scripts": {
+    "publish": "lerna bootstrap --hoist && lerna run build && lerna run test && lerna publish"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
