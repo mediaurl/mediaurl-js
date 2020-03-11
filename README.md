@@ -25,33 +25,27 @@ npm run develop
 1. Open the WATCHED app on your mobile and go to the `Add Addon` screen, where you can enter a URL.
 2. Enter the IP address of your computer. For example `192.168.1.123`, or with port number `192.168.1.123:1234`. On local IP addresses, the port `3000` as well as some other default ports are omitted.
 
-### Testing with the `testAddon` function
-
-This function will try to figure out some actions your addon provides and is doing some tests. It's an easy and quick way, especially for addons which provide a `directory` action.
-
-Our addon creation wizard can create such a test automatically for you. Run this test with:
-
-```shell
-npm run test
-```
-
 ### Record and replay requests
 
 This might be the best choice to create a new addon. Start your developemnt server in the following way:
 
 ```shell
-npm run develop -- --record test-session
+npx watched-sdk develop --record test-session
 ```
 
-This should create a file named `test-session.record.js`. To replay this, you have two options.
-
-#### 1. Via command line
+This will create a file named `test-session.record.js`. To replay your recording, run this command:
 
 ```shell
-npm run replay --record test-session
+npx watched-sdk replay --record test-session
 ```
 
-#### 2. Create a test case
+To reply and watch for changes, use this:
+
+```shell
+npx watched-sdk replay --record test-session --watch
+```
+
+### Create a test case with a recorded session
 
 Create a test case file, for example `src/record.test.ts`:
 
@@ -72,9 +66,19 @@ Now run the tests:
 npm run test
 ```
 
+### Testing with the `testAddon` function
+
+This function will try to figure out some actions your addon provides and is doing some tests. It's an easy and quick way, especially for addons which provide a `directory` action.
+
+Our addon creation wizard can create such a test automatically for you. Run this test with:
+
+```shell
+npm run test
+```
+
 ## Translate your addon
 
-For some suggestions regarind translations, please see either our `@watchedcom/i18n` package found inside `packages/i18n`, or the documentation at `docs/translations.md`.
+For some suggestions regaring translations, please see either our `@watchedcom/i18n` package found inside `packages/i18n`, or the documentation at `docs/translations.md`.
 
 ## Deploy your addon
 
