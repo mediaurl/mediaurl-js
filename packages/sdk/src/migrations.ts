@@ -5,7 +5,7 @@ import {
   DirectoryResponse
 } from "@watchedcom/schema";
 
-const sdkVersion: string = require("../../package.json").version;
+const sdkVersion: string = require("../package.json").version;
 
 export const migrations = {
   addon: {
@@ -16,6 +16,7 @@ export const migrations = {
       output: AddonResponse
     ) {
       output.sdkVersion = sdkVersion;
+      return output;
     }
   },
   directory: {
@@ -23,7 +24,7 @@ export const migrations = {
       if (input.page !== undefined && input.cursor === undefined) {
         console.warn("Upgrading directory request from page to cursor system");
         data.update = 1;
-        input.cursor = input.page;
+        input.cursor = input.page === 1 ? null : input.page;
       }
       return input;
     },

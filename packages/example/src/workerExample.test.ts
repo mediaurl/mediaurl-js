@@ -13,6 +13,8 @@ import {
 } from "./exampleData";
 import { addonWorkerExample } from "./workerExample";
 
+const sdkVersion = require("@watchedcom/sdk/package.json").version;
+
 const requestEnd = (done: (err?: Error) => void, log: boolean = false) => (
   err: Error,
   res?: request.Response
@@ -44,7 +46,7 @@ test("action addon", async done => {
   app
     .post(`/${addonWorkerExample.getId()}/addon.watched`)
     .send(<AddonRequest>{ ...defaults })
-    .expect(200, addonWorkerExample.getProps())
+    .expect(200, { ...addonWorkerExample.getProps(), sdkVersion })
     .end(requestEnd(done));
 });
 

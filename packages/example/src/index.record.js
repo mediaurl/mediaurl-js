@@ -1,3 +1,5 @@
+const sdkVersion = require("@watchedcom/sdk/package.json").version;
+
 module.exports = [];
 module.exports.push({
   addon: "watched-repo-example",
@@ -16,7 +18,8 @@ module.exports.push({
       ru: "Пример репозитория"
     },
     version: "1.0.0",
-    type: "repository"
+    type: "repository",
+    sdkVersion
   },
   i: 0
 });
@@ -34,7 +37,8 @@ module.exports.push({
     name: "Typescript Example Addon",
     version: "1.0.0",
     itemTypes: ["movie"],
-    type: "worker"
+    type: "worker",
+    sdkVersion
   },
   i: 1
 });

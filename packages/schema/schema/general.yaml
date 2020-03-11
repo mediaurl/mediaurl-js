@@ -29,7 +29,11 @@ definitions:
     default: regular
   Image:
     description: Definition of an image.
-    $ref: "#/definitions/Url"
+    anyOf:
+      - $ref: "#/definitions/Url"
+      - type: string
+        enum: [""]
+      - type: "null"
   Country:
     description: Country in ISO-3166-1 format.
     anyOf:
