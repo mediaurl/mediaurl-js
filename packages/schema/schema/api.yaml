@@ -14,46 +14,57 @@ definitions:
   # Api requests and responses
   AddonRequest:
     description: Get detailed infos about an addon.
-    type: object
-    properties:
-      language:
-        $ref: "general.yaml#/definitions/Language"
-        default: en
-      region:
-        $ref: "general.yaml#/definitions/Country"
-        default: "XX"
-    required: [language, region]
+    oneOf:
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
   AddonResponse:
     oneOf:
       - $ref: "addons.yaml#/definitions/Addon"
   RepositoryRequest:
     description: Get list of addons in this repository.
-    type: object
-    properties:
-      language:
-        $ref: "general.yaml#/definitions/Language"
-        default: en
-      region:
-        $ref: "general.yaml#/definitions/Country"
-        default: "XX"
-    required: [language, region]
+    oneOf:
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
   RepositoryResponse:
     type: array
     items:
       $ref: "addons.yaml#/definitions/Addon"
   DirectoryRequest:
+    description: Request parameters for a directory call.
     allOf:
-      - $ref: "items.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
       - type: object
         properties:
           id:
-            description:
-              ID of the `Directory` object. Defaults to an empty string
-              which means the root directory is requested.
+            description: |
+              ID of the `Directory` object. Defaults to an empty string which
+              means the root directory is requested.
             $ref: "general.yaml#/definitions/GenericId"
             default: ""
-        required: [id]
-      - $ref: "items.yaml#/definitions/DirectoryArguments"
+          adult:
+            description: Show adult items in search result.
+            type: boolean
+            default: false
+          search:
+            description: Search query string.
+            type: string
+            default: ""
+          sort:
+            description: Sort the list by this column.
+            type: string
+            default: ""
+          filter:
+            description: Filter values.
+            type: object
+            default: {}
+          cursor:
+            description: |
+              Used for pagination. This describes the position inside the directory.
+              Normally this should be a page or offset number, or an ID representing the
+              current position. On the first request this value is always `null`.
+              If there are more items available for the current page, return the current
+              cursor with the `nextCursor` property of `DirectoryResponse`.
+            type: ["null", string, number]
+            default: null
+        required: [id, adult, search, sort, filter, cursor]
   DirectoryResponse:
     type: object
     properties:
@@ -167,7 +178,7 @@ definitions:
         $ref: "general.yaml#/definitions/GenericId"
       url:
         $ref: "general.yaml#/definitions/Url"
-    required: [type, url]
+    required: [region, type, url]
   ResolveResponse:
     oneOf:
       - $ref: "general.yaml#/definitions/Url"

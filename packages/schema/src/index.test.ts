@@ -25,11 +25,11 @@ test("Validate directory item with null as id", () => {
   expect(getClientValidators().models.item.directory(directory())).toBeTruthy();
 });
 
-test("Validate directory response", () => {
-  expect(
-    getServerValidators().actions.directory.response(directoryResponse())
-  ).toBeTruthy();
-  expect(
-    getClientValidators().actions.directory.response(directoryResponse())
-  ).toBeTruthy();
-});
+// test("Validate directory response", () => {
+//   expect(
+//     getServerValidators().actions.directory.response(directoryResponse())
+//   ).toBeTruthy();
+//   expect(
+//     getClientValidators().actions.directory.response(directoryResponse())
+//   ).toBeTruthy();
+// });

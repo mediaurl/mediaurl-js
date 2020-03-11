@@ -3,6 +3,7 @@ import {
   BasicAddonActions,
   BundleAddonActions,
   createApp,
+  DefaultAddonRequest,
   DirectoryItem,
   DirectoryRequest,
   IptvAddonActions,
@@ -45,10 +46,20 @@ export class AddonTest {
 }
 
 export const testAddon = async (addon: BasicAddonClass) => {
-  const requestDefaults = {
+  const requestDefaults: DefaultAddonRequest = {
     sig: "mock",
     language: "en",
     region: "UK"
+  };
+
+  const directoryDefaults: DirectoryRequest = {
+    ...requestDefaults,
+    id: "",
+    adult: false,
+    search: "",
+    sort: "",
+    filter: {},
+    cursor: null
   };
 
   const app = new AddonTest(addon);
@@ -80,8 +91,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
     if (hasAction("directory")) {
       console.log('directory "root"');
       const res = await app.call<DirectoryRequest>("directory", {
-        ...requestDefaults,
-        id: ""
+        ...directoryDefaults
       });
       assert(!!res.body.items);
       res.body.items.forEach(addItem);
@@ -90,7 +100,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
       for (const directory of directories) {
         console.log(`directory "${directory.name}"`);
         const res = await app.call<DirectoryRequest>("directory", {
-          ...requestDefaults,
+          ...directoryDefaults,
           id: directory.id
         });
         assert(!!res.body.items);

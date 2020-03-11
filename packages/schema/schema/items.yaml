@@ -37,32 +37,6 @@ definitions:
           Display the item name over the image.
           If not set, a value depening on the item type is used.
         type: boolean
-  DirectoryArguments:
-    description: Request parameters for a directory call.
-    type: object
-    properties:
-      adult:
-        description: Show adult items in search result.
-        type: boolean
-        default: false
-      search:
-        description: Search query string.
-        type: string
-      sort:
-        description: Sort the list by this column.
-        type: string
-      filter:
-        description: Filter values.
-        type: object
-      cursor:
-        description: |
-          Used for pagination. This describes the position inside the directory.
-          Normally this should be a page or offset number, or an ID representing the
-          current position. On the first request this value is always `null`.
-          If there are more items available for the current page, return the current
-          cursor with the `nextCursor` property of `DirectoryResponse`.
-        type: ["null", string, number]
-        default: null
   VirtualDirectoryItem:
     type: object
     properties:
@@ -94,8 +68,36 @@ definitions:
         oneOf:
           - $ref: "#/definitions/DirectoryFeatures"
       args:
-        oneOf:
-          - $ref: "#/definitions/DirectoryArguments"
+        description: |
+          Request parameters for a directory call. This is nearly the same
+          as on `DirectoryRequest`.
+        type: object
+        properties:
+          adult:
+            description: Show adult items in search result.
+            type: boolean
+            default: false
+          search:
+            description: Search query string.
+            type: string
+            default: ""
+          sort:
+            description: Sort the list by this column.
+            type: string
+            default: ""
+          filter:
+            description: Filter values.
+            type: object
+            default: {}
+          cursor:
+            description: |
+              Used for pagination. This describes the position inside the directory.
+              Normally this should be a page or offset number, or an ID representing the
+              current position. On the first request this value is always `null`.
+              If there are more items available for the current page, return the current
+              cursor with the `nextCursor` property of `DirectoryResponse`.
+            type: ["null", string, number]
+            default: null
         default: {}
     required: [id]
   DirectoryItem:
