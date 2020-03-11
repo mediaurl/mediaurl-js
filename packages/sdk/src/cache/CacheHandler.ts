@@ -54,6 +54,7 @@ export class CacheHandler {
   }
 
   public async get<T = any>(key: any): Promise<T | undefined> {
+    if (this.options.disableGet) return undefined;
     key = this.createKey(key);
     if (this.options.refreshInterval) {
       const locked = await this.engine.get(`${key}:refresh`);

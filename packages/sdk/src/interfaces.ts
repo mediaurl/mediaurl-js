@@ -73,6 +73,11 @@ export type CacheOptions = {
    * Prefix. Defaults to addon id, version and action.
    */
   prefix: null | any;
+  /**
+   * Calls to all `get` functions will always return `undefined`. Set is
+   * still working normally. This is useful for testing.
+   */
+  disableGet: boolean;
 };
 
 export const defaultCacheOptions: CacheOptions = {
@@ -82,7 +87,8 @@ export const defaultCacheOptions: CacheOptions = {
   storeRefreshErrors: false,
   simultanLockTimeout: 30 * 1000,
   simultanLockTimeoutSleep: 250,
-  prefix: null
+  prefix: null,
+  disableGet: false
 };
 
 export type InlineCacheContext = {
