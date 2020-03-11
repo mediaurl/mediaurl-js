@@ -90,7 +90,7 @@ export type PageRuleOptions = {
    * Surpress all log messages.
    * Default: `false`
    */
-  silentByDefault: boolean;
+  silentByDefault?: boolean;
 };
 
 const defaultOptions: Partial<PageRuleOptions> = {
@@ -172,6 +172,9 @@ export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
       if (rule.cache) {
         response = await opts.ctx.cache.get(cacheKey);
         if (response) {
+          if ((<any>response.body)?.type === "Buffer") {
+            response.body = Buffer.from(<any>response.body);
+          }
           if (!rule.silent) {
             console.info(`CACHED: [${resourceType}] ${method} ${url}`);
           }
@@ -259,7 +262,15 @@ export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
           return;
       }
 
-      if (rule.cache) await opts.ctx.cache.set(cacheKey, response);
+      if (rule.cache) {
+        await opts.ctx.cache.set(cacheKey, {
+          ...response,
+          body: Buffer.isBuffer(response.body)
+            ? response.body.toJSON()
+            : response.body
+        });
+      }
+
       sent = true;
       await request.respond(response);
     } catch (error) {
