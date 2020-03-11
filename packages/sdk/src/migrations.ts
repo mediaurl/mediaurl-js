@@ -1,6 +1,23 @@
-import { DirectoryRequest, DirectoryResponse } from "@watchedcom/schema";
+import {
+  AddonRequest,
+  AddonResponse,
+  DirectoryRequest,
+  DirectoryResponse
+} from "@watchedcom/schema";
+
+const sdkVersion: string = require("../../package.json").version;
 
 export const migrations = {
+  addon: {
+    async response(
+      data: any,
+      sig: any,
+      input: AddonRequest,
+      output: AddonResponse
+    ) {
+      output.sdkVersion = sdkVersion;
+    }
+  },
   directory: {
     async request(data: any, sig: any, input: DirectoryRequest) {
       if (input.page !== undefined && input.cursor === undefined) {
@@ -17,7 +34,7 @@ export const migrations = {
       output: DirectoryResponse
     ) {
       if (data.update === 1) {
-        output.nextCursor = output.hasMore ? input.page + 1 : null;
+        output.nextCursor = output.hasMore ? (input.page ?? 1) + 1 : null;
         delete output.hasMore;
       }
       return output;
