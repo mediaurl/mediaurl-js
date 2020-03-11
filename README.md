@@ -74,11 +74,39 @@ npm run test
 
 ## Translate your addon
 
-For some suggestions regarind translations, please see `docs/translations.md`.
+For some suggestions regarind translations, please see either our `@watchedcom/i18n` package found inside `packages/i18n`, or the documentation at `docs/translations.md`.
 
 ## Deploy your addon
 
 To make your addon open to the public, you need to run it somewhere on the internet. We are working on giving an as easy as possible tutorial for a wide range of affordable or free hosting providers.
+
+## Cache
+
+Caching can have many benefits for server processes. With the `ctx.cache` function you have access to an `CacheHandler` instance. Please see the function documentation for more infos about this.
+
+Currently there are the following caching engines available:
+
+### `MemoryCache`
+
+In memory cache, this is the default.
+
+### `DiskCache`
+
+A cache which uses the file system for storage. To enable this, set the environment variable `DISK_CACHE` to a path.
+
+```shell
+export DISK_CACHE=/data/watched-cache
+npm run develop
+```
+
+### `RedisCache`
+
+This cache engine is using the [redis](https://www.npmjs.com/package/redis) package. IURLt get's activated when setting the environment variable `REDIS_CACHE` to a redis connection .
+
+```shell
+export REDIS_CACHE=redis://localhost
+npm run develop
+```
 
 ## Developing on this repo
 

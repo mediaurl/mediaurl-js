@@ -1,6 +1,6 @@
 import { BasicCache } from "./BasicCache";
 
-export class LocalCache extends BasicCache {
+export class MemoryCache extends BasicCache {
   private data: any = {};
 
   public async exists(key: string) {

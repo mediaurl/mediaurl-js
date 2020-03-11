@@ -25,7 +25,7 @@ const handleOptions = (options?: CacheOptionsParam) => {
 export class CacheHandler {
   public options: CacheOptions;
 
-  constructor(private engine: BasicCache, options?: CacheOptionsParam) {
+  constructor(public readonly engine: BasicCache, options?: CacheOptionsParam) {
     this.options = {
       ...defaultCacheOptions,
       ...handleOptions(options)
@@ -73,7 +73,7 @@ export class CacheHandler {
   private async _set(key: string, value: any, ttl: number) {
     await this.engine.set(key, value, ttl);
     if (this.options.refreshInterval)
-      await this.engine.set(`${key}:refresh`, 1, this.options.refreshInterval);
+      await this.engine.set(`${key}-refresh`, 1, this.options.refreshInterval);
   }
 
   public async set(key: any, value: any, ttl?: CacheOptions["ttl"]) {
@@ -111,7 +111,7 @@ export class CacheHandler {
 
   private async lockRequest(key: string) {
     if (this.options.simultanLockTimeout === null) return undefined;
-    if (await this.engine.exists(`${key}:call-lock`)) {
+    if (await this.engine.exists(`${key}-call-lock`)) {
       // Wait for a result to be set, instead of the call-lock key.
       // The call-lock key is only used to check if there is a lock
       // active
@@ -152,7 +152,7 @@ export class CacheHandler {
 
     if (this.options.simultanLockTimeout) {
       await this.engine.set(
-        `${key}:call-lock`,
+        `${key}-call-lock`,
         1,
         this.options.simultanLockTimeout
       );
@@ -167,7 +167,7 @@ export class CacheHandler {
       throw error;
     } finally {
       if (this.options.simultanLockTimeout) {
-        await this.engine.delete(`${key}:call-lock`);
+        await this.engine.delete(`${key}-call-lock`);
       }
     }
   }
@@ -200,11 +200,11 @@ export class CacheHandler {
     let releaseLock = async () => {};
     if (this.options.simultanLockTimeout) {
       await this.engine.set(
-        `${key}:call-lock`,
+        `${key}-call-lock`,
         1,
         this.options.simultanLockTimeout
       );
-      releaseLock = async () => await this.engine.delete(`${key}:call-lock`);
+      releaseLock = async () => await this.engine.delete(`${key}-call-lock`);
     }
 
     return <InlineCacheContext>{

@@ -6,7 +6,13 @@ import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
 import { BasicAddonClass } from "./addons";
-import { CacheFoundError, CacheHandler, LocalCache, RedisCache } from "./cache";
+import {
+  CacheFoundError,
+  CacheHandler,
+  DiskCache,
+  MemoryCache,
+  RedisCache
+} from "./cache";
 import { errorHandler } from "./error-handler";
 import { RequestCacheFn } from "./interfaces";
 import {
@@ -55,9 +61,11 @@ const defaultServeOpts: ServeAddonsOptions = {
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
   cache: new CacheHandler(
-    process.env.REDIS_CACHE
+    process.env.DISK_CACHE
+      ? new DiskCache(process.env.DISK_CACHE)
+      : process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
-      : new LocalCache()
+      : new MemoryCache()
   )
 };
 
@@ -77,8 +85,8 @@ const createActionHandler = (
   }
 
   if (requestRecorderPath && !requestRecorder) {
-    console.warn(`Logging requests to ${requestRecorderPath}`);
     requestRecorder = new RequestRecorder(requestRecorderPath);
+    console.warn(`Logging requests to ${requestRecorder.path}`);
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
