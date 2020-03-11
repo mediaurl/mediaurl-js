@@ -20,7 +20,7 @@ export const addonWorkerExample = createWorkerAddon({
 addonWorkerExample.registerActionHandler("directory", async (input, ctx) => {
   return {
     items: EXAMPLE_ITEMS,
-    hasMore: false
+    nextCursor: null
   };
 });
 

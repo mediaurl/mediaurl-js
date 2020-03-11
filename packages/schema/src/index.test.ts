@@ -12,7 +12,7 @@ const directory = () => ({
 
 const directoryResponse = () => ({
   items: [movie(), directory()],
-  hasMore: false
+  nextCursor: null
 });
 
 test("Validate movie item", () => {

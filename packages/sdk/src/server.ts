@@ -15,6 +15,7 @@ import {
 } from "./cache";
 import { errorHandler } from "./error-handler";
 import { RequestCacheFn } from "./interfaces";
+import { migrations } from "./migrations";
 import {
   createTaskFetch,
   createTaskRecaptcha,
@@ -90,17 +91,13 @@ const createActionHandler = (
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
-    const input =
+    const action = req.params[0];
+    let input =
       req.method === "POST"
         ? req.body
         : req.query.data
         ? JSON.parse(req.query.data)
         : {};
-
-    const action = req.params[0];
-    const handler = addon.getActionHandler(action);
-    const validator = getActionValidator(action);
-    validator.request(input);
 
     // Get sig contents
     let sig: string;
@@ -115,6 +112,15 @@ const createActionHandler = (
       process.env.SKIP_AUTH === "1" || action === "addon"
         ? null
         : validateSignature(sig);
+
+    const migrationData = {};
+    if (migrations[action]?.request) {
+      input = await migrations[action].request(migrationData, sigData, input);
+    }
+
+    const handler = addon.getActionHandler(action);
+    const validator = getActionValidator(action);
+    validator.request(input);
 
     // Store request data for recording
     const record: Partial<RecordData> = {};
@@ -163,6 +169,14 @@ const createActionHandler = (
         case "captcha":
           if (result === null) throw new Error("Nothing found");
           break;
+      }
+      if (migrations[action]?.response) {
+        result = await migrations[action].response(
+          migrationData,
+          sigData,
+          input,
+          result
+        );
       }
       validator.response(result);
       if (inlineCache) await inlineCache.set(result);

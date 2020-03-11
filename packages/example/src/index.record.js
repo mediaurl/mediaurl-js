@@ -71,7 +71,7 @@ module.exports.push({
     search: "",
     sort: "",
     filter: {},
-    page: 1,
+    cursor: null,
     adult: false
   },
   statusCode: 200,
@@ -101,7 +101,7 @@ module.exports.push({
         description: "Dream of elephants?"
       }
     ],
-    hasMore: false
+    nextCursor: null
   },
   i: 3
 });

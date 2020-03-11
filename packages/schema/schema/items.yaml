@@ -54,11 +54,15 @@ definitions:
       filter:
         description: Filter values.
         type: object
-      page:
-        description: Page of the result list.
-        type: number
-        minimum: 1
-        default: 1
+      cursor:
+        description: |
+          Used for pagination. This describes the position inside the directory.
+          Normally this should be a page or offset number, or an ID representing the
+          current position. On the first request this value is always `null`.
+          If there are more items available for the current page, return the current
+          cursor with the `nextCursor` property of `DirectoryResponse`.
+        type: ["null", string, number]
+        default: null
   VirtualDirectoryItem:
     type: object
     properties:

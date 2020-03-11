@@ -69,11 +69,13 @@ definitions:
         type: array
         items:
           $ref: "items.yaml#/definitions/MainItem"
-      hasMore:
-        description: Set to `true` if there are more items to request.
-        type: boolean
-        default: null
-    required: [items]
+      nextCursor:
+        description: |
+          Used for pagination. This describes the position of the current directory.
+          This value will be used on the next request on `DirectoryRequest.cursor`.
+          If the end of the directory is reached, set this to `null`.
+        type: ["null", string, number]
+    required: [items, nextCursor]
   ItemRequest:
     description: Request parameters for a item request.
     allOf:

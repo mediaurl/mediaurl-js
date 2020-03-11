@@ -55,7 +55,7 @@ test("action directory", async done => {
       ...defaults,
       id: ""
     })
-    .expect(200, { items: EXAMPLE_ITEMS, hasMore: false })
+    .expect(200, { items: EXAMPLE_ITEMS, nextCursor: null })
     .end(requestEnd(done));
 });
 
