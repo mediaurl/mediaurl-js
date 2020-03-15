@@ -13,7 +13,7 @@ module.exports.push({
     name: "Typescript Example Addon",
     version: "1.0.0",
     itemTypes: ["movie"],
-    directoryPresets: [
+    rootDirectories: [
       {
         features: {
           search: {
@@ -29,6 +29,16 @@ module.exports.push({
               name: "Year"
             }
           ]
+        }
+      }
+    ],
+    dashboards: [
+      {},
+      {
+        id: "by-year",
+        name: "By year",
+        args: {
+          sort: "year"
         }
       }
     ],
@@ -91,12 +101,12 @@ module.exports.push({
   input: {
     language: "en",
     region: "CH",
-    id: "",
-    adult: false,
+    id: "by-year",
     search: "",
+    sort: "year",
     filter: {},
     cursor: null,
-    sort: "year",
+    adult: false,
     page: 1
   },
   statusCode: 200,
@@ -144,7 +154,7 @@ module.exports.push({
     search: "",
     filter: {},
     cursor: null,
-    sort: "year",
+    sort: "name",
     page: 1
   },
   statusCode: 200,
@@ -153,11 +163,10 @@ module.exports.push({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234"
+          "watched-worker-example": "id1235"
         },
-        name: "Example Item 1",
-        description: "This item does not have any sources.",
-        year: 2011
+        name: "Big Buck Bunny",
+        year: 2013
       },
       {
         type: "movie",
@@ -171,10 +180,11 @@ module.exports.push({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235"
+          "watched-worker-example": "id1234"
         },
-        name: "Big Buck Bunny",
-        year: 2013
+        name: "Example Item 1",
+        description: "This item does not have any sources.",
+        year: 2011
       }
     ],
     nextCursor: null
@@ -187,73 +197,12 @@ module.exports.push({
   input: {
     language: "en",
     region: "CH",
-    id: "",
-    adult: false,
-    filter: {},
-    cursor: null,
+    id: "by-year",
     sort: "year",
-    search: "T",
-    page: 1
-  },
-  statusCode: 200,
-  output: {
-    items: [
-      {
-        type: "movie",
-        ids: {
-          "watched-worker-example": "id1234"
-        },
-        name: "Example Item 1",
-        description: "This item does not have any sources.",
-        year: 2011
-      },
-      {
-        type: "movie",
-        ids: {
-          "watched-worker-example": "elephant"
-        },
-        name: "Elephants Dream",
-        description: "Dream of elephants?",
-        year: 2012
-      }
-    ],
-    nextCursor: null
-  },
-  i: 4
-});
-module.exports.push({
-  addon: "watched-worker-example",
-  action: "directory",
-  input: {
-    language: "en",
-    region: "CH",
-    id: "",
     adult: false,
-    filter: {},
-    cursor: null,
-    sort: "year",
-    search: "Tes",
-    page: 1
-  },
-  statusCode: 200,
-  output: {
-    items: [],
-    nextCursor: null
-  },
-  i: 5
-});
-module.exports.push({
-  addon: "watched-worker-example",
-  action: "directory",
-  input: {
-    language: "en",
-    region: "CH",
-    id: "",
-    adult: false,
-    filter: {},
-    cursor: null,
-    sort: "year",
     search: "",
+    filter: {},
+    cursor: null,
     page: 1
   },
   statusCode: 200,
@@ -288,7 +237,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 6
+  i: 4
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -296,12 +245,12 @@ module.exports.push({
   input: {
     language: "en",
     region: "CH",
-    id: "",
+    id: "by-year",
+    sort: "name",
     adult: false,
+    search: "",
     filter: {},
     cursor: null,
-    sort: "year",
-    search: "E",
     page: 1
   },
   statusCode: 200,
@@ -310,11 +259,10 @@ module.exports.push({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234"
+          "watched-worker-example": "id1235"
         },
-        name: "Example Item 1",
-        description: "This item does not have any sources.",
-        year: 2011
+        name: "Big Buck Bunny",
+        year: 2013
       },
       {
         type: "movie",
@@ -324,6 +272,86 @@ module.exports.push({
         name: "Elephants Dream",
         description: "Dream of elephants?",
         year: 2012
+      },
+      {
+        type: "movie",
+        ids: {
+          "watched-worker-example": "id1234"
+        },
+        name: "Example Item 1",
+        description: "This item does not have any sources.",
+        year: 2011
+      }
+    ],
+    nextCursor: null
+  },
+  i: 5
+});
+module.exports.push({
+  addon: "watched-worker-example",
+  action: "directory",
+  input: {
+    language: "en",
+    region: "CH",
+    id: "by-year",
+    sort: "name",
+    adult: false,
+    filter: {},
+    cursor: null,
+    search: "E",
+    page: 1
+  },
+  statusCode: 200,
+  output: {
+    items: [
+      {
+        type: "movie",
+        ids: {
+          "watched-worker-example": "elephant"
+        },
+        name: "Elephants Dream",
+        description: "Dream of elephants?",
+        year: 2012
+      },
+      {
+        type: "movie",
+        ids: {
+          "watched-worker-example": "id1234"
+        },
+        name: "Example Item 1",
+        description: "This item does not have any sources.",
+        year: 2011
+      }
+    ],
+    nextCursor: null
+  },
+  i: 6
+});
+module.exports.push({
+  addon: "watched-worker-example",
+  action: "directory",
+  input: {
+    language: "en",
+    region: "CH",
+    id: "by-year",
+    sort: "name",
+    adult: false,
+    filter: {},
+    cursor: null,
+    search: "Ex",
+    page: 1
+  },
+  statusCode: 200,
+  output: {
+    items: [
+      {
+        type: "movie",
+        ids: {
+          "watched-worker-example": "id1234"
+        },
+        name: "Example Item 1",
+        description: "This item does not have any sources.",
+        year: 2011
       }
     ],
     nextCursor: null
@@ -332,64 +360,48 @@ module.exports.push({
 });
 module.exports.push({
   addon: "watched-worker-example",
-  action: "directory",
+  action: "item",
   input: {
     language: "en",
     region: "CH",
-    id: "",
-    adult: false,
-    filter: {},
-    cursor: null,
-    sort: "year",
-    search: "Ex",
-    page: 1
+    type: "movie",
+    ids: {
+      "watched-worker-example": "id1234",
+      id: "id1234"
+    },
+    name: "Example Item 1",
+    year: 2011,
+    episode: {}
   },
   statusCode: 200,
   output: {
-    items: [
-      {
-        type: "movie",
-        ids: {
-          "watched-worker-example": "id1234"
-        },
-        name: "Example Item 1",
-        description: "This item does not have any sources.",
-        year: 2011
-      }
-    ],
-    nextCursor: null
+    type: "movie",
+    ids: {
+      "watched-worker-example": "id1234"
+    },
+    name: "Example Item 1",
+    description: "This item does not have any sources.",
+    year: 2011
   },
   i: 8
 });
 module.exports.push({
   addon: "watched-worker-example",
-  action: "directory",
+  action: "source",
   input: {
     language: "en",
     region: "CH",
-    id: "",
-    adult: false,
-    filter: {},
-    cursor: null,
-    sort: "name",
-    search: "Ex",
-    page: 1
+    type: "movie",
+    ids: {
+      "watched-worker-example": "id1234",
+      id: "id1234"
+    },
+    name: "Example Item 1",
+    year: 2011,
+    episode: {}
   },
   statusCode: 200,
-  output: {
-    items: [
-      {
-        type: "movie",
-        ids: {
-          "watched-worker-example": "id1234"
-        },
-        name: "Example Item 1",
-        description: "This item does not have any sources.",
-        year: 2011
-      }
-    ],
-    nextCursor: null
-  },
+  output: [],
   i: 9
 });
 module.exports.push({
@@ -398,11 +410,11 @@ module.exports.push({
   input: {
     language: "en",
     region: "CH",
-    id: "",
+    id: "by-year",
+    sort: "name",
     adult: false,
     filter: {},
     cursor: null,
-    sort: "name",
     search: "",
     page: 1
   },
@@ -442,7 +454,7 @@ module.exports.push({
 });
 module.exports.push({
   addon: "watched-worker-example",
-  action: "item",
+  action: "subtitle",
   input: {
     language: "en",
     region: "CH",
@@ -456,14 +468,7 @@ module.exports.push({
     episode: {}
   },
   statusCode: 200,
-  output: {
-    type: "movie",
-    ids: {
-      "watched-worker-example": "id1235"
-    },
-    name: "Big Buck Bunny",
-    year: 2013
-  },
+  output: [],
   i: 11
 });
 module.exports.push({

@@ -33,10 +33,14 @@ definitions:
       - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
       - type: object
         properties:
+          rootId:
+            description: |
+              ID of the root directory.
+            $ref: "general.yaml#/definitions/GenericId"
+            default: ""
           id:
             description: |
-              ID of the `Directory` object. Defaults to an empty string which
-              means the root directory is requested.
+              ID of the `Directory` object. Defaults to an empty string.
             $ref: "general.yaml#/definitions/GenericId"
             default: ""
           adult:
@@ -68,10 +72,9 @@ definitions:
   DirectoryResponse:
     type: object
     properties:
-      preset:
-        description: Overwrite `preset` of a directory.
-        oneOf:
-          - $ref: "directories.yaml#/definitions/DirectoryPresetId"
+      rootId:
+        description: Overwrite the `rootId` of a directory.
+        $ref: "general.yaml#/definitions/GenericId"
       options:
         description: Overwrite `options` of a directory or addon.
         oneOf:

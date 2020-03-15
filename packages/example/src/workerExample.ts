@@ -16,7 +16,7 @@ export const addonWorkerExample = createWorkerAddon({
   name: "Typescript Example Addon",
   version: "1.0.0",
   itemTypes: ["movie"],
-  directoryPresets: [
+  rootDirectories: [
     {
       features: {
         search: { enabled: true },
@@ -25,6 +25,14 @@ export const addonWorkerExample = createWorkerAddon({
           { id: "year", name: "Year" }
         ]
       }
+    }
+  ],
+  dashboards: [
+    {}, // Root directory
+    {
+      id: "by-year",
+      name: "By year",
+      args: { sort: "year" }
     }
   ]
 });

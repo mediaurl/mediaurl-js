@@ -1,12 +1,5 @@
 $schema: "http://json-schema.org/draft-07/schema#"
 definitions:
-  DirectoryPresetId:
-    description: |
-      ID of a directory preset defined in the addons `directoryPresets`
-      property. If `options` or `features` is defined here, this values
-      will be used.
-    type: string
-    default: ""
   DirectoryOptions:
     description: Options on how to display images.
     type: object
@@ -94,7 +87,39 @@ definitions:
                 - $ref: "general.yaml#/definitions/TranslatedText"
                 - type: string
           required: [id, name, values]
-  VirtualDirectoryItem:
+  DirectoryArguments:
+    description: |
+      Request parameters for a directory call. This is nearly the same
+      as on `DirectoryRequest`.
+    type: object
+    properties:
+      adult:
+        description: Show adult items in search result.
+        type: boolean
+        default: false
+      search:
+        description: Search query string.
+        type: string
+        default: ""
+      sort:
+        description: Sort the list by this column.
+        type: string
+        default: ""
+      filter:
+        description: Filter values.
+        type: object
+        default: {}
+      cursor:
+        description: |
+          Used for pagination. This describes the position inside the directory.
+          Normally this should be a page or offset number, or an ID representing the
+          current position. On the first request this value is always `null`.
+          If there are more items available for the current page, return the current
+          cursor with the `nextCursor` property of `DirectoryResponse`.
+        type: ["null", string, number]
+        default: null
+    default: {}
+  BasicDirectoryItem:
     type: object
     properties:
       id:
@@ -118,55 +143,29 @@ definitions:
         type: array
         items:
           $ref: "items.yaml#/definitions/ItemTypes"
-      preset:
-        $ref: "#/definitions/DirectoryPresetId"
       options:
         $ref: "#/definitions/DirectoryOptions"
       features:
         $ref: "#/definitions/DirectoryFeatures"
-      args:
-        description: |
-          Request parameters for a directory call. This is nearly the same
-          as on `DirectoryRequest`.
-        type: object
-        properties:
-          adult:
-            description: Show adult items in search result.
-            type: boolean
-            default: false
-          search:
-            description: Search query string.
-            type: string
-            default: ""
-          sort:
-            description: Sort the list by this column.
-            type: string
-            default: ""
-          filter:
-            description: Filter values.
-            type: object
-            default: {}
-          cursor:
-            description: |
-              Used for pagination. This describes the position inside the directory.
-              Normally this should be a page or offset number, or an ID representing the
-              current position. On the first request this value is always `null`.
-              If there are more items available for the current page, return the current
-              cursor with the `nextCursor` property of `DirectoryResponse`.
-            type: ["null", string, number]
-            default: null
-        default: {}
-    required: [id]
+  RootDirectoryItem:
+    oneOf:
+      - $ref: "#/definitions/BasicDirectoryItem"
   DirectoryItem:
     description: An item which points to a directory.
     type: object
     allOf:
-      - $ref: "#/definitions/VirtualDirectoryItem"
+      - $ref: "#/definitions/BasicDirectoryItem"
       - type: object
         properties:
           type:
             type: string
             enum: [directory]
+          rootId:
+            description: This directory will use features and options from this directory.
+            $ref: "general.yaml#/definitions/GenericId"
+            default: ""
+          args:
+            $ref: "#/definitions/DirectoryArguments"
         required: [type]
   DashboardItem:
     description: |
@@ -174,7 +173,7 @@ definitions:
       are defined inside the addon.
     type: object
     allOf:
-      - $ref: "#/definitions/VirtualDirectoryItem"
+      - $ref: "#/definitions/BasicDirectoryItem"
       - type: object
         properties:
           addonId:
@@ -182,13 +181,19 @@ definitions:
               If this dashboard should be executed with another addon,
               specify the ID here.
             type: string
+          rootId:
+            description: This directory will use features and options from this directory.
+            $ref: "general.yaml#/definitions/GenericId"
+            default: ""
           id:
             description: |
               ID of this dashboard.
               To overwrite (or reconfigure) other dashboards, set
               this to an already existing dashboard. The found object
               then is merged with this one.
-            type: string
+            $ref: "general.yaml#/definitions/GenericId"
+          args:
+            $ref: "#/definitions/DirectoryArguments"
           config:
             description: Configuration of this dashboard.
             type: object

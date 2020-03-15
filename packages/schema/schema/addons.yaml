@@ -150,31 +150,24 @@ definitions:
             items:
               $ref: "tasks.yaml#/definitions/CaptchaTypes"
             default: []
-          directoryPresets:
-            descrption: |
-              Here you can define different presets for different kind of
-              directories. To activate one preset, set the `Directory.preset` or
-              `DirectoryResponse.preset` value.
-              By default the `id` value is an empty string, which allows to use easily
-              define a default preset which will be applied for all directories.
+          defaultDirectoryOptions:
+            $ref: "items.yaml#/definitions/DirectoryOptions"
+          defaultDirectoryFeatures:
+            $ref: "items.yaml#/definitions/DirectoryFeatures"
+          rootDirectories:
+            description: |
+              Predefined root directories. Here you also can define features.
+              `DashboardItem` objects can reference to this objects by it's `id` field.
+              Directories which have the `search` feature enabled will be displayed
+              on the search screen of the client app.
             type: array
             items:
-              type: object
-              properties:
-                id:
-                  $ref: "directories.yaml#/definitions/DirectoryPresetId"
-                options:
-                  $ref: "directories.yaml#/definitions/DirectoryOptions"
-                features:
-                  $ref: "directories.yaml#/definitions/DirectoryFeatures"
+              $ref: "directories.yaml#/definitions/RootDirectoryItem"
             default: []
           dashboards:
             description: |
-              Predefined dashboards. This dashboards get updated
-              when the addon is updated, the dashboard configuration
-              is preserved.
-              Dashboards which have the `search` feature enabled will be displayed
-              on the search screen of the client app.
+              Predefined dashboards. This dashboards get updated when the addon is
+              updated. The dashboard configuration is preserved.
             type: array
             items:
               $ref: "directories.yaml#/definitions/DashboardItem"

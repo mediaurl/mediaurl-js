@@ -101,7 +101,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
         console.log(`directory "${directory.name}"`);
         const res = await app.call<DirectoryRequest>("directory", {
           ...directoryDefaults,
-          id: directory.id
+          id: directory.id ?? ""
         });
         assert(!!res.body.items);
         res.body.items.forEach(addItem);
