@@ -68,14 +68,18 @@ definitions:
   DirectoryResponse:
     type: object
     properties:
+      preset:
+        description: Overwrite `preset` of a directory.
+        oneOf:
+          - $ref: "directories.yaml#/definitions/DirectoryPresetId"
       options:
-        description: Overwrite options of a directory or addon.
+        description: Overwrite `options` of a directory or addon.
         oneOf:
-          - $ref: "items.yaml#/definitions/DirectoryOptions"
+          - $ref: "directories.yaml#/definitions/DirectoryOptions"
       features:
-        description: Overwrite features of a directory or addon.
+        description: Overwrite `features` of a directory or addon.
         oneOf:
-          - $ref: "items.yaml#/definitions/DirectoryFeatures"
+          - $ref: "directories.yaml#/definitions/DirectoryFeatures"
       items:
         type: array
         items:

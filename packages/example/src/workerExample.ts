@@ -4,6 +4,7 @@ import {
   SourceRequest,
   SubtitleRequest
 } from "@watchedcom/sdk";
+import * as _ from "lodash";
 import {
   EXAMPLE_ITEMS,
   EXAMPLE_SOURCES,
@@ -14,12 +15,31 @@ export const addonWorkerExample = createWorkerAddon({
   id: "watched-worker-example",
   name: "Typescript Example Addon",
   version: "1.0.0",
-  itemTypes: ["movie"]
+  itemTypes: ["movie"],
+  directoryPresets: [
+    {
+      features: {
+        search: { enabled: true },
+        sort: [
+          { id: "name", name: "Name" },
+          { id: "year", name: "Year" }
+        ]
+      }
+    }
+  ]
 });
 
 addonWorkerExample.registerActionHandler("directory", async (input, ctx) => {
+  let items = _.sortBy(EXAMPLE_ITEMS, input.sort ?? "name");
+  if (input.search) {
+    items = items.filter(item =>
+      String(item.name)
+        .toLocaleLowerCase()
+        .includes(input.search.toLocaleLowerCase())
+    );
+  }
   return {
-    items: EXAMPLE_ITEMS,
+    items,
     nextCursor: null
   };
 });

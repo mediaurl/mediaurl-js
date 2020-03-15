@@ -29,7 +29,7 @@ const defaults = {
   region: "UK"
 };
 
-const itemDefaults = {
+const itemDefaults: ItemRequest = {
   ...defaults,
   type: "movie",
   ids: {
@@ -55,7 +55,12 @@ test("action directory", async done => {
     .post(`/${addonWorkerExample.getId()}/directory.watched`)
     .send(<DirectoryRequest>{
       ...defaults,
-      id: ""
+      id: "",
+      adult: false,
+      search: "",
+      sort: "",
+      filter: {},
+      cursor: null
     })
     .expect(200, { items: EXAMPLE_ITEMS, nextCursor: null })
     .end(requestEnd(done));

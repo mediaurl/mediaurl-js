@@ -7,14 +7,16 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
       "watched-worker-example": "id1234"
     },
     name: "Example Item 1",
-    description: "This item does not have any sources."
+    description: "This item does not have any sources.",
+    year: 2011 // Example years to demonstrate the sort feature
   },
   {
     type: "movie",
     ids: {
       "watched-worker-example": "id1235"
     },
-    name: "Big Buck Bunny"
+    name: "Big Buck Bunny",
+    year: 2013
   },
   {
     type: "movie",
@@ -22,7 +24,8 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
       "watched-worker-example": "elephant"
     },
     name: "Elephants Dream",
-    description: "Dream of elephants?"
+    description: "Dream of elephants?",
+    year: 2012
   }
 ];
 
