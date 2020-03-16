@@ -35,7 +35,10 @@ definitions:
       addons:
         type: array
         items:
-          $ref: "general.yaml#/definitions/Url"
+          type: array:
+          items:
+            - type: string
+            - $ref: "general.yaml#/definitions/Url"
         default: []
       name:
         type: string
