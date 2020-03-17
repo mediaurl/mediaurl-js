@@ -122,4 +122,10 @@ definitions:
       headers:
         type: object
         default: {}
+      resolveAgain:
+        description: |
+          If `true`, the app will try to resolve the `url` again. This is useful
+          to resolve URL's which are behind some gateway for example.
+        type: boolean
+        default: false
     required: [url]

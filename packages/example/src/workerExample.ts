@@ -83,3 +83,20 @@ addonWorkerExample.registerActionHandler(
     return subtitles ?? [];
   }
 );
+
+// Example for a resolver with "resolveAgain" system
+const chainResolveTestUrl =
+  "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm";
+
+addonWorkerExample.addResolveHandler(
+  chainResolveTestUrl,
+  async (match, input, ctx) => {
+    if (!input.url.includes("?chain=1")) {
+      return {
+        url: input.url += "?chain=1",
+        resolveAgain: true
+      };
+    }
+    return input.url;
+  }
+);

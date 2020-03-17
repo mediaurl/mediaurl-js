@@ -171,21 +171,15 @@ definitions:
           $ref: "objects.yaml#/definitions/Subtitle"
       - type: "null"
   ResolveRequest:
+    description: Resolve a `Source` object to a playable `Url` or `ResolvedUrl`.
     type: object
     properties:
       region:
         $ref: "general.yaml#/definitions/Country"
         default: "XX"
-      type:
-        description: Object type.
-        type: string
-        enum: [source, subtitle]
-      id:
-        description: Source or subtitle ID.
-        $ref: "general.yaml#/definitions/GenericId"
       url:
         $ref: "general.yaml#/definitions/Url"
-    required: [region, type, url]
+    required: [region, url]
   ResolveResponse:
     oneOf:
       - $ref: "general.yaml#/definitions/Url"

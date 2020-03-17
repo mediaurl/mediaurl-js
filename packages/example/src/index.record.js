@@ -8,7 +8,7 @@ module.exports.push({
   },
   statusCode: 200,
   output: {
-    actions: ["directory", "item", "source", "subtitle"],
+    actions: ["directory", "item", "source", "subtitle", "resolve"],
     id: "watched-worker-example",
     name: "Typescript Example Addon",
     version: "1.0.0",
@@ -43,6 +43,9 @@ module.exports.push({
       }
     ],
     type: "worker",
+    urlPatterns: [
+      "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm"
+    ],
     sdkVersion: "0.20.2"
   },
   i: 0

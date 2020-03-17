@@ -35,7 +35,7 @@ definitions:
       addons:
         type: array
         items:
-          type: array:
+          type: array
           items:
             - type: string
             - $ref: "general.yaml#/definitions/Url"
