@@ -23,7 +23,7 @@ const startScript = (
             ".bin",
             "ts-node-dev"
           ),
-          execArgv: ["--no-notify", "--transpileOnly", ...tsArgs]
+          execArgv: ["--no-notify", "--transpileOnly", "--respawn", ...tsArgs]
         }
   );
 };
