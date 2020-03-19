@@ -238,5 +238,5 @@ definitions:
       - $ref: "#/definitions/PlayableItem"
   SubItem:
     description: All sub items, currently only `SeriesEpisodeItem`.
-    anyOf:
+    oneOf:
       - $ref: "#/definitions/SeriesEpisodeItem"
