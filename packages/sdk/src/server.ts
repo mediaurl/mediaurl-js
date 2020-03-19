@@ -236,16 +236,19 @@ const createAddonRouter = (
     options.cache,
     options.requestRecorderPath
   );
+
   const taskHandler = createTaskResponseHandler(addon, options.cache);
 
-  router.get(/^\/([^/]*?)(?:-(task))?(?:\.watched)?$/, (req, res, next) => {
-    if (req.params[1] === "task") taskHandler(req, res, next);
-    else actionHandler(req, res, next);
-  });
-  router.post(/^\/([^/]*?)(?:-(task))?(?:\.watched)?$/, (req, res, next) => {
-    if (req.params[1] === "task") taskHandler(req, res, next);
-    else actionHandler(req, res, next);
-  });
+  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/;
+  const routeHandler: express.RequestHandler = (req, res, next) => {
+    if (req.params[1] === "task") {
+      return taskHandler(req, res, next);
+    }
+    return actionHandler(req, res, next);
+  };
+
+  router.get(routeRegex, routeHandler);
+  router.post(routeRegex, routeHandler);
 
   return router;
 };
