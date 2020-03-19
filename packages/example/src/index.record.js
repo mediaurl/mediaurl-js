@@ -1,3 +1,4 @@
+const sdkVersion = require("@watchedcom/sdk/package.json").version;
 module.exports = [];
 module.exports.push({
   addon: "watched-worker-example",
@@ -46,7 +47,7 @@ module.exports.push({
     urlPatterns: [
       "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm"
     ],
-    sdkVersion: "0.20.2"
+    sdkVersion
   },
   i: 0
 });
