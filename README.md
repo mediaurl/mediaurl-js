@@ -78,11 +78,11 @@ npm run test
 
 ## Translate your addon
 
-For some suggestions regaring translations, please see either our `@watchedcom/i18n` package found inside `packages/i18n`, or the documentation at `docs/translations.md`.
+For some suggestions regarding translations, please see either our `@watchedcom/i18n` package found inside `packages/i18n`, or the documentation at `docs/translations.md`.
 
 ## Deploy your addon
 
-To make your addon open to the public, you need to run it somewhere on the internet. We are working on giving an as easy as possible tutorial for a wide range of affordable or free hosting providers.
+Please check our deployment documentation at `docs/deployment.md`.
 
 ## Cache
 
