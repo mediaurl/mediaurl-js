@@ -63,8 +63,20 @@ definitions:
           adult:
             description: Have to be `true` if this addon provides adult content.
             type: boolean
+          devModeOnly:
+            description: |
+              If `true`, this addon is only available when developer mode is enabled.
+            type: boolean
+          platforms:
+            description: |
+              Array of platforms where this addon is available. If it's an empty array
+              or not set, it's available on all platforms.
+            type: array
+            items:
+              type: string
         default:
           adult: false
+          devModeOnly: false
       regions:
         description: Regions where this addon is available
         $ref: "general.yaml#/definitions/Regions"
