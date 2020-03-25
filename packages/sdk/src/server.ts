@@ -131,7 +131,10 @@ const createActionHandler = (
     }
 
     // Get a cache handler instance
-    cache = cache.clone({ prefix: addon.getId() });
+    cache = cache.clone({
+      prefix: addon.getId(),
+      ...addon.getDefaultCacheOptions()
+    });
 
     // Request cache helper
     let inlineCache: any = null;

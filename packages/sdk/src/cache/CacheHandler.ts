@@ -15,34 +15,27 @@ export class CacheFoundError {
 
 export class WaitTimedOut extends Error {}
 
-const handleOptions = (options?: CacheOptionsParam) => {
-  if (typeof options === "number") {
-    return { ttl: options, errorTtl: options / 2 };
-  }
-  return options;
-};
-
 export class CacheHandler {
   public options: CacheOptions;
 
   constructor(public readonly engine: BasicCache, options?: CacheOptionsParam) {
     this.options = {
       ...defaultCacheOptions,
-      ...handleOptions(options)
+      ...options
     };
   }
 
   public clone(options?: CacheOptionsParam) {
     return new CacheHandler(this.engine, {
       ...this.options,
-      ...handleOptions(options)
+      ...options
     });
   }
 
   public setOptions(options: CacheOptionsParam) {
     this.options = {
       ...this.options,
-      ...handleOptions(options)
+      ...options
     };
   }
 

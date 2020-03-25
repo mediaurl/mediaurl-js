@@ -100,7 +100,7 @@ export type InlineCacheContext = {
   ) => Promise<void>;
 };
 
-export type CacheOptionsParam = Partial<CacheOptions> | number;
+export type CacheOptionsParam = Partial<CacheOptions>;
 
 export type RequestCacheFn = (
   /**

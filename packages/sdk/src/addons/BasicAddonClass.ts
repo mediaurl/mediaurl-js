@@ -6,7 +6,7 @@ import {
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
-import { ActionHandler, HandlersMap } from "../interfaces";
+import { ActionHandler, CacheOptionsParam, HandlersMap } from "../interfaces";
 import { validateAddonProps } from "../validators";
 
 export type BasicHandlers = {
@@ -20,8 +20,11 @@ export abstract class BasicAddonClass<
   private handlersMap: HandlersMap = {
     addon: async () => this.getProps()
   };
+  private defaultCacheOptions: CacheOptionsParam;
 
-  constructor(protected readonly props: P) {}
+  constructor(protected readonly props: P) {
+    this.defaultCacheOptions = {};
+  }
 
   public validateAddon() {
     validateAddonProps(this.getProps());
@@ -75,5 +78,17 @@ export abstract class BasicAddonClass<
 
   public hasActionHandler(action: keyof HandlersMap) {
     return !!this.handlersMap[action];
+  }
+
+  public setDefaultCacheOptions(options: CacheOptionsParam) {
+    this.defaultCacheOptions = {
+      ...this.defaultCacheOptions,
+      ...options
+    };
+    return this;
+  }
+
+  public getDefaultCacheOptions() {
+    return this.defaultCacheOptions;
   }
 }
