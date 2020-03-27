@@ -68,7 +68,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
             },
             addon
           );
-          props.metadata = { url: `../${id}` };
+          props.metadata = { url: `./${id}` };
           result.push(props);
         } catch (error) {
           console.warn(`Failed loading ${id}:`, error.message);
