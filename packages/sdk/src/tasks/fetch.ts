@@ -32,16 +32,15 @@ class TunnelResponse {
     return this.r.headers;
   }
 
-  async json() {
-    return this.r.json;
+  async json<T = any>(): Promise<T> {
+    if (this.r.json) return <T>this.r.json; // LEGACY
+    return JSON.parse(await this.text());
   }
 
   async text(): Promise<string> {
-    if (!this.r.text) {
-      throw new Error("No text in task response");
-    }
-
-    return this.r.text;
+    if (this.r.text) return this.r.text;
+    if (this.r.data) return Buffer.from(this.r.data, "base64").toString();
+    throw new Error("No text or data in task response");
   }
 
   async data() {

@@ -49,12 +49,6 @@ definitions:
         $ref: "general.yaml#/definitions/Url"
       headers:
         type: object
-      json:
-        oneOf:
-          - type: string
-          - type: number
-          - type: array
-          - type: object
       text:
         type: string
       data:
