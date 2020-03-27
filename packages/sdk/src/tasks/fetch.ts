@@ -2,13 +2,7 @@ import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./utils";
 
-export type FetchFn = (
-  url: TaskFetchRequest["url"],
-  params?: TaskFetchRequest["params"],
-  timeout?: number
-) => Promise<TunnelResponse>;
-
-class TunnelResponse {
+class FetchResponse {
   constructor(private r: TaskFetchResponse) {}
 
   get error() {
@@ -49,32 +43,48 @@ class TunnelResponse {
   }
 }
 
-// export const dummyFetch: FetchFn = async (url, params) => {
-//     const response: TaskFetchResponse = {
-//         type: "fetchResponse",
-//         id: "",
-//         status: 0
-//     };
-//     try {
-//         const res = await fetch(url, params);
-//         response.status = res.status;
-//         response.url = res.url;
-//         response.headers = res.headers;
+export type FetchFn = (
+  url: TaskFetchRequest["url"],
+  params?: TaskFetchRequest["params"],
+  timeout?: number
+) => Promise<FetchResponse>;
 
-//         const ct = String(res.headers.get("content-type")).toLowerCase();
-//         if (ct.indexOf("application/json") >= 0) {
-//             response.json = await res.json();
-//         } else if (ct.indexOf("text/") === 0) {
-//             response.text = await res.text();
-//         } else {
-//             throw new Error(
-//                 "Dummy fetch return values with binary type is not implemented"
-//             );
-//         }
-//     } catch (error) {
-//         response.error = error.message;
+// export const dummyFetch: FetchFn = async (url, params) => {
+//   const response: TaskFetchResponse = {
+//     type: "fetch",
+//     id: "",
+//     status: 0
+//   };
+//   try {
+//     const res = await fetch(url, params);
+//     response.status = res.status;
+//     response.url = res.url;
+//     response.headers = res.headers;
+
+//     const ct = String(res.headers.get("content-type")).toLowerCase();
+//     if (ct.indexOf("text/") === 0 || ct.includes("json")) {
+//       response.text = await res.text();
+//     } else {
+//       const blob = await res.blob();
+//       await new Promise(resolve => {
+//         const reader = new FileReader();
+//         reader.addEventListener("load", () => {
+//           if (reader.result !== null) {
+//             if (typeof reader.result === "string") {
+//               response.text = reader.result;
+//             } else {
+//               response.data = Buffer.from(reader.result).toString("base64");
+//             }
+//           }
+//           resolve();
+//         });
+//         reader.readAsDataURL(blob);
+//       });
 //     }
-//     return new TunnelResponse(response);
+//   } catch (error) {
+//     response.error = error.message;
+//   }
+//   return new FetchResponse(response);
 // };
 
 export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
@@ -89,7 +99,7 @@ export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
     );
 
     // Return fetch response
-    const res = new TunnelResponse(response);
+    const res = new FetchResponse(response);
     if (res.status === 0) throw new Error(res.error);
     return res;
   };
