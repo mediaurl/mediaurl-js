@@ -62,12 +62,13 @@ export class RepositoryAddonClass extends BasicAddonClass<
             {
               ...ctx,
               cache: ctx.cache.clone({
-                prefix: [addon.getId(), addon.getVersion(), "addon"]
+                prefix: addon.getId(),
+                ...addon.getDefaultCacheOptions()
               })
             },
             addon
           );
-          props.metadata = { url: `./${id}` };
+          props.metadata = { url: `../${id}` };
           result.push(props);
         } catch (error) {
           console.warn(`Failed loading ${id}:`, error.message);

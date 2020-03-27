@@ -9,9 +9,7 @@ export type FetchFn = (
 ) => Promise<TunnelResponse>;
 
 class TunnelResponse {
-  constructor(private r: TaskFetchResponse) {
-    this.r = r;
-  }
+  constructor(private r: TaskFetchResponse) {}
 
   get error() {
     return this.r.error;
