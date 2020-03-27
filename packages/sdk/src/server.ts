@@ -99,6 +99,9 @@ const createActionHandler = (
         ? JSON.parse(req.query.data)
         : {};
 
+    // Get action handler before verifying the signature
+    const handler = addon.getActionHandler(action);
+
     // Get sig contents
     let sig: string;
     if (input.sig) {
@@ -118,7 +121,6 @@ const createActionHandler = (
       input = migrations[action].request(migrationData, sigData, input);
     }
 
-    const handler = addon.getActionHandler(action);
     const validator = getActionValidator(action);
     validator.request(input);
 
