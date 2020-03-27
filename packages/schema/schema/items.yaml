@@ -74,6 +74,9 @@ definitions:
       - $ref: "#/definitions/VirtualItem"
       - type: object
         properties:
+          originalName:
+            description: Original name of item.
+            type: string
           year:
             description: Production year. If not provided, releaseDate will be used.
             $ref: "general.yaml#/definitions/Year"
