@@ -245,10 +245,14 @@ export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
             body: request.postData(),
             redirect: "follow"
           });
+          const headers = {};
+          res.headers.forEach((value, name) => {
+            headers[name] = value;
+          });
           response = {
             status: res.status,
-            headers: res.headers,
-            body: await res.data(),
+            headers,
+            body: await res.buffer(),
             contentType: res.headers?.["content-type"]
           };
           break;
