@@ -1,7 +1,7 @@
 {
   "name": "@watchedcom/schema",
   "description": "WATCHED.com JSON Schema",
-  "version": "0.21.4",
+  "version": "0.22.0",
   "main": "dist",
   "scripts": {
     "prepublishOnly": "npm run build",

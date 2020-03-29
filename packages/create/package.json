@@ -1,7 +1,7 @@
 {
   "name": "@watchedcom/create",
   "description": "WATCHED.com addon generator",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "main": "dist",
   "bin": {
     "create-watched-addon": "dist/index.js"
