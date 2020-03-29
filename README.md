@@ -88,7 +88,7 @@ Please check our deployment documentation at `docs/deployment.md`.
 
 Caching can have many benefits for server processes. With the `ctx.cache` function you have access to an `CacheHandler` instance. Please see the function documentation for more infos about this.
 
-By default, all cache keys get's prefixed with the addon ID, the addon's major version code and the current action. You can change this by changing the `prefix` option.
+By default, all cache keys get's prefixed with the addon ID. You can change this by changing the `prefix` option.
 
 Currently there are the following caching engines available:
 

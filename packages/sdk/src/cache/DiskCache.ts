@@ -66,16 +66,4 @@ export class DiskCache extends BasicCache {
   public async cleanup() {
     throw new Error("Cleanup is not yet implemented");
   }
-
-  /**
-   * Add cache prefixes and prevent too long cache keys.
-   */
-  public createKey(prefix: any, key: any) {
-    if (typeof key === "string" && key.indexOf(":") === 0) return key;
-    const data = prefix ? [prefix, key] : key;
-    const str = typeof data === "string" ? data : JSON.stringify(data);
-    const hash = createHash("sha256");
-    hash.update(str);
-    return ":" + hash.digest().toString("hex");
-  }
 }

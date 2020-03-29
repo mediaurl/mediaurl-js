@@ -70,9 +70,9 @@ export type CacheOptions = {
    */
   simultanLockTimeoutSleep: number;
   /**
-   * Prefix. Defaults to addon id, version and action.
+   * Prefix. Defaults to addon ID.
    */
-  prefix: null | any;
+  prefix: null | string;
   /**
    * Calls to all `get` functions will always return `undefined`. Set is
    * still working normally. This is useful for testing.
