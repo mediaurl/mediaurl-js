@@ -35,8 +35,7 @@ class TunnelResponse {
   async json<T = any>(): Promise<T> {
     if (this.r.json) return <T>this.r.json; // LEGACY
     try {
-      const parsedData = JSON.parse(await this.text());
-      return parsedData;
+      return JSON.parse(await this.text());
     } catch (err) {
       throw new Error(
         `Invalid response body while trying to fetch ${this.url}: ${err.message}`
