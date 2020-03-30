@@ -3,13 +3,16 @@ import * as os from "os";
 import * as path from "path";
 import { CacheHandler, DiskCache, MemoryCache } from "../src/cache";
 
+// On slow computers the default waiting times may cause timeouts
+const multiplicator = 2;
+
 const options = {
-  ttl: 1000,
-  errorTtl: 500,
+  ttl: 1000 * multiplicator,
+  errorTtl: 500 * multiplicator,
   prefix: "foobar"
 };
-const refreshInterval = 200;
-const functionWait = 150;
+const refreshInterval = 200 * multiplicator;
+const functionWait = 150 * multiplicator;
 
 const sleep = async (t: number) =>
   await new Promise(resolve => setTimeout(resolve, t));
@@ -161,7 +164,7 @@ for (const engine of engines) {
     test("waitKey timeout", async done => {
       const t = Date.now();
       await expect(
-        cache.waitKey("hello", functionWait, true, 10)
+        cache.waitKey("hello", functionWait, true, 10 * multiplicator)
       ).rejects.toThrowError("Wait timed out");
       expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
       done();
@@ -171,7 +174,7 @@ for (const engine of engines) {
       const t = Date.now();
       setTimeout(() => cache.set("hello", "1"), functionWait / 2);
       await expect(
-        cache.waitKey("hello", functionWait, true, 10)
+        cache.waitKey("hello", functionWait, true, 10 * multiplicator)
       ).resolves.toBe("1");
       expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait / 2);
       expect(Date.now() - t).toBeLessThan(functionWait);
@@ -183,7 +186,7 @@ for (const engine of engines) {
       const t = Date.now();
       setTimeout(() => cache.set("hello", "1"), functionWait / 2);
       await expect(
-        cache.waitKey("hello", functionWait, false, 10)
+        cache.waitKey("hello", functionWait, false, 10 * multiplicator)
       ).resolves.toBe("1");
       expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait / 2);
       expect(Date.now() - t).toBeLessThan(functionWait);
@@ -236,8 +239,8 @@ for (const engine of engines) {
 
     test("call success locked", async done => {
       cache.setOptions({
-        simultanLockTimeout: 200,
-        simultanLockTimeoutSleep: 10
+        simultanLockTimeout: 200 * multiplicator,
+        simultanLockTimeoutSleep: 10 * multiplicator
       });
       const t1 = Date.now();
       const t2 = Date.now();
@@ -268,7 +271,7 @@ for (const engine of engines) {
     test("call success locked timeout", async done => {
       cache.setOptions({
         simultanLockTimeout: functionWait / 2,
-        simultanLockTimeoutSleep: 10
+        simultanLockTimeoutSleep: 10 * multiplicator
       });
       const t1 = Date.now();
       const t2 = Date.now();
@@ -294,7 +297,7 @@ for (const engine of engines) {
     test("call success locked with error and refresh error store", async done => {
       cache.setOptions({
         simultanLockTimeout: functionWait / 2,
-        simultanLockTimeoutSleep: 10,
+        simultanLockTimeoutSleep: 10 * multiplicator,
         refreshInterval,
         storeRefreshErrors: true
       });
@@ -323,7 +326,7 @@ for (const engine of engines) {
     test("call success locked with error and refresh without store", async done => {
       cache.setOptions({
         simultanLockTimeout: functionWait / 2,
-        simultanLockTimeoutSleep: 10,
+        simultanLockTimeoutSleep: 10 * multiplicator,
         refreshInterval,
         storeRefreshErrors: false
       });
