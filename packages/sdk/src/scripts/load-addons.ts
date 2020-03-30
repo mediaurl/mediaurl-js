@@ -1,6 +1,6 @@
 import { uniqBy } from "lodash";
 import * as path from "path";
-import { BasicAddonClass } from "../../addons";
+import { BasicAddonClass } from "../addons";
 
 const requireAddons = async (pathStr: string) => {
   const requiredFile = require(pathStr);

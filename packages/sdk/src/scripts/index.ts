@@ -4,6 +4,7 @@ import * as program from "commander";
 import { guessTsMain } from "guess-ts-main";
 import path = require("path");
 import { ServeAddonsOptions } from "../server";
+import { ReplayArgs, StartArgs } from "./types";
 
 const startScript = (
   script: string,
@@ -49,14 +50,17 @@ export const startHandler = (files: string[], cmdObj: any) => {
     files.push(guessTsMain(cwd));
   }
 
-  const opts = <Partial<ServeAddonsOptions>>{
-    singleMode: cmdObj.single ? true : false,
-    requestRecorderPath: cmdObj.record ? cmdObj.record : null
-  };
-
   startScript(
     "start-entrypoint",
-    [JSON.stringify(opts), ...files],
+    [
+      JSON.stringify(<StartArgs>{
+        opts: {
+          singleMode: cmdObj.single ? true : false,
+          requestRecorderPath: cmdObj.record ? cmdObj.record : null
+        },
+        files
+      })
+    ],
     cmdObj.prod || !tsConfig,
     []
   );
@@ -65,7 +69,12 @@ export const startHandler = (files: string[], cmdObj: any) => {
 export const replayHandler = (files: string[], cmdObj: any) => {
   startScript(
     "replay-entrypoint",
-    [cmdObj.record, ...files],
+    [
+      JSON.stringify(<ReplayArgs>{
+        recordPath: cmdObj.record,
+        files
+      })
+    ],
     false,
     cmdObj.watch ? ["--respawn", "--watch", "."] : []
   );
