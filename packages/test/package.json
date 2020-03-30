@@ -9,7 +9,7 @@
   "dependencies": {
     "@watchedcom/sdk": "^0.22.0",
     "supertest": "^4.0.2",
-    "ts-jest": "^25.2.1"
+    "ts-jest": "^25.3.0"
   },
   "devDependencies": {
     "@types/supertest": "^2.0.8",

@@ -16,12 +16,12 @@
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
-    "@types/node": "^13.9.0",
-    "jest": "^25.1.0",
+    "@types/node": "^13.9.5",
+    "jest": "^25.2.4",
     "js-yaml": "^3.13.1",
-    "json-schema-ref-parser": "^7.1.4",
-    "json-schema-to-typescript": "^8.1.0",
-    "ts-jest": "^25.2.1",
+    "json-schema-ref-parser": "^8.0.0",
+    "json-schema-to-typescript": "^8.2.0",
+    "ts-jest": "^25.3.0",
     "typescript": "^3.8.3"
   }
 }
