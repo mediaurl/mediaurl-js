@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { promises as fsPromises } from "fs";
 import * as path from "path";
 import { BasicCache } from "./BasicCache";
@@ -15,6 +14,11 @@ export class DiskCache extends BasicCache {
   private getPath(key: string) {
     let p = this.rootPath;
     key = key.substring(1);
+    const [a, b] = key.split(":");
+    if (a && b) {
+      p = path.join(p, a);
+      key = b;
+    }
     for (let i = 0; i < this.pathSegments; i++) {
       p = path.join(
         p,

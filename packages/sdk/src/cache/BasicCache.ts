@@ -27,7 +27,6 @@ export class BasicCache {
     if (typeof key === "string" && key.indexOf(":") === 0) return key;
     const str = typeof key === "string" ? key : JSON.stringify(key);
     prefix = prefix === null ? "" : `${prefix}:`;
-    if (str.length < 40) return ":" + prefix + str;
     const hash = createHash("sha256");
     hash.update(str);
     return ":" + prefix + hash.digest().toString("base64");
