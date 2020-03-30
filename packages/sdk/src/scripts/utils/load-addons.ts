@@ -8,6 +8,17 @@ const requireAddons = async (pathStr: string) => {
 
   const addons: BasicAddonClass[] = [];
   const keys = Object.keys(sources);
+
+  const handleArray = (key: string, value: any) => {
+    if (!Array.isArray(value)) return false;
+    for (let i = 0; i < value.length; i++) {
+      const k = `${key}_` + i;
+      sources[k] = value[i];
+      keys.push(k);
+    }
+    return true;
+  };
+
   while (keys.length > 0) {
     const key = <string>keys.shift();
     const source = sources[key];
@@ -21,16 +32,12 @@ const requireAddons = async (pathStr: string) => {
       if (typeof source?.then === "function") {
         console.info(`Resolving exported promise "${key}"`);
         const value = await Promise.resolve(source);
-        if (Array.isArray(value)) {
-          for (let i = 0; i < value.length; i++) {
-            const k = `${key}_` + i;
-            sources[k] = value[i];
-            keys.push(k);
-          }
-        } else {
+        if (!handleArray(key, value)) {
           sources[key] = value;
           keys.push(key);
         }
+      } else {
+        handleArray(key, source);
       }
     }
   }
