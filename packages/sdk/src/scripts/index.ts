@@ -3,7 +3,6 @@ import { fork } from "child_process";
 import * as program from "commander";
 import { guessTsMain } from "guess-ts-main";
 import path = require("path");
-import { ServeAddonsOptions } from "../server";
 import { ReplayArgs, StartArgs } from "./types";
 
 const startScript = (
@@ -13,7 +12,7 @@ const startScript = (
   tsArgs: string[]
 ) => {
   fork(
-    path.resolve(__dirname, "utils", script),
+    path.resolve(__dirname, script),
     args,
     production
       ? undefined
