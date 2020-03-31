@@ -107,6 +107,9 @@ definitions:
           name:
             description: Name of this item.
             type: string
+          originalName:
+            description: Original name of this item.
+            type: string
           releaseDate:
             description: Release date as unix timestamp or parseable string.
             oneOf:
