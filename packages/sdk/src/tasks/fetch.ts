@@ -33,7 +33,7 @@ export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
       body = response.text;
       init.size = body.length;
     } else if (response.data) {
-      body = Buffer.from(this.r.data, "base64");
+      body = Buffer.from(response.data, "base64");
       init.size = body.byteLength;
     }
 
