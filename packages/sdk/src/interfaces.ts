@@ -23,20 +23,24 @@ import { FetchFn, RecaptchaFn } from "./tasks";
 
 export type CacheOptions = {
   /**
-   * TTL in milliseconds. Defaults to 1 hours. When this is
+   * TTL in milliseconds. When this is
    * a function, the cache value will be passed as parameter.
    * This can be useful to for example set a special TTL on
    * an empty value.
    * To disable caching, set this to `null`.
    * To cache forever, set this to `Infinity`.
+   *
+   * Default: 1 hour
    */
   ttl: null | number | ((value: any) => null | number);
   /**
-   * TTL for errors in milliseconds. Defaults to 10 minutes.
+   * TTL for errors in milliseconds.
    * When it's a function, the error will be passed as parameter.
    * To disable error caching, set this to `null`.
    * To disable caching, set this to `null`.
    * To cache forever, set this to `Infinity`.
+   *
+   * Default: 10 minutes
    */
   errorTtl: null | number | ((error: any) => null | number);
   /**
@@ -45,11 +49,15 @@ export type CacheOptions = {
    * This value should be below `ttl`, and maybe also below `errorTtl`.
    * This functionality can be very useful to prevent race conditions
    * and to maintain a stable cache database.
+   *
+   * Default: `null`
    */
   refreshInterval: null | number;
   /**
    * When the current cache is getting refreshed and an error occoured,
-   * should this overwrite the current value? Defaults to `false`.
+   * should this overwrite the current value?
+   *
+   * Default: `false`
    */
   storeRefreshErrors: boolean;
   /**
@@ -62,11 +70,14 @@ export type CacheOptions = {
    *
    * To disable this feature, set it to `null`.
    * Set this to a timeout in miliseconds, or to `Infinity`.
-   * The default is to wait for 30 seconds.
+   *
+   * Default: 30 seconds
    */
   simultanLockTimeout: null | number;
   /**
    * The `sleep` parameter of the `waitKey` function.
+   *
+   * Default: 250 milliseconds
    */
   simultanLockTimeoutSleep: number;
   /**
@@ -76,6 +87,8 @@ export type CacheOptions = {
   /**
    * Calls to all `get` functions will always return `undefined`. Set is
    * still working normally. This is useful for testing.
+   *
+   * Default: `false`
    */
   disableGet: boolean;
 };
