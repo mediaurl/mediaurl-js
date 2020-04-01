@@ -16,7 +16,7 @@ const main = async () => {
   }
   process.env.SKIP_AUTH = "1";
   try {
-    await replayRequests(addons, argv.recordPath);
+    await replayRequests(addons, argv.recordPath, argv.ids, argv.silent);
     console.log("Replay finished successful");
     process.exit(0);
   } catch (error) {

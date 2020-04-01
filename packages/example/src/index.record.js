@@ -49,7 +49,7 @@ module.exports.push({
     ],
     sdkVersion
   },
-  i: 0
+  id: 0
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -97,7 +97,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 1
+  id: 1
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -145,7 +145,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 2
+  id: 2
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -193,7 +193,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 3
+  id: 3
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -241,7 +241,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 4
+  id: 4
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -289,7 +289,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 5
+  id: 5
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -329,7 +329,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 6
+  id: 6
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -360,7 +360,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 7
+  id: 7
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -387,7 +387,7 @@ module.exports.push({
     description: "This item does not have any sources.",
     year: 2011
   },
-  i: 8
+  id: 8
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -406,7 +406,7 @@ module.exports.push({
   },
   statusCode: 200,
   output: [],
-  i: 9
+  id: 9
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -454,7 +454,7 @@ module.exports.push({
     ],
     nextCursor: null
   },
-  i: 10
+  id: 10
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -473,7 +473,7 @@ module.exports.push({
   },
   statusCode: 200,
   output: [],
-  i: 11
+  id: 11
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -500,7 +500,7 @@ module.exports.push({
     description: "Dream of elephants?",
     year: 2012
   },
-  i: 12
+  id: 12
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -532,7 +532,7 @@ module.exports.push({
         "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
     }
   ],
-  i: 13
+  id: 13
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -568,7 +568,7 @@ module.exports.push({
         "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
     }
   ],
-  i: 14
+  id: 14
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -604,7 +604,7 @@ module.exports.push({
         "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
     }
   ],
-  i: 15
+  id: 15
 });
 module.exports.push({
   addon: "watched-worker-example",
@@ -640,5 +640,5 @@ module.exports.push({
         "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
     }
   ],
-  i: 16
+  id: 16
 });
