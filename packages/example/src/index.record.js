@@ -55,7 +55,7 @@ addRecord({
     urlPatterns: [
       "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm"
     ],
-    sdkVersion: "0.23.1"
+    sdkVersion: require("@watchedcom/sdk/package.json").version
   }
 });
 
