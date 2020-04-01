@@ -23,16 +23,15 @@ const startScript = (
             ".bin",
             "ts-node-dev"
           ),
-          execArgv: ["--no-notify", "--transpileOnly", "--respawn", ...tsArgs]
+          execArgv: ["--no-notify", "--transpileOnly", ...tsArgs]
         }
   );
 };
 
-export const startHandler = (files: string[], cmdObj: any) => {
-  if (cmdObj.record && cmdObj.prod) {
-    throw new Error("Request recording is only available in development mode");
-  }
-
+/**
+ * Returns production: boolean
+ */
+const detectFiles = (files: string[], production: boolean) => {
   const cwd = process.cwd();
 
   let tsConfig = null;
@@ -40,7 +39,7 @@ export const startHandler = (files: string[], cmdObj: any) => {
     tsConfig = require(path.resolve(cwd, "tsconfig.json"));
   } catch {}
 
-  if ((cmdObj.prod && files.length === 0) || !tsConfig) {
+  if ((production && files.length === 0) || !tsConfig) {
     files.push(cwd);
   }
 
@@ -49,6 +48,15 @@ export const startHandler = (files: string[], cmdObj: any) => {
     files.push(guessTsMain(cwd));
   }
 
+  return production || !tsConfig;
+};
+
+export const startHandler = (files: string[], cmdObj: any) => {
+  if (cmdObj.record && cmdObj.prod) {
+    throw new Error("Request recording is only available in development mode");
+  }
+
+  const production = detectFiles(files, cmdObj.prod);
   startScript(
     "start-entrypoint",
     [
@@ -60,12 +68,13 @@ export const startHandler = (files: string[], cmdObj: any) => {
         files
       })
     ],
-    cmdObj.prod || !tsConfig,
-    []
+    production,
+    production ? [] : ["--respawn"]
   );
 };
 
 export const replayHandler = (files: string[], cmdObj: any) => {
+  detectFiles(files, cmdObj.prod);
   startScript(
     "replay-entrypoint",
     [
