@@ -8,4 +8,6 @@ export type StartArgs = {
 export type ReplayArgs = {
   files: string[];
   recordPath: string;
+  ids: null | number[];
+  silent: boolean;
 };

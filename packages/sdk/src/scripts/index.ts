@@ -61,11 +61,11 @@ export const startHandler = (files: string[], cmdObj: any) => {
     "start-entrypoint",
     [
       JSON.stringify(<StartArgs>{
+        files,
         opts: {
           singleMode: cmdObj.single ? true : false,
           requestRecorderPath: cmdObj.record ? cmdObj.record : null
-        },
-        files
+        }
       })
     ],
     production,
@@ -79,8 +79,12 @@ export const replayHandler = (files: string[], cmdObj: any) => {
     "replay-entrypoint",
     [
       JSON.stringify(<ReplayArgs>{
+        files,
         recordPath: cmdObj.record,
-        files
+        ids: cmdObj.ids
+          ? cmdObj.ids.split(",").map(id => parseInt(id, 10))
+          : null,
+        silent: cmdObj.silent
       })
     ],
     false,
@@ -110,6 +114,8 @@ program
   .command("replay [files...]")
   .description("Replay a previously recorded session")
   .requiredOption("-r, --record <record-file>", "The previously recorded file")
+  .option("-i, --ids <ids>", "Choose which ID's to replay")
+  .option("-s, --silent", "Be less verbose")
   .option("-w, --watch", "Watch for changes and re-run the script")
   .action((files: string, cmdObj: any) =>
     replayHandler(Array.isArray(files) ? files : [files], cmdObj)

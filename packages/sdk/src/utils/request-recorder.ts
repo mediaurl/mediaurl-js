@@ -4,7 +4,7 @@ import { BasicAddonClass } from "../addons";
 import { createApp } from "../server";
 
 export type RecordData = {
-  i: number;
+  id: number;
   addon: string;
   action: string;
   input: any;
@@ -22,11 +22,17 @@ const getPath = (recordPath: string) => {
   return path.resolve(getFile(recordPath));
 };
 
+const log = (prefix: string, data: RecordData) => {
+  console.warn(
+    `${prefix}: id=${data.id}, addon=${data.addon}, action=${data.action}, statusCode=${data.statusCode}`
+  );
+};
+
 export class RequestRecorder {
   public readonly path: string;
   private readonly stream: WriteStream;
   private w: (data: string) => Promise<unknown>;
-  private i: number;
+  private currentId: number;
 
   constructor(recordPath: string) {
     this.path = getFile(recordPath);
@@ -38,16 +44,17 @@ export class RequestRecorder {
         )
       );
 
-    this.i = 0;
+    this.currentId = 0;
   }
 
   public async write(data: RecordData) {
-    data.i = this.i++;
-    if (data.i === 0) await this.w("module.exports = [];\n");
+    if (this.currentId === 0) {
+      await this.w("module.exports = [];\n");
+      await this.w("module.exports.version = 1;\n");
+    }
+    data.id = ++this.currentId;
     await this.w(`module.exports.push(${JSON.stringify(data, null, 2)})\n`);
-    console.warn(
-      `Recorded request ${data.i}: action=${data.action}, statusCode=${data.statusCode}`
-    );
+    log("Record", data);
   }
 
   public close() {
@@ -57,13 +64,17 @@ export class RequestRecorder {
 
 export const replayRequests = async (
   addons: BasicAddonClass[],
-  recordPath: string
+  recordPath: string,
+  ids: null | number[],
+  silent: boolean
 ) => {
   const request = await import("supertest");
-  const recordData = await import(getPath(recordPath));
+  const recordData: RecordData[] = await import(getPath(recordPath));
 
   const app = request(createApp(addons));
   for (const data of recordData) {
+    if (ids && !ids.includes(data.id)) continue;
+    if (!silent) log("Replay", data);
     await app
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
