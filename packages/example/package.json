@@ -1,6 +1,6 @@
 {
   "name": "watched-addon-example",
-  "version": "0.23.2",
+  "version": "0.23.3",
   "main": "dist",
   "private": true,
   "scripts": {
