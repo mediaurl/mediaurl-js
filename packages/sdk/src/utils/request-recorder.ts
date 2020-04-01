@@ -1,5 +1,6 @@
-import { createWriteStream, promises as fsPromises, WriteStream } from "fs";
+import { createWriteStream, WriteStream } from "fs";
 import * as path from "path";
+import * as util from "util";
 import { BasicAddonClass } from "../addons";
 import { createApp } from "../server";
 
@@ -22,9 +23,9 @@ const getPath = (recordPath: string) => {
   return path.resolve(getFile(recordPath));
 };
 
-const log = (prefix: string, data: RecordData) => {
+const log = (prefix: string, id: number, data: RecordData) => {
   console.warn(
-    `${prefix}: id=${data.id}, addon=${data.addon}, action=${data.action}, statusCode=${data.statusCode}`
+    `${prefix}: id=${id}, addon=${data.addon}, action=${data.action}, statusCode=${data.statusCode}`
   );
 };
 
@@ -44,17 +45,29 @@ export class RequestRecorder {
         )
       );
 
-    this.currentId = 0;
+    this.currentId = 1;
   }
 
   public async write(data: RecordData) {
-    if (this.currentId === 0) {
-      await this.w("module.exports = [];\n");
-      await this.w("module.exports.version = 1;\n");
+    const id = this.currentId++;
+    if (id === 1) {
+      await this.w(`module.exports = [];
+module.exports.version = 1;
+
+var currentId = 1;
+function addRecord(record) {
+  record.id = currentId++;
+  module.exports.push(record);
+};
+`);
     }
-    data.id = ++this.currentId;
-    await this.w(`module.exports.push(${JSON.stringify(data, null, 2)})\n`);
-    log("Record", data);
+    await this.w(
+      `\naddRecord(${util.inspect(data, {
+        compact: false,
+        depth: null
+      })});\n`
+    );
+    log("Record", id, data);
   }
 
   public close() {
@@ -73,8 +86,9 @@ export const replayRequests = async (
 
   const app = request(createApp(addons));
   for (const data of recordData) {
-    if (ids && !ids.includes(data.id)) continue;
-    if (!silent) log("Replay", data);
+    const id = data.id ?? (<any>data).i; // LEGACY: Remove data.i
+    if (ids && !ids.includes(id)) continue;
+    if (!silent) log("Replay", id, data);
     await app
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
