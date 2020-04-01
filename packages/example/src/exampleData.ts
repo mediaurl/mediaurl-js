@@ -26,6 +26,15 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
     name: "Elephants Dream",
     description: "Dream of elephants?",
     year: 2012
+  },
+  {
+    type: "movie",
+    ids: {
+      "watched-worker-example": "4ktest"
+    },
+    name: "4k Test",
+    description: "Test video with 4k resolution",
+    year: 2012
   }
 ];
 
@@ -56,6 +65,14 @@ export const EXAMPLE_SOURCES: ExampleSources = {
       name: "webm",
       url:
         "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
+    }
+  ],
+  "4ktest": [
+    {
+      type: "url",
+      name: "hls",
+      url:
+        "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
     }
   ]
 };

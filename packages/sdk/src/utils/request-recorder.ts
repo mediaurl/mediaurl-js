@@ -1,4 +1,5 @@
 import { createWriteStream, WriteStream } from "fs";
+import _ = require("lodash");
 import * as path from "path";
 import * as util from "util";
 import { BasicAddonClass } from "../addons";
@@ -12,6 +13,12 @@ export type RecordData = {
   statusCode: number;
   output: any;
 };
+
+const inspect = data =>
+  util.inspect(data, {
+    compact: false,
+    depth: null
+  });
 
 const getFile = (recordPath: string) => {
   if (!/\.record\.js$/.test(recordPath)) recordPath += ".record.js";
@@ -50,8 +57,9 @@ export class RequestRecorder {
 
   public async write(data: RecordData) {
     const id = this.currentId++;
+    let text = "";
     if (id === 1) {
-      await this.w(`module.exports = [];
+      text += `module.exports = [];
 module.exports.version = 1;
 
 var currentId = 1;
@@ -59,14 +67,13 @@ function addRecord(record) {
   record.id = currentId++;
   module.exports.push(record);
 };
-`);
+`;
     }
-    await this.w(
-      `\naddRecord(${util.inspect(data, {
-        compact: false,
-        depth: null
-      })});\n`
-    );
+    text += `
+// Record ID ${id}
+addRecord(${inspect(data)});
+`;
+    await this.w(text);
     log("Record", id, data);
   }
 
@@ -92,6 +99,18 @@ export const replayRequests = async (
     await app
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
-      .expect(data.statusCode, data.output);
+      .expect(data.statusCode)
+      .expect(res => {
+        // Comparing of string-only JSON responses is buggy in supertest
+        if (typeof data.output === "function") {
+          data.output(res);
+        } else if (!_.isEqual(res.body, data.output)) {
+          throw new Error(
+            `Expected: ${inspect(data.output)} response body, got ${inspect(
+              res.body
+            )}`
+          );
+        }
+      });
   }
 };
