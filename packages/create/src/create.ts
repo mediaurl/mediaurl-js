@@ -30,7 +30,7 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
     itemTypes: ["movie", "series"],
     requestArgs: [],
     lintConfig: true,
-    test: true
+    test: false
   };
 
   const userInput = await inquirer
@@ -102,7 +102,8 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
             {
               name: "test",
               type: "confirm",
-              message: "Setup automatic addon tests using jest?",
+              message:
+                "Setup automatic addon tests using jest? (Note: This is currently not very stable)",
               default: defaults.test
             }
           ]
