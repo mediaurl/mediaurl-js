@@ -1,16 +1,5 @@
 export * from "@watchedcom/schema";
-export {
-  BasicAddonClass,
-  BundleAddonClass,
-  BundleHandlers,
-  createBundleAddon,
-  createRepositoryAddon,
-  createWorkerAddon,
-  RepositoryAddonClass,
-  RepositoryHandlers,
-  WorkerAddonClass,
-  WorkerHandlers
-} from "./addons";
+export * from "./addons";
 export * from "./interfaces";
 export {
   createApp,

@@ -1,6 +1,7 @@
 import {
   createApp,
   createBundleAddon,
+  createIptvAddon,
   createMultiAddonRouter,
   createRepositoryAddon,
   createSingleAddonRouter,
@@ -10,12 +11,13 @@ import {
 
 const exported = [
   createApp,
-  createSingleAddonRouter,
-  createMultiAddonRouter,
-  serveAddons,
   createBundleAddon,
+  createIptvAddon,
+  createMultiAddonRouter,
   createRepositoryAddon,
-  createWorkerAddon
+  createSingleAddonRouter,
+  createWorkerAddon,
+  serveAddons
 ];
 
 test("SDK should export all needed methods and properties", () => {
