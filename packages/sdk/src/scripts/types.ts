@@ -1,7 +1,7 @@
-import { ServeAddonsOptions } from "../server";
+import { IServeAddonsOptions } from "../interfaces";
 
 export type StartArgs = {
-  opts: Partial<ServeAddonsOptions>;
+  opts: Partial<IServeAddonsOptions>;
   files: string[];
 };
 

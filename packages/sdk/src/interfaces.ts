@@ -192,3 +192,44 @@ export type ActionHandlers<T extends BasicAddonClass> = {
   resolve: ActionHandler<ResolveRequest, ResolveResponse, T>;
   captcha: ActionHandler<CaptchaRequest, CaptchaResponse, T>;
 };
+
+export interface IServeAddonsOptions {
+  /**
+   * Start the server in single addon mode (default: true)
+   */
+  singleMode: boolean;
+  /**
+   * Log HTTP requests (default: true)
+   */
+  logRequests: boolean;
+  /**
+   * Write requests to the addon server to a file which can
+   * be replayed later. This is very useful for testing or
+   * to create test cases.
+   */
+  requestRecorderPath: null | string;
+  /**
+   * Express error handler
+   */
+  errorHandler: express.ErrorRequestHandler;
+  /**
+   * Listen port
+   */
+  port: number;
+  /**
+   * Cache handler
+   */
+  cache: CacheHandler;
+  /**
+   * Middlewares prepending to all app routes
+   */
+  preMiddlewares: express.RequestHandler[];
+  /**
+   * Middlewares that are executed at the end, but BEFORE error handler
+   */
+  postMiddlewares: express.RequestHandler[];
+  /**
+   * Your custom Express app instance
+   */
+  app?: express.Application;
+}

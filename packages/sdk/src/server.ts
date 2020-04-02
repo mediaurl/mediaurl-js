@@ -14,7 +14,7 @@ import {
   RedisCache
 } from "./cache";
 import { errorHandler } from "./error-handler";
-import { RequestCacheFn } from "./interfaces";
+import { IServeAddonsOptions, RequestCacheFn } from "./interfaces";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
@@ -26,36 +26,13 @@ import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
-export type ServeAddonsOptions = {
-  /**
-   * Start the server in single addon mode (default: true)
-   */
-  singleMode: boolean;
-  /**
-   * Log HTTP requests (default: true)
-   */
-  logRequests: boolean;
-  /**
-   * Write requests to the addon server to a file which can
-   * be replayed later. This is very useful for testing or
-   * to create test cases.
-   */
-  requestRecorderPath: null | string;
-  /**
-   * Express error handler
-   */
-  errorHandler: express.ErrorRequestHandler;
-  /**
-   * Listen port
-   */
-  port: number;
-  /**
-   * Cache handler
-   */
-  cache: CacheHandler;
-};
+export class ServeAddonOptions implements Partial<IServeAddonsOptions> {
+  constructor(props: Partial<IServeAddonsOptions>) {
+    Object.assign(this, props);
+  }
+}
 
-const defaultServeOpts: ServeAddonsOptions = {
+const defaultServeOpts: IServeAddonsOptions = {
   singleMode: false,
   logRequests: true,
   requestRecorderPath: null,
@@ -67,7 +44,9 @@ const defaultServeOpts: ServeAddonsOptions = {
       : process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
       : new MemoryCache()
-  )
+  ),
+  preMiddlewares: [],
+  postMiddlewares: []
 };
 
 let requestRecorder: RequestRecorder;
@@ -213,7 +192,7 @@ const createActionHandler = (
 
 const createAddonRouter = (
   addon: BasicAddonClass,
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
@@ -258,7 +237,7 @@ const createAddonRouter = (
 
 export const createSingleAddonRouter = (
   addons: BasicAddonClass[],
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   if (addons.length > 1) {
     throw new Error(
@@ -273,7 +252,7 @@ export const createSingleAddonRouter = (
 
 export const createMultiAddonRouter = (
   addons: BasicAddonClass[],
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   const router = express.Router();
 
@@ -316,11 +295,18 @@ export const createMultiAddonRouter = (
 
 export const createApp = (
   addons: BasicAddonClass[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<IServeAddonsOptions>
 ): express.Application => {
-  const app = express();
-  const options: ServeAddonsOptions = defaults(opts, defaultServeOpts);
-  if (options.logRequests) app.use(morgan("dev"));
+  const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
+  const app = options.app || express();
+
+  if (options.logRequests) {
+    app.use(morgan("dev"));
+  }
+
+  if (options.preMiddlewares.length) {
+    app.use(...options.preMiddlewares);
+  }
 
   app.set("port", options.port);
   app.set("views", path.join(__dirname, "..", "views"));
@@ -343,6 +329,11 @@ export const createApp = (
   }
 
   app.get("/health", (req, res) => res.send("OK"));
+
+  if (options.postMiddlewares.length) {
+    app.use(...options.postMiddlewares);
+  }
+
   app.use(options.errorHandler);
 
   return app;
@@ -350,7 +341,7 @@ export const createApp = (
 
 export const serveAddons = (
   addons: BasicAddonClass[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<IServeAddonsOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
   const app = createApp(addons, opts);
 
