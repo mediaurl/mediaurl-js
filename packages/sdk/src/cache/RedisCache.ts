@@ -18,21 +18,28 @@ export class RedisCache extends BasicCache {
   }
 
   public async exists(key: string) {
-    return await this.client.exists(key);
+    return await this.client.exists(key.substring(1));
   }
 
   public async get(key: string) {
-    const value = await this.client.get(key);
+    const value = await this.client.get(key.substring(1));
     if (value) return JSON.parse(value);
     return undefined;
   }
 
   public async set(key: string, value: any, ttl: number) {
-    if (ttl === Infinity) await this.client.set(key, JSON.stringify(value));
-    else await this.client.setex(key, ttl / 1000, JSON.stringify(value));
+    if (ttl === Infinity) {
+      await this.client.set(key.substring(1), JSON.stringify(value));
+    } else {
+      await this.client.setex(
+        key.substring(1),
+        ttl / 1000,
+        JSON.stringify(value)
+      );
+    }
   }
 
   public async delete(key: string) {
-    this.client.del(key);
+    this.client.del(key.substring(1));
   }
 }
