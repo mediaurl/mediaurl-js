@@ -11,7 +11,7 @@ import {
   EXAMPLE_SUBTITLES
 } from "./exampleData";
 
-export const addonWorkerExample = createWorkerAddon({
+export const workerExampleAddon = createWorkerAddon({
   id: "watched-worker-example",
   name: "Typescript Example Addon",
   version: "1.0.0",
@@ -37,7 +37,7 @@ export const addonWorkerExample = createWorkerAddon({
   ]
 });
 
-addonWorkerExample.registerActionHandler("directory", async (input, ctx) => {
+workerExampleAddon.registerActionHandler("directory", async (input, ctx) => {
   let items = _.sortBy(EXAMPLE_ITEMS, input.sort ?? "name");
   if (input.search) {
     items = items.filter(item =>
@@ -52,7 +52,7 @@ addonWorkerExample.registerActionHandler("directory", async (input, ctx) => {
   };
 });
 
-addonWorkerExample.registerActionHandler(
+workerExampleAddon.registerActionHandler(
   "item",
   async (input: ItemRequest, ctx) => {
     const id = input.ids["watched-worker-example"];
@@ -64,7 +64,7 @@ addonWorkerExample.registerActionHandler(
   }
 );
 
-addonWorkerExample.registerActionHandler(
+workerExampleAddon.registerActionHandler(
   "source",
   async (input: SourceRequest, ctx) => {
     const id = input.ids["watched-worker-example"];
@@ -73,7 +73,7 @@ addonWorkerExample.registerActionHandler(
   }
 );
 
-addonWorkerExample.registerActionHandler(
+workerExampleAddon.registerActionHandler(
   "subtitle",
   async (input: SubtitleRequest, ctx) => {
     // ids.id is an alias for ids["watched-worker-example"] (the addon ID)
@@ -88,7 +88,7 @@ addonWorkerExample.registerActionHandler(
 const chainResolveTestUrl =
   "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm";
 
-addonWorkerExample.addResolveHandler(
+workerExampleAddon.addResolveHandler(
   chainResolveTestUrl,
   async (match, input, ctx) => {
     if (!input.url.includes("?chain=1")) {

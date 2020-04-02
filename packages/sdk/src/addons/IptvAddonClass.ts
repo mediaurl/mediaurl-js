@@ -12,9 +12,19 @@ export class IptvAddonClass extends BasicAddonClass<IptvHandlers, IptvAddon> {
   constructor(props: IptvAddon) {
     super(props);
   }
+
+  public validateAddon() {
+    super.validateAddon();
+    if (!this.hasActionHandler("directory") && !this.props.playlistUrl) {
+      throw new Error(
+        `An IPTV addon needs at least a directory action handler or a playlist URL`
+      );
+    }
+  }
 }
 
 export const createIptvAddon = makeCreateFunction<IptvAddon, IptvAddonClass>({
   AddonClass: IptvAddonClass,
-  type: "iptv"
+  type: "iptv",
+  defaults: { actions: [] }
 });

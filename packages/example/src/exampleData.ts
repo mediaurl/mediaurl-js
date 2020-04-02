@@ -1,4 +1,4 @@
-import { PlayableItem, Source, Subtitle } from "@watchedcom/sdk";
+import { IptvItem, PlayableItem, Source, Subtitle } from "@watchedcom/sdk";
 
 export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
@@ -102,3 +102,13 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
     }
   ]
 };
+
+export const EXAMPLE_IPTV_ITEMS: IptvItem[] = [
+  {
+    type: "iptv",
+    ids: {},
+    name: "Not really a livestream",
+    url:
+      "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
+  }
+];

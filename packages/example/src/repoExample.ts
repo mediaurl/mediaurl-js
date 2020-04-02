@@ -1,7 +1,8 @@
 import { createRepositoryAddon } from "@watchedcom/sdk";
-import { addonWorkerExample as exampleAddon } from "./workerExample";
+import { iptvExampleAddon } from "./iptvExample";
+import { workerExampleAddon } from "./workerExample";
 
-export const addonRepoExample = createRepositoryAddon({
+export const repoExampleAddon = createRepositoryAddon({
   id: "watched-repo-example",
   name: {
     cn: "示例存储库",
@@ -12,6 +13,5 @@ export const addonRepoExample = createRepositoryAddon({
   version: "1.0.0"
 });
 
-// addonRepoExample.addUrl("https://addons.watched.com/js/tmdb");
-// addonRepoExample.addUrl("https://addons.watched.com/js/archive.org");
-addonRepoExample.addAddon(exampleAddon);
+repoExampleAddon.addAddon(workerExampleAddon);
+repoExampleAddon.addAddon(iptvExampleAddon);

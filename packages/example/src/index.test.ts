@@ -1,22 +1,22 @@
 import { replayRequests } from "@watchedcom/sdk";
 import { testAddon } from "@watchedcom/test";
-import { addonRepoExample } from "./repoExample";
-import { addonWorkerExample } from "./workerExample";
+import { repoExampleAddon } from "./repoExample";
+import { workerExampleAddon } from "./workerExample";
 
-test(`Test addon "${addonWorkerExample.getId()}"`, done => {
-  testAddon(addonWorkerExample)
+test(`Test addon "${workerExampleAddon.getId()}"`, done => {
+  testAddon(workerExampleAddon)
     .then(done)
     .catch(done);
 });
 
-test(`Test addon "${addonRepoExample.getId()}"`, done => {
-  testAddon(addonRepoExample)
+test(`Test addon "${repoExampleAddon.getId()}"`, done => {
+  testAddon(repoExampleAddon)
     .then(done)
     .catch(done);
 });
 
 test(`Replay recorded actions`, done => {
-  replayRequests([addonRepoExample, addonWorkerExample], "src/index")
+  replayRequests([repoExampleAddon, workerExampleAddon], "src/index")
     .then(done)
     .catch(done);
 });

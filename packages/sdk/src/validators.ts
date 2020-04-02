@@ -1,18 +1,21 @@
 import { Addon, getServerValidators } from "@watchedcom/schema";
 
-const handleError = (action: string, error: Error) => {
+const handleError = (kind: string, error: Error) => {
   console.error(error.message);
   console.error(
-    `Data validation of action ${action} failed.\n` +
+    `Data validation of ${kind} failed.\n` +
       `Check out our schema at https://www.watched.com/swagger`
   );
   return new Error("Validation error");
 };
 
-/** Wrapper arount crazy untyped `@watched/schema` getServerValidators stuff */
 export const validateAddonProps = <T extends Addon>(input: any): T => {
   try {
-    return getServerValidators().models.addon(input);
+    const validator = getServerValidators().models.addon[input.type];
+    if (!validator) {
+      throw new Error(`No validator for addon type "${input.type}" found`);
+    }
+    return validator(input);
   } catch (error) {
     throw handleError("addon", error);
   }
@@ -21,7 +24,7 @@ export const validateAddonProps = <T extends Addon>(input: any): T => {
 export const getActionValidator = (action: string) => {
   const validator = getServerValidators().actions[action];
   if (!validator) {
-    throw new Error(`No validator for "${action}" found in schema`);
+    throw new Error(`No validator for action "${action}" found`);
   }
   return {
     request: (data: any) => {

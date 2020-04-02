@@ -1,4 +1,5 @@
-import { addonRepoExample } from "./repoExample";
-import { addonWorkerExample } from "./workerExample";
+import { iptvExampleAddon } from "./iptvExample";
+import { repoExampleAddon } from "./repoExample";
+import { workerExampleAddon } from "./workerExample";
 
-export { addonWorkerExample, addonRepoExample };
+export default [workerExampleAddon, iptvExampleAddon, repoExampleAddon];

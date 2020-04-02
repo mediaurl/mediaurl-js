@@ -35,7 +35,13 @@ function createValidator(schemas: any, type: string, definition: string) {
 function init(schemas: any) {
   const v: any = {
     models: {
-      addon: createValidator(schemas, "out", "Addon"),
+      addon: {
+        repository: createValidator(schemas, "out", "RepositoryAddon"),
+        worker: createValidator(schemas, "out", "WorkerAddon"),
+        iptv: createValidator(schemas, "out", "IptvAddon"),
+        bundle: createValidator(schemas, "out", "BundleAddon"),
+        all: createValidator(schemas, "out", "Addon")
+      },
       item: {
         directory: createValidator(schemas, "out", "DirectoryItem"),
         movie: createValidator(schemas, "out", "MovieItem"),
@@ -58,42 +64,42 @@ function init(schemas: any) {
     },
     actions: {
       addon: {
-        addonType: undefined,
+        addonTypes: undefined,
         request: createValidator(schemas, "in", "AddonRequest"),
         response: createValidator(schemas, "out", "AddonResponse")
       },
       repository: {
-        addonType: "repository",
+        addonTypes: ["repository"],
         request: createValidator(schemas, "in", "RepositoryRequest"),
         response: createValidator(schemas, "out", "RepositoryResponse")
       },
       directory: {
-        addonType: "worker",
+        addonTypes: ["worker", "iptv"],
         request: createValidator(schemas, "in", "DirectoryRequest"),
         response: createValidator(schemas, "out", "DirectoryResponse")
       },
       item: {
-        addonType: "worker",
+        addonTypes: ["worker"],
         request: createValidator(schemas, "in", "ItemRequest"),
         response: createValidator(schemas, "out", "ItemResponse")
       },
       source: {
-        addonType: "worker",
+        addonTypes: ["worker"],
         request: createValidator(schemas, "in", "SourceRequest"),
         response: createValidator(schemas, "out", "SourceResponse")
       },
       subtitle: {
-        addonType: "worker",
+        addonTypes: ["worker"],
         request: createValidator(schemas, "in", "SubtitleRequest"),
         response: createValidator(schemas, "out", "SubtitleResponse")
       },
       resolve: {
-        addonType: "worker",
+        addonTypes: ["worker"],
         request: createValidator(schemas, "in", "ResolveRequest"),
         response: createValidator(schemas, "out", "ResolveResponse")
       },
       captcha: {
-        addonType: "worker",
+        addonTypes: ["worker"],
         request: createValidator(schemas, "in", "CaptchaRequest"),
         response: createValidator(schemas, "out", "CaptchaResponse")
       }

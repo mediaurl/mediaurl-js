@@ -11,7 +11,7 @@ import {
   EXAMPLE_SOURCES,
   EXAMPLE_SUBTITLES
 } from "./exampleData";
-import { addonWorkerExample } from "./workerExample";
+import { workerExampleAddon } from "./workerExample";
 
 const sdkVersion = require("@watchedcom/sdk/package.json").version;
 
@@ -40,19 +40,19 @@ const itemDefaults: ItemRequest = {
   episode: {}
 };
 
-const app = request(createApp([addonWorkerExample]));
+const app = request(createApp([workerExampleAddon]));
 
 test("action addon", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/addon.watched`)
+    .post(`/${workerExampleAddon.getId()}/addon.watched`)
     .send(<AddonRequest>{ ...defaults })
-    .expect(200, { ...addonWorkerExample.getProps(), sdkVersion })
+    .expect(200, { ...workerExampleAddon.getProps(), sdkVersion })
     .end(requestEnd(done));
 });
 
 test("action directory", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/directory.watched`)
+    .post(`/${workerExampleAddon.getId()}/directory.watched`)
     .send(<DirectoryRequest>{
       ...defaults,
       id: "",
@@ -68,7 +68,7 @@ test("action directory", async done => {
 
 test("action item", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/item.watched`)
+    .post(`/${workerExampleAddon.getId()}/item.watched`)
     .send(<ItemRequest>itemDefaults)
     .expect(
       200,
@@ -79,7 +79,7 @@ test("action item", async done => {
 
 test("action source", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/source.watched`)
+    .post(`/${workerExampleAddon.getId()}/source.watched`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, EXAMPLE_SOURCES.elephant)
     .end(requestEnd(done));
@@ -87,7 +87,7 @@ test("action source", async done => {
 
 test("action subtitle", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/subtitle.watched`)
+    .post(`/${workerExampleAddon.getId()}/subtitle.watched`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, EXAMPLE_SUBTITLES.elephant)
     .end(requestEnd(done));
@@ -95,7 +95,7 @@ test("action subtitle", async done => {
 
 test("action subtitle (cached response)", async done => {
   app
-    .post(`/${addonWorkerExample.getId()}/subtitle.watched`)
+    .post(`/${workerExampleAddon.getId()}/subtitle.watched`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, EXAMPLE_SUBTITLES.elephant)
     .end(requestEnd(done));
