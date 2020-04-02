@@ -53,6 +53,18 @@ export type ServeAddonsOptions = {
    * Cache handler
    */
   cache: CacheHandler;
+  /**
+   * Middlewares prepending to all app routes
+   */
+  preMiddlewares: express.RequestHandler[];
+  /**
+   * Middlewares that are executed at the end, but BEFORE error handler
+   */
+  postMiddlewares: express.RequestHandler[];
+  /**
+   * Your custom Express app instance
+   */
+  app?: express.Application;
 };
 
 const defaultServeOpts: ServeAddonsOptions = {
@@ -67,7 +79,9 @@ const defaultServeOpts: ServeAddonsOptions = {
       : process.env.REDIS_CACHE
       ? new RedisCache({ url: process.env.REDIS_CACHE })
       : new MemoryCache()
-  )
+  ),
+  preMiddlewares: [],
+  postMiddlewares: []
 };
 
 let requestRecorder: RequestRecorder;
@@ -318,9 +332,16 @@ export const createApp = (
   addons: BasicAddonClass[],
   opts?: Partial<ServeAddonsOptions>
 ): express.Application => {
-  const app = express();
   const options: ServeAddonsOptions = defaults(opts, defaultServeOpts);
-  if (options.logRequests) app.use(morgan("dev"));
+  const app = options.app || express();
+
+  if (options.logRequests) {
+    app.use(morgan("dev"));
+  }
+
+  if (options.preMiddlewares.length) {
+    app.use(...options.preMiddlewares);
+  }
 
   app.set("port", options.port);
   app.set("views", path.join(__dirname, "..", "views"));
@@ -343,6 +364,11 @@ export const createApp = (
   }
 
   app.get("/health", (req, res) => res.send("OK"));
+
+  if (options.postMiddlewares.length) {
+    app.use(...options.postMiddlewares);
+  }
+
   app.use(options.errorHandler);
 
   return app;
