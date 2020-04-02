@@ -66,22 +66,54 @@ function init(schemas: any) {
       addon: {
         addonTypes: undefined,
         request: createValidator(schemas, "in", "AddonRequest"),
-        response: createValidator(schemas, "out", "AddonResponse")
+        originalResponse: createValidator(schemas, "out", "AddonResponse"),
+        response: (obj: any) => {
+          const fn =
+            v.models.addon[obj?.type] ?? v.actions.addon.originalResponse;
+          return fn(obj);
+        }
       },
       repository: {
         addonTypes: ["repository"],
         request: createValidator(schemas, "in", "RepositoryRequest"),
-        response: createValidator(schemas, "out", "RepositoryResponse")
+        originalResponse: createValidator(schemas, "out", "RepositoryResponse"),
+        response: (obj: any) => {
+          if (!Array.isArray(obj)) {
+            return v.actions.repository.originalResponse(obj);
+          }
+          for (const o of obj) {
+            const fn =
+              v.models.addon[o.type] ?? v.actions.addon.originalResponse;
+            fn(o);
+          }
+          return obj;
+        }
       },
       directory: {
         addonTypes: ["worker", "iptv"],
         request: createValidator(schemas, "in", "DirectoryRequest"),
-        response: createValidator(schemas, "out", "DirectoryResponse")
+        originalResponse: createValidator(schemas, "out", "DirectoryResponse"),
+        response: (obj: any) => {
+          const items = obj?.items;
+          obj.items = Array.isArray(items) ? [] : items;
+          v.actions.directory.originalResponse(obj);
+          for (const item of items) {
+            const fn = v.models.item[item?.type] ?? v.models.item.all;
+            fn(item);
+          }
+          obj.items = items;
+          return obj;
+        }
       },
       item: {
         addonTypes: ["worker"],
         request: createValidator(schemas, "in", "ItemRequest"),
-        response: createValidator(schemas, "out", "ItemResponse")
+        originalResponse: createValidator(schemas, "out", "ItemResponse"),
+        response: (obj: any) => {
+          const fn =
+            v.models.item[obj?.type] ?? v.actions.item.originalResponse;
+          return fn(obj);
+        }
       },
       source: {
         addonTypes: ["worker"],
