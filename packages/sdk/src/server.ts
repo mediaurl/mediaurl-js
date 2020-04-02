@@ -14,7 +14,7 @@ import {
   RedisCache
 } from "./cache";
 import { errorHandler } from "./error-handler";
-import { RequestCacheFn } from "./interfaces";
+import { IServeAddonsOptions, RequestCacheFn } from "./interfaces";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
@@ -26,48 +26,13 @@ import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
-export type ServeAddonsOptions = {
-  /**
-   * Start the server in single addon mode (default: true)
-   */
-  singleMode: boolean;
-  /**
-   * Log HTTP requests (default: true)
-   */
-  logRequests: boolean;
-  /**
-   * Write requests to the addon server to a file which can
-   * be replayed later. This is very useful for testing or
-   * to create test cases.
-   */
-  requestRecorderPath: null | string;
-  /**
-   * Express error handler
-   */
-  errorHandler: express.ErrorRequestHandler;
-  /**
-   * Listen port
-   */
-  port: number;
-  /**
-   * Cache handler
-   */
-  cache: CacheHandler;
-  /**
-   * Middlewares prepending to all app routes
-   */
-  preMiddlewares: express.RequestHandler[];
-  /**
-   * Middlewares that are executed at the end, but BEFORE error handler
-   */
-  postMiddlewares: express.RequestHandler[];
-  /**
-   * Your custom Express app instance
-   */
-  app?: express.Application;
-};
+export class ServeAddonOptions implements Partial<IServeAddonsOptions> {
+  constructor(props: Partial<IServeAddonsOptions>) {
+    Object.assign(this, props);
+  }
+}
 
-const defaultServeOpts: ServeAddonsOptions = {
+const defaultServeOpts: IServeAddonsOptions = {
   singleMode: false,
   logRequests: true,
   requestRecorderPath: null,
@@ -227,7 +192,7 @@ const createActionHandler = (
 
 const createAddonRouter = (
   addon: BasicAddonClass,
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
@@ -272,7 +237,7 @@ const createAddonRouter = (
 
 export const createSingleAddonRouter = (
   addons: BasicAddonClass[],
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   if (addons.length > 1) {
     throw new Error(
@@ -287,7 +252,7 @@ export const createSingleAddonRouter = (
 
 export const createMultiAddonRouter = (
   addons: BasicAddonClass[],
-  options: ServeAddonsOptions
+  options: IServeAddonsOptions
 ) => {
   const router = express.Router();
 
@@ -330,9 +295,9 @@ export const createMultiAddonRouter = (
 
 export const createApp = (
   addons: BasicAddonClass[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<IServeAddonsOptions>
 ): express.Application => {
-  const options: ServeAddonsOptions = defaults(opts, defaultServeOpts);
+  const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
   const app = options.app || express();
 
   if (options.logRequests) {
@@ -376,7 +341,7 @@ export const createApp = (
 
 export const serveAddons = (
   addons: BasicAddonClass[],
-  opts?: Partial<ServeAddonsOptions>
+  opts?: Partial<IServeAddonsOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
   const app = createApp(addons, opts);
 
