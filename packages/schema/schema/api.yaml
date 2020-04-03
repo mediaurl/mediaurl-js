@@ -214,7 +214,11 @@ definitions:
             default: false
         required: [adult]
   IptvResponse:
-    description: Array of IPTV items.
-    type: array
-    items:
-      $ref: "items.yaml#/definitions/IptvItem"
+    type: object
+    properties:
+      items:
+        description: Array of IPTV items.
+        type: array
+        items:
+          $ref: "items.yaml#/definitions/IptvItem"
+    required: [items]

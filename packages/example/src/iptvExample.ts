@@ -8,5 +8,5 @@ export const iptvExampleAddon = createIptvAddon({
 });
 
 iptvExampleAddon.registerActionHandler("iptv", async (input, ctx) => {
-  return EXAMPLE_IPTV_ITEMS;
+  return { items: EXAMPLE_IPTV_ITEMS };
 });
