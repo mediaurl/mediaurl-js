@@ -21,7 +21,7 @@ definitions:
       - $ref: "#/definitions/WorkerAddonResourceActions"
   IptvAddonResourceActions:
     type: string
-    enum: [directory]
+    enum: [iptv]
   IptvAddonActions:
     oneOf:
       - $ref: "#/definitions/BasicAddonActions"

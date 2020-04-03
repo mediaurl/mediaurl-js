@@ -95,13 +95,17 @@ const createActionHandler = (
         ? null
         : validateSignature(sig);
 
-    const migrationData = {};
+    const migrationCtx = {
+      addon,
+      data: {},
+      sigData,
+      validator: getActionValidator(addon.getType(), action)
+    };
     if (migrations[action]?.request) {
-      input = migrations[action].request(migrationData, sigData, input);
+      input = migrations[action].request(migrationCtx, input);
+    } else {
+      input = migrationCtx.validator.request(input);
     }
-
-    const validator = getActionValidator(action);
-    validator.request(input);
 
     // Store request data for recording
     const record: Partial<RecordData> = {};
@@ -153,14 +157,10 @@ const createActionHandler = (
           break;
       }
       if (migrations[action]?.response) {
-        output = migrations[action].response(
-          migrationData,
-          sigData,
-          input,
-          output
-        );
+        output = migrations[action].response(migrationCtx, input, output);
+      } else {
+        output = migrationCtx.validator.response(output);
       }
-      validator.response(output);
       if (inlineCache) await inlineCache.set(output);
     } catch (error) {
       if (error instanceof CacheFoundError) {

@@ -15,9 +15,9 @@ export class IptvAddonClass extends BasicAddonClass<IptvHandlers, IptvAddon> {
 
   public validateAddon() {
     super.validateAddon();
-    if (!this.hasActionHandler("directory") && !this.props.playlistUrl) {
+    if (!this.hasActionHandler("iptv") && !this.props.playlistUrl) {
       throw new Error(
-        `An IPTV addon needs at least a directory action handler or a playlist URL`
+        `An IPTV addon needs at least an iptv action handler or a playlist URL`
       );
     }
   }

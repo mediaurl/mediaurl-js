@@ -108,6 +108,7 @@ export const EXAMPLE_IPTV_ITEMS: IptvItem[] = [
     type: "iptv",
     ids: {},
     name: "Not really a livestream",
+    group: "Example!",
     url:
       "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
   }
