@@ -242,6 +242,10 @@ definitions:
       name:
         description: Name of item.
         type: string
+      country:
+        description: Country of this channel.
+        oneOf:
+          - $ref: "general.yaml#/definitions/Country"
       group:
         description: Group of this channel.
         type: string
@@ -276,7 +280,7 @@ definitions:
               $ref: "general.yaml#/definitions/Image"
           required: [start, stop, name]
         default: []
-    required: [type, ids, name, url]
+    required: [type, ids]
   PlayableItem:
     description: All items which could be played, excludes `DirectoryItem`.
     anyOf:
