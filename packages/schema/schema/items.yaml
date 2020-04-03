@@ -244,8 +244,10 @@ definitions:
         type: string
       country:
         description: Country of this channel.
-        oneOf:
-          - $ref: "general.yaml#/definitions/Country"
+        type: string
+      language:
+        description: Language of this channel.
+        type: string
       group:
         description: Group of this channel.
         type: string
