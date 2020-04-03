@@ -1,14 +1,14 @@
 {
   "name": "@watchedcom/puppeteer",
   "description": "Puppeteer helper module",
-  "version": "0.25.2",
+  "version": "0.26.0",
   "main": "dist",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
     "@types/puppeteer-core": "^2.0.0",
-    "@watchedcom/sdk": "^0.25.2",
+    "@watchedcom/sdk": "^0.26.0",
     "generic-pool": "^3.7.1",
     "puppeteer-core": "^2.1.1"
   },
