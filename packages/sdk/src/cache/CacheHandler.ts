@@ -7,13 +7,21 @@ import {
 import { BasicCache } from "./BasicCache";
 
 /**
- * Internal error which will be raised when the `inline` function had a hit
+ * Errors inherited by this class are not cached.
+ */
+export class IgnoreCacheError extends Error {}
+
+/**
+ * Error thrown by the `waitKey` function.
+ */
+export class WaitTimedOut extends IgnoreCacheError {}
+
+/**
+ * Internal error which will be raised when the `inline` function had a hit.
  */
 export class CacheFoundError {
   constructor(public result: any, public error: null | Error) {}
 }
-
-export class WaitTimedOut extends Error {}
 
 export class CacheHandler {
   public options: CacheOptions;
@@ -83,6 +91,7 @@ export class CacheHandler {
     value: any,
     errorTtl?: CacheOptions["errorTtl"]
   ) {
+    if (IgnoreCacheError instanceof IgnoreCacheError) return;
     key = this.createKey(key);
     if (errorTtl === undefined) errorTtl = this.options.errorTtl;
     if (typeof errorTtl === "function") errorTtl = errorTtl(value);
