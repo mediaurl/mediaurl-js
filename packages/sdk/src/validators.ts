@@ -21,10 +21,20 @@ export const validateAddonProps = <T extends Addon>(input: any): T => {
   }
 };
 
-export const getActionValidator = (action: string) => {
-  const validator = getServerValidators().actions[action];
+export const getActionValidator = (addonType: string, action: string) => {
+  const validators = getServerValidators();
+  const validator =
+    validators.actions[addonType]?.[action] ?? validators.actions.basic[action];
   if (!validator) {
     throw new Error(`No validator for action "${action}" found`);
+  }
+  if (
+    validator.addonTypes !== undefined &&
+    !validator.addonTypes.includes(addonType)
+  ) {
+    throw new Error(
+      `No validator for action "${action}" and addon type "${addonType}" found`
+    );
   }
   return {
     request: (data: any) => {

@@ -29,6 +29,8 @@ html
           });
           var e = document.getElementsByClassName('addon-'+a.id);
           for (var i = 0; i < e.length; i++) {
-            e[i].setAttribute('href', 'https://www.watched.com/share#' + Base64.encode(d));
+            var b = Base64.encode(d);
+            // b = b.replace(/\//g, '_').replace(/\+/g, '-').replace(/[=]+$/g, '');
+            e[i].setAttribute('href', 'https://www.watched.com/share#' + b);
           }
         });

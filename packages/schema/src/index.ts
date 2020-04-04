@@ -63,45 +63,93 @@ function init(schemas: any) {
       }
     },
     actions: {
-      addon: {
-        addonTypes: undefined,
-        request: createValidator(schemas, "in", "AddonRequest"),
-        response: createValidator(schemas, "out", "AddonResponse")
+      basic: {
+        addon: {
+          request: createValidator(schemas, "in", "AddonRequest"),
+          originalResponse: createValidator(schemas, "out", "AddonResponse"),
+          response: (obj: any) => {
+            const fn =
+              v.models.addon[obj?.type] ??
+              v.actions.basic.addon.originalResponse;
+            return fn(obj);
+          }
+        }
       },
       repository: {
-        addonTypes: ["repository"],
-        request: createValidator(schemas, "in", "RepositoryRequest"),
-        response: createValidator(schemas, "out", "RepositoryResponse")
+        repository: {
+          addonTypes: ["repository"],
+          request: createValidator(schemas, "in", "RepositoryRequest"),
+          originalResponse: createValidator(
+            schemas,
+            "out",
+            "RepositoryResponse"
+          ),
+          response: (obj: any) => {
+            if (!Array.isArray(obj)) {
+              return v.actions.repository.repository.originalResponse(obj);
+            }
+            for (const o of obj) {
+              const fn =
+                v.models.addon[o.type] ??
+                v.actions.addon.repository.originalResponse;
+              fn(o);
+            }
+            return obj;
+          }
+        }
       },
-      directory: {
-        addonTypes: ["worker", "iptv"],
-        request: createValidator(schemas, "in", "DirectoryRequest"),
-        response: createValidator(schemas, "out", "DirectoryResponse")
+      worker: {
+        directory: {
+          request: createValidator(schemas, "in", "DirectoryRequest"),
+          originalResponse: createValidator(
+            schemas,
+            "out",
+            "DirectoryResponse"
+          ),
+          response: (obj: any) => {
+            const items = obj?.items;
+            obj.items = Array.isArray(items) ? [] : items;
+            v.actions.worker.directory.originalResponse(obj);
+            for (const item of items) {
+              const fn = v.models.item[item?.type] ?? v.models.item.all;
+              fn(item);
+            }
+            obj.items = items;
+            return obj;
+          }
+        },
+        item: {
+          request: createValidator(schemas, "in", "ItemRequest"),
+          originalResponse: createValidator(schemas, "out", "ItemResponse"),
+          response: (obj: any) => {
+            const fn =
+              v.models.item[obj?.type] ??
+              v.actions.worker.item.originalResponse;
+            return fn(obj);
+          }
+        },
+        source: {
+          request: createValidator(schemas, "in", "SourceRequest"),
+          response: createValidator(schemas, "out", "SourceResponse")
+        },
+        subtitle: {
+          request: createValidator(schemas, "in", "SubtitleRequest"),
+          response: createValidator(schemas, "out", "SubtitleResponse")
+        },
+        resolve: {
+          request: createValidator(schemas, "in", "ResolveRequest"),
+          response: createValidator(schemas, "out", "ResolveResponse")
+        },
+        captcha: {
+          request: createValidator(schemas, "in", "CaptchaRequest"),
+          response: createValidator(schemas, "out", "CaptchaResponse")
+        }
       },
-      item: {
-        addonTypes: ["worker"],
-        request: createValidator(schemas, "in", "ItemRequest"),
-        response: createValidator(schemas, "out", "ItemResponse")
-      },
-      source: {
-        addonTypes: ["worker"],
-        request: createValidator(schemas, "in", "SourceRequest"),
-        response: createValidator(schemas, "out", "SourceResponse")
-      },
-      subtitle: {
-        addonTypes: ["worker"],
-        request: createValidator(schemas, "in", "SubtitleRequest"),
-        response: createValidator(schemas, "out", "SubtitleResponse")
-      },
-      resolve: {
-        addonTypes: ["worker"],
-        request: createValidator(schemas, "in", "ResolveRequest"),
-        response: createValidator(schemas, "out", "ResolveResponse")
-      },
-      captcha: {
-        addonTypes: ["worker"],
-        request: createValidator(schemas, "in", "CaptchaRequest"),
-        response: createValidator(schemas, "out", "CaptchaResponse")
+      iptv: {
+        iptv: {
+          request: createValidator(schemas, "in", "IptvRequest"),
+          response: createValidator(schemas, "out", "IptvResponse")
+        }
       }
     }
   };

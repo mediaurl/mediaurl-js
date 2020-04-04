@@ -239,6 +239,18 @@ definitions:
         oneOf:
           - $ref: "#/definitions/ItemIDs"
         default: {}
+      name:
+        description: Name of item.
+        type: string
+      country:
+        description: Country of this channel.
+        type: string
+      language:
+        description: Language of this channel.
+        type: string
+      group:
+        description: Group of this channel.
+        type: string
       url:
         description: Streaming URL for this IPTV item.
         oneOf:
@@ -270,7 +282,7 @@ definitions:
               $ref: "general.yaml#/definitions/Image"
           required: [start, stop, name]
         default: []
-    required: [type, ids, url]
+    required: [type, ids]
   PlayableItem:
     description: All items which could be played, excludes `DirectoryItem`.
     anyOf:

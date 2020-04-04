@@ -1,9 +1,14 @@
+var sdkVersion = require("@watchedcom/sdk/package.json").version;
+
 module.exports = [];
 module.exports.version = 1;
 
 var currentId = 1;
 function addRecord(record) {
   record.id = currentId++;
+  if (record.action === "addon" && record.statusCode === 200) {
+    record.output.sdkVersion = sdkVersion;
+  }
   module.exports.push(record);
 }
 
@@ -55,7 +60,7 @@ addRecord({
     urlPatterns: [
       "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm"
     ],
-    sdkVersion: require("@watchedcom/sdk/package.json").version
+    sdkVersion: "0.20.0"
   }
 });
 

@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { RequestHandler } from "express";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
-import { CacheHandler } from "../cache";
+import { CacheHandler, IgnoreCacheError } from "../cache";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;
 
@@ -35,7 +35,7 @@ export class Responder {
           this.emitter.removeListener("event", on);
           const i = this.queue.indexOf(id);
           if (i !== -1) this.queue.splice(i, 1);
-          reject("Waiting for slot timed out");
+          reject(new IgnoreCacheError("Waiting for slot timed out"));
         }, queueTimeout);
       });
     }

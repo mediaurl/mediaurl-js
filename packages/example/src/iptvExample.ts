@@ -7,9 +7,6 @@ export const iptvExampleAddon = createIptvAddon({
   version: "1.0.0"
 });
 
-iptvExampleAddon.registerActionHandler("directory", async (input, ctx) => {
-  return {
-    items: EXAMPLE_IPTV_ITEMS,
-    nextCursor: null
-  };
+iptvExampleAddon.registerActionHandler("iptv", async (input, ctx) => {
+  return { items: EXAMPLE_IPTV_ITEMS };
 });

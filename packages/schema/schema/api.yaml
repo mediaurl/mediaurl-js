@@ -44,7 +44,7 @@ definitions:
             $ref: "general.yaml#/definitions/GenericId"
             default: ""
           adult:
-            description: Show adult items in search result.
+            description: Show adult items in result.
             type: boolean
             default: false
           search:
@@ -84,6 +84,7 @@ definitions:
         oneOf:
           - $ref: "directories.yaml#/definitions/DirectoryFeatures"
       items:
+        description: Array of items.
         type: array
         items:
           $ref: "items.yaml#/definitions/MainItem"
@@ -201,3 +202,23 @@ definitions:
     oneOf:
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
       - type: "null"
+  IptvRequest:
+    description: Request parameters for an IPTV directory call.
+    allOf:
+      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          adult:
+            description: Show adult items.
+            type: boolean
+            default: false
+        required: [adult]
+  IptvResponse:
+    type: object
+    properties:
+      items:
+        description: Array of IPTV items.
+        type: array
+        items:
+          $ref: "items.yaml#/definitions/IptvItem"
+    required: [items]

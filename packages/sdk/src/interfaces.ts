@@ -5,6 +5,8 @@ import {
   CaptchaResponse,
   DirectoryRequest,
   DirectoryResponse,
+  IptvRequest,
+  IptvResponse,
   ItemRequest,
   ItemResponse,
   RepositoryRequest,
@@ -191,6 +193,8 @@ export type ActionHandlers<T extends BasicAddonClass> = {
   subtitle: ActionHandler<SubtitleRequest, SubtitleResponse, T>;
   resolve: ActionHandler<ResolveRequest, ResolveResponse, T>;
   captcha: ActionHandler<CaptchaRequest, CaptchaResponse, T>;
+
+  iptv: ActionHandler<IptvRequest, IptvResponse, T>;
 };
 
 export interface IServeAddonsOptions {
