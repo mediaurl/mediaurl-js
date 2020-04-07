@@ -343,11 +343,14 @@ export const serveAddons = (
   addons: BasicAddonClass[],
   opts?: Partial<IServeAddonsOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const app = createApp(addons, opts);
+  const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
+  const app = createApp(addons, options);
 
   const listenPromise = new Promise<void>(resolve => {
     app.listen(app.get("port"), () => {
+      console.info(`Using cache: ${options.cache.engine.constructor.name}`);
       console.info(`Listening on ${app.get("port")}`);
+
       resolve();
     });
   });
