@@ -81,8 +81,8 @@ export const replayHandler = (files: string[], cmdObj: any) => {
       JSON.stringify(<ReplayArgs>{
         files,
         recordPath: cmdObj.record,
-        ids: cmdObj.ids
-          ? cmdObj.ids.split(",").map(id => parseInt(id, 10))
+        ids: cmdObj.id
+          ? cmdObj.id.split(",").map(id => parseInt(id, 10))
           : null,
         silent: cmdObj.silent
       })
@@ -114,7 +114,7 @@ program
   .command("replay [files...]")
   .description("Replay a previously recorded session")
   .requiredOption("-r, --record <record-file>", "The previously recorded file")
-  .option("-i, --ids <ids>", "Choose which ID's to replay")
+  .option("-i, --id <id>", "Choose which ID's to replay (komma separated list)")
   .option("-s, --silent", "Be less verbose")
   .option("-w, --watch", "Watch for changes and re-run the script")
   .action((files: string, cmdObj: any) =>

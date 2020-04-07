@@ -108,12 +108,13 @@ export const replayRequests = async (
       .expect(res => {
         // Comparing of string-only JSON responses is buggy in supertest
         if (typeof data.output === "function") {
-          data.output(res);
+          const r = data.output(res);
+          if (r !== undefined && !r) {
+            throw new Error(`Output check failed, got ${inspect(res.body)}`);
+          }
         } else if (!_.isEqual(res.body, data.output)) {
           throw new Error(
-            `Expected: ${inspect(data.output)} response body, got ${inspect(
-              res.body
-            )}`
+            `Expected: ${inspect(data.output)} output, got ${inspect(res.body)}`
           );
         }
       });
