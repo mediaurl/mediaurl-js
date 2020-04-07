@@ -226,15 +226,13 @@ definitions:
               The values can be a URL to an addon, an addon ID
               or an addon ID with engine definition.
               Eg:
-              - https://example.com/watched/v1/some.addon.id
-              - https://example.com/watched/v1/another.addon.id
-              - stremio/https://example.com/watched/stremioaddon/manifest.json
-              - addon.id.that.exists.in.an.avaliable.repository
-              - stremio/another.engine.addon
-              - { "engine": "stremio", "id": "addon.id" }
-              - { "engine": "watched", "id": "watched.addon.id" }
-              - { "id": "another.watched.addon.id" }
-              - { "engine": "stremio", "url": "https://exmaple.com/link/to/stremio/addon" }
+              - `https://example.com/watched/v1/some.addon.id`
+              - `https://example.com/watched/v1/another.addon.id`
+              - `./relative-url-to-addon` (have to start with `./` or `../`)
+              - `addon-id-that-exists-in-an-avaliable-repository`
+              - `watched/other-addon-id-with-watched-engine`
+              - `{ "engine": "watched", "id": "watched.addon.id" }`
+              - `{ "id": "another.watched.addon.id" }`
             type: array
             items:
               oneOf:
@@ -243,7 +241,7 @@ definitions:
                   properties:
                     engine:
                       type: string
-                      enum: [watched, stremio]
+                      enum: [watched]
                       default: watched
                     id:
                       $ref: "general.yaml#/definitions/GenericId"

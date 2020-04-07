@@ -32,6 +32,10 @@ definitions:
         description: Used with all items except directories.
         oneOf:
           - $ref: "items.yaml#/definitions/ItemIDs"
+      url:
+        description: Used for IPTV items.
+        oneOf:
+          - $ref: "general.yaml#/definitions/Url"
       addons:
         type: array
         items:
