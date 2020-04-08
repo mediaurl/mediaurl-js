@@ -119,11 +119,11 @@ export type CacheOptionsParam = Partial<CacheOptions>;
 
 export type RequestCacheFn = (
   /**
-   * Data which will be used as the key for caching. Defaults to the full request data.
-   * You should only use the the variables from the action handler's `input` parameter
-   * which you are using in your script.
+   * Data which will be used as the key for caching. You should only use the the
+   * variables from the action handlers `input` parameter which you are using in your script.
+   * For example: `await ctx.requestCache([input.name, input.year, input.releaseDate]);`
    */
-  key?: any,
+  key: any,
   options?: CacheOptionsParam
 ) => Promise<void>;
 
