@@ -49,6 +49,21 @@ const defaultServeOpts: IServeAddonsOptions = {
   postMiddlewares: []
 };
 
+/**
+ * An error which will not log any backtrace.
+ *
+ * All errors with the property `noBacktraceLog` set to `true` will not show a
+ * backtrace on the console.
+ */
+export class SilentError extends Error {
+  public noBacktraceLog: boolean;
+
+  constructor(message: any) {
+    super(message);
+    this.noBacktraceLog = true;
+  }
+}
+
 let requestRecorder: RequestRecorder;
 
 const createActionHandler = (
@@ -174,7 +189,7 @@ const createActionHandler = (
         if (inlineCache) await inlineCache.setError(error);
         statusCode = 500;
         output = { error: error.message || error };
-        console.warn(error);
+        if (!error.noBacktraceLog) console.warn(error);
       }
     }
 
