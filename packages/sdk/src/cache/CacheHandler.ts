@@ -54,18 +54,34 @@ export class CacheHandler {
     return this.engine.createKey(this.options.prefix, key);
   }
 
-  public async get<T = any>(key: any): Promise<T | undefined> {
+  /**
+   * Returns the cached value or, if not found, `undefined`.
+   *
+   * The `key` parameter can be any value. When this is not a string or it's too long,
+   * the value will be hashed.
+   *
+   * If `updateRefreshInterval` is `true` (default), the refresh interval will be updated.
+   * This will prevent concurrent refreshing of the cache.
+   * If it's `false`, requests to `get` will always return `undefined` until the cache is
+   * updated or `get` is called with `updateRefreshInterval` set to `true`.
+   */
+  public async get<T = any>(
+    key: any,
+    updateRefreshInterval: boolean = true
+  ): Promise<T | undefined> {
     if (this.options.disableGet) return undefined;
     key = this.createKey(key);
     if (this.options.refreshInterval) {
       const locked = await this.engine.get(`${key}-refresh`);
       if (!locked) {
-        // Set this key now so the next request will hit the cache again
-        await this.engine.set(
-          `${key}-refresh`,
-          1,
-          this.options.refreshInterval
-        );
+        if (updateRefreshInterval) {
+          // Set this key now so the next request will hit the cache again
+          await this.engine.set(
+            `${key}-refresh`,
+            1,
+            this.options.refreshInterval
+          );
+        }
         return undefined;
       }
     }
