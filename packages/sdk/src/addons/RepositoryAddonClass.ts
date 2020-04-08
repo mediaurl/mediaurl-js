@@ -49,6 +49,12 @@ export class RepositoryAddonClass extends BasicAddonClass<
     input: AddonRequest,
     ctx: ActionHandlerContext
   ) {
+    await ctx.requestCache([
+      this.getVersion(),
+      ...this.addons.map(a => [a.getId(), a.getVersion()]),
+      ...this.urls
+    ]);
+
     const result: Addon[] = [];
     const promises: Promise<void>[] = [];
 
@@ -78,13 +84,9 @@ export class RepositoryAddonClass extends BasicAddonClass<
     }
 
     for (const url of this.urls) {
+      const key = [this.getVersion(), url, input.language, input.region];
+      ctx.cache.call(key, async () => {});
       const fn = async () => {
-        const key = [this.getId(), url, input.language, input.region];
-        const data = await ctx.cache.get(key);
-        if (data !== undefined) {
-          if (data.props) result.push(data.props);
-          return;
-        }
         try {
           const res = await fetch(`${url.replace(/\/$/, "")}/addon`, {
             method: "POST",
@@ -98,10 +100,8 @@ export class RepositoryAddonClass extends BasicAddonClass<
           props.metadata = { ...props.metadata, url };
           validateAddonProps(props);
           result.push(props);
-          ctx.cache.set(key, { props });
         } catch (error) {
           console.warn(`Failed loading ${url}:`, error.message);
-          ctx.cache.set(key, { error: true });
         }
       };
       promises.push(fn());
