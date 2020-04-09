@@ -102,6 +102,28 @@ export class CacheHandler {
     await this._set(key, value, ttl);
   }
 
+  /**
+   * Force a refresh on the next `get` call.
+   */
+  public async forceRefresh(key: any) {
+    key = this.createKey(key);
+    await this.engine.delete(`${key}-refresh`);
+  }
+
+  public async delete(key: any) {
+    key = this.createKey(key);
+    await this.engine.delete(key);
+  }
+
+  public async cleanup() {
+    await this.engine.cleanup();
+  }
+
+  /**
+   * This function is used for the `call` and `inline` functions.
+   * It will set an error value depending on `options.errorTtl` and
+   * other settings.
+   */
   public async setError(
     key: any,
     value: any,
@@ -117,15 +139,6 @@ export class CacheHandler {
       if (await this.engine.exists(key)) return;
     }
     await this._set(key, value, errorTtl);
-  }
-
-  public async delete(key: any) {
-    key = this.createKey(key);
-    await this.engine.delete(key);
-  }
-
-  public async cleanup() {
-    await this.engine.cleanup();
   }
 
   private async lockRequest(key: string) {
