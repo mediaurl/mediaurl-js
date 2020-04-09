@@ -6,7 +6,8 @@ import {
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
-import { ActionHandler, CacheOptionsParam, HandlersMap } from "../interfaces";
+import { CacheOptionsParam } from "../cache";
+import { ActionHandler, HandlersMap } from "../interfaces";
 import { validateAddonProps } from "../validators";
 
 export type BasicHandlers = {

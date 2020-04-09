@@ -1,27 +1,21 @@
+import { BasicCache } from "./engines";
+import { CacheFoundError, IgnoreCacheError, WaitTimedOut } from "./errors";
 import {
   CacheOptions,
   CacheOptionsParam,
-  defaultCacheOptions,
   InlineCacheContext
-} from "../interfaces";
-import { BasicCache } from "./BasicCache";
+} from "./interfaces";
 
-/**
- * Errors inherited by this class are not cached.
- */
-export class IgnoreCacheError extends Error {}
-
-/**
- * Error thrown by the `waitKey` function.
- */
-export class WaitTimedOut extends IgnoreCacheError {}
-
-/**
- * Internal error which will be raised when the `inline` function had a hit.
- */
-export class CacheFoundError {
-  constructor(public result: any, public error: null | Error) {}
-}
+const defaultCacheOptions: CacheOptions = {
+  ttl: 3600 * 1000,
+  errorTtl: 600 * 1000,
+  refreshInterval: null,
+  storeRefreshErrors: false,
+  simultanLockTimeout: 30 * 1000,
+  simultanLockTimeoutSleep: 250,
+  prefix: null,
+  disableGet: false
+};
 
 export class CacheHandler {
   public options: CacheOptions;

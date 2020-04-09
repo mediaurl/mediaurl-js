@@ -13,7 +13,7 @@ rl2iXzVO8gXUw97fDwIDAQAB
  */
 export const validateSignature = (sig: string): any => {
   if (!sig) {
-    throw new Error("No sig field passed in body");
+    throw new Error("Missing WATCHED signature");
   }
 
   const decodedSig = Buffer.from(sig, "base64").toString();
