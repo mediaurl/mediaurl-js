@@ -141,5 +141,5 @@ export const createWorkerAddon = makeCreateFunction<
 >({
   AddonClass: WorkerAddonClass,
   type: "worker",
-  defaults: { actions: [] }
+  defaults: () => ({ actions: [] })
 });
