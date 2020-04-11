@@ -11,7 +11,7 @@ import {
   CacheHandler,
   DiskCache,
   MemoryCache,
-  RedisCache
+  RedisCache,
 } from "./cache";
 import { errorHandler } from "./error-handler";
 import { IServeAddonsOptions, RequestCacheFn } from "./interfaces";
@@ -20,7 +20,7 @@ import {
   createTaskFetch,
   createTaskRecaptcha,
   createTaskResponseHandler,
-  Responder
+  Responder,
 } from "./tasks";
 import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
@@ -46,7 +46,7 @@ const defaultServeOpts: IServeAddonsOptions = {
       : new MemoryCache()
   ),
   preMiddlewares: [],
-  postMiddlewares: []
+  postMiddlewares: [],
 };
 
 /**
@@ -90,7 +90,7 @@ const createActionHandler = (
       req.method === "POST"
         ? req.body
         : req.query.data
-        ? JSON.parse(req.query.data)
+        ? JSON.parse(<string>req.query.data)
         : {};
 
     // Get action handler before verifying the signature
@@ -114,7 +114,7 @@ const createActionHandler = (
       addon,
       data: {},
       sigData,
-      validator: getActionValidator(addon.getType(), action)
+      validator: getActionValidator(addon.getType(), action),
     };
     if (migrations[action]?.request) {
       input = migrations[action].request(migrationCtx, input);
@@ -133,7 +133,7 @@ const createActionHandler = (
     // Get a cache handler instance
     cache = cache.clone({
       prefix: addon.getId(),
-      ...addon.getDefaultCacheOptions()
+      ...addon.getDefaultCacheOptions(),
     });
 
     // Request cache helper
@@ -161,7 +161,7 @@ const createActionHandler = (
           cache,
           requestCache,
           fetch: createTaskFetch(responder, cache),
-          recaptcha: createTaskRecaptcha(responder, cache)
+          recaptcha: createTaskRecaptcha(responder, cache),
         },
         addon
       );
@@ -220,7 +220,7 @@ const createAddonRouter = (
       // TODO: Get addon props from the action handler `addon`
       res.render("index", {
         addons: [addon.getProps()],
-        options
+        options,
       });
     } else {
       // Redirect to index page
@@ -277,13 +277,13 @@ export const createMultiAddonRouter = (
       // Send all addon id's
       res.send({
         watched: "index",
-        addons: addons.map(addon => addon.getId())
+        addons: addons.map((addon) => addon.getId()),
       });
     } else {
       // TODO: Get get addon props from the action handler `addon`
       res.render("index", {
-        addons: addons.map(addon => addon.getProps()),
-        options
+        addons: addons.map((addon) => addon.getProps()),
+        options,
       });
     }
   });
@@ -292,7 +292,7 @@ export const createMultiAddonRouter = (
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",
-      addons: addons.map(addon => addon.getId())
+      addons: addons.map((addon) => addon.getId()),
     });
   });
 
@@ -361,7 +361,7 @@ export const serveAddons = (
   const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
   const app = createApp(addons, options);
 
-  const listenPromise = new Promise<void>(resolve => {
+  const listenPromise = new Promise<void>((resolve) => {
     app.listen(app.get("port"), () => {
       console.info(`Using cache: ${options.cache.engine.constructor.name}`);
       console.info(`Listening on ${app.get("port")}`);
