@@ -33,34 +33,36 @@ export type PageOptions = {
    * Open page in incognito mode.
    * Default: `true`
    */
-  incognito?: boolean;
+  incognito: boolean;
   /**
    * Apply page rules on popups
    */
-  applyRulesToPopups?: boolean;
+  applyRulesToPopups: boolean;
   /**
    * Page rule options. If this is set, setupRules will be called when the
    * page is opened.
    */
-  ruleOptions?: PageRuleOptions;
+  ruleOptions: PageRuleOptions;
 };
 
-const defaultPageOptions: PageOptions = {
+const defaultPageOptions: Partial<PageOptions> = {
   incognito: true,
   applyRulesToPopups: true
 };
 
 interface BrowserPool extends genericPool.Pool<PoolBrowser> {
-  acquirePage: (options?: PageOptions) => PromiseLike<AcquiredPage>;
+  acquirePage: (options?: Partial<PageOptions>) => PromiseLike<AcquiredPage>;
   callPage: <T>(
-    options: PageOptions | undefined,
+    options: Partial<PageOptions> | undefined,
     handler: (page: AcquiredPage) => PromiseLike<T>
   ) => PromiseLike<T>;
-  getPageContent: (options: PageOptions, url: string) => PromiseLike<string>;
+  getPageContent: (
+    options: Partial<PageOptions>,
+    url: string
+  ) => PromiseLike<string>;
 }
 
 interface AcquiredPage extends Page {
-  setupRules: (options: PageRuleOptions) => void;
   release: () => PromiseLike<void>;
 }
 
@@ -93,32 +95,21 @@ export const createPool = (
   });
 
   pool.acquirePage = async options => {
-    const opts = { ...defaultPageOptions, ...options };
+    const opts = <PageOptions>{ ...defaultPageOptions, ...options };
     const browser = await pool.acquire();
     const ingocnito = opts.incognito
       ? await browser.createIncognitoBrowserContext()
       : null;
 
     const page = <AcquiredPage>await (ingocnito ?? browser).newPage();
-    const pages = [page];
+
+    setupPageRules(page, opts.ruleOptions, opts.applyRulesToPopups);
 
     page.release = async () => {
-      for (const p of pages.reverse()) {
-        await p.close();
-      }
+      await page.close();
       if (ingocnito) await ingocnito.close();
       await pool.release(browser);
     };
-
-    page.setupRules = options => setupPageRules(page, options);
-    if (opts.ruleOptions) page.setupRules(opts.ruleOptions);
-
-    page.on("popup", async (p: AcquiredPage) => {
-      pages.push(p);
-      p.setupRules = options => setupPageRules(p, options);
-      if (opts.applyRulesToPopups && opts.ruleOptions)
-        p.setupRules(opts.ruleOptions);
-    });
 
     return page;
   };

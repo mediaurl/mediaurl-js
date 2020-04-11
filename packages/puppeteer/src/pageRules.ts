@@ -1,6 +1,12 @@
 import { ActionHandlerContext } from "@watchedcom/sdk";
 import fetch from "node-fetch";
-import { HttpMethod, Page, Request, RespondOptions } from "puppeteer-core";
+import {
+  HttpMethod,
+  Page,
+  PageCloseOptions,
+  Request,
+  RespondOptions
+} from "puppeteer-core";
 
 export type RuleAction = "allow" | "proxy" | "deny";
 
@@ -140,7 +146,7 @@ const defaultRules = {
   ]
 };
 
-export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
+export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
   const opts = <PageRuleOptions>{ ...defaultOptions, ...options };
 
   const allRules = [
@@ -289,4 +295,29 @@ export const setupPageRules = async (page: Page, options?: PageRuleOptions) => {
       }
     }
   });
+};
+
+export const setupPageRules = (
+  page: Page,
+  ruleOptions: PageRuleOptions,
+  applyRulesToPopups = true
+) => {
+  applyPageRules(page, ruleOptions);
+
+  if (applyRulesToPopups) {
+    const pages: Page[] = [];
+
+    const close = page.close;
+    page.close = async (options?: PageCloseOptions) => {
+      for (const p of pages.reverse()) {
+        await p.close();
+      }
+      await close();
+    };
+
+    page.on("popup", async (p: Page) => {
+      pages.push(p);
+      applyPageRules(p, ruleOptions);
+    });
+  }
 };
