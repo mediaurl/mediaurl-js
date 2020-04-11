@@ -13,7 +13,7 @@ components:
     BundleAddon:
       $ref: "addons.yaml#/definitions/BundleAddon"
     DirectoryItem:
-      $ref: "items.yaml#/definitions/DirectoryItem"
+      $ref: "directories.yaml#/definitions/DirectoryItem"
     MovieItem:
       $ref: "items.yaml#/definitions/MovieItem"
     SeriesItem:

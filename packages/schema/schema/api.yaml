@@ -15,14 +15,14 @@ definitions:
   AddonRequest:
     description: Get detailed infos about an addon.
     oneOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
   AddonResponse:
     oneOf:
       - $ref: "addons.yaml#/definitions/Addon"
   RepositoryRequest:
     description: Get list of addons in this repository.
     oneOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
   RepositoryResponse:
     type: array
     items:
@@ -30,7 +30,7 @@ definitions:
   DirectoryRequest:
     description: Request parameters for a directory call.
     allOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
       - type: object
         properties:
           rootId:
@@ -98,7 +98,7 @@ definitions:
   ItemRequest:
     description: Request parameters for a item request.
     allOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
       - type: object
         properties:
           type:
@@ -126,8 +126,8 @@ definitions:
       - type: "null"
   SourceRequest:
     allOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
-      - $ref: "addons.yaml#/definitions/ItemRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/ItemRequest"
       - type: object
         properties:
           episode:
@@ -205,7 +205,7 @@ definitions:
   IptvRequest:
     description: Request parameters for an IPTV directory call.
     allOf:
-      - $ref: "addons.yaml#/definitions/DefaultAddonRequest"
+      - $ref: "#/definitions/DefaultAddonRequest"
       - type: object
         properties:
           adult:

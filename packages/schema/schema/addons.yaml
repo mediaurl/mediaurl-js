@@ -167,9 +167,9 @@ definitions:
               $ref: "tasks.yaml#/definitions/CaptchaTypes"
             default: []
           defaultDirectoryOptions:
-            $ref: "items.yaml#/definitions/DirectoryOptions"
+            $ref: "directories.yaml#/definitions/DirectoryOptions"
           defaultDirectoryFeatures:
-            $ref: "items.yaml#/definitions/DirectoryFeatures"
+            $ref: "directories.yaml#/definitions/DirectoryFeatures"
           rootDirectories:
             description: |
               Predefined root directories. Here you also can define features.
