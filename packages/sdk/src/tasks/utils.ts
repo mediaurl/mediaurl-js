@@ -66,7 +66,7 @@ export const sendTask = async (
   const task: TaskRequest = {
     kind: "taskRequest",
     id: uuid4().toString(),
-    data: taskRequestData
+    data: taskRequestData,
   };
   // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
@@ -105,7 +105,7 @@ export const createTaskResponseHandler = (
   const taskHandler: RequestHandler = async (req, res) => {
     cache = cache.clone({
       prefix: addon.getId(),
-      ...addon.getDefaultCacheOptions()
+      ...addon.getDefaultCacheOptions(),
     });
 
     const task: TaskResponse = req.body;

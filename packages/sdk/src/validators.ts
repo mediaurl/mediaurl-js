@@ -50,6 +50,6 @@ export const getActionValidator = (addonType: string, action: string) => {
       } catch (error) {
         throw handleError(`${action}.response`, error);
       }
-    }
+    },
   };
 };

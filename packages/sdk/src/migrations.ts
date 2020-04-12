@@ -2,7 +2,7 @@ import {
   AddonRequest,
   AddonResponse,
   DirectoryRequest,
-  DirectoryResponse
+  DirectoryResponse,
 } from "@watchedcom/schema";
 import { BasicAddonClass } from "./addons";
 import { ActionHandlerContext } from "./interfaces";
@@ -28,7 +28,7 @@ export const migrations = {
     ) {
       output.sdkVersion = sdkVersion;
       return ctx.validator.response(output);
-    }
+    },
   },
   directory: {
     request(ctx: MigrationContext, input: DirectoryRequest) {
@@ -49,6 +49,6 @@ export const migrations = {
         o.hasMore = o.nextCursor !== null;
       }
       return ctx.validator.response(output);
-    }
-  }
+    },
+  },
 };

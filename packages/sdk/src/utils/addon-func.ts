@@ -11,7 +11,7 @@ export const makeCreateFunction = <P extends Addon, C>(opts: Opts<P, C>) => {
     return new opts.AddonClass(<P>{
       ...(opts.defaults ? opts.defaults() : null),
       ...props,
-      type: opts.type
+      type: opts.type,
     });
   };
 

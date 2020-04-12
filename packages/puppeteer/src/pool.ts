@@ -21,7 +21,7 @@ const defaultPoolOptions: PoolOptions = {
   // Number of resources to check each eviction run
   testOnBorrow: true,
   // Browser timeout
-  timeout: 30000
+  timeout: 30000,
 };
 
 interface PoolBrowser extends Browser {
@@ -47,7 +47,7 @@ export type PageOptions = {
 
 const defaultPageOptions: Partial<PageOptions> = {
   incognito: true,
-  applyRulesToPopups: true
+  applyRulesToPopups: true,
 };
 
 interface BrowserPool extends genericPool.Pool<PoolBrowser> {
@@ -83,7 +83,7 @@ export const createPool = (
     },
     validate: async (browser: PoolBrowser) => {
       return browser.poolIsValid();
-    }
+    },
   };
 
   const pool = <BrowserPool>genericPool.createPool(factory, opts);
@@ -94,7 +94,7 @@ export const createPool = (
     process.kill(process.pid, "SIGTERM");
   });
 
-  pool.acquirePage = async options => {
+  pool.acquirePage = async (options) => {
     const opts = <PageOptions>{ ...defaultPageOptions, ...options };
     const browser = await pool.acquire();
     const ingocnito = opts.incognito
@@ -124,7 +124,7 @@ export const createPool = (
   };
 
   pool.getPageContent = async (options, url) => {
-    return await pool.callPage(options, async page => {
+    return await pool.callPage(options, async (page) => {
       await page.goto(url);
       return await page.content();
     });

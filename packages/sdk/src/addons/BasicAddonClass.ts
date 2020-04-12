@@ -2,7 +2,7 @@ import {
   Addon,
   AddonRequest,
   AddonResponse,
-  AddonTypes
+  AddonTypes,
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
@@ -19,7 +19,7 @@ export abstract class BasicAddonClass<
   P extends Addon = Addon
 > {
   private handlersMap: HandlersMap = {
-    addon: async () => this.getProps()
+    addon: async () => this.getProps(),
   };
   private defaultCacheOptions: CacheOptionsParam;
 
@@ -84,7 +84,7 @@ export abstract class BasicAddonClass<
   public setDefaultCacheOptions(options: CacheOptionsParam) {
     this.defaultCacheOptions = {
       ...this.defaultCacheOptions,
-      ...options
+      ...options,
     };
     return this;
   }

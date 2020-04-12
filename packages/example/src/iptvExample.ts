@@ -4,7 +4,7 @@ import { EXAMPLE_IPTV_ITEMS } from "./exampleData";
 export const iptvExampleAddon = createIptvAddon({
   id: "watched-iptv-worker-example",
   name: "IPTV Example Addon",
-  version: "1.0.0"
+  version: "1.0.0",
 });
 
 iptvExampleAddon.registerActionHandler("iptv", async (input, ctx) => {

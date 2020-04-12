@@ -24,7 +24,7 @@ export const init = async (languages: string[], options?: InitOptions) => {
       new LocizeBackend({
         projectId: <string>process.env.LOCIZE_PROJECTID,
         apiKey: process.env.LOCIZE_API_KEY,
-        version: process.env.LOCIZE_VERSION ?? "latest"
+        version: process.env.LOCIZE_VERSION ?? "latest",
       })
     );
   } else {
@@ -32,7 +32,7 @@ export const init = async (languages: string[], options?: InitOptions) => {
       new FsBackend(null, {
         loadPath: path.join("locales", "{{lng}}", "{{ns}}.json"),
         addPath: path.join("locales", "{{lng}}", "{{ns}}.missing.json"),
-        jsonIndent: 2
+        jsonIndent: 2,
       })
     );
   }
@@ -44,7 +44,7 @@ export const init = async (languages: string[], options?: InitOptions) => {
     load: "languageOnly",
     saveMissing: true,
     updateMissing: true,
-    ...options
+    ...options,
   });
 
   for (const lng of languages) {

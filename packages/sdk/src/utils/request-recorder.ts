@@ -14,10 +14,10 @@ export type RecordData = {
   output: any;
 };
 
-const inspect = data =>
+const inspect = (data) =>
   util.inspect(data, {
     compact: false,
-    depth: null
+    depth: null,
   });
 
 const getFile = (recordPath: string) => {
@@ -105,7 +105,7 @@ export const replayRequests = async (
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
       .expect(data.statusCode)
-      .expect(res => {
+      .expect((res) => {
         // Comparing of string-only JSON responses is buggy in supertest
         if (typeof data.output === "function") {
           const r = data.output(res);

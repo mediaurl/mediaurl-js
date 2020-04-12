@@ -14,7 +14,7 @@ export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
     const task: TaskFetchRequest = {
       type: "fetch",
       url,
-      params
+      params,
     };
     const response = <TaskFetchResponse>(
       await sendTask(responder, cache, task, timeout)
@@ -25,7 +25,7 @@ export const createTaskFetch = (responder: Responder, cache: CacheHandler) => {
     const init: ResponseInit = {
       headers: response.headers,
       status: response.status,
-      url: response.url
+      url: response.url,
     };
 
     let body: string | ArrayBuffer | undefined = undefined;

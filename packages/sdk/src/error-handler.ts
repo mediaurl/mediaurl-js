@@ -13,7 +13,7 @@ export const errorHandler: express.ErrorRequestHandler = (
 
   res.status(error.statusCode || 500).send({
     error: error.message || error,
-    stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+    stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
   });
 
   next();
