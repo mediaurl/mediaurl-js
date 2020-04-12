@@ -1,6 +1,6 @@
 {
   "name": "watched-addon-example",
-  "version": "0.26.5",
+  "version": "0.26.6",
   "main": "dist",
   "private": true,
   "scripts": {
@@ -11,12 +11,12 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@watchedcom/sdk": "^0.26.5",
+    "@watchedcom/sdk": "^0.26.6",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",
-    "@watchedcom/test": "^0.26.5",
+    "@watchedcom/test": "^0.26.6",
     "jest": "^25.2.4",
     "ts-jest": "^25.3.0",
     "ts-node-dev": "^1.0.0-pre.44",
