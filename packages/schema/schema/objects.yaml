@@ -12,8 +12,7 @@ definitions:
         $ref: "general.yaml#/definitions/GenericId"
       name:
         description: Optional informations about this subtitle.
-        oneOf:
-          - $ref: "general.yaml#/definitions/TranslatedText"
+        type: string
       language:
         $ref: "general.yaml#/definitions/Language"
       type:
@@ -108,7 +107,7 @@ definitions:
     properties:
       name:
         description: Name of this resolved URL. Will be displayed in player.
-        $ref: "general.yaml#/definitions/TranslatedText"
+        type: string
       quality:
         description: Quality of this URL. Will be displayed in video player settings.
         type: string
