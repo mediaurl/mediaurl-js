@@ -119,6 +119,10 @@ export interface IServeAddonsOptions {
    */
   requestRecorderPath: null | string;
   /**
+   * Whenever the app is in replay mode. This will mock the ctx.fetch function.
+   */
+  replayMode: boolean;
+  /**
    * Express error handler
    */
   errorHandler: express.ErrorRequestHandler;

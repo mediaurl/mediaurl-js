@@ -22,7 +22,11 @@ import {
   createTaskResponseHandler,
   Responder,
 } from "./tasks";
-import { RecordData, RequestRecorder } from "./utils/request-recorder";
+import {
+  RecordData,
+  RequestRecorder,
+  setupRequestRecorder,
+} from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
@@ -36,6 +40,7 @@ const defaultServeOpts: IServeAddonsOptions = {
   singleMode: false,
   logRequests: true,
   requestRecorderPath: null,
+  replayMode: false,
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
   cache: new CacheHandler(
@@ -64,12 +69,9 @@ export class SilentError extends Error {
   }
 }
 
-let requestRecorder: RequestRecorder;
-
 const createActionHandler = (
   addon: BasicAddonClass,
-  cache: CacheHandler,
-  requestRecorderPath: null | string
+  opts: IServeAddonsOptions
 ) => {
   try {
     addon.validateAddon();
@@ -79,9 +81,8 @@ const createActionHandler = (
     );
   }
 
-  if (requestRecorderPath && !requestRecorder) {
-    requestRecorder = new RequestRecorder(requestRecorderPath);
-    console.warn(`Logging requests to ${requestRecorder.path}`);
+  if (opts.requestRecorderPath) {
+    setupRequestRecorder(opts.requestRecorderPath);
   }
 
   const actionHandler: express.RequestHandler = async (req, res) => {
@@ -122,16 +123,8 @@ const createActionHandler = (
       input = migrationCtx.validator.request(input);
     }
 
-    // Store request data for recording
-    const record: Partial<RecordData> = {};
-    if (requestRecorder) {
-      record.addon = addon.getId();
-      record.action = action;
-      record.input = cloneDeep(input);
-    }
-
     // Get a cache handler instance
-    cache = cache.clone({
+    const cache = opts.cache.clone({
       prefix: addon.getId(),
       ...addon.getDefaultCacheOptions(),
     });
@@ -144,10 +137,23 @@ const createActionHandler = (
       inlineCache = await c.inline(key);
     };
 
+    // Store request data for recording
+    const record: null | Partial<RecordData> = opts.requestRecorderPath
+      ? {}
+      : null;
+    if (record) {
+      record.addon = addon.getId();
+      record.action = action;
+      record.input = cloneDeep(input);
+    }
+
     // Responder object
-    const responder = new Responder(async (statusCode: number, body: any) => {
-      res.status(statusCode).json(body);
-    });
+    const responder = new Responder(
+      record,
+      async (statusCode: number, body: any) => {
+        res.status(statusCode).json(body);
+      }
+    );
 
     // Handle the request
     let statusCode = 200;
@@ -160,8 +166,8 @@ const createActionHandler = (
           sig: sigData,
           cache,
           requestCache,
-          fetch: createTaskFetch(responder, cache),
-          recaptcha: createTaskRecaptcha(responder, cache),
+          fetch: createTaskFetch(opts, responder, cache),
+          recaptcha: createTaskRecaptcha(opts, responder, cache),
         },
         addon
       );
@@ -193,13 +199,11 @@ const createActionHandler = (
       }
     }
 
-    if (requestRecorder) {
-      record.statusCode = statusCode;
-      record.output = output;
-      await requestRecorder.write(<RecordData>record);
-    }
-
-    responder.send(statusCode, output);
+    const type =
+      typeof output === "object" && output.kind === "taskRequest"
+        ? "task"
+        : "response";
+    responder.send(type, statusCode, output);
   };
 
   return actionHandler;
@@ -228,11 +232,7 @@ const createAddonRouter = (
     }
   });
 
-  const actionHandler = createActionHandler(
-    addon,
-    options.cache,
-    options.requestRecorderPath
-  );
+  const actionHandler = createActionHandler(addon, options);
 
   const taskHandler = createTaskResponseHandler(addon, options.cache);
 
