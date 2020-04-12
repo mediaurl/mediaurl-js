@@ -200,7 +200,7 @@ const createActionHandler = (
     }
 
     const type =
-      typeof output === "object" && output.kind === "taskRequest"
+      typeof output === "object" && output?.kind === "taskRequest"
         ? "task"
         : "response";
     responder.send(type, statusCode, output);

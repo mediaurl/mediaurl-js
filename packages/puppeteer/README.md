@@ -17,17 +17,13 @@ npm i --save puppetter
 Inside your addon, add this code. In this example, two `puppeteer-extra` plugins are used.
 
 ```typescript
-import { createPool } from "@watchedcom/puppeteer";
+import { setupPageRules } from "@watchedcom/puppeteer";
 import puppeteer from "puppeteer-extra";
 import AnonymizeUserAgentPlugin from "puppeteer-extra-plugin-anonymize-ua";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 puppeteer.use(StealthPlugin({}));
 puppeteer.use(AnonymizeUserAgentPlugin());
-
-const pool = createPool(async () => {
-  return puppeteer.launch();
-});
 ```
 
 ## Usage
@@ -40,32 +36,30 @@ addon.registerActionHandler("item", async (input, ctx) => {
     ctx,
     rules: [
       { url: [input.url, "example.com/api"], action: "allow" },
-      { url: "example.com/js", action: "allow", cache: true }
+      { url: "example.com/js", action: "allow", cache: true },
     ],
-    blockPopups: true
+    blockPopups: true,
   };
 
-  // The traditional way
-  const page = await pool.acquirePage(ruleOptions);
+  // Get a browser instance
+  const browser = await puppeteer.launch();
   try {
+    const page = (await browser.pages())[0];
+
+    // Setup the page rules
+    setupPageRules(page, ruleOptions);
+
+    // Open the website and return it's content
     await page.open(input.url);
     return await page.content();
   } finally {
-    await page.release();
+    // Close the browser
+    await browser.close();
   }
-
-  // Helper function which handles aquire and release
-  return await pool.callPage(options, async page => {
-    await page.goto(input.url);
-    return await page.content();
-  });
-
-  // Helper function which returns the page contents
-  return await pool.getPageContent(options, input.url);
 });
 ```
 
-## Callbacks inside page rules
+### Callbacks inside page rules
 
 To catch one specific URL and return it from an action handler, the following recipe might help you:
 
@@ -75,25 +69,35 @@ addon.registerActionHandler("resolve", async (input, ctx) => {
   // See the documentation of this function for more infos.
   const p = outerPromise(5000);
 
-  const options = {
-    ctx,
-    rules: [
-      { url: [input.url, "example.com/api"], action: "allow" },
-      { url: "example.com/js", action: "allow", cache: true },
-      {
-        resourceType: "media",
-        url: "example.com/mediapath/",
-        action: async request => {
-          const url = await request.url();
-          p.resolve(url);
-        }
-      }
-    ],
-    blockPopups: true
-  };
+  const pageRules = [
+    { url: [input.url, "example.com/api"], action: "allow" },
+    { url: "example.com/js", action: "allow", cache: true },
+    {
+      resourceType: "media",
+      url: "example.com/mediapath/",
+      action: async (request) => {
+        // This action handler will be called during page load
+        const url = await request.url();
+        p.resolve(url);
+      },
+    },
+  ];
 
-  // Load the page
-  await pool.getPageContent(options, input.url);
+  // Get a browser instance
+  const browser = await puppeteer.launch();
+  try {
+    const page = (await browser.pages())[0];
+    setupPageRules(page, ruleOptions);
+
+    // When calling open, the action function will be triggered
+    await page.open(input.url);
+
+    // In case the page was loaded without calling the action
+    // function, reject the promise
+    p.promise.reject(new Error("Action handler was not called"));
+  } finally {
+    await browser.close();
+  }
 
   // Wait for the promise
   return await p.promise;

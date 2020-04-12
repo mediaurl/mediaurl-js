@@ -9,7 +9,6 @@
   "dependencies": {
     "@types/puppeteer-core": "^2.0.0",
     "@watchedcom/sdk": "^0.26.6",
-    "generic-pool": "^3.7.1",
     "puppeteer-core": "^2.1.1"
   },
   "devDependencies": {
