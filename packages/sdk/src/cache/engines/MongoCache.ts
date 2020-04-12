@@ -1,8 +1,8 @@
 import * as mongodb from "mongodb";
 import { BasicCache } from "./BasicCache";
 
-// 3 days
-const MAX_TTL = 259200000;
+// 30 days
+const MAX_TTL = 1000 * 60 * 60 * 24 * 30;
 const COLLECTION_NAME = "_watched-cache";
 const PAYLOAD_FIELD = "c";
 const DATE_FIELD = "_d";
@@ -49,8 +49,8 @@ export class MongoCache extends BasicCache {
   }
 
   public async set(key, value, ttl) {
-    if (ttl > MAX_TTL) {
-      console.warn(`Max ttl value is: ${MAX_TTL} ms`);
+    if (ttl > MAX_TTL && ttl !== Infinity) {
+      console.warn(`Max ttl value is: ${MAX_TTL} ms. Use Infinity instead`);
     }
 
     await (await this.collection).updateOne(
@@ -61,7 +61,8 @@ export class MongoCache extends BasicCache {
         $set: {
           ttl,
           [PAYLOAD_FIELD]: value,
-          [DATE_FIELD]: new Date()
+          /** If date field is not type of Date, then it will not be removed */
+          [DATE_FIELD]: ttl === Infinity ? new Date() : undefined
         }
       },
       { upsert: true }
