@@ -14,6 +14,12 @@ export type ActionFn = (
   request: Request
 ) => PromiseLike<RuleAction | RespondOptions | undefined | null | void>;
 
+export type BeforeResponseFn = (
+  request: Request,
+  response: RespondOptions,
+  fromCache: boolean
+) => PromiseLike<RespondOptions>;
+
 export type Rule = {
   /**
    * Resource type where this rule should be triggered.
@@ -52,10 +58,16 @@ export type Rule = {
    */
   cache: boolean;
   /**
+   * This function wil be called before sending the response back to the browser.
+   * Should return a valid `RespondOptions` (for eg. the input parameter `response`),
+   * or `null` to abort the request.
+   */
+  beforeResponse?: BeforeResponseFn;
+  /**
    * Surpress all log messages. When not set, the default value from
    * 'options.silentByDefault' will be used.
    */
-  silent: boolean | undefined;
+  silent?: boolean;
 };
 
 const defaultRule: Rule = {
@@ -63,8 +75,7 @@ const defaultRule: Rule = {
   method: null,
   url: null,
   action: "deny",
-  cache: false,
-  silent: undefined
+  cache: false
 };
 
 export type PageRuleOptions = {
@@ -130,6 +141,7 @@ const compileRules = (rules: Partial<Rule>[], options: PageRuleOptions) =>
       },
       action: rule.action,
       cache: rule.cache,
+      beforeResponse: rule.beforeResponse,
       silent: rule.silent === undefined ? options.silentByDefault : rule.silent
     };
   });
@@ -170,115 +182,131 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
 
     try {
       const rule = allRules.find(rule => rule.check(resourceType, method, url));
-      if (!rule)
+      if (!rule) {
         throw new Error(`Found no rule for [${resourceType}] ${method} ${url}`);
+      }
 
       let response: RespondOptions | undefined;
+      let fromCache: boolean;
       const cacheKey = rule.cache ? `${method}:${url}` : "";
       if (rule.cache) {
         response = await opts.ctx.cache.get(cacheKey);
         if (response) {
+          fromCache = true;
           if ((<any>response.body)?.type === "Buffer") {
             response.body = Buffer.from(<any>response.body);
           }
           if (!rule.silent) {
             console.info(`CACHED: [${resourceType}] ${method} ${url}`);
           }
-          sent = true;
-          request.respond(response);
-          return;
         }
       }
 
-      let action: RuleAction | "noop" | undefined;
-      if (typeof rule.action === "function") {
-        const res = await rule.action(request);
-        if (typeof res === "string") {
-          action = res;
-        } else if (res) {
-          action = "noop";
-          response = res;
-        }
-      } else {
-        action = rule.action;
-      }
+      if (response === undefined) {
+        fromCache = false;
 
-      switch (action ?? opts.defaultAction) {
-        default:
-          throw new Error(`Unknown rule action ${action}`);
-        case "noop":
-          if (response === undefined) {
-            throw new Error("Response is not set");
+        let action: RuleAction | "noop" | undefined;
+        if (typeof rule.action === "function") {
+          const res = await rule.action(request);
+          if (typeof res === "string") {
+            action = res;
+          } else if (res) {
+            action = "noop";
+            response = res;
           }
-          break;
-        case "allow": {
-          if (!rule.silent) {
-            console.info(`ALLOW: [${resourceType}] ${method} ${url}`);
+        } else {
+          action = rule.action;
+        }
+
+        switch (action ?? opts.defaultAction) {
+          default:
+            throw new Error(`Unknown rule action ${action}`);
+          case "noop":
+            if (response === undefined) {
+              throw new Error("Response is not set");
+            }
+            break;
+          case "allow": {
+            if (!rule.silent) {
+              console.info(`ALLOW: [${resourceType}] ${method} ${url}`);
+            }
+            if (!rule.cache) {
+              sent = true;
+              request.continue();
+              return;
+            }
+            const res = await fetch(url, {
+              method,
+              headers: request.headers(),
+              body: request.postData(),
+              redirect: "follow"
+            });
+            const headers = {};
+            res.headers.forEach((value, key) => {
+              headers[key] = value;
+            });
+            delete headers["content-length"];
+            delete headers["connection"];
+            delete headers["accept-ranges"];
+            response = {
+              status: res.status,
+              headers,
+              body: await res.buffer(),
+              contentType: headers["content-type"]
+            };
+            break;
           }
-          if (!rule.cache) {
+          case "proxy": {
+            if (!rule.silent) {
+              console.info(`PROXY: [${resourceType}] ${method} ${url}`);
+            }
+            const res = await opts.ctx.fetch(url, {
+              method: <any>method,
+              headers: request.headers(),
+              body: request.postData(),
+              redirect: "follow"
+            });
+            const headers = {};
+            res.headers.forEach((value, name) => {
+              headers[name] = value;
+            });
+            response = {
+              status: res.status,
+              headers,
+              body: await res.buffer(),
+              contentType: res.headers?.["content-type"]
+            };
+            break;
+          }
+          case "deny":
+            if (!rule.silent) {
+              console.info(`DENY: [${resourceType}] ${method} ${url}`);
+            }
             sent = true;
-            request.continue();
+            await request.abort();
             return;
-          }
-          const res = await fetch(url, {
-            method,
-            headers: request.headers(),
-            body: request.postData(),
-            redirect: "follow"
-          });
-          const headers = {};
-          res.headers.forEach((value, key) => {
-            headers[key] = value;
-          });
-          delete headers["content-length"];
-          delete headers["connection"];
-          delete headers["accept-ranges"];
-          response = {
-            status: res.status,
-            headers,
-            body: await res.buffer(),
-            contentType: headers["content-type"]
-          };
-          break;
         }
-        case "proxy": {
-          if (!rule.silent) {
-            console.info(`PROXY: [${resourceType}] ${method} ${url}`);
-          }
-          const res = await opts.ctx.fetch(url, {
-            method: <any>method,
-            headers: request.headers(),
-            body: request.postData(),
-            redirect: "follow"
+
+        if (rule.cache) {
+          await opts.ctx.cache.set(cacheKey, {
+            ...response,
+            body: Buffer.isBuffer(response.body)
+              ? response.body.toJSON()
+              : response.body
           });
-          const headers = {};
-          res.headers.forEach((value, name) => {
-            headers[name] = value;
-          });
-          response = {
-            status: res.status,
-            headers,
-            body: await res.buffer(),
-            contentType: res.headers?.["content-type"]
-          };
-          break;
         }
-        case "deny":
+      }
+
+      if (rule.beforeResponse) {
+        response = await rule.beforeResponse(request, response, true);
+        if (response === null) {
           if (!rule.silent) {
             console.info(`DENY: [${resourceType}] ${method} ${url}`);
           }
           sent = true;
           await request.abort();
           return;
-      }
-
-      if (rule.cache) {
-        await opts.ctx.cache.set(cacheKey, {
-          ...response,
-          body: Buffer.isBuffer(response.body)
-            ? response.body.toJSON()
-            : response.body
-        });
+        }
       }
 
       sent = true;

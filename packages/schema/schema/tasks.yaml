@@ -54,7 +54,7 @@ definitions:
       data:
         description: Base64 encoded raw data.
         type: string
-    required: [type, status]
+    required: [type]
   # recaptcha
   TaskRecaptchaRequest:
     type: object

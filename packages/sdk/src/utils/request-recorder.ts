@@ -87,6 +87,20 @@ addRecord(${inspect(data)});
   }
 }
 
+let requestRecorder: RequestRecorder;
+
+export const setupRequestRecorder = (path: string) => {
+  if (!requestRecorder) {
+    requestRecorder = new RequestRecorder(path);
+    console.warn(`Logging requests to ${requestRecorder.path}`);
+  }
+};
+
+export const writeRecordedRequest = async (record: RecordData) => {
+  if (!requestRecorder) throw new Error("Request recorder is not set up");
+  await requestRecorder.write(record);
+};
+
 export const replayRequests = async (
   addons: BasicAddonClass[],
   recordPath: string,
@@ -96,17 +110,17 @@ export const replayRequests = async (
   const request = await import("supertest");
   const recordData: RecordData[] = await import(getPath(recordPath));
 
-  const app = request(createApp(addons));
+  const app = request(createApp(addons, { replayMode: true }));
   for (const data of recordData) {
-    const id = data.id ?? (<any>data).i; // LEGACY: Remove data.i
-    if (ids && !ids.includes(id)) continue;
-    if (!silent) log("Replay", id, data);
+    if (ids && !ids.includes(data.id)) continue;
+    if (!silent) log("Replay", data.id, data);
     await app
       .post(`/${data.addon}/${data.action}.watched`)
       .send(data.input)
       .expect(data.statusCode)
       .expect(res => {
-        // Comparing of string-only JSON responses is buggy in supertest
+        // Comparing of string-only JSON responses is buggy in supertest,
+        // so let's use lodash.isEqual
         if (typeof data.output === "function") {
           const r = data.output(res);
           if (r !== undefined && !r) {

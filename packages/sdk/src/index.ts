@@ -7,7 +7,8 @@ export {
   createMultiAddonRouter,
   createSingleAddonRouter,
   ServeAddonOptions,
-  serveAddons
+  serveAddons,
+  SilentError
 } from "./server";
 export { RecordData, replayRequests } from "./utils/request-recorder";
 export { translateDeep } from "./utils/translate-deep";

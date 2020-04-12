@@ -270,8 +270,7 @@ definitions:
               $ref: "general.yaml#/definitions/UnixTimestamp"
             name:
               description: Name of the show.
-              oneOf:
-                - $ref: "general.yaml#/definitions/TranslatedText"
+              type: string
             description:
               $ref: "general.yaml#/definitions/TranslatedText"
             categories:

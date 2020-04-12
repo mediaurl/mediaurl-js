@@ -3,6 +3,7 @@ import {
   TaskRecaptchaResponse
 } from "@watchedcom/schema";
 import { CacheHandler } from "../cache";
+import { IServeAddonsOptions } from "../interfaces";
 import { Responder, sendTask } from "./utils";
 
 export type RecaptchaFn = (
@@ -16,6 +17,7 @@ const defaults: Partial<TaskRecaptchaRequest> = {
 };
 
 export const createTaskRecaptcha = (
+  opts: IServeAddonsOptions,
   responder: Responder,
   cache: CacheHandler
 ) => {
@@ -26,7 +28,7 @@ export const createTaskRecaptcha = (
       type: "recaptcha"
     };
     const res = <TaskRecaptchaResponse>(
-      await sendTask(responder, cache, task, timeout)
+      await sendTask(opts, responder, cache, task, timeout)
     );
     return res.token;
   };

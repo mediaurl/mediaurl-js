@@ -4,21 +4,31 @@ import { RequestHandler } from "express";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
 import { CacheHandler, IgnoreCacheError } from "../cache";
+import { IServeAddonsOptions } from "../interfaces";
+import { RecordData, writeRecordedRequest } from "../utils/request-recorder";
 
 type TransportFn = (statusCode: number, body: any) => Promise<any>;
 
 export class Responder {
+  record: null | Partial<RecordData>;
   queue: string[];
   emitter: EventEmitter;
   transport: TransportFn;
 
-  constructor(fn: TransportFn) {
+  constructor(record: null | Partial<RecordData>, fn: TransportFn) {
     this.queue = [];
     this.emitter = new EventEmitter();
+
+    this.record = record;
     this.setTransport(fn);
   }
 
-  async send(statusCode: number, body: any, queueTimeout = 30 * 1000) {
+  async send(
+    type: "response" | "task",
+    statusCode: number,
+    body: any,
+    queueTimeout = 30 * 1000
+  ) {
     const id = uuid4().toString();
     this.queue.push(id);
     if (this.queue[0] !== id) {
@@ -39,16 +49,19 @@ export class Responder {
         }, queueTimeout);
       });
     }
-    let res;
+    if (this.record && type === "response") {
+      this.record.statusCode = statusCode;
+      this.record.output = body;
+      await writeRecordedRequest(<RecordData>this.record);
+    }
     try {
-      res = await this.transport(statusCode, body);
+      await this.transport(statusCode, body);
     } finally {
       if (this.queue[0] !== id) {
         throw new Error(`First queue element is not the current id`);
       }
       this.queue.shift();
     }
-    return res;
   }
 
   setTransport(fn: TransportFn) {
@@ -58,11 +71,18 @@ export class Responder {
 }
 
 export const sendTask = async (
+  opts: IServeAddonsOptions,
   responder: Responder,
   cache: CacheHandler,
   taskRequestData: TaskRequest["data"],
   timeout = 30 * 1000
 ): Promise<TaskResponse["data"]> => {
+  if (opts.replayMode) {
+    throw new Error(
+      `Can not run client task "${taskRequestData.type}" in replay mode`
+    );
+  }
+
   const task: TaskRequest = {
     kind: "taskRequest",
     id: uuid4().toString(),
@@ -71,7 +91,7 @@ export const sendTask = async (
   // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait-${task.id}`, "1", timeout * 2);
-  await responder.send(200, task);
+  await responder.send("task", 200, task);
 
   // Wait for the response
   const data: any = await cache.waitKey(
