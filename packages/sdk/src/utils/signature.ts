@@ -20,7 +20,7 @@ export const validateSignature = (sig: string): any => {
   try {
     JSON.parse(decodedSig);
   } catch {
-    throw new Error("Malformed sig field");
+    throw new Error("Malformed WATCHED signature");
   }
 
   const { data, signature } = JSON.parse(decodedSig);
@@ -29,12 +29,12 @@ export const validateSignature = (sig: string): any => {
   verifier.update(data);
   const isValid = verifier.verify(publicKey, signature, "base64");
   if (!isValid) {
-    throw new Error("Invalid signature");
+    throw new Error("Invalid WATCHED signature");
   }
 
   const result = JSON.parse(data);
   if (new Date(result.validUntil) < new Date()) {
-    throw new Error("Signature data timed out");
+    throw new Error("WATCHED signature timed out");
   }
 
   return result;
