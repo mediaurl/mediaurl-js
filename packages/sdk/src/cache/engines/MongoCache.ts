@@ -1,11 +1,10 @@
 import * as mongodb from "mongodb";
 import { BasicCache } from "./BasicCache";
 
-// 30 days
-const MAX_TTL = 1000 * 60 * 60 * 24 * 30;
 const COLLECTION_NAME = "_watched-cache";
 const PAYLOAD_FIELD = "c";
-const DATE_FIELD = "_d";
+/** Expiration date */
+const DATE_FIELD = "d";
 
 export class MongoCache extends BasicCache {
   private collection: Promise<mongodb.Collection>;
@@ -21,7 +20,7 @@ export class MongoCache extends BasicCache {
         {
           [DATE_FIELD]: 1
         },
-        { expireAfterSeconds: MAX_TTL }
+        { expireAfterSeconds: 0 }
       );
     });
   }
@@ -40,29 +39,27 @@ export class MongoCache extends BasicCache {
     return await (await this.collection).findOne({ _id: key }).then(resp => {
       if (!resp) return;
 
-      const ttlCondition =
-        (resp.ttl && new Date(+resp[DATE_FIELD] + resp.ttl) > new Date()) ||
-        resp.ttl === undefined;
+      const expired = !!(resp?.[DATE_FIELD] < new Date());
 
-      return ttlCondition ? resp?.[PAYLOAD_FIELD] : undefined;
+      if (expired) {
+        return;
+      }
+
+      return resp?.[PAYLOAD_FIELD];
     });
   }
 
   public async set(key, value, ttl) {
-    if (ttl > MAX_TTL && ttl !== Infinity) {
-      console.warn(`Max ttl value is: ${MAX_TTL} ms. Use Infinity instead`);
-    }
-
     await (await this.collection).updateOne(
       {
         _id: key
       },
       {
         $set: {
-          ttl,
           [PAYLOAD_FIELD]: value,
           /** If date field is not type of Date, then it will not be removed */
-          [DATE_FIELD]: ttl !== Infinity ? new Date() : undefined
+          [DATE_FIELD]:
+            ttl !== Infinity ? new Date(+new Date() + ttl) : undefined
         }
       },
       { upsert: true }
