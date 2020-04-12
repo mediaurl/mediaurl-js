@@ -62,7 +62,7 @@ export class MongoCache extends BasicCache {
           ttl,
           [PAYLOAD_FIELD]: value,
           /** If date field is not type of Date, then it will not be removed */
-          [DATE_FIELD]: ttl === Infinity ? new Date() : undefined
+          [DATE_FIELD]: ttl !== Infinity ? new Date() : undefined
         }
       },
       { upsert: true }
