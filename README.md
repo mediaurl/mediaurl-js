@@ -22,8 +22,10 @@ npm run develop
 
 ### Test with the WATCHED app
 
-1. Open the WATCHED app on your mobile and go to the `Add Addon` screen, where you can enter a URL.
-2. Enter the IP address of your computer. For example `192.168.1.123`, or with port number `192.168.1.123:1234`. On local IP addresses, the port `3000` as well as some other default ports are omitted.
+1. Open the WATCHED app, go to settings and make sure the "Developer mode" is enabled.
+2. Go to the addon index and deactivate the bundle addon if there is one active.
+3. Go to the `Add Addon` screen, where you can enter an URL.
+4. Enter the IP address of your computer. For example `192.168.1.123`, or with port number `192.168.1.123:1234`. On local IP addresses, the port `3000` as well as some other default ports are omitted.
 
 ### Record and replay requests
 
@@ -53,10 +55,8 @@ Create a test case file, for example `src/record.test.ts`:
 import { replayRequests } from "@watchedcom/sdk";
 import { yourAddon } from "./index";
 
-test(`Replay recorded actions`, done => {
-  replayRequests([yourAddon], "test-session.record.js")
-    .then(done)
-    .catch(done);
+test(`Replay recorded actions`, (done) => {
+  replayRequests([yourAddon], "test-session.record.js").then(done).catch(done);
 });
 ```
 
