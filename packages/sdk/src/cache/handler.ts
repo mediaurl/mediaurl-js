@@ -3,7 +3,7 @@ import { CacheFoundError, IgnoreCacheError, WaitTimedOut } from "./errors";
 import {
   CacheOptions,
   CacheOptionsParam,
-  InlineCacheContext,
+  InlineCacheContext
 } from "./interfaces";
 
 const defaultCacheOptions: CacheOptions = {
@@ -14,7 +14,7 @@ const defaultCacheOptions: CacheOptions = {
   simultanLockTimeout: 30 * 1000,
   simultanLockTimeoutSleep: 250,
   prefix: null,
-  disableGet: false,
+  disableGet: false
 };
 
 export class CacheHandler {
@@ -23,21 +23,21 @@ export class CacheHandler {
   constructor(public readonly engine: BasicCache, options?: CacheOptionsParam) {
     this.options = {
       ...defaultCacheOptions,
-      ...options,
+      ...options
     };
   }
 
   public clone(options?: CacheOptionsParam) {
     return new CacheHandler(this.engine, {
       ...this.options,
-      ...options,
+      ...options
     });
   }
 
   public setOptions(options: CacheOptionsParam) {
     this.options = {
       ...this.options,
-      ...options,
+      ...options
     };
   }
 
@@ -244,7 +244,7 @@ export class CacheHandler {
       ) => {
         await this.setError(key, { error: error?.message || error }, errorTtl);
         await releaseLock();
-      },
+      }
     };
   }
 
@@ -268,7 +268,7 @@ export class CacheHandler {
       if (timeout !== Infinity && Date.now() - t > timeout) {
         throw new WaitTimedOut("Wait timed out");
       }
-      await new Promise((resolve) => setTimeout(resolve, sleep));
+      await new Promise(resolve => setTimeout(resolve, sleep));
     }
   }
 }

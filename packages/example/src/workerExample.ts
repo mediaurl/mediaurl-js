@@ -2,13 +2,13 @@ import {
   createWorkerAddon,
   ItemRequest,
   SourceRequest,
-  SubtitleRequest,
+  SubtitleRequest
 } from "@watchedcom/sdk";
 import * as _ from "lodash";
 import {
   EXAMPLE_ITEMS,
   EXAMPLE_SOURCES,
-  EXAMPLE_SUBTITLES,
+  EXAMPLE_SUBTITLES
 } from "./exampleData";
 
 export const workerExampleAddon = createWorkerAddon({
@@ -22,25 +22,25 @@ export const workerExampleAddon = createWorkerAddon({
         search: { enabled: true },
         sort: [
           { id: "name", name: "Name" },
-          { id: "year", name: "Year" },
-        ],
-      },
-    },
+          { id: "year", name: "Year" }
+        ]
+      }
+    }
   ],
   dashboards: [
     {}, // Root directory
     {
       id: "by-year",
       name: "By year",
-      args: { sort: "year" },
-    },
-  ],
+      args: { sort: "year" }
+    }
+  ]
 });
 
 workerExampleAddon.registerActionHandler("directory", async (input, ctx) => {
   let items = _.sortBy(EXAMPLE_ITEMS, input.sort ?? "name");
   if (input.search) {
-    items = items.filter((item) =>
+    items = items.filter(item =>
       String(item.name)
         .toLocaleLowerCase()
         .includes(input.search.toLocaleLowerCase())
@@ -48,7 +48,7 @@ workerExampleAddon.registerActionHandler("directory", async (input, ctx) => {
   }
   return {
     items,
-    nextCursor: null,
+    nextCursor: null
   };
 });
 
@@ -57,7 +57,7 @@ workerExampleAddon.registerActionHandler(
   async (input: ItemRequest, ctx) => {
     const id = input.ids["watched-worker-example"];
     const item = EXAMPLE_ITEMS.find(
-      (item) => item.ids["watched-worker-example"] === id
+      item => item.ids["watched-worker-example"] === id
     );
     if (!item) throw new Error("Not found");
     return item;
@@ -94,7 +94,7 @@ workerExampleAddon.addResolveHandler(
     if (!input.url.includes("?chain=1")) {
       return {
         url: input.url += "?chain=1",
-        resolveAgain: true,
+        resolveAgain: true
       };
     }
     return input.url;

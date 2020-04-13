@@ -1,6 +1,6 @@
 import {
   TaskRecaptchaRequest,
-  TaskRecaptchaResponse,
+  TaskRecaptchaResponse
 } from "@watchedcom/schema";
 import { CacheHandler } from "../cache";
 import { IServeAddonsOptions } from "../interfaces";
@@ -13,7 +13,7 @@ export type RecaptchaFn = (
 
 const defaults: Partial<TaskRecaptchaRequest> = {
   version: 2,
-  action: "",
+  action: ""
 };
 
 export const createTaskRecaptcha = (
@@ -25,7 +25,7 @@ export const createTaskRecaptcha = (
     const task = <TaskRecaptchaRequest>{
       ...defaults,
       ...data,
-      type: "recaptcha",
+      type: "recaptcha"
     };
     const res = <TaskRecaptchaResponse>(
       await sendTask(opts, responder, cache, task, timeout)

@@ -3,7 +3,7 @@ import {
   AddonRequest,
   RepositoryAddon as RepositoryAddonProps,
   RepositoryAddonActions,
-  RepositoryRequest,
+  RepositoryRequest
 } from "@watchedcom/schema";
 import fetch from "node-fetch";
 import { ActionHandlerContext, ActionHandlers } from "../interfaces";
@@ -51,8 +51,8 @@ export class RepositoryAddonClass extends BasicAddonClass<
   ) {
     await ctx.requestCache([
       this.getVersion(),
-      ...this.addons.map((a) => [a.getId(), a.getVersion()]),
-      ...this.urls,
+      ...this.addons.map(a => [a.getId(), a.getVersion()]),
+      ...this.urls
     ]);
 
     const result: Addon[] = [];
@@ -69,8 +69,8 @@ export class RepositoryAddonClass extends BasicAddonClass<
               ...ctx,
               cache: ctx.cache.clone({
                 prefix: addon.getId(),
-                ...addon.getDefaultCacheOptions(),
-              }),
+                ...addon.getDefaultCacheOptions()
+              })
             },
             addon
           );
@@ -91,7 +91,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
           const res = await fetch(`${url.replace(/\/$/, "")}/addon`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(input),
+            body: JSON.stringify(input)
           });
           if (!res.ok) {
             throw new Error(`Get status code ${res.status}`);
@@ -135,5 +135,5 @@ export const createRepositoryAddon = makeCreateFunction<
   RepositoryAddonClass
 >({
   AddonClass: RepositoryAddonClass,
-  type: "repository",
+  type: "repository"
 });

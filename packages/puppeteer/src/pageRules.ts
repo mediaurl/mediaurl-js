@@ -5,7 +5,7 @@ import {
   Page,
   PageCloseOptions,
   Request,
-  RespondOptions,
+  RespondOptions
 } from "puppeteer-core";
 
 export type RuleAction = "allow" | "proxy" | "deny";
@@ -75,7 +75,7 @@ const defaultRule: Rule = {
   method: null,
   url: null,
   action: "deny",
-  cache: false,
+  cache: false
 };
 
 export type PageRuleOptions = {
@@ -115,11 +115,11 @@ const defaultOptions: Partial<PageRuleOptions> = {
   defaultAction: "deny",
   blockPopups: false,
   rules: [],
-  silentByDefault: false,
+  silentByDefault: false
 };
 
 const compileRules = (rules: Partial<Rule>[], options: PageRuleOptions) =>
-  rules.map((rule) => {
+  rules.map(rule => {
     rule = { ...defaultRule, ...rule };
     return {
       check: (resourceType: string, method: Rule["method"], url: string) => {
@@ -131,7 +131,7 @@ const compileRules = (rules: Partial<Rule>[], options: PageRuleOptions) =>
         }
         if (rule.url) {
           const urls = Array.isArray(rule.url) ? rule.url : [rule.url];
-          const res = urls.find((u) => {
+          const res = urls.find(u => {
             if (typeof u === "string") return url.includes(u);
             return u.test(url);
           });
@@ -142,20 +142,20 @@ const compileRules = (rules: Partial<Rule>[], options: PageRuleOptions) =>
       action: rule.action,
       cache: rule.cache,
       beforeResponse: rule.beforeResponse,
-      silent: rule.silent === undefined ? options.silentByDefault : rule.silent,
+      silent: rule.silent === undefined ? options.silentByDefault : rule.silent
     };
   });
 
 const defaultRules = {
   pre: <Partial<Rule>[]>[
     { url: /^data:/, action: "allow", silent: true },
-    { url: /^wss?:/, action: "deny" },
+    { url: /^wss?:/, action: "deny" }
   ],
   static: <Partial<Rule>[]>[
     { resourceType: "stylesheet", action: "deny", silent: true },
     { resourceType: "image", action: "deny", silent: true },
-    { resourceType: "other", action: "deny" },
-  ],
+    { resourceType: "other", action: "deny" }
+  ]
 };
 
 export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
@@ -165,7 +165,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
     ...compileRules(defaultRules.pre, opts),
     ...compileRules(opts.rules ?? [], opts),
     ...compileRules(opts.blockStatic ? defaultRules.static : [], opts),
-    ...compileRules([{ action: opts.defaultAction }], opts),
+    ...compileRules([{ action: opts.defaultAction }], opts)
   ];
 
   if (opts.blockPopups) {
@@ -174,16 +174,14 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
 
   await page.setRequestInterception(true);
 
-  page.on("request", async (request) => {
+  page.on("request", async request => {
     const resourceType = request.resourceType();
     const method = request.method();
     const url = request.url();
     let sent = false;
 
     try {
-      const rule = allRules.find((rule) =>
-        rule.check(resourceType, method, url)
-      );
+      const rule = allRules.find(rule => rule.check(resourceType, method, url));
       if (!rule) {
         throw new Error(`Found no rule for [${resourceType}] ${method} ${url}`);
       }
@@ -241,7 +239,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               method,
               headers: request.headers(),
               body: request.postData(),
-              redirect: "follow",
+              redirect: "follow"
             });
             const headers = {};
             res.headers.forEach((value, key) => {
@@ -254,7 +252,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               status: res.status,
               headers,
               body: await res.buffer(),
-              contentType: headers["content-type"],
+              contentType: headers["content-type"]
             };
             break;
           }
@@ -266,7 +264,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               method: <any>method,
               headers: request.headers(),
               body: request.postData(),
-              redirect: "follow",
+              redirect: "follow"
             });
             const headers = {};
             res.headers.forEach((value, name) => {
@@ -276,7 +274,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               status: res.status,
               headers,
               body: await res.buffer(),
-              contentType: res.headers?.["content-type"],
+              contentType: res.headers?.["content-type"]
             };
             break;
           }
@@ -294,7 +292,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
             ...response,
             body: Buffer.isBuffer(response.body)
               ? response.body.toJSON()
-              : response.body,
+              : response.body
           });
         }
       }

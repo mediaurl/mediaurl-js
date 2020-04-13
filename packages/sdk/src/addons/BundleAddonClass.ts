@@ -29,5 +29,5 @@ export const createBundleAddon = makeCreateFunction<
   BundleAddonClass
 >({
   AddonClass: BundleAddonClass,
-  type: "bundle",
+  type: "bundle"
 });

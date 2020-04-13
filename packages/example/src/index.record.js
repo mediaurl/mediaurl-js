@@ -18,7 +18,7 @@ addRecord({
   action: "addon",
   input: {
     language: "en",
-    region: "CH",
+    region: "CH"
   },
   statusCode: 200,
   output: {
@@ -31,20 +31,20 @@ addRecord({
       {
         features: {
           search: {
-            enabled: true,
+            enabled: true
           },
           sort: [
             {
               id: "name",
-              name: "Name",
+              name: "Name"
             },
             {
               id: "year",
-              name: "Year",
-            },
-          ],
-        },
-      },
+              name: "Year"
+            }
+          ]
+        }
+      }
     ],
     dashboards: [
       {},
@@ -52,16 +52,16 @@ addRecord({
         id: "by-year",
         name: "By year",
         args: {
-          sort: "year",
-        },
-      },
+          sort: "year"
+        }
+      }
     ],
     type: "worker",
     urlPatterns: [
-      "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm",
+      "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm"
     ],
-    sdkVersion: "0.20.0",
-  },
+    sdkVersion: "0.20.0"
+  }
 });
 
 // Record ID 2
@@ -78,7 +78,7 @@ addRecord({
     filter: {},
     cursor: null,
     adult: false,
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -86,41 +86,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
+        year: 2013
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
-      },
+        year: 2012
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 3
@@ -137,7 +137,7 @@ addRecord({
     filter: {},
     cursor: null,
     adult: false,
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -145,41 +145,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
-      },
+        year: 2013
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 4
@@ -196,7 +196,7 @@ addRecord({
     filter: {},
     cursor: null,
     adult: false,
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -204,41 +204,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
+        year: 2013
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
-      },
+        year: 2012
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 5
@@ -251,22 +251,22 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "id1234",
-      id: "id1234",
+      id: "id1234"
     },
     name: "Example Item 1",
     year: 2011,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: {
     type: "movie",
     ids: {
-      "watched-worker-example": "id1234",
+      "watched-worker-example": "id1234"
     },
     name: "Example Item 1",
     description: "This item does not have any sources.",
-    year: 2011,
-  },
+    year: 2011
+  }
 });
 
 // Record ID 6
@@ -279,14 +279,14 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "id1234",
-      id: "id1234",
+      id: "id1234"
     },
     name: "Example Item 1",
     year: 2011,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
-  output: [],
+  output: []
 });
 
 // Record ID 7
@@ -299,21 +299,21 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "id1235",
-      id: "id1235",
+      id: "id1235"
     },
     name: "Big Buck Bunny",
     year: 2013,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: {
     type: "movie",
     ids: {
-      "watched-worker-example": "id1235",
+      "watched-worker-example": "id1235"
     },
     name: "Big Buck Bunny",
-    year: 2013,
-  },
+    year: 2013
+  }
 });
 
 // Record ID 8
@@ -326,11 +326,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "id1235",
-      id: "id1235",
+      id: "id1235"
     },
     name: "Big Buck Bunny",
     year: 2013,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -339,9 +339,9 @@ addRecord({
       id: "",
       name: "Source 1",
       url:
-        "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4",
-    },
-  ],
+        "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
+    }
+  ]
 });
 
 // Record ID 9
@@ -358,7 +358,7 @@ addRecord({
     sort: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -366,41 +366,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
+        year: 2013
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
-      },
+        year: 2012
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 10
@@ -417,7 +417,7 @@ addRecord({
     search: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -425,41 +425,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
-      },
+        year: 2013
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 11
@@ -472,14 +472,14 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "id1235",
-      id: "id1235",
+      id: "id1235"
     },
     name: "Big Buck Bunny",
     year: 2013,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
-  output: [],
+  output: []
 });
 
 // Record ID 12
@@ -492,22 +492,22 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "elephant",
-      id: "elephant",
+      id: "elephant"
     },
     name: "Elephants Dream",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: {
     type: "movie",
     ids: {
-      "watched-worker-example": "elephant",
+      "watched-worker-example": "elephant"
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
-    year: 2012,
-  },
+    year: 2012
+  }
 });
 
 // Record ID 13
@@ -520,11 +520,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "elephant",
-      id: "elephant",
+      id: "elephant"
     },
     name: "Elephants Dream",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -532,15 +532,15 @@ addRecord({
       type: "url",
       name: "mp4",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.mp4",
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.mp4"
     },
     {
       type: "url",
       name: "webm",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm",
-    },
-  ],
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
+    }
+  ]
 });
 
 // Record ID 14
@@ -557,7 +557,7 @@ addRecord({
     sort: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -565,41 +565,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
+        year: 2013
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
-      },
+        year: 2012
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 15
@@ -616,7 +616,7 @@ addRecord({
     search: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -624,41 +624,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
-      },
+        year: 2013
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 16
@@ -671,11 +671,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "elephant",
-      id: "elephant",
+      id: "elephant"
     },
     name: "Elephants Dream",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -685,7 +685,7 @@ addRecord({
       language: "en",
       type: "vtt",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt",
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
     },
     {
       id: "ttml",
@@ -693,9 +693,9 @@ addRecord({
       language: "en",
       type: "ttml",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml",
-    },
-  ],
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ]
 });
 
 // Record ID 17
@@ -708,11 +708,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "elephant",
-      id: "elephant",
+      id: "elephant"
     },
     name: "Elephants Dream",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -722,7 +722,7 @@ addRecord({
       language: "en",
       type: "vtt",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt",
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
     },
     {
       id: "ttml",
@@ -730,9 +730,9 @@ addRecord({
       language: "en",
       type: "ttml",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml",
-    },
-  ],
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ]
 });
 
 // Record ID 18
@@ -743,14 +743,14 @@ addRecord({
     language: "en",
     region: "CH",
     url:
-      "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm",
+      "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
   },
   statusCode: 200,
   output: {
     url:
       "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm?chain=1",
-    resolveAgain: true,
-  },
+    resolveAgain: true
+  }
 });
 
 // Record ID 19
@@ -761,11 +761,11 @@ addRecord({
     language: "en",
     region: "CH",
     url:
-      "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm?chain=1",
+      "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm?chain=1"
   },
   statusCode: 200,
   output:
-    "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm?chain=1",
+    "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm?chain=1"
 });
 
 // Record ID 20
@@ -778,11 +778,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "elephant",
-      id: "elephant",
+      id: "elephant"
     },
     name: "Elephants Dream",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -792,7 +792,7 @@ addRecord({
       language: "en",
       type: "vtt",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt",
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
     },
     {
       id: "ttml",
@@ -800,9 +800,9 @@ addRecord({
       language: "en",
       type: "ttml",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml",
-    },
-  ],
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
+    }
+  ]
 });
 
 // Record ID 21
@@ -815,22 +815,22 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "4ktest",
-      id: "4ktest",
+      id: "4ktest"
     },
     name: "4k Test",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: {
     type: "movie",
     ids: {
-      "watched-worker-example": "4ktest",
+      "watched-worker-example": "4ktest"
     },
     name: "4k Test",
     description: "Test video with 4k resolution",
-    year: 2012,
-  },
+    year: 2012
+  }
 });
 
 // Record ID 22
@@ -843,11 +843,11 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "4ktest",
-      id: "4ktest",
+      id: "4ktest"
     },
     name: "4k Test",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
   output: [
@@ -855,9 +855,9 @@ addRecord({
       type: "url",
       name: "hls",
       url:
-        "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8",
-    },
-  ],
+        "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
+    }
+  ]
 });
 
 // Record ID 23
@@ -874,7 +874,7 @@ addRecord({
     sort: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -882,41 +882,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
+        year: 2013
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
-      },
+        year: 2012
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 24
@@ -933,7 +933,7 @@ addRecord({
     search: "",
     cursor: null,
     filter: {},
-    page: 1,
+    page: 1
   },
   statusCode: 200,
   output: {
@@ -941,41 +941,41 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1234",
+          "watched-worker-example": "id1234"
         },
         name: "Example Item 1",
         description: "This item does not have any sources.",
-        year: 2011,
+        year: 2011
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "elephant",
+          "watched-worker-example": "elephant"
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "4ktest",
+          "watched-worker-example": "4ktest"
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
-        year: 2012,
+        year: 2012
       },
       {
         type: "movie",
         ids: {
-          "watched-worker-example": "id1235",
+          "watched-worker-example": "id1235"
         },
         name: "Big Buck Bunny",
-        year: 2013,
-      },
+        year: 2013
+      }
     ],
-    nextCursor: null,
-  },
+    nextCursor: null
+  }
 });
 
 // Record ID 25
@@ -988,12 +988,12 @@ addRecord({
     type: "movie",
     ids: {
       "watched-worker-example": "4ktest",
-      id: "4ktest",
+      id: "4ktest"
     },
     name: "4k Test",
     year: 2012,
-    episode: {},
+    episode: {}
   },
   statusCode: 200,
-  output: [],
+  output: []
 });
