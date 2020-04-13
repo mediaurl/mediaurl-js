@@ -11,14 +11,14 @@ export class MongoCache extends BasicCache {
 
   constructor(private url: string, private opts?: mongodb.MongoClientOptions) {
     super();
-    this.collection = mongodb.connect(url).then(connection => {
+    this.collection = mongodb.connect(url).then((connection) => {
       return connection.db(url.split("/").pop()).collection(COLLECTION_NAME);
     });
 
-    this.collection.then(collection => {
+    this.collection.then((collection) => {
       collection.createIndex(
         {
-          [DATE_FIELD]: 1
+          [DATE_FIELD]: 1,
         },
         { expireAfterSeconds: 0 }
       );
@@ -36,7 +36,7 @@ export class MongoCache extends BasicCache {
   }
 
   public async get(key) {
-    return await (await this.collection).findOne({ _id: key }).then(resp => {
+    return await (await this.collection).findOne({ _id: key }).then((resp) => {
       if (!resp) return;
 
       const expired = !!(resp?.[DATE_FIELD] < new Date());
@@ -52,15 +52,15 @@ export class MongoCache extends BasicCache {
   public async set(key, value, ttl) {
     await (await this.collection).updateOne(
       {
-        _id: key
+        _id: key,
       },
       {
         $set: {
           /** If date field is not type of Date, then it will not be removed */
           [DATE_FIELD]:
             ttl !== Infinity ? new Date(+new Date() + ttl) : undefined,
-          [PAYLOAD_FIELD]: value
-        }
+          [PAYLOAD_FIELD]: value,
+        },
       },
       { upsert: true }
     );

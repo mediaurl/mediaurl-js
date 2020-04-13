@@ -15,7 +15,7 @@ import {
   SourceRequest,
   SubItem,
   SubtitleRequest,
-  WorkerAddonActions
+  WorkerAddonActions,
 } from "@watchedcom/sdk";
 import { BasicAddonClass, WorkerAddonClass } from "@watchedcom/sdk";
 import * as assert from "assert";
@@ -49,7 +49,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
   const requestDefaults: DefaultAddonRequest = {
     sig: "mock",
     language: "en",
-    region: "UK"
+    region: "UK",
   };
 
   const directoryDefaults: DirectoryRequest = {
@@ -59,7 +59,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
     search: "",
     sort: "",
     filter: {},
-    cursor: null
+    cursor: null,
   };
 
   const app = new AddonTest(addon);
@@ -73,10 +73,10 @@ export const testAddon = async (addon: BasicAddonClass) => {
   } else if (type === "worker") {
     const testData = (<WorkerAddonClass>addon).getTestData();
     const directories = <DirectoryItem[]>(
-      testData.items.filter(item => item.type === "directory")
+      testData.items.filter((item) => item.type === "directory")
     );
     const items = <PlayableItem[]>(
-      testData.items.filter(item => item.type !== "directory")
+      testData.items.filter((item) => item.type !== "directory")
     );
 
     const addItem = (item: MainItem) => {
@@ -91,7 +91,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
     if (hasAction("directory")) {
       console.log('directory "root"');
       const res = await app.call<DirectoryRequest>("directory", {
-        ...directoryDefaults
+        ...directoryDefaults,
       });
       assert(!!res.body.items);
       res.body.items.forEach(addItem);
@@ -101,7 +101,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
         console.log(`directory "${directory.name}"`);
         const res = await app.call<DirectoryRequest>("directory", {
           ...directoryDefaults,
-          id: directory.id ?? ""
+          id: directory.id ?? "",
         });
         assert(!!res.body.items);
         res.body.items.forEach(addItem);
@@ -117,10 +117,10 @@ export const testAddon = async (addon: BasicAddonClass) => {
         type: item.type,
         ids: {
           ...item.ids,
-          id: item.ids[addon.getId()]
+          id: item.ids[addon.getId()],
         },
         name: item.name,
-        releaseDate: item.releaseDate
+        releaseDate: item.releaseDate,
       };
 
     const sourceRequest = (item: PlayableItem, subItem?: SubItem) =>
@@ -130,14 +130,14 @@ export const testAddon = async (addon: BasicAddonClass) => {
           ? {
               ids: {
                 ...subItem.ids,
-                id: subItem.ids[addon.getId()]
+                id: subItem.ids[addon.getId()],
               },
               name: subItem.name,
               releaseDate: subItem.releaseDate,
               season: subItem.season,
-              episode: subItem.episode
+              episode: subItem.episode,
             }
-          : undefined
+          : undefined,
       };
 
     if (hasAction("item")) {

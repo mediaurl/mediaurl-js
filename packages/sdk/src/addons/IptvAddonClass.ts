@@ -26,5 +26,5 @@ export class IptvAddonClass extends BasicAddonClass<IptvHandlers, IptvAddon> {
 export const createIptvAddon = makeCreateFunction<IptvAddon, IptvAddonClass>({
   AddonClass: IptvAddonClass,
   type: "iptv",
-  defaults: () => ({ actions: [] })
+  defaults: () => ({ actions: [] }),
 });

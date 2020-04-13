@@ -4,7 +4,7 @@ import {
   ResolveResponse,
   WorkerAddon,
   WorkerAddonActions,
-  WorkerAddonResourceActions
+  WorkerAddonResourceActions,
 } from "@watchedcom/schema";
 import { ActionHandlerContext, ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
@@ -21,7 +21,7 @@ const resourceActions: WorkerAddonResourceActions[] = [
   "source",
   "subtitle",
   "resolve",
-  "captcha"
+  "captcha",
 ];
 
 type WorkerAddonTestData = {
@@ -29,7 +29,7 @@ type WorkerAddonTestData = {
 };
 
 const defaultWorkerAddonTestData = {
-  items: []
+  items: [],
 };
 
 type ResolverHandlerFn = (
@@ -61,7 +61,7 @@ export class WorkerAddonClass extends BasicAddonClass<
       throw new Error(`A worker addon needs at least one action`);
     }
     if (
-      this.props.actions.some(action =>
+      this.props.actions.some((action) =>
         ["item", "source", "subtitle"].includes(action)
       ) &&
       !this.props.itemTypes?.length
@@ -97,7 +97,7 @@ export class WorkerAddonClass extends BasicAddonClass<
   ) {
     // Prepare the `pattern` parameter
     if (!Array.isArray(pattern)) pattern = [pattern];
-    pattern = pattern.map(p => (typeof p === "string" ? new RegExp(p) : p));
+    pattern = pattern.map((p) => (typeof p === "string" ? new RegExp(p) : p));
 
     // Add the handler to our resolvers
     this.resolvers.push({ pattern: <RegExp[]>pattern, handler });
@@ -141,5 +141,5 @@ export const createWorkerAddon = makeCreateFunction<
 >({
   AddonClass: WorkerAddonClass,
   type: "worker",
-  defaults: () => ({ actions: [] })
+  defaults: () => ({ actions: [] }),
 });

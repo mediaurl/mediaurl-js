@@ -4,38 +4,38 @@ export const EXAMPLE_ITEMS: PlayableItem[] = [
   {
     type: "movie",
     ids: {
-      "watched-worker-example": "id1234"
+      "watched-worker-example": "id1234",
     },
     name: "Example Item 1",
     description: "This item does not have any sources.",
-    year: 2011 // Example years to demonstrate the sort feature
+    year: 2011, // Example years to demonstrate the sort feature
   },
   {
     type: "movie",
     ids: {
-      "watched-worker-example": "id1235"
+      "watched-worker-example": "id1235",
     },
     name: "Big Buck Bunny",
-    year: 2013
+    year: 2013,
   },
   {
     type: "movie",
     ids: {
-      "watched-worker-example": "elephant"
+      "watched-worker-example": "elephant",
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
-    year: 2012
+    year: 2012,
   },
   {
     type: "movie",
     ids: {
-      "watched-worker-example": "4ktest"
+      "watched-worker-example": "4ktest",
     },
     name: "4k Test",
     description: "Test video with 4k resolution",
-    year: 2012
-  }
+    year: 2012,
+  },
 ];
 
 type ExampleSources = {
@@ -50,31 +50,31 @@ export const EXAMPLE_SOURCES: ExampleSources = {
       id: "",
       name: "Source 1",
       url:
-        "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
-    }
+        "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4",
+    },
   ],
   elephant: [
     {
       type: "url",
       name: "mp4",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.mp4"
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.mp4",
     },
     {
       type: "url",
       name: "webm",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm"
-    }
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm",
+    },
   ],
   "4ktest": [
     {
       type: "url",
       name: "hls",
       url:
-        "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
-    }
-  ]
+        "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8",
+    },
+  ],
 };
 
 type ExampleSubtitle = {
@@ -90,7 +90,7 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
       language: "en",
       type: "vtt",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt"
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.vtt",
     },
     {
       id: "ttml",
@@ -98,9 +98,9 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
       language: "en",
       type: "ttml",
       url:
-        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml"
-    }
-  ]
+        "https://thepaciellogroup.github.io/AT-browser-tests/video/subtitles-en.ttml",
+    },
+  ],
 };
 
 export const EXAMPLE_IPTV_ITEMS: IptvItem[] = [
@@ -110,6 +110,6 @@ export const EXAMPLE_IPTV_ITEMS: IptvItem[] = [
     name: "Not really a livestream",
     group: "Example!",
     url:
-      "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8"
-  }
+      "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8",
+  },
 ];

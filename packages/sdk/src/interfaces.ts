@@ -16,7 +16,7 @@ import {
   SourceRequest,
   SourceResponse,
   SubtitleRequest,
-  SubtitleResponse
+  SubtitleResponse,
 } from "@watchedcom/schema";
 import * as express from "express";
 import { BasicAddonClass } from "./addons";
