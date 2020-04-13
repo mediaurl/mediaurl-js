@@ -23,7 +23,7 @@ const startScript = (
             ".bin",
             "ts-node-dev"
           ),
-          execArgv: ["--no-notify", "--transpileOnly", ...tsArgs],
+          execArgv: ["--no-notify", "--transpileOnly", ...tsArgs]
         }
   );
 };
@@ -64,9 +64,9 @@ export const startHandler = (files: string[], cmdObj: any) => {
         files,
         opts: {
           singleMode: cmdObj.single ? true : false,
-          requestRecorderPath: cmdObj.record ? cmdObj.record : null,
-        },
-      }),
+          requestRecorderPath: cmdObj.record ? cmdObj.record : null
+        }
+      })
     ],
     production,
     production ? [] : ["--respawn"]
@@ -82,10 +82,10 @@ export const replayHandler = (files: string[], cmdObj: any) => {
         files,
         recordPath: cmdObj.record,
         ids: cmdObj.id
-          ? cmdObj.id.split(",").map((id) => parseInt(id, 10))
+          ? cmdObj.id.split(",").map(id => parseInt(id, 10))
           : null,
-        silent: cmdObj.silent,
-      }),
+        silent: cmdObj.silent
+      })
     ],
     false,
     cmdObj.watch ? ["--respawn", "--watch", "."] : []
@@ -121,7 +121,7 @@ program
     replayHandler(Array.isArray(files) ? files : [files], cmdObj)
   );
 
-program.on("command:*", function () {
+program.on("command:*", function() {
   program.outputHelp();
   process.exit(1);
 });

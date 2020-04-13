@@ -21,12 +21,12 @@ export const outerPromise = (timeout?: number) => {
   let t: NodeJS.Timeout;
   const p: Partial<OuterPromise> = { done: null };
   p.promise = new Promise((a, b) => {
-    p.resolve = (value) => {
+    p.resolve = value => {
       if (t) clearTimeout(t);
       p.done = true;
       a(value);
     };
-    p.reject = (error) => {
+    p.reject = error => {
       if (t) clearTimeout(t);
       p.done = true;
       b(error);

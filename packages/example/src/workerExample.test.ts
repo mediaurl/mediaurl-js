@@ -3,13 +3,13 @@ import {
   createApp,
   DirectoryRequest,
   ItemRequest,
-  SourceRequest,
+  SourceRequest
 } from "@watchedcom/sdk";
 import * as request from "supertest";
 import {
   EXAMPLE_ITEMS,
   EXAMPLE_SOURCES,
-  EXAMPLE_SUBTITLES,
+  EXAMPLE_SUBTITLES
 } from "./exampleData";
 import { workerExampleAddon } from "./workerExample";
 
@@ -26,7 +26,7 @@ const requestEnd = (done: (err?: Error) => void, log: boolean = false) => (
 const defaults = {
   sig: "mock",
   language: "en",
-  region: "UK",
+  region: "UK"
 };
 
 const itemDefaults: ItemRequest = {
@@ -34,15 +34,15 @@ const itemDefaults: ItemRequest = {
   type: "movie",
   ids: {
     id: "elephant",
-    "watched-worker-example": "elephant",
+    "watched-worker-example": "elephant"
   },
   name: "Elephants Dream",
-  episode: {},
+  episode: {}
 };
 
 const app = request(createApp([workerExampleAddon]));
 
-test("action addon", async (done) => {
+test("action addon", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/addon.watched`)
     .send(<AddonRequest>{ ...defaults })
@@ -50,7 +50,7 @@ test("action addon", async (done) => {
     .end(requestEnd(done));
 });
 
-test("action directory", async (done) => {
+test("action directory", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/directory.watched`)
     .send(<DirectoryRequest>{
@@ -60,24 +60,24 @@ test("action directory", async (done) => {
       search: "",
       sort: "",
       filter: {},
-      cursor: null,
+      cursor: null
     })
     .expect(200, { items: EXAMPLE_ITEMS, nextCursor: null })
     .end(requestEnd(done));
 });
 
-test("action item", async (done) => {
+test("action item", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/item.watched`)
     .send(<ItemRequest>itemDefaults)
     .expect(
       200,
-      EXAMPLE_ITEMS.find((i) => i.ids["watched-worker-example"] === "elephant")
+      EXAMPLE_ITEMS.find(i => i.ids["watched-worker-example"] === "elephant")
     )
     .end(requestEnd(done));
 });
 
-test("action source", async (done) => {
+test("action source", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/source.watched`)
     .send(<SourceRequest>itemDefaults)
@@ -85,7 +85,7 @@ test("action source", async (done) => {
     .end(requestEnd(done));
 });
 
-test("action subtitle", async (done) => {
+test("action subtitle", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/subtitle.watched`)
     .send(<SourceRequest>itemDefaults)
@@ -93,7 +93,7 @@ test("action subtitle", async (done) => {
     .end(requestEnd(done));
 });
 
-test("action subtitle (cached response)", async (done) => {
+test("action subtitle (cached response)", async done => {
   app
     .post(`/${workerExampleAddon.getId()}/subtitle.watched`)
     .send(<SourceRequest>itemDefaults)

@@ -27,7 +27,7 @@ const _filterAddons = async (
             )
           );
         }, 15000);
-      }),
+      })
     ]);
 
     if (Array.isArray(item)) {
@@ -61,6 +61,6 @@ export const loadAddons = async (files: string[]) => {
   const cwd = process.cwd();
 
   return Promise.all(
-    files.map((file) => path.resolve(cwd, file)).map(_requireAddons)
-  ).then((_) => _.flat());
+    files.map(file => path.resolve(cwd, file)).map(_requireAddons)
+  ).then(_ => _.flat());
 };

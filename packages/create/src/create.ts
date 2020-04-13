@@ -15,9 +15,7 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
   const folderFiles = await fs.readdir(addonPath);
 
   // Folder can be empty git repo, so we need to check only visible files
-  const nonHiddenFiles = folderFiles.filter(
-    (filename) => !/^\./.test(filename)
-  );
+  const nonHiddenFiles = folderFiles.filter(filename => !/^\./.test(filename));
 
   if (nonHiddenFiles.length > 0) {
     throw new Error("Folder is not empty");
@@ -32,7 +30,7 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
     itemTypes: ["movie", "series"],
     requestArgs: [],
     lintConfig: true,
-    test: false,
+    test: false
   };
 
   const userInput = await inquirer
@@ -46,21 +44,21 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
                   type: "list",
                   choices: [
                     { name: "TypeScript", value: "ts" },
-                    { name: "JavaScript", value: "js" },
+                    { name: "JavaScript", value: "js" }
                   ],
                   name: "template",
-                  default: 0,
+                  default: 0
                 },
             {
               name: "name",
               type: "input",
-              default: defaultName,
+              default: defaultName
             },
             {
               name: "actions",
               type: "checkbox",
               choices: ["directory", "item", "source", "subtitle", "resolve"],
-              default: defaults.actions,
+              default: defaults.actions
             },
             {
               name: "itemTypes",
@@ -70,9 +68,9 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
                 "movie",
                 "series",
                 "channel",
-                "iptv",
+                "iptv"
               ],
-              default: defaults.itemTypes,
+              default: defaults.itemTypes
             },
             {
               name: "requestArgs",
@@ -83,7 +81,7 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
                 "imdb_id",
                 "tmdb_id",
                 "tvdb_id",
-                "tvrage_id",
+                "tvrage_id"
               ],
               default: defaults.requestArgs,
               when: ({ actions }) => {
@@ -93,24 +91,24 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
                   }
                 }
                 return false;
-              },
+              }
             },
             {
               name: "lintConfig",
               type: "confirm",
               message: "Install linting libraries and git hooks?",
-              default: defaults.lintConfig,
+              default: defaults.lintConfig
             },
             {
               name: "test",
               type: "confirm",
               message:
                 "Setup automatic addon tests using jest? (Note: This is currently not very stable)",
-              default: defaults.test,
-            },
+              default: defaults.test
+            }
           ]
     )
-    .then((responses) => ({ ...defaults, ...responses }));
+    .then(responses => ({ ...defaults, ...responses }));
 
   const projectTemplate = templateMap[userInput.template];
   if (!projectTemplate) {
@@ -123,7 +121,7 @@ export const createHandler = async (folderPath: string, cmdObj: any) => {
   console.log("[=] Updating dependencies");
   spawnSync("npx", ["npm-check-updates", "-u"], {
     stdio: "inherit",
-    cwd: addonPath,
+    cwd: addonPath
   });
 
   console.log("[=] Installing dependencies");

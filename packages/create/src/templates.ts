@@ -20,13 +20,13 @@ const addonProps = ({ name, requestArgs, itemTypes }) => {
     requestArgs:
       requestArgs.length === 0
         ? undefined
-        : requestArgs.map((arg) => (/,/.test(arg) ? arg.split(",") : arg)),
+        : requestArgs.map(arg => (/,/.test(arg) ? arg.split(",") : arg))
   };
 };
 
 const indexHandlers = (addonVar, actions) =>
   actions
-    .map((action) => {
+    .map(action => {
       return `${addonVar}.registerActionHandler("${action}", async (input, ctx) => {
   // ${action} action handler code goes here
   throw new Error("Not implemented");
@@ -34,7 +34,7 @@ const indexHandlers = (addonVar, actions) =>
     })
     .join("\n\n");
 
-const tsIndex = (input) => {
+const tsIndex = input => {
   const { name, actions } = input;
   const addonVar = `${name}Addon`;
   const content = `import { createWorkerAddon } from "@watchedcom/sdk";
@@ -50,9 +50,7 @@ ${indexHandlers(addonVar, actions)}
   return content;
 };
 
-const testHandler = (
-  addonVar
-) => `// Depending on your addon, change the test timeout
+const testHandler = addonVar => `// Depending on your addon, change the test timeout
 jest.setTimeout(30000);
 
 test(\`Test addon "\${${addonVar}.getId()}"\`, done => {
@@ -61,7 +59,7 @@ test(\`Test addon "\${${addonVar}.getId()}"\`, done => {
     .catch(done);
 });`;
 
-const tsIndexTest = (input) => {
+const tsIndexTest = input => {
   if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
@@ -74,7 +72,7 @@ ${testHandler(addonVar)}
   return content;
 };
 
-const jsIndex = (input) => {
+const jsIndex = input => {
   const { name, actions } = input;
   const addonVar = `${name}Addon`;
   const content = `const { createWorkerAddon } = require("@watchedcom/sdk");
@@ -93,7 +91,7 @@ module.exports = ${addonVar};
   return content;
 };
 
-const jsIndexTest = (input) => {
+const jsIndexTest = input => {
   if (!input.test) return "";
   const { name } = input;
   const addonVar = `${name}Addon`;
@@ -127,7 +125,7 @@ npm run develop
   return content;
 };
 
-const packageJson = (input) => {
+const packageJson = input => {
   const ts = input.template === "ts";
   let data: any = {
     name: "watched-addon-" + kebabCase(input.name),
@@ -140,19 +138,19 @@ const packageJson = (input) => {
       ...(input.test
         ? {
             test: "jest",
-            "test:watch": "jest --watch",
+            "test:watch": "jest --watch"
           }
-        : undefined),
+        : undefined)
     },
     dependencies: {
-      "@watchedcom/sdk": "^0.0.0",
-    },
+      "@watchedcom/sdk": "^0.0.0"
+    }
   };
 
   if (ts) {
     data.devDependencies = {
       ...data.devDependencies,
-      typescript: "^0.0.0",
+      typescript: "^0.0.0"
     };
   }
 
@@ -161,18 +159,18 @@ const packageJson = (input) => {
       ...data.devDependencies,
       husky: "^0.0.0",
       "lint-staged": "^0.0.0",
-      prettier: "^0.0.0",
+      prettier: "^0.0.0"
     };
     data = {
       ...data,
       husky: {
         hooks: {
-          "pre-commit": "lint-staged",
-        },
+          "pre-commit": "lint-staged"
+        }
       },
       "lint-staged": {
-        "*.{js,ts,tsx,css,md}": ["prettier --write", "git add"],
-      },
+        "*.{js,ts,tsx,css,md}": ["prettier --write", "git add"]
+      }
     };
   }
 
@@ -181,12 +179,12 @@ const packageJson = (input) => {
       ...data.devDependencies,
       jest: "^0.0.0",
       "ts-jest": "^0.0.0",
-      "@watchedcom/test": "^0.0.0",
+      "@watchedcom/test": "^0.0.0"
     };
     if (ts) {
       data.devDependencies = {
         ...data.devDependencies,
-        "@types/jest": "^0.0.0",
+        "@types/jest": "^0.0.0"
       };
     }
   }
@@ -200,9 +198,9 @@ const tsConfigJson = () =>
       compilerOptions: {
         target: "es5",
         strictNullChecks: true,
-        outDir: "dist",
+        outDir: "dist"
       },
-      include: ["src/index.ts"],
+      include: ["src/index.ts"]
     },
     null,
     2
@@ -214,7 +212,7 @@ type TemplateMap = {
   };
 };
 
-const jestConfig = (input) => {
+const jestConfig = input => {
   if (!input.test) return "";
   const preset = input.template === "ts" ? "typescript" : "javascript";
   return `module.exports = {
@@ -231,7 +229,7 @@ export const templateMap: TemplateMap = {
     ".env.example": envExample,
     "jest.config.js": jestConfig,
     "src/index.js": jsIndex,
-    "src/index.test.js": jsIndexTest,
+    "src/index.test.js": jsIndexTest
   },
   ts: {
     "README.md": readme,
@@ -241,6 +239,6 @@ export const templateMap: TemplateMap = {
     "tsconfig.json": tsConfigJson,
     "jest.config.js": jestConfig,
     "src/index.ts": tsIndex,
-    "src/index.test.ts": tsIndexTest,
-  },
+    "src/index.test.ts": tsIndexTest
+  }
 };

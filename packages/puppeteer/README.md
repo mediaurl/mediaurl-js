@@ -36,9 +36,9 @@ addon.registerActionHandler("item", async (input, ctx) => {
     ctx,
     rules: [
       { url: [input.url, "example.com/api"], action: "allow" },
-      { url: "example.com/js", action: "allow", cache: true },
+      { url: "example.com/js", action: "allow", cache: true }
     ],
-    blockPopups: true,
+    blockPopups: true
   };
 
   // Get a browser instance
@@ -75,12 +75,12 @@ addon.registerActionHandler("resolve", async (input, ctx) => {
     {
       resourceType: "media",
       url: "example.com/mediapath/",
-      action: async (request) => {
+      action: async request => {
         // This action handler will be called during page load
         const url = await request.url();
         p.resolve(url);
-      },
-    },
+      }
+    }
   ];
 
   // Get a browser instance
