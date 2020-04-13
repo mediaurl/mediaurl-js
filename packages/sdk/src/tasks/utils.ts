@@ -13,14 +13,14 @@ export class Responder {
   record: null | Partial<RecordData>;
   queue: string[];
   emitter: EventEmitter;
-  transport: TransportFn;
+  transport: null | TransportFn;
 
   constructor(record: null | Partial<RecordData>, fn: TransportFn) {
     this.queue = [];
     this.emitter = new EventEmitter();
 
     this.record = record;
-    this.setTransport(fn);
+    this.transport = fn;
   }
 
   async send(
@@ -29,6 +29,7 @@ export class Responder {
     body: any,
     queueTimeout = 30 * 1000
   ) {
+    // Since there can be always only one task, create a queue
     const id = uuid4().toString();
     this.queue.push(id);
     if (this.queue[0] !== id) {
@@ -45,26 +46,40 @@ export class Responder {
           this.emitter.removeListener("event", on);
           const i = this.queue.indexOf(id);
           if (i !== -1) this.queue.splice(i, 1);
-          reject(new IgnoreCacheError("Waiting for slot timed out"));
+          reject(new IgnoreCacheError("Waiting for task slot timed out"));
         }, queueTimeout);
       });
     }
+
+    // Record the response
     if (this.record && type === "response") {
       this.record.statusCode = statusCode;
       this.record.output = body;
       await writeRecordedRequest(<RecordData>this.record);
     }
-    try {
-      await this.transport(statusCode, body);
-    } finally {
-      if (this.queue[0] !== id) {
-        throw new Error(`First queue element is not the current id`);
-      }
-      this.queue.shift();
+
+    // Make sure we have a transport channel
+    const transport = this.transport;
+    if (transport === null) {
+      // When the transport is not set, it means that either the queue function
+      // has a bug, or the responder was used after it sent the final response
+      throw new Error("Transport not set");
     }
+    this.transport = null;
+
+    // Send the response
+    await transport(statusCode, body);
+
+    // Return the queue id
+    return id;
   }
 
-  setTransport(fn: TransportFn) {
+  setTransport(id: string, fn: null | TransportFn) {
+    if (this.queue[0] !== id) {
+      throw new Error(`First queue element is not the current id`);
+    }
+    this.queue.shift();
+
     this.transport = fn;
     this.emitter.emit("event");
   }
@@ -91,7 +106,7 @@ export const sendTask = async (
   // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait-${task.id}`, "1", timeout * 2);
-  await responder.send("task", 200, task);
+  const id = await responder.send("task", 200, task);
 
   // Wait for the response
   const data: any = await cache.waitKey(
@@ -104,7 +119,7 @@ export const sendTask = async (
   // console.debug(`Task ${task.id} resolved`);
 
   // Set new valid responder
-  responder.setTransport(async (statusCode, body) => {
+  responder.setTransport(id, async (statusCode, body) => {
     const data = JSON.stringify({ statusCode, body });
     await cache.set(`task.response-${responseChannel}`, data, timeout);
   });

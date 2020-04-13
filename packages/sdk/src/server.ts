@@ -203,7 +203,8 @@ const createActionHandler = (
       typeof output === "object" && output?.kind === "taskRequest"
         ? "task"
         : "response";
-    responder.send(type, statusCode, output);
+    const id = await responder.send(type, statusCode, output);
+    responder.setTransport(id, null);
   };
 
   return actionHandler;
