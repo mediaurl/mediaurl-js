@@ -1,7 +1,7 @@
-import { changeLanguage, i18next, init, tAll } from "../src";
+import { changeLanguage, i18n, init, tAll } from "../src";
 
-const exported = [i18next, changeLanguage, init, tAll];
+const exported = [i18n, changeLanguage, init, tAll];
 
 test("Module should export all needed methods and properties", () => {
-  expect(exported.every(fn => fn)).toBeTruthy();
+  expect(exported.every((fn) => fn)).toBeTruthy();
 });
