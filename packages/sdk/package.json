@@ -1,7 +1,7 @@
 {
   "name": "@watchedcom/sdk",
   "description": "WATCHED.com Javascript SDK",
-  "version": "0.26.8",
+  "version": "0.26.9",
   "main": "dist",
   "bin": {
     "watched-sdk": "dist/scripts/index.js"
