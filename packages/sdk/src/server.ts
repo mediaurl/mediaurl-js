@@ -23,11 +23,7 @@ import {
   createTaskResponseHandler,
   Responder,
 } from "./tasks";
-import {
-  RecordData,
-  RequestRecorder,
-  setupRequestRecorder,
-} from "./utils/request-recorder";
+import { RecordData, setupRequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
