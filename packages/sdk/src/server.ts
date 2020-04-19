@@ -5,6 +5,7 @@ import "express-async-errors";
 import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
+import "pug";
 import { BasicAddonClass } from "./addons";
 import {
   CacheFoundError,
