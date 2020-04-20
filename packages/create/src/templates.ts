@@ -7,7 +7,11 @@ export const executeProjectTemplate = async (template, basePath, input) => {
     const targetPath = path.resolve(basePath, ...filePath.split("/"));
     const data = template[filePath];
     const content = typeof data === "function" ? data(input) : data;
-    if (content) await fs.outputFile(targetPath, content);
+    if (typeof content === "string") {
+      await fs.outputFile(targetPath, content);
+    } else {
+      console.warn(`Received content type of: ${typeof content}... skipping`);
+    }
   }
 };
 
@@ -143,6 +147,7 @@ const packageJson = (input) => {
             "test:watch": "jest --watch",
           }
         : undefined),
+      "now-build": "npx @watchedcom/create now-sh-prepare && npm run build",
     },
     dependencies: {
       "@watchedcom/sdk": "^0.0.0",

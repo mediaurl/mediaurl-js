@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import * as commander from "commander";
 import { createHandler } from "./create";
+import { templateMap as nowTemplate } from "./now-sh-support";
+import { executeProjectTemplate } from "./templates";
 
 commander
   .arguments("<name>")
@@ -9,6 +11,10 @@ commander
   .option("--template <template>", "js|ts")
   .option("--force")
   .action(createHandler);
+
+commander.command("now-sh-prepare").action(async () => {
+  await executeProjectTemplate(nowTemplate, process.cwd(), {});
+});
 
 // commander.on("command:*", function() {
 //   commander.outputHelp();
