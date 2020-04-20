@@ -1,7 +1,7 @@
 {
   "name": "@watchedcom/i18n",
   "description": "WATCHED.com tools for translations",
-  "version": "0.26.9",
+  "version": "0.26.10",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/i18next-node-fs-backend": "^2.1.0",
-    "@watchedcom/sdk": "^0.26.9",
+    "@watchedcom/sdk": "^0.26.10",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1",
     "typescript": "^3.8.3"
