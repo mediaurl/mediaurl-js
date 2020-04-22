@@ -147,7 +147,6 @@ const packageJson = (input) => {
             "test:watch": "jest --watch",
           }
         : undefined),
-      "now-build": "npx @watchedcom/create now-sh-prepare && npm run build",
     },
     dependencies: {
       "@watchedcom/sdk": "^0.0.0",
