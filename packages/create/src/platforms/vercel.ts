@@ -5,6 +5,12 @@ import * as path from "path";
  */
 const handler = `const { createApp } = require("@watchedcom/sdk");
 
+const supportedCacheTypes = ['MONGO_CACHE', 'REDIS_CACHE'];
+
+if (!supportedCacheTypes.some(_ => process.env[_])) {
+    throw new Error(\`Cache is not configured. Supported cache types: $\{supportedCacheTypes.join(', ')\}\`)
+}
+
 module.exports = createApp(Object.values(require("./")));
 `;
 
