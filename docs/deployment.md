@@ -24,3 +24,29 @@ $ heroku config:set MY_CUSTOM_VALUE=foobar
 # Execute deploy
 $ git push heroku master
 ```
+
+## Vercel (_ex now.sh_)
+
+**Requirements**
+
+Account on vercel.com and [Now CLI](https://www.npmjs.com/package/now) (`npm i -g now`) installed.
+
+**Deployment**
+
+Go to your addon directory, then run the following code:
+
+```shell
+# Add files related to vercel
+$ npx @watchedcom/create init-vercel
+
+# Link project
+$ now
+
+# Set cache url (REDIS_CACHE is also supported)
+$ now env add MONGO_CACHE
+
+# Deploy
+$ now deploy
+```
+
+Note: mlab.com offers free mongo instances (Up to 0.5 GB storage)
