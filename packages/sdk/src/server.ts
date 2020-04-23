@@ -107,7 +107,9 @@ const createActionHandler = (
       sig = <string>req.headers["watched-sig"] ?? "";
     }
     const sigData =
-      process.env.SKIP_AUTH === "1" || action === "addon"
+      process.env.SKIP_AUTH === "1" ||
+      action === "addon" ||
+      (addon.getType() === "repository" && action === "repository")
         ? null
         : validateSignature(sig);
 
