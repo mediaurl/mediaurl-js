@@ -6,7 +6,7 @@ export const executeProjectTemplate = async (template, basePath, input) => {
   for (const filePath of Object.keys(template)) {
     const targetPath = path.resolve(basePath, ...filePath.split("/"));
     const data = template[filePath];
-    const content = typeof data === "function" ? data(input) : data;
+    const content = typeof data === "function" ? await data(input) : data;
     if (typeof content === "string") {
       await fs.outputFile(targetPath, content);
     } else {
