@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as commander from "commander";
 import { createHandler } from "./create";
-import { templateMap as nowTemplate } from "./now-sh-support";
+import { templateMap as vercelTemplate } from "./platforms/vercel";
 import { executeProjectTemplate } from "./templates";
 
 commander
@@ -12,9 +12,12 @@ commander
   .option("--force")
   .action(createHandler);
 
-commander.command("now-sh-prepare").action(async () => {
-  await executeProjectTemplate(nowTemplate, process.cwd(), {});
-});
+commander
+  .command("init-vercel")
+  .description("Prepare for vercel.com (ex now.sh) deployment")
+  .action(async () => {
+    await executeProjectTemplate(vercelTemplate, process.cwd(), {});
+  });
 
 // commander.on("command:*", function() {
 //   commander.outputHelp();

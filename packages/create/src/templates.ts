@@ -147,7 +147,6 @@ const packageJson = (input) => {
             "test:watch": "jest --watch",
           }
         : undefined),
-      "now-build": "npx @watchedcom/create now-sh-prepare && npm run build",
     },
     dependencies: {
       "@watchedcom/sdk": "^0.0.0",
@@ -228,11 +227,13 @@ const jestConfig = (input) => {
 `;
 };
 
+const commonIgnoredFiles = ["node_modules", ".env", ".now"];
+
 export const templateMap: TemplateMap = {
   js: {
     "README.md": readme,
     "package.json": packageJson,
-    ".gitignore": ["node_modules", ".env"].join("\n"),
+    ".gitignore": [...commonIgnoredFiles].join("\n"),
     ".env.example": envExample,
     "jest.config.js": jestConfig,
     "src/index.js": jsIndex,
@@ -241,7 +242,7 @@ export const templateMap: TemplateMap = {
   ts: {
     "README.md": readme,
     "package.json": packageJson,
-    ".gitignore": ["node_modules", ".env", "dist"].join("\n"),
+    ".gitignore": [...commonIgnoredFiles, "dist"].join("\n"),
     ".env.example": envExample,
     "tsconfig.json": tsConfigJson,
     "jest.config.js": jestConfig,
