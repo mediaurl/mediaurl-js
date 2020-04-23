@@ -49,4 +49,4 @@ $ now env add MONGO_CACHE
 $ now deploy
 ```
 
-Note: mlab.com offers free mongo instances (Up to 0.5 GB storage)
+Note: [mlab.com](https://mlab.com/) offers free mongo instances (up to 0.5 GB storage)
