@@ -7,7 +7,11 @@ export const executeProjectTemplate = async (template, basePath, input) => {
     const targetPath = path.resolve(basePath, ...filePath.split("/"));
     const data = template[filePath];
     const content = typeof data === "function" ? data(input) : data;
-    if (content) await fs.outputFile(targetPath, content);
+    if (typeof content === "string") {
+      await fs.outputFile(targetPath, content);
+    } else {
+      console.warn(`Received content type of: ${typeof content}... skipping`);
+    }
   }
 };
 
@@ -223,11 +227,13 @@ const jestConfig = (input) => {
 `;
 };
 
+const commonIgnoredFiles = ["node_modules", ".env", ".now"];
+
 export const templateMap: TemplateMap = {
   js: {
     "README.md": readme,
     "package.json": packageJson,
-    ".gitignore": ["node_modules", ".env"].join("\n"),
+    ".gitignore": [...commonIgnoredFiles].join("\n"),
     ".env.example": envExample,
     "jest.config.js": jestConfig,
     "src/index.js": jsIndex,
@@ -236,7 +242,7 @@ export const templateMap: TemplateMap = {
   ts: {
     "README.md": readme,
     "package.json": packageJson,
-    ".gitignore": ["node_modules", ".env", "dist"].join("\n"),
+    ".gitignore": [...commonIgnoredFiles, "dist"].join("\n"),
     ".env.example": envExample,
     "tsconfig.json": tsConfigJson,
     "jest.config.js": jestConfig,

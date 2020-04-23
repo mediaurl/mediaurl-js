@@ -9,10 +9,15 @@ const DATE_FIELD = "d";
 export class MongoCache extends BasicCache {
   private collection: Promise<mongodb.Collection>;
 
-  constructor(private url: string, private opts?: mongodb.MongoClientOptions) {
+  constructor(
+    private url: string,
+    private opts?: mongodb.MongoClientCommonOption
+  ) {
     super();
     this.collection = mongodb.connect(url).then((connection) => {
-      return connection.db(url.split("/").pop()).collection(COLLECTION_NAME);
+      return connection
+        .db(url.split("/").pop(), opts)
+        .collection(COLLECTION_NAME);
     });
 
     this.collection.then((collection) => {
@@ -25,34 +30,36 @@ export class MongoCache extends BasicCache {
     });
   }
 
-  public async exists(key: any) {
+  public async exists(key: string) {
     return (
       (
         await (await this.collection)
-          .find({ _id: key }, { projection: {}, limit: 1 })
+          .find({ _id: key.substring(1) }, { projection: {}, limit: 1 })
           .toArray()
       ).length > 0
     );
   }
 
-  public async get(key) {
-    return await (await this.collection).findOne({ _id: key }).then((resp) => {
-      if (!resp) return;
+  public async get(key: string) {
+    return await (await this.collection)
+      .findOne({ _id: key.substring(1) })
+      .then((resp) => {
+        if (!resp) return undefined;
 
-      const expired = !!(resp?.[DATE_FIELD] < new Date());
+        const expired = !!(resp?.[DATE_FIELD] < new Date());
 
-      if (expired) {
-        return;
-      }
+        if (expired) {
+          return undefined;
+        }
 
-      return resp?.[PAYLOAD_FIELD];
-    });
+        return resp?.[PAYLOAD_FIELD];
+      });
   }
 
-  public async set(key, value, ttl) {
+  public async set(key: string, value: any, ttl: number) {
     await (await this.collection).updateOne(
       {
-        _id: key,
+        _id: key.substring(1),
       },
       {
         $set: {
@@ -66,7 +73,7 @@ export class MongoCache extends BasicCache {
     );
   }
 
-  public async delete(key) {
-    await (await this.collection).deleteOne({ _id: key });
+  public async delete(key: string) {
+    await (await this.collection).deleteOne({ _id: key.substring(1) });
   }
 }

@@ -5,6 +5,7 @@ import "express-async-errors";
 import { cloneDeep, defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
+import "pug";
 import { BasicAddonClass } from "./addons";
 import {
   CacheFoundError,
@@ -23,11 +24,7 @@ import {
   createTaskResponseHandler,
   Responder,
 } from "./tasks";
-import {
-  RecordData,
-  RequestRecorder,
-  setupRequestRecorder,
-} from "./utils/request-recorder";
+import { RecordData, setupRequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
