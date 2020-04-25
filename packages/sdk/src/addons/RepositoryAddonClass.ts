@@ -88,11 +88,14 @@ export class RepositoryAddonClass extends BasicAddonClass<
       ctx.cache.call(key, async () => {});
       const fn = async () => {
         try {
-          const res = await fetch(`${url.replace(/\/$/, "")}/addon`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(input),
-          });
+          const res = await fetch(
+            `${url.replace(/\/(addon\.watched)?$/, "")}/addon.watched`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(input),
+            }
+          );
           if (!res.ok) {
             throw new Error(`Get status code ${res.status}`);
           }
