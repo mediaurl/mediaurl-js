@@ -67,7 +67,7 @@ export class DiskCache extends BasicCache {
     }
   }
 
-  public async cleanup() {
-    throw new Error("Cleanup is not yet implemented");
+  public async deleteAll() {
+    await fsPromises.rmdir(this.rootPath, { maxRetries: 1, recursive: true });
   }
 }

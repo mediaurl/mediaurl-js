@@ -18,7 +18,11 @@ export class BasicCache {
     throw new Error(`Not implemented`);
   }
 
-  public async cleanup() {}
+  /**
+   * This function should remove all cached data. Currently this
+   * is only used for testing.
+   */
+  public async deleteAll() {}
 
   /**
    * Add cache prefixes and prevent too long cache keys.

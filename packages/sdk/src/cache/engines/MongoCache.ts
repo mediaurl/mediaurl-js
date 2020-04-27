@@ -1,39 +1,40 @@
 import * as mongodb from "mongodb";
 import { BasicCache } from "./BasicCache";
 
-const COLLECTION_NAME = "_watched-cache";
+const COLLECTION_NAME = "watched_cache";
 const PAYLOAD_FIELD = "c";
 /** Expiration date */
 const DATE_FIELD = "d";
 
+const defaultOptions: mongodb.MongoClientOptions = {
+  poolSize: 10,
+};
+
 export class MongoCache extends BasicCache {
-  private collection: Promise<mongodb.Collection>;
+  private initPromise: Promise<void>;
+  private db: mongodb.Db;
 
-  constructor(
-    private url: string,
-    private opts?: mongodb.MongoClientCommonOption
-  ) {
+  constructor(url: string, opts?: mongodb.MongoClientOptions) {
     super();
-    this.collection = mongodb.connect(url).then((connection) => {
-      return connection
-        .db(url.split("/").pop(), opts)
-        .collection(COLLECTION_NAME);
-    });
+    this.initPromise = (async () => {
+      const c = await mongodb.connect(url, { ...defaultOptions, ...opts });
+      this.db = c.db(url.split("/").pop());
+      await this.initCollection();
+    })();
+  }
 
-    this.collection.then((collection) => {
-      collection.createIndex(
-        {
-          [DATE_FIELD]: 1,
-        },
-        { expireAfterSeconds: 0 }
-      );
-    });
+  private async initCollection() {
+    await this.db
+      .collection(COLLECTION_NAME)
+      .createIndex({ [DATE_FIELD]: 1 }, { expireAfterSeconds: 0 });
   }
 
   public async exists(key: string) {
+    await this.initPromise;
     return (
       (
-        await (await this.collection)
+        await this.db
+          .collection(COLLECTION_NAME)
           .find({ _id: key.substring(1) }, { projection: {}, limit: 1 })
           .toArray()
       ).length > 0
@@ -41,31 +42,23 @@ export class MongoCache extends BasicCache {
   }
 
   public async get(key: string) {
-    return await (await this.collection)
-      .findOne({ _id: key.substring(1) })
-      .then((resp) => {
-        if (!resp) return undefined;
-
-        const expired = !!(resp?.[DATE_FIELD] < new Date());
-
-        if (expired) {
-          return undefined;
-        }
-
-        return resp?.[PAYLOAD_FIELD];
-      });
+    await this.initPromise;
+    const resp = await this.db
+      .collection(COLLECTION_NAME)
+      .findOne({ _id: key.substring(1) });
+    if (!resp || (resp[DATE_FIELD] !== null && resp[DATE_FIELD] < new Date())) {
+      return undefined;
+    }
+    return resp[PAYLOAD_FIELD];
   }
 
   public async set(key: string, value: any, ttl: number) {
-    await (await this.collection).updateOne(
-      {
-        _id: key.substring(1),
-      },
+    await this.initPromise;
+    const x = await this.db.collection(COLLECTION_NAME).updateOne(
+      { _id: key.substring(1) },
       {
         $set: {
-          /** If date field is not type of Date, then it will not be removed */
-          [DATE_FIELD]:
-            ttl !== Infinity ? new Date(+new Date() + ttl) : undefined,
+          [DATE_FIELD]: ttl === Infinity ? null : new Date(Date.now() + ttl),
           [PAYLOAD_FIELD]: value,
         },
       },
@@ -74,6 +67,15 @@ export class MongoCache extends BasicCache {
   }
 
   public async delete(key: string) {
-    await (await this.collection).deleteOne({ _id: key.substring(1) });
+    await this.initPromise;
+    await this.db
+      .collection(COLLECTION_NAME)
+      .deleteOne({ _id: key.substring(1) });
+  }
+
+  public async deleteAll() {
+    await this.initPromise;
+    await this.db.collection(COLLECTION_NAME).drop();
+    this.initPromise = this.initCollection();
   }
 }

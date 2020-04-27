@@ -12,8 +12,9 @@ export class RedisCache extends BasicCache {
       exists: promisify(redisClient.exists).bind(redisClient),
       get: promisify(redisClient.get).bind(redisClient),
       set: promisify(redisClient.set).bind(redisClient),
-      setex: promisify(redisClient.setex).bind(redisClient),
+      psetex: promisify(redisClient.psetex).bind(redisClient),
       del: promisify(redisClient.del).bind(redisClient),
+      flushdb: promisify(redisClient.flushdb).bind(redisClient),
     };
   }
 
@@ -23,7 +24,7 @@ export class RedisCache extends BasicCache {
 
   public async get(key: string) {
     const value = await this.client.get(key.substring(1));
-    if (value) return JSON.parse(value);
+    if (value !== null) return JSON.parse(value);
     return undefined;
   }
 
@@ -31,15 +32,15 @@ export class RedisCache extends BasicCache {
     if (ttl === Infinity) {
       await this.client.set(key.substring(1), JSON.stringify(value));
     } else {
-      await this.client.setex(
-        key.substring(1),
-        ttl / 1000,
-        JSON.stringify(value)
-      );
+      await this.client.psetex(key.substring(1), ttl, JSON.stringify(value));
     }
   }
 
   public async delete(key: string) {
     this.client.del(key.substring(1));
+  }
+
+  public async deleteAll() {
+    await this.client.flushdb();
   }
 }

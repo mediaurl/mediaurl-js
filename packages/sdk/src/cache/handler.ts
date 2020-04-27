@@ -109,8 +109,8 @@ export class CacheHandler {
     await this.engine.delete(key);
   }
 
-  public async cleanup() {
-    await this.engine.cleanup();
+  public async deleteAll() {
+    await this.engine.deleteAll();
   }
 
   /**
@@ -177,6 +177,7 @@ export class CacheHandler {
     }
 
     if (this.options.simultanLockTimeout) {
+      // It *can* happen that two instances will get the lock due to a race condition
       await this.engine.set(
         `${key}-call-lock`,
         1,
