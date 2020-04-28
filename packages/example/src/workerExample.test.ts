@@ -37,6 +37,7 @@ const itemDefaults: ItemRequest = {
     "watched-worker-example": "elephant",
   },
   name: "Elephants Dream",
+  translatedNames: {},
   episode: {},
 };
 

@@ -11,6 +11,15 @@ definitions:
         $ref: "general.yaml#/definitions/Country"
         default: "XX"
     required: [language, region]
+  TranslatedNames:
+    description: |
+      Object with all known names in different languages. If there are
+      no translations available, this object will be empty.
+    type: object
+    additionalProperties: false
+    patternProperties:
+      "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
+        type: string
   # Api requests and responses
   AddonRequest:
     description: Get detailed infos about an addon.
@@ -106,8 +115,12 @@ definitions:
           ids:
             $ref: "items.yaml#/definitions/ItemIDs"
           name:
-            description: Name of this item.
+            description: |
+              Name of this item. If there are more than one translation available,
+              it will always be the one closest to the currently selected app language.
             type: string
+          translatedNames:
+            $ref: "#/definitions/TranslatedNames"
           originalName:
             description: Original name of this item.
             type: string
@@ -119,7 +132,7 @@ definitions:
           year:
             description: Release year.
             $ref: "general.yaml#/definitions/Year"
-        required: [type, ids, name]
+        required: [type, ids, name, translatedNames]
   ItemResponse:
     oneOf:
       - $ref: "items.yaml#/definitions/PlayableItem"
@@ -140,6 +153,8 @@ definitions:
               name:
                 description: Name of this sub item.
                 type: string
+              translatedNames:
+                $ref: "#/definitions/TranslatedNames"
               releaseDate:
                 description: Release date as unix timestamp or parseable string.
                 oneOf:
@@ -175,7 +190,9 @@ definitions:
           $ref: "objects.yaml#/definitions/Subtitle"
       - type: "null"
   ResolveRequest:
-    description: Resolve a `Source` object to a playable `Url` or `ResolvedUrl`.
+    description: |
+      Resolve a `url` to a `Url` or `ResolvedUrl` which can be played in
+      the app.
     type: object
     properties:
       region:
@@ -189,7 +206,7 @@ definitions:
       - $ref: "general.yaml#/definitions/Url"
       - $ref: "objects.yaml#/definitions/ResolvedUrl"
       - type: array
-        description: You also can return more than one resolved result.
+        description: You also can return more than one resolved results.
         items:
           oneOf:
             - $ref: "general.yaml#/definitions/Url"

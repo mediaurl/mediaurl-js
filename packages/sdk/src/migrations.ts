@@ -3,6 +3,9 @@ import {
   AddonResponse,
   DirectoryRequest,
   DirectoryResponse,
+  ItemRequest,
+  SourceRequest,
+  SubtitleRequest,
 } from "@watchedcom/schema";
 import { BasicAddonClass } from "./addons";
 import { ActionHandlerContext } from "./interfaces";
@@ -49,6 +52,24 @@ export const migrations = {
         o.hasMore = o.nextCursor !== null;
       }
       return ctx.validator.response(output);
+    },
+  },
+  item: {
+    request(ctx: MigrationContext, input: ItemRequest) {
+      if (input.translatedNames === undefined) input.translatedNames = {};
+      return ctx.validator.request(input);
+    },
+  },
+  source: {
+    request(ctx: MigrationContext, input: SourceRequest) {
+      if (input.translatedNames === undefined) input.translatedNames = {};
+      return ctx.validator.request(input);
+    },
+  },
+  subtitle: {
+    request(ctx: MigrationContext, input: SubtitleRequest) {
+      if (input.translatedNames === undefined) input.translatedNames = {};
+      return ctx.validator.request(input);
     },
   },
 };
