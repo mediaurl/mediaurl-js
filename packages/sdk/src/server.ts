@@ -2,219 +2,39 @@ import { TranslatedText } from "@watchedcom/schema";
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
-import { cloneDeep, defaults } from "lodash";
+import { defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
 import "pug";
 import { BasicAddonClass } from "./addons";
-import {
-  CacheFoundError,
-  CacheHandler,
-  DiskCache,
-  MemoryCache,
-  MongoCache,
-  RedisCache,
-} from "./cache";
+import { CacheHandler, getCacheEngineFromEnv } from "./cache";
+import { handleAction, initializeAddon } from "./engine";
 import { errorHandler } from "./error-handler";
-import { IServeAddonsOptions, RequestCacheFn } from "./interfaces";
-import { migrations } from "./migrations";
-import {
-  createTaskFetch,
-  createTaskRecaptcha,
-  createTaskResponseHandler,
-  Responder,
-} from "./tasks";
-import { RecordData, setupRequestRecorder } from "./utils/request-recorder";
-import { validateSignature } from "./utils/signature";
-import { getActionValidator } from "./validators";
+import { IExpressServerOptions } from "./interfaces";
 
-export class ServeAddonOptions implements Partial<IServeAddonsOptions> {
-  constructor(props: Partial<IServeAddonsOptions>) {
+export class ServeAddonOptions implements Partial<IExpressServerOptions> {
+  constructor(props: Partial<IExpressServerOptions>) {
     Object.assign(this, props);
   }
 }
 
-const defaultServeOpts: IServeAddonsOptions = {
-  singleMode: false,
-  logRequests: true,
+const defaultServeOpts: IExpressServerOptions = {
+  // Engine options
+  cache: new CacheHandler(getCacheEngineFromEnv()),
   requestRecorderPath: null,
   replayMode: false,
+  // Express options
+  singleMode: false,
+  logRequests: true,
   errorHandler,
   port: parseInt(<string>process.env.PORT) || 3000,
-  cache: new CacheHandler(
-    process.env.DISK_CACHE
-      ? new DiskCache(process.env.DISK_CACHE)
-      : process.env.REDIS_CACHE
-      ? new RedisCache({ url: process.env.REDIS_CACHE })
-      : process.env.MONGO_CACHE
-      ? new MongoCache(process.env.MONGO_CACHE)
-      : new MemoryCache()
-  ),
   preMiddlewares: [],
   postMiddlewares: [],
 };
 
-/**
- * An error which will not log any backtrace.
- *
- * All errors with the property `noBacktraceLog` set to `true` will not show a
- * backtrace on the console.
- */
-export class SilentError extends Error {
-  public noBacktraceLog: boolean;
-
-  constructor(message: any) {
-    super(message);
-    this.noBacktraceLog = true;
-  }
-}
-
-const createActionHandler = (
-  addon: BasicAddonClass,
-  opts: IServeAddonsOptions
-) => {
-  try {
-    addon.validateAddon();
-  } catch (error) {
-    throw new Error(
-      `Validation of addon "${addon.getId()}" failed: ${error.message}`
-    );
-  }
-
-  if (opts.requestRecorderPath) {
-    setupRequestRecorder(opts.requestRecorderPath);
-  }
-
-  const actionHandler: express.RequestHandler = async (req, res) => {
-    const action = req.params[0];
-    let input =
-      req.method === "POST"
-        ? req.body
-        : req.query.data
-        ? JSON.parse(<string>req.query.data)
-        : {};
-
-    // Get action handler before verifying the signature
-    const handler = addon.getActionHandler(action);
-
-    // Get sig contents
-    let sig: string;
-    if (input.sig) {
-      // Legacy
-      sig = input.sig;
-      delete input.sig;
-    } else {
-      sig = <string>req.headers["watched-sig"] ?? "";
-    }
-    const sigData =
-      process.env.SKIP_AUTH === "1" ||
-      action === "addon" ||
-      (addon.getType() === "repository" && action === "repository")
-        ? null
-        : validateSignature(sig);
-
-    const migrationCtx = {
-      addon,
-      data: {},
-      sigData,
-      validator: getActionValidator(addon.getType(), action),
-    };
-    if (migrations[action]?.request) {
-      input = migrations[action].request(migrationCtx, input);
-    } else {
-      input = migrationCtx.validator.request(input);
-    }
-
-    // Get a cache handler instance
-    const cache = opts.cache.clone({
-      prefix: addon.getId(),
-      ...addon.getDefaultCacheOptions(),
-    });
-
-    // Request cache helper
-    let inlineCache: any = null;
-    const requestCache: RequestCacheFn = async (key, options) => {
-      if (inlineCache) throw new Error(`Request cache is already set up`);
-      const c = cache.clone(options);
-      inlineCache = await c.inline(key);
-    };
-
-    // Store request data for recording
-    const record: null | Partial<RecordData> = opts.requestRecorderPath
-      ? {}
-      : null;
-    if (record) {
-      record.addon = addon.getId();
-      record.action = action;
-      record.input = cloneDeep(input);
-    }
-
-    // Responder object
-    const responder = new Responder(
-      record,
-      async (statusCode: number, body: any) => {
-        res.status(statusCode).json(body);
-      }
-    );
-
-    // Handle the request
-    let statusCode = 200;
-    let output: any;
-    try {
-      output = await handler(
-        input,
-        {
-          request: req,
-          sig: sigData,
-          cache,
-          requestCache,
-          fetch: createTaskFetch(opts, responder, cache),
-          recaptcha: createTaskRecaptcha(opts, responder, cache),
-        },
-        addon
-      );
-      switch (action) {
-        case "resolve":
-        case "captcha":
-          if (output === null) throw new Error("Nothing found");
-          break;
-      }
-      if (migrations[action]?.response) {
-        output = migrations[action].response(migrationCtx, input, output);
-      } else {
-        output = migrationCtx.validator.response(output);
-      }
-      if (inlineCache) await inlineCache.set(output);
-    } catch (error) {
-      if (error instanceof CacheFoundError) {
-        if (error.result !== undefined) {
-          output = error.result;
-        } else {
-          statusCode = 500;
-          output = { error: error.error };
-        }
-      } else {
-        if (inlineCache) await inlineCache.setError(error);
-        statusCode = 500;
-        output = { error: error.message || error };
-        if (!error.noBacktraceLog) console.warn(error);
-      }
-    }
-
-    const type =
-      typeof output === "object" && output?.kind === "taskRequest"
-        ? "task"
-        : "response";
-    const id = await responder.send(type, statusCode, output);
-    responder.setTransport(id, null);
-  };
-
-  return actionHandler;
-};
-
 const createAddonRouter = (
   addon: BasicAddonClass,
-  options: IServeAddonsOptions
+  options: IExpressServerOptions
 ) => {
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
@@ -235,18 +55,30 @@ const createAddonRouter = (
     }
   });
 
-  const actionHandler = createActionHandler(addon, options);
+  // Initialize the addon
+  initializeAddon(options, addon);
 
-  const taskHandler = createTaskResponseHandler(addon, options.cache);
-
-  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/;
-  const routeHandler: express.RequestHandler = (req, res, next) => {
-    if (req.params[1] === "task") {
-      return taskHandler(req, res, next);
-    }
-    return actionHandler(req, res, next);
+  // Register addon routes
+  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
+  // const routeRegex = /^\/([^/]*?):\.watched$/; // New
+  const routeHandler: express.RequestHandler = async (req, res, next) => {
+    await handleAction({
+      opts: options,
+      addon,
+      action: req.params[1] === "task" ? "task" : req.params[0],
+      input:
+        req.method === "POST"
+          ? req.body
+          : req.query.data
+          ? JSON.parse(<string>req.query.data)
+          : {},
+      sig: <string>req.headers["watched-sig"] ?? "",
+      request: req,
+      sendResponse: async (statusCode, data) => {
+        res.status(statusCode).json(data);
+      },
+    });
   };
-
   router.get(routeRegex, routeHandler);
   router.post(routeRegex, routeHandler);
 
@@ -255,7 +87,7 @@ const createAddonRouter = (
 
 export const createSingleAddonRouter = (
   addons: BasicAddonClass[],
-  options: IServeAddonsOptions
+  options: IExpressServerOptions
 ) => {
   if (addons.length > 1) {
     throw new Error(
@@ -270,7 +102,7 @@ export const createSingleAddonRouter = (
 
 export const createMultiAddonRouter = (
   addons: BasicAddonClass[],
-  options: IServeAddonsOptions
+  options: IExpressServerOptions
 ) => {
   const router = express.Router();
 
@@ -313,9 +145,9 @@ export const createMultiAddonRouter = (
 
 export const createApp = (
   addons: BasicAddonClass[],
-  opts?: Partial<IServeAddonsOptions>
+  opts?: Partial<IExpressServerOptions>
 ): express.Application => {
-  const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
+  const options: IExpressServerOptions = defaults(opts, defaultServeOpts);
   const app = options.app || express();
 
   if (options.logRequests) {
@@ -359,9 +191,9 @@ export const createApp = (
 
 export const serveAddons = (
   addons: BasicAddonClass[],
-  opts?: Partial<IServeAddonsOptions>
+  opts?: Partial<IExpressServerOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const options: IServeAddonsOptions = defaults(opts, defaultServeOpts);
+  const options: IExpressServerOptions = defaults(opts, defaultServeOpts);
   const app = createApp(addons, options);
 
   const listenPromise = new Promise<void>((resolve) => {

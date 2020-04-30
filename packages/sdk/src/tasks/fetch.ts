@@ -1,8 +1,7 @@
 import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
 import fetch, { Response, ResponseInit } from "node-fetch";
 import { CacheHandler } from "../cache";
-import { IServeAddonsOptions } from "../interfaces";
-import { Responder, sendTask } from "./utils";
+import { Responder, sendTask } from "./engine";
 
 export type FetchFn = (
   url: TaskFetchRequest["url"],
@@ -11,11 +10,11 @@ export type FetchFn = (
 ) => Promise<Response>;
 
 export const createTaskFetch = (
-  opts: IServeAddonsOptions,
+  testMode: boolean,
   responder: Responder,
   cache: CacheHandler
 ): FetchFn => {
-  if (opts.replayMode) {
+  if (testMode) {
     return async (url, params, timeout = 0) => {
       console.debug(`Using mocked fetch for ${params?.method ?? "GET"} ${url}`);
       return await fetch(url, params);
@@ -28,7 +27,7 @@ export const createTaskFetch = (
         params,
       };
       const response = <TaskFetchResponse>(
-        await sendTask(opts, responder, cache, task, timeout)
+        await sendTask(testMode, responder, cache, task, timeout)
       );
 
       if (response.status === 0) throw new Error(response.error);

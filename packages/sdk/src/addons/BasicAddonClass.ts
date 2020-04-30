@@ -3,6 +3,8 @@ import {
   AddonRequest,
   AddonResponse,
   AddonTypes,
+  SelftestRequest,
+  SelftestResponse,
 } from "@watchedcom/schema";
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
@@ -11,6 +13,7 @@ import { ActionHandler, HandlersMap } from "../interfaces";
 import { validateAddonProps } from "../validators";
 
 export type BasicHandlers = {
+  selftest: ActionHandler<SelftestRequest, SelftestResponse, BasicAddonClass>;
   addon: ActionHandler<AddonRequest, AddonResponse, BasicAddonClass>;
 };
 
@@ -19,6 +22,13 @@ export abstract class BasicAddonClass<
   P extends Addon = Addon
 > {
   private handlersMap: HandlersMap = {
+    selftest: async (input, ctx) => {
+      const key = `selftest-${Date.now()}-${Math.random()}`;
+      await ctx.cache.set(key, "1", 60 * 1000);
+      const value = await ctx.cache.get(key);
+      if (value !== "1") throw new Error("Cache test failed");
+      return "ok";
+    },
     addon: async () => this.getProps(),
   };
   private defaultCacheOptions: CacheOptionsParam;

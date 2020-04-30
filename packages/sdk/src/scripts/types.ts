@@ -1,7 +1,7 @@
-import { IServeAddonsOptions } from "../interfaces";
+import { IExpressServerOptions } from "../interfaces";
 
 export type StartArgs = {
-  opts: Partial<IServeAddonsOptions>;
+  opts: Partial<IExpressServerOptions>;
   files: string[];
 };
 

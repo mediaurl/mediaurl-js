@@ -21,6 +21,13 @@ definitions:
       "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
         type: string
   # Api requests and responses
+  SelftestRequest:
+    description: |
+      Check if this addon is healthy. The response have to be the string `ok`.
+      The default selftest is testing the cache handler.
+  SelftestResponse:
+    type: string
+    enum: [ok]
   AddonRequest:
     description: Get detailed infos about an addon.
     oneOf:

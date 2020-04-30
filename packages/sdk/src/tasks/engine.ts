@@ -1,26 +1,23 @@
 import { TaskRequest, TaskResponse } from "@watchedcom/schema";
 import { EventEmitter } from "events";
-import { RequestHandler } from "express";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
 import { CacheHandler, IgnoreCacheError } from "../cache";
-import { IServeAddonsOptions } from "../interfaces";
+import { SendResponseFn } from "../interfaces";
 import { RecordData, writeRecordedRequest } from "../utils/request-recorder";
-
-type TransportFn = (statusCode: number, body: any) => Promise<any>;
 
 export class Responder {
   record: null | Partial<RecordData>;
   queue: string[];
   emitter: EventEmitter;
-  transport: null | TransportFn;
+  sendResponse: null | SendResponseFn;
 
-  constructor(record: null | Partial<RecordData>, fn: TransportFn) {
+  constructor(record: null | Partial<RecordData>, fn: SendResponseFn) {
     this.queue = [];
     this.emitter = new EventEmitter();
 
     this.record = record;
-    this.transport = fn;
+    this.sendResponse = fn;
   }
 
   async send(
@@ -58,43 +55,43 @@ export class Responder {
       await writeRecordedRequest(<RecordData>this.record);
     }
 
-    // Make sure we have a transport channel
-    const transport = this.transport;
-    if (transport === null) {
-      // When the transport is not set, it means that either the queue function
+    // Make sure we have a sendResponse handle
+    const sendResponse = this.sendResponse;
+    if (sendResponse === null) {
+      // When `sendResponse` is not set, it means that either the queue function
       // has a bug, or the responder was used after it sent the final response
-      throw new Error("Transport not set");
+      throw new Error("Send response not set");
     }
-    this.transport = null;
+    this.sendResponse = null;
 
     // Send the response
-    await transport(statusCode, body);
+    await sendResponse(statusCode, body);
 
     // Return the queue id
     return id;
   }
 
-  setTransport(id: string, fn: null | TransportFn) {
+  setSendResponse(id: string, fn: null | SendResponseFn) {
     if (this.queue[0] !== id) {
       throw new Error(`First queue element is not the current id`);
     }
     this.queue.shift();
 
-    this.transport = fn;
+    this.sendResponse = fn;
     this.emitter.emit("event");
   }
 }
 
 export const sendTask = async (
-  opts: IServeAddonsOptions,
+  testMode: boolean,
   responder: Responder,
   cache: CacheHandler,
   taskRequestData: TaskRequest["data"],
   timeout = 30 * 1000
 ): Promise<TaskResponse["data"]> => {
-  if (opts.replayMode) {
+  if (testMode) {
     throw new Error(
-      `Can not run client task "${taskRequestData.type}" in replay mode`
+      `Can not run client task "${taskRequestData.type}" in test mode`
     );
   }
 
@@ -119,7 +116,7 @@ export const sendTask = async (
   // console.debug(`Task ${task.id} resolved`);
 
   // Set new valid responder
-  responder.setTransport(id, async (statusCode, body) => {
+  responder.setSendResponse(id, async (statusCode, body) => {
     const data = JSON.stringify({ statusCode, body });
     await cache.set(`task.response-${responseChannel}`, data, timeout);
   });
@@ -132,42 +129,49 @@ export const sendTask = async (
   return response;
 };
 
-export const createTaskResponseHandler = (
-  addon: BasicAddonClass,
-  cache: CacheHandler,
-  timeout = 120 * 1000
-) => {
-  const taskHandler: RequestHandler = async (req, res) => {
-    cache = cache.clone({
-      prefix: addon.getId(),
-      ...addon.getDefaultCacheOptions(),
-    });
+type HandleTaskProps = {
+  cache: CacheHandler;
+  addon: BasicAddonClass;
+  timeout?: number;
+  input: any;
+  sendResponse: SendResponseFn;
+};
 
-    const task: TaskResponse = req.body;
-    // getServerValidators().models.task.response(task);
-    // console.debug(`Task ${task.id} received response from client`);
+export const handleTask = async ({
+  cache,
+  addon,
+  timeout = 120 * 1000,
+  input,
+  sendResponse,
+}: HandleTaskProps) => {
+  cache = cache.clone({
+    prefix: addon.getId(),
+    ...addon.getDefaultCacheOptions(),
+  });
 
-    // Make sure the key exists to prevent spamming
-    if (!(await cache.get(`task.wait-${task.id}`))) {
-      throw new Error(`Task wait key ${task.id} does not exist`);
-    }
-    await cache.delete(`task.wait-${task.id}`);
+  const task: TaskResponse = input;
+  // getServerValidators().models.task.response(task);
+  // console.debug(`Task ${task.id} received response from client`);
 
-    // Set the response
-    const responseChannel = uuid4().toString();
-    const raw = JSON.stringify({ responseChannel, response: task.data });
-    await cache.set(`task.response-${task.id}`, raw);
+  // Make sure the key exists to prevent spamming
+  if (!(await cache.get(`task.wait-${task.id}`))) {
+    throw new Error(`Task wait key ${task.id} does not exist`);
+  }
+  await cache.delete(`task.wait-${task.id}`);
 
-    // Wait for the response
-    const data = await cache.waitKey(
-      `task.response-${responseChannel}`,
-      timeout,
-      true
-    );
-    const { statusCode, body } = JSON.parse(data);
-    res.status(statusCode).json(body);
-    // console.debug(`Task ${task.id} sending next response to client`);
-  };
+  // Set the response
+  const responseChannel = uuid4().toString();
+  const raw = JSON.stringify({ responseChannel, response: task.data });
+  await cache.set(`task.response-${task.id}`, raw);
 
-  return taskHandler;
+  // Wait for the response
+  const data = await cache.waitKey(
+    `task.response-${responseChannel}`,
+    timeout,
+    true
+  );
+  const { statusCode, body } = JSON.parse(data);
+
+  await sendResponse(statusCode, body);
+  // console.debug(`Task ${task.id} sending next response to client`);
 };

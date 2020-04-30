@@ -3,8 +3,7 @@ import {
   TaskRecaptchaResponse,
 } from "@watchedcom/schema";
 import { CacheHandler } from "../cache";
-import { IServeAddonsOptions } from "../interfaces";
-import { Responder, sendTask } from "./utils";
+import { Responder, sendTask } from "./engine";
 
 export type RecaptchaFn = (
   data: Omit<TaskRecaptchaRequest, "type">,
@@ -17,18 +16,21 @@ const defaults: Partial<TaskRecaptchaRequest> = {
 };
 
 export const createTaskRecaptcha = (
-  opts: IServeAddonsOptions,
+  testMode: boolean,
   responder: Responder,
   cache: CacheHandler
 ) => {
   const recaptcha: RecaptchaFn = async (data, timeout = 60 * 1000) => {
+    if (testMode) {
+      throw new Error("Task recaptcha is not available in test mode");
+    }
     const task = <TaskRecaptchaRequest>{
       ...defaults,
       ...data,
       type: "recaptcha",
     };
     const res = <TaskRecaptchaResponse>(
-      await sendTask(opts, responder, cache, task, timeout)
+      await sendTask(testMode, responder, cache, task, timeout)
     );
     return res.token;
   };

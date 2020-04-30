@@ -6,7 +6,7 @@ definitions:
     enum: [repository, worker, iptv, bundle]
   BasicAddonActions:
     type: string
-    enum: [addon]
+    enum: [selftest, addon]
   RepositoryAddonActions:
     oneOf:
       - $ref: "#/definitions/BasicAddonActions"

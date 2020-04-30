@@ -13,6 +13,8 @@ import {
   RepositoryResponse,
   ResolveRequest,
   ResolveResponse,
+  SelftestRequest,
+  SelftestResponse,
   SourceRequest,
   SourceResponse,
   SubtitleRequest,
@@ -89,10 +91,14 @@ export interface HandlersMap {
  * It's base type to pick from (by action).
  */
 export type ActionHandlers<T extends BasicAddonClass> = {
+  // All addons
+  selftest: ActionHandler<SelftestRequest, SelftestResponse, T>;
   addon: ActionHandler<AddonRequest, AddonResponse, T>;
 
+  // Repository addons
   repository: ActionHandler<RepositoryRequest, RepositoryResponse, T>;
 
+  // Worker addons
   directory: ActionHandler<DirectoryRequest, DirectoryResponse, T>;
   item: ActionHandler<ItemRequest, ItemResponse, T>;
   source: ActionHandler<SourceRequest, SourceResponse, T>;
@@ -100,18 +106,15 @@ export type ActionHandlers<T extends BasicAddonClass> = {
   resolve: ActionHandler<ResolveRequest, ResolveResponse, T>;
   captcha: ActionHandler<CaptchaRequest, CaptchaResponse, T>;
 
+  // IPTV addons
   iptv: ActionHandler<IptvRequest, IptvResponse, T>;
 };
 
-export interface IServeAddonsOptions {
+export interface IServerOptions {
   /**
-   * Start the server in single addon mode (default: true)
+   * Cache handler
    */
-  singleMode: boolean;
-  /**
-   * Log HTTP requests (default: true)
-   */
-  logRequests: boolean;
+  cache: CacheHandler;
   /**
    * Write requests to the addon server to a file which can
    * be replayed later. This is very useful for testing or
@@ -122,6 +125,17 @@ export interface IServeAddonsOptions {
    * Whenever the app is in replay mode. This will mock the ctx.fetch function.
    */
   replayMode: boolean;
+}
+
+export interface IExpressServerOptions extends IServerOptions {
+  /**
+   * Start the server in single addon mode (default: false)
+   */
+  singleMode: boolean;
+  /**
+   * Log HTTP requests (default: true)
+   */
+  logRequests: boolean;
   /**
    * Express error handler
    */
@@ -130,10 +144,6 @@ export interface IServeAddonsOptions {
    * Listen port
    */
   port: number;
-  /**
-   * Cache handler
-   */
-  cache: CacheHandler;
   /**
    * Middlewares prepending to all app routes
    */
@@ -147,3 +157,9 @@ export interface IServeAddonsOptions {
    */
   app?: express.Application;
 }
+
+/**
+ * Function to send the response. This is the abstraction layer between nodejs
+ * server engines like express or serverless cloud hosters.
+ */
+export type SendResponseFn = (statusCode: number, body: any) => Promise<void>;

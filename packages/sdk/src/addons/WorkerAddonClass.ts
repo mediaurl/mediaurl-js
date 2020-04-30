@@ -1,5 +1,4 @@
 import {
-  MainItem,
   ResolveRequest,
   ResolveResponse,
   WorkerAddon,
