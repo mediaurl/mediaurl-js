@@ -1,5 +1,5 @@
 import { ActionHandlerContext } from "@watchedcom/sdk";
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 import {
   HttpMethod,
   Page,
@@ -158,6 +158,22 @@ const defaultRules = {
   ],
 };
 
+const convertFetchResponse = async (res: Response): Promise<RespondOptions> => {
+  const headers = {};
+  res.headers.forEach((value, name) => {
+    headers[name] = value;
+  });
+  delete headers["content-length"];
+  delete headers["connection"];
+  delete headers["accept-ranges"];
+  return {
+    status: res.status,
+    headers,
+    body: await res.buffer(),
+    contentType: headers["content-type"],
+  };
+};
+
 export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
   const opts = <PageRuleOptions>{ ...defaultOptions, ...options };
 
@@ -243,19 +259,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               body: request.postData(),
               redirect: "follow",
             });
-            const headers = {};
-            res.headers.forEach((value, key) => {
-              headers[key] = value;
-            });
-            delete headers["content-length"];
-            delete headers["connection"];
-            delete headers["accept-ranges"];
-            response = {
-              status: res.status,
-              headers,
-              body: await res.buffer(),
-              contentType: headers["content-type"],
-            };
+            response = await convertFetchResponse(res);
             break;
           }
           case "proxy": {
@@ -268,16 +272,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               body: request.postData(),
               redirect: "follow",
             });
-            const headers = {};
-            res.headers.forEach((value, name) => {
-              headers[name] = value;
-            });
-            response = {
-              status: res.status,
-              headers,
-              body: await res.buffer(),
-              contentType: res.headers?.["content-type"],
-            };
+            response = await convertFetchResponse(res);
             break;
           }
           case "deny":
