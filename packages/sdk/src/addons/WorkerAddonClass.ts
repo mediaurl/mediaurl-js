@@ -24,14 +24,6 @@ const resourceActions: WorkerAddonResourceActions[] = [
   "captcha",
 ];
 
-type WorkerAddonTestData = {
-  items: MainItem[];
-};
-
-const defaultWorkerAddonTestData = {
-  items: [],
-};
-
 type ResolverHandlerFn = (
   match: RegExpExecArray,
   input: ResolveRequest,
@@ -48,7 +40,6 @@ export class WorkerAddonClass extends BasicAddonClass<
   WorkerAddon
 > {
   private resolvers: Resolver[];
-  private testData: WorkerAddonTestData = { ...defaultWorkerAddonTestData };
 
   constructor(props: WorkerAddon) {
     super(props);
@@ -124,14 +115,6 @@ export class WorkerAddonClass extends BasicAddonClass<
     }
 
     return this;
-  }
-
-  public setTestData(testData: Partial<WorkerAddonTestData>) {
-    this.testData = { ...this.testData, ...testData };
-  }
-
-  public getTestData() {
-    return this.testData;
   }
 }
 

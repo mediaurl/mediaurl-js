@@ -71,13 +71,8 @@ export const testAddon = async (addon: BasicAddonClass) => {
   if (type === "repository") {
     await app.call<RepositoryRequest>("repository", { ...requestDefaults });
   } else if (type === "worker") {
-    const testData = (<WorkerAddonClass>addon).getTestData();
-    const directories = <DirectoryItem[]>(
-      testData.items.filter((item) => item.type === "directory")
-    );
-    const items = <PlayableItem[]>(
-      testData.items.filter((item) => item.type !== "directory")
-    );
+    const directories: DirectoryItem[] = [];
+    const items: PlayableItem[] = [];
 
     const addItem = (item: MainItem) => {
       if (item.type === "directory" && directories.length < 10)
