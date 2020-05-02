@@ -1,10 +1,6 @@
 # WATCHED.com SDK and tools
 
-This monorepo includes all javascript modules needed to create easily addons for WATCHED.
-
-## Status of this project
-
-The WATCHED API and the SDK is still not yet stable, so there might be further updates which will require you to update or change your code.
+This monorepo includes all javascript modules needed to create addons for [WATCHED](https://www.watched.com/).
 
 ## Getting started
 
