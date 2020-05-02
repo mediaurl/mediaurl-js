@@ -1,8 +1,7 @@
-export type OuterPromise<T = any> = {
-  promise: PromiseLike<T>;
+export type OuterPromise<T = any> = Promise<T> & {
   resolve: (value?: any) => void;
   reject: (error: Error | string) => void;
-  done: null | boolean;
+  done: boolean;
 };
 
 /**
@@ -12,27 +11,33 @@ export type OuterPromise<T = any> = {
  * const p = outerPromise();
  * setTimeout(function firstCallback() { p.resolve(); }, 1000);
  * someHandler(async function otherCallback() {
- *   return await p.promise;
+ *   return await p;
  * });
  * ```
  * @param timeout Optional timeout.
  */
 export const outerPromise = (timeout?: number) => {
+  const temp: Partial<OuterPromise> = { done: false };
+
   let t: NodeJS.Timeout;
-  const p: Partial<OuterPromise> = { done: null };
-  p.promise = new Promise((a, b) => {
-    p.resolve = (value) => {
+  const promise = new Promise((a, b) => {
+    temp.resolve = (value) => {
       if (t) clearTimeout(t);
-      p.done = true;
+      temp.done = true;
       a(value);
     };
-    p.reject = (error) => {
+    temp.reject = (error) => {
       if (t) clearTimeout(t);
-      p.done = true;
+      temp.done = true;
       b(error);
     };
   });
-  const res = <OuterPromise>p;
+
+  temp.then = (...args: any[]) => promise.then(...args);
+  temp.catch = (...args: any[]) => promise.catch(...args);
+  temp.finally = (...args: any[]) => promise.finally(...args);
+
+  const res = <OuterPromise>temp;
   if (timeout) setTimeout(() => res.reject(new Error("Timeout")), timeout);
   return res;
 };
