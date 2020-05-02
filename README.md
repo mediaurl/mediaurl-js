@@ -76,6 +76,12 @@ To reload for screens in the app, swipe down until a refresh symbol appears. Aft
 
 When you change the metadata of your addon (like addin a new `item` or `source` handler, or adding new item types to your addon), you need to refresh the addon. To do this, go to the _addon manager_, click on it (I) symbol on the right side of your addon. Within the "addon detail screen", swipe down to refreh your addon.
 
+### Documentation
+
+Much of our documentation is in our code. Depending on your editor you should see much of the documentation while writing or when hovering a variable or function.
+
+Please also check out our object schema here: https://www.watched.com/swagger
+
 ### Publish and rename
 
 - Before renaming the ID of your addon, you should deactivate and delete it from the app.
