@@ -72,6 +72,12 @@ Go to the start screen and you should see a dashboard of your addon.
 
 TODO
 
+### Name your addon
+
+Please don't forget to change the ID and name of your addon before publishing it!
+
+You need to edit the `package.json` and `src/index.ts` files.
+
 ## Tipps for development and testing
 
 We created some tools to make the development of addons more easy.
