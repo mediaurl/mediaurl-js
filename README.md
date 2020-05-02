@@ -16,9 +16,9 @@ In best way to start an own WATCHED addon is by cloning our example repository.
 - A text editor of your choice. Preferred are [vscode](https://code.visualstudio.com/), [atom](https://atom.io/) or [Sublime Text](https://www.sublimetext.com/)
 - Basic knowledge in Javascript or Typescript
 
-### Creating the addon
+### Cloning the example addon
 
-The best way to start is to clone our [watched-addon-example](https://github.com/watchedcom/watched-addon-example) addon
+The best way to start is to clone our [watched-addon-example](https://github.com/watchedcom/watched-addon-example) addon:
 
 ```shell
 git clone https://github.com/watchedcom/watched-addon-example.git my-addon
@@ -52,10 +52,10 @@ Listening on 3000
 
 **2. Enable developer mode**
 
-In order to install addons in the app, you first need to unlock the WATCHED app:
+In order to install addons in the WATCHED app, you first need to _unlock_ it:
 
-1. Open the WATCHED app, go settings and make sure the **Developer mode** is enabled.
-2. Go to the addon index and deactivate the bundle addon if there is one active.
+1. Open the WATCHED app, go to settings and make sure the **Developer mode** is enabled.
+2. Go to the addon manager and deactivate the bundle addon if there is one active.
 3. To make things more clean and easy, disabled all currently activated addons.
 
 **3. Add your addon**
@@ -70,13 +70,19 @@ Go to the start screen and you should see a dashboard of your addon.
 
 ### Modify your addon
 
-TODO
+Open the `src/index.ts` file in your editor and start playing around. The server will restart automatically once you saved a file.
 
-### Name your addon
+To reload for screens in the app, swipe down until a refresh symbol appears. After the refresh your changes should appear.
 
-Please don't forget to change the ID and name of your addon before publishing it!
+When you change the metadata of your addon (like addin a new `item` or `source` handler, or adding new item types to your addon), you need to refresh the addon. To do this, go to the _addon manager_, click on it (I) symbol on the right side of your addon. Within the "addon detail screen", swipe down to refreh your addon.
 
-You need to edit the `package.json` and `src/index.ts` files.
+### Publish and rename
+
+- Before renaming the ID of your addon, you should deactivate and delete it from the app.
+
+- Edit the name and addon ID in `package.json` and `src/index.ts`.
+
+- Delete all unnecessary action handlers.
 
 ## Tipps for development and testing
 
