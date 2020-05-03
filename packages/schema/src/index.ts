@@ -15,7 +15,7 @@ function createValidator(schemas: any, type: string, definition: string) {
           JSON.stringify(
             {
               errors: validate.errors,
-              obj: obj ?? null
+              obj: obj ?? null,
             },
             null,
             2
@@ -40,7 +40,7 @@ function init(schemas: any) {
         worker: createValidator(schemas, "out", "WorkerAddon"),
         iptv: createValidator(schemas, "out", "IptvAddon"),
         bundle: createValidator(schemas, "out", "BundleAddon"),
-        all: createValidator(schemas, "out", "Addon")
+        all: createValidator(schemas, "out", "Addon"),
       },
       item: {
         directory: createValidator(schemas, "out", "DirectoryItem"),
@@ -48,22 +48,26 @@ function init(schemas: any) {
         series: createValidator(schemas, "out", "SeriesItem"),
         channel: createValidator(schemas, "out", "ChannelItem"),
         iptv: createValidator(schemas, "out", "IptvItem"),
-        all: createValidator(schemas, "out", "MainItem")
+        all: createValidator(schemas, "out", "MainItem"),
       },
       subItem: {
         episode: createValidator(schemas, "out", "SeriesEpisodeItem"),
-        all: createValidator(schemas, "out", "SubItem")
+        all: createValidator(schemas, "out", "SubItem"),
       },
       source: createValidator(schemas, "out", "Source"),
       subtitle: createValidator(schemas, "out", "Subtitle"),
       error: createValidator(schemas, "out", "Error"),
       task: {
         request: createValidator(schemas, "out", "TaskRequest"),
-        response: createValidator(schemas, "in", "TaskResponse")
-      }
+        response: createValidator(schemas, "in", "TaskResponse"),
+      },
     },
     actions: {
       basic: {
+        selftest: {
+          request: createValidator(schemas, "in", "SelftestRequest"),
+          response: createValidator(schemas, "out", "SelftestResponse"),
+        },
         addon: {
           request: createValidator(schemas, "in", "AddonRequest"),
           originalResponse: createValidator(schemas, "out", "AddonResponse"),
@@ -72,8 +76,8 @@ function init(schemas: any) {
               v.models.addon[obj?.type] ??
               v.actions.basic.addon.originalResponse;
             return fn(obj);
-          }
-        }
+          },
+        },
       },
       repository: {
         repository: {
@@ -95,8 +99,8 @@ function init(schemas: any) {
               fn(o);
             }
             return obj;
-          }
-        }
+          },
+        },
       },
       worker: {
         directory: {
@@ -116,7 +120,7 @@ function init(schemas: any) {
             }
             obj.items = items;
             return obj;
-          }
+          },
         },
         item: {
           request: createValidator(schemas, "in", "ItemRequest"),
@@ -126,35 +130,35 @@ function init(schemas: any) {
               v.models.item[obj?.type] ??
               v.actions.worker.item.originalResponse;
             return fn(obj);
-          }
+          },
         },
         source: {
           request: createValidator(schemas, "in", "SourceRequest"),
-          response: createValidator(schemas, "out", "SourceResponse")
+          response: createValidator(schemas, "out", "SourceResponse"),
         },
         subtitle: {
           request: createValidator(schemas, "in", "SubtitleRequest"),
-          response: createValidator(schemas, "out", "SubtitleResponse")
+          response: createValidator(schemas, "out", "SubtitleResponse"),
         },
         resolve: {
           request: createValidator(schemas, "in", "ResolveRequest"),
-          response: createValidator(schemas, "out", "ResolveResponse")
+          response: createValidator(schemas, "out", "ResolveResponse"),
         },
         captcha: {
           request: createValidator(schemas, "in", "CaptchaRequest"),
-          response: createValidator(schemas, "out", "CaptchaResponse")
-        }
+          response: createValidator(schemas, "out", "CaptchaResponse"),
+        },
       },
       iptv: {
         iptv: {
           request: createValidator(schemas, "in", "IptvRequest"),
-          response: createValidator(schemas, "out", "IptvResponse")
-        }
-      }
-    }
+          response: createValidator(schemas, "out", "IptvResponse"),
+        },
+      },
+    },
   };
 
-  ["resolveSource", "resolveSubtitle"].forEach(key => {
+  ["resolveSource", "resolveSubtitle"].forEach((key) => {
     v.actions[key] = v.actions.resolve;
   });
 
@@ -162,33 +166,33 @@ function init(schemas: any) {
 }
 
 const defaultOptions: Ajv.Options = {
-  coerceTypes: true
+  coerceTypes: true,
 };
 
 const schemaWithDefaults = new Schema({
   schema,
   schemaOptions: {
     ...defaultOptions,
-    useDefaults: "empty"
-  }
+    useDefaults: "empty",
+  },
 });
 
 const schemaWithoutDefaults = new Schema({
   schema,
   schemaOptions: {
     ...defaultOptions,
-    useDefaults: false
-  }
+    useDefaults: false,
+  },
 });
 
 const serverValidators = init({
   in: schemaWithDefaults,
-  out: schemaWithoutDefaults
+  out: schemaWithoutDefaults,
 });
 
 const clientValidators = init({
   in: schemaWithoutDefaults,
-  out: schemaWithDefaults
+  out: schemaWithDefaults,
 });
 
 export const getServerValidators = () => {
