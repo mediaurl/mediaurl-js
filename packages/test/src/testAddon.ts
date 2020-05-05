@@ -115,7 +115,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
           id: item.ids[addon.getId()],
         },
         name: item.name,
-        translatedNames: {},
+        nameTranslations: {},
         releaseDate: item.releaseDate,
       };
 

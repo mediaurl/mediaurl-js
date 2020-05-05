@@ -56,19 +56,25 @@ export const migrations = {
   },
   item: {
     request(ctx: MigrationContext, input: ItemRequest) {
-      if (input.translatedNames === undefined) input.translatedNames = {};
+      if (input.nameTranslations === undefined) {
+        input.nameTranslations = input.translatedNames ?? {};
+      }
       return ctx.validator.request(input);
     },
   },
   source: {
     request(ctx: MigrationContext, input: SourceRequest) {
-      if (input.translatedNames === undefined) input.translatedNames = {};
+      if (input.nameTranslations === undefined) {
+        input.nameTranslations = input.translatedNames ?? {};
+      }
       return ctx.validator.request(input);
     },
   },
   subtitle: {
     request(ctx: MigrationContext, input: SubtitleRequest) {
-      if (input.translatedNames === undefined) input.translatedNames = {};
+      if (input.nameTranslations === undefined) {
+        input.nameTranslations = input.translatedNames ?? {};
+      }
       return ctx.validator.request(input);
     },
   },

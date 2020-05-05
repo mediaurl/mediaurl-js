@@ -11,15 +11,6 @@ definitions:
         $ref: "general.yaml#/definitions/Country"
         default: "XX"
     required: [language, region]
-  TranslatedNames:
-    description: |
-      Object with all known names in different languages. If there are
-      no translations available, this object will be empty.
-    type: object
-    additionalProperties: false
-    patternProperties:
-      "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
-        type: string
   # Api requests and responses
   SelftestRequest:
     description: |
@@ -126,8 +117,8 @@ definitions:
               Name of this item. If there are more than one translation available,
               it will always be the one closest to the currently selected app language.
             type: string
-          translatedNames:
-            $ref: "#/definitions/TranslatedNames"
+          nameTranslations:
+            $ref: "items.yaml#/definitions/NameTranslations"
           originalName:
             description: Original name of this item.
             type: string
@@ -139,7 +130,7 @@ definitions:
           year:
             description: Release year.
             $ref: "general.yaml#/definitions/Year"
-        required: [type, ids, name, translatedNames]
+        required: [type, ids, name, nameTranslations]
   ItemResponse:
     oneOf:
       - $ref: "items.yaml#/definitions/PlayableItem"
@@ -160,8 +151,8 @@ definitions:
               name:
                 description: Name of this sub item.
                 type: string
-              translatedNames:
-                $ref: "#/definitions/TranslatedNames"
+              nameTranslations:
+                $ref: "items.yaml#/definitions/NameTranslations"
               releaseDate:
                 description: Release date as unix timestamp or parseable string.
                 oneOf:

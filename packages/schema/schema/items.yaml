@@ -10,6 +10,15 @@ definitions:
       - $ref: "#/definitions/ItemTypes"
       - type: string
         enum: [episode]
+  NameTranslations:
+    description: |
+      Object with all known names in different languages. If there are
+      no translations available, this object will be empty.
+    type: object
+    additionalProperties: false
+    patternProperties:
+      "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
+        type: string
   ItemImages:
     description: Item images.
     type: object
@@ -45,6 +54,8 @@ definitions:
         description: Name of item.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
+      nameTranslations:
+        $ref: "#/definitions/NameTranslations"
       originalName:
         description: Original name of item.
         type: string
