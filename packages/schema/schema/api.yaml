@@ -130,7 +130,7 @@ definitions:
           year:
             description: Release year.
             $ref: "general.yaml#/definitions/Year"
-        required: [type, ids, name, nameTranslations]
+        required: [type, ids, name]
   ItemResponse:
     oneOf:
       - $ref: "items.yaml#/definitions/PlayableItem"
