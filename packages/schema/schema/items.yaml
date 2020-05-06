@@ -150,6 +150,12 @@ definitions:
         items:
           $ref: "objects.yaml#/definitions/Source"
         default: []
+      sourcesExclusive:
+        description: |
+          If true, only this sources are offered to the user.
+          The app will not try to find more subtitles via other addons.
+        type: boolean
+        default: false
     required: [ids]
   MovieItem:
     allOf:
@@ -211,6 +217,12 @@ definitions:
         items:
           $ref: "objects.yaml#/definitions/Source"
         default: []
+      sourcesExclusive:
+        description: |
+          If true, only this sources are offered to the user.
+          The app will not try to find more subtitles via other addons.
+        type: boolean
+        default: false
     required: [ids, season, episode]
   ChannelItem:
     type: object
@@ -236,6 +248,12 @@ definitions:
         items:
           $ref: "objects.yaml#/definitions/Source"
         default: []
+      sourcesExclusive:
+        description: |
+          If true, only this sources are offered to the user.
+          The app will not try to find more subtitles via other addons.
+        type: boolean
+        default: false
     required: [type, ids]
   IptvItem:
     type: object
