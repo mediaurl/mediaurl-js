@@ -90,16 +90,16 @@ Please also check out our object schema here: https://www.watched.com/swagger
 
 Please check our deployment documentation at [docs/deployment.md](https://github.com/watchedcom/watched-js/blob/master/docs/deployment.md).
 
-## Tipps for development and testing
+## Tips for development and testing
 
 We created some tools to make the development of addons more easy.
 
 ### Record and replay requests
 
-Start your developemnt server in the following way:
+Start your development server in the following way:
 
 ```shell
-npx watched-sdk develop --record test-session
+npx watched-sdk start --record test-session
 ```
 
 This will create a file named `test-session.record.js` in the current directory. Now load your addon in the app and open directories, items or load sources. In the terminal, you should see some log messages regarding recording.
