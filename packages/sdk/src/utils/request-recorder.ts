@@ -21,9 +21,9 @@ const inspect = (data) =>
   });
 
 const getFile = (recordPath: string) => {
-  if (!/\.record\.js$/.test(recordPath)) recordPath += ".record.js";
-  else if (!/\.js$/.test(recordPath)) recordPath += ".js";
-  return recordPath;
+  return !/\.record\.js$/.test(recordPath)
+    ? recordPath + ".record.js"
+    : recordPath;
 };
 
 const getPath = (recordPath: string) => {
