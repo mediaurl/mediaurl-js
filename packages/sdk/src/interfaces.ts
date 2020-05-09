@@ -54,6 +54,7 @@ export interface ActionHandlerContext {
     [k: string]: any;
   };
   cache: CacheHandler;
+
   /**
    * Helper function to cache full action calls. Run this
    * on the beginning of your action handler to check
@@ -62,10 +63,12 @@ export interface ActionHandlerContext {
    * automatically.
    */
   requestCache: RequestCacheFn;
+
   /**
    * Fetch an URL via the client app.
    */
   fetch: FetchFn;
+
   /**
    * Solve a recaptcha via the client app.
    */
@@ -110,21 +113,62 @@ export type ActionHandlers<T extends BasicAddonClass> = {
   iptv: ActionHandler<IptvRequest, IptvResponse, T>;
 };
 
+/**
+ * Server options
+ */
 export interface IServerOptions {
   /**
    * Cache handler
    */
   cache: CacheHandler;
+
   /**
    * Write requests to the addon server to a file which can
    * be replayed later. This is very useful for testing or
    * to create test cases.
    */
   requestRecorderPath: null | string;
+
   /**
    * Whenever the app is in replay mode. This will mock the ctx.fetch function.
    */
   replayMode: boolean;
+
+  /**
+   * Middleware functions
+   */
+  middlewares: {
+    /**
+     * Called before any initialization.
+     * Have to return the input object.
+     */
+    init: ((
+      addon: BasicAddonClass,
+      action: string,
+      input: any
+    ) => Promise<any>)[];
+    /**
+     * Called immediately before the action handler is called
+     * Have to return the input object.
+     */
+    request: ((
+      addon: BasicAddonClass,
+      action: string,
+      ctx: ActionHandlerContext,
+      input: any
+    ) => Promise<any>)[];
+    /**
+     * Called right before the response is sent.
+     * Have to return the output object.
+     */
+    response: ((
+      addon: BasicAddonClass,
+      action: string,
+      ctx: ActionHandlerContext,
+      input: any,
+      output: any
+    ) => Promise<any>)[];
+  };
 }
 
 export interface IExpressServerOptions extends IServerOptions {
@@ -132,26 +176,32 @@ export interface IExpressServerOptions extends IServerOptions {
    * Start the server in single addon mode (default: false)
    */
   singleMode: boolean;
+
   /**
    * Log HTTP requests (default: true)
    */
   logRequests: boolean;
+
   /**
    * Express error handler
    */
   errorHandler: express.ErrorRequestHandler;
+
   /**
    * Listen port
    */
   port: number;
+
   /**
    * Middlewares prepending to all app routes
    */
   preMiddlewares: express.RequestHandler[];
+
   /**
    * Middlewares that are executed at the end, but BEFORE error handler
    */
   postMiddlewares: express.RequestHandler[];
+
   /**
    * Your custom Express app instance
    */

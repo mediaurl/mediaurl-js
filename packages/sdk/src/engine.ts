@@ -1,7 +1,12 @@
 import { cloneDeep } from "lodash";
 import { BasicAddonClass } from "./addons";
 import { CacheFoundError } from "./cache";
-import { IServerOptions, RequestCacheFn, SendResponseFn } from "./interfaces";
+import {
+  ActionHandlerContext,
+  IServerOptions,
+  RequestCacheFn,
+  SendResponseFn,
+} from "./interfaces";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
@@ -12,21 +17,6 @@ import {
 import { RecordData, setupRequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
-
-/**
- * An error which will not log any backtrace.
- *
- * All errors with the property `noBacktraceLog` set to `true` will not show a
- * backtrace on the console.
- */
-export class SilentError extends Error {
-  public noBacktraceLog: boolean;
-
-  constructor(message: any) {
-    super(message);
-    this.noBacktraceLog = true;
-  }
-}
 
 /**
  * Make sure the addon as well as the options are initialized
@@ -70,6 +60,11 @@ export const handleAction = async ({
   request,
   sendResponse,
 }: HandleActionProps) => {
+  // Run event handlers
+  for (const fn of opts.middlewares.init) {
+    input = await fn(addon, action, input);
+  }
+
   // Handle task responses
   if (action === "task") {
     await handleTask({
@@ -85,25 +80,36 @@ export const handleAction = async ({
   const handler = addon.getActionHandler(action);
 
   // Validate the signature
-  const sigData =
-    process.env.SKIP_AUTH === "1" ||
-    action === "selftest" ||
-    action === "addon" ||
-    (addon.getType() === "repository" && action === "repository")
-      ? null
-      : validateSignature(sig);
+  let sigData: any;
+  try {
+    sigData =
+      process.env.SKIP_AUTH === "1" ||
+      action === "selftest" ||
+      action === "addon" ||
+      (addon.getType() === "repository" && action === "repository")
+        ? null
+        : validateSignature(sig);
+  } catch (error) {
+    sendResponse(403, { error: error.message || error });
+    return;
+  }
 
-  // Migrations
+  // Migration and validation
   const migrationCtx = {
     addon,
     data: {},
     sigData,
     validator: getActionValidator(addon.getType(), action),
   };
-  if (migrations[action]?.request) {
-    input = migrations[action].request(migrationCtx, input);
-  } else {
-    input = migrationCtx.validator.request(input);
+  try {
+    if (migrations[action]?.request) {
+      input = migrations[action].request(migrationCtx, input);
+    } else {
+      input = migrationCtx.validator.request(input);
+    }
+  } catch (error) {
+    sendResponse(400, { error: error.message || error });
+    return;
   }
 
   // Get a cache handler instance
@@ -133,23 +139,27 @@ export const handleAction = async ({
   // Responder object
   const responder = new Responder(record, sendResponse);
 
+  // Action handler context
+  const testMode = opts.replayMode || action === "selftest";
+  const ctx: ActionHandlerContext = {
+    request,
+    sig: sigData,
+    cache,
+    requestCache,
+    fetch: createTaskFetch(testMode, responder, cache),
+    recaptcha: createTaskRecaptcha(testMode, responder, cache),
+  };
+
+  // Run event handlers
+  for (const fn of opts.middlewares.request) {
+    input = await fn(addon, action, ctx, input);
+  }
+
   // Handle the request
   let statusCode = 200;
   let output: any;
   try {
-    const testMode = opts.replayMode || action === "selftest";
-    output = await handler(
-      input,
-      {
-        request,
-        sig: sigData,
-        cache,
-        requestCache,
-        fetch: createTaskFetch(testMode, responder, cache),
-        recaptcha: createTaskRecaptcha(testMode, responder, cache),
-      },
-      addon
-    );
+    output = await handler(input, ctx, addon);
 
     // Raise default errors
     switch (action) {
@@ -188,11 +198,12 @@ export const handleAction = async ({
     }
   }
 
+  // Run event handlers
+  for (const fn of opts.middlewares.response) {
+    output = await fn(addon, action, ctx, input, output);
+  }
+
   // Send the response
-  const type =
-    typeof output === "object" && output?.kind === "taskRequest"
-      ? "task"
-      : "response";
-  const id = await responder.send(type, statusCode, output);
+  const id = await responder.send("response", statusCode, output);
   responder.setSendResponse(id, null);
 };

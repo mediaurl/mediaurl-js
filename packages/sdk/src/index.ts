@@ -2,6 +2,7 @@ export * from "@watchedcom/schema";
 export * from "./addons";
 export * from "./cache";
 export * from "./engine";
+export * from "./errors";
 export * from "./interfaces";
 export {
   createApp,

@@ -2,7 +2,6 @@ import { TranslatedText } from "@watchedcom/schema";
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import "express-async-errors";
-import { defaults } from "lodash";
 import * as morgan from "morgan";
 import * as path from "path";
 import "pug";
@@ -23,6 +22,12 @@ const defaultServeOpts: IExpressServerOptions = {
   cache: new CacheHandler(getCacheEngineFromEnv()),
   requestRecorderPath: null,
   replayMode: false,
+  middlewares: {
+    init: [],
+    request: [],
+    response: [],
+  },
+
   // Express options
   singleMode: false,
   logRequests: true,
@@ -31,6 +36,15 @@ const defaultServeOpts: IExpressServerOptions = {
   preMiddlewares: [],
   postMiddlewares: [],
 };
+
+const applyDefaultOptions = (options?: Partial<IExpressServerOptions>) => ({
+  ...defaultServeOpts,
+  ...options,
+  middlewares: {
+    ...defaultServeOpts.middlewares,
+    ...options?.middlewares,
+  },
+});
 
 const createAddonRouter = (
   addon: BasicAddonClass,
@@ -89,7 +103,7 @@ export const createSingleAddonRouter = (
   addons: BasicAddonClass[],
   options: IExpressServerOptions
 ) => {
-  if (addons.length > 1) {
+  if (addons.length !== 1) {
     throw new Error(
       `The single addon router only supports one addon at a time. ` +
         `You tried to start the server with ${addons.length} addons.`
@@ -147,7 +161,7 @@ export const createApp = (
   addons: BasicAddonClass[],
   opts?: Partial<IExpressServerOptions>
 ): express.Application => {
-  const options: IExpressServerOptions = defaults(opts, defaultServeOpts);
+  const options: IExpressServerOptions = applyDefaultOptions(opts);
   const app = options.app || express();
 
   if (options.logRequests) {
@@ -193,7 +207,7 @@ export const serveAddons = (
   addons: BasicAddonClass[],
   opts?: Partial<IExpressServerOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const options: IExpressServerOptions = defaults(opts, defaultServeOpts);
+  const options: IExpressServerOptions = applyDefaultOptions(opts);
   const app = createApp(addons, options);
 
   const listenPromise = new Promise<void>((resolve) => {
