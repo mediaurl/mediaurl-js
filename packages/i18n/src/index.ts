@@ -1,7 +1,7 @@
 import { TranslatedText } from "@watchedcom/sdk";
 import i18next, { InitOptions, TFunction } from "i18next";
+import FsBackend from "i18next-fs-backend";
 import LocizeBackend from "i18next-locize-backend";
-import FsBackend from "i18next-node-fs-backend";
 import path from "path";
 
 let availableLanguages: string[] = [];
