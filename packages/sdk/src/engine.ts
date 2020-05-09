@@ -10,10 +10,11 @@ import {
 } from "./tasks";
 import {
   ActionHandlerContext,
+  AddonHandler,
   AddonHandlerFn,
   AddonHandlerOptions,
 } from "./types";
-import { RecordData, setupRequestRecorder } from "./utils/request-recorder";
+import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
 import { getActionValidator } from "./validators";
 
@@ -28,21 +29,21 @@ const defaultOptions: AddonHandlerOptions = {
   },
 };
 
-let initialized = false;
-
 /**
- * Initialize the addon and return a `handleAction` function
+ * Handle options and prepare addons
  */
-export const createAddonHandler = (
-  options: Partial<AddonHandlerOptions>,
-  addon: BasicAddonClass
-) => {
-  try {
-    addon.validateAddon();
-  } catch (error) {
-    throw new Error(
-      `Validation of addon "${addon.getId()}" failed: ${error.message}`
-    );
+export const createAddonHandlers = (
+  addons: BasicAddonClass[],
+  options?: Partial<AddonHandlerOptions>
+): AddonHandler[] => {
+  for (const addon of addons) {
+    try {
+      addon.validateAddon();
+    } catch (error) {
+      throw new Error(
+        `Validation of addon "${addon.getId()}" failed: ${error.message}`
+      );
+    }
   }
 
   const opts = {
@@ -54,17 +55,25 @@ export const createAddonHandler = (
     },
   };
 
-  if (!initialized) {
-    console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
+  console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
 
-    if (opts.requestRecorderPath) {
-      setupRequestRecorder(opts.requestRecorderPath);
-    }
-
-    initialized = true;
+  let requestRecorder: null | RequestRecorder = null;
+  if (opts.requestRecorderPath) {
+    requestRecorder = new RequestRecorder(opts.requestRecorderPath);
+    console.warn(`Logging requests to ${requestRecorder.path}`);
   }
 
-  // return opts;
+  return addons.map((addon) => ({
+    addon,
+    handler: createHandler(addon, opts, requestRecorder),
+  }));
+};
+
+const createHandler = (
+  addon: BasicAddonClass,
+  options: AddonHandlerOptions,
+  requestRecorder: null | RequestRecorder
+) => {
   const handleAction: AddonHandlerFn = async ({
     action,
     input,
@@ -72,15 +81,20 @@ export const createAddonHandler = (
     request,
     sendResponse,
   }) => {
+    // Store request data for recording
+    const record: null | Partial<RecordData> = requestRecorder
+      ? { input: cloneDeep(input) }
+      : null;
+
     // Run event handlers
-    for (const fn of opts.middlewares.init) {
+    for (const fn of options.middlewares.init) {
       input = await fn(addon, action, input);
     }
 
     // Handle task responses
     if (action === "task") {
       await handleTask({
-        cache: opts.cache,
+        cache: options.cache,
         addon,
         input,
         sendResponse,
@@ -91,12 +105,15 @@ export const createAddonHandler = (
     // Get action handler before verifying the signature
     const handler = addon.getActionHandler(action);
 
+    // Check if we are running in test mode
+    const testMode = options.replayMode || action === "selftest";
+
     // Validate the signature
     let user: ActionHandlerContext["user"];
     try {
       user =
+        testMode ||
         process.env.SKIP_AUTH === "1" ||
-        action === "selftest" ||
         action === "addon" ||
         (addon.getType() === "repository" && action === "repository")
           ? null
@@ -125,7 +142,7 @@ export const createAddonHandler = (
     }
 
     // Get a cache handler instance
-    const cache = opts.cache.clone({
+    const cache = options.cache.clone({
       prefix: addon.getId(),
       ...addon.getDefaultCacheOptions(),
     });
@@ -133,21 +150,10 @@ export const createAddonHandler = (
     // Request cache instance
     let inlineCache: any = null;
 
-    // Store request data for recording
-    const record: null | Partial<RecordData> = opts.requestRecorderPath
-      ? {}
-      : null;
-    if (record) {
-      record.addon = addon.getId();
-      record.action = action;
-      record.input = cloneDeep(input);
-    }
-
     // Responder object
-    const responder = new Responder(record, sendResponse);
+    const responder = new Responder(sendResponse);
 
     // Action handler context
-    const testMode = opts.replayMode || action === "selftest";
     const ctx: ActionHandlerContext = {
       cache,
       request,
@@ -162,7 +168,7 @@ export const createAddonHandler = (
     };
 
     // Run event handlers
-    for (const fn of opts.middlewares.request) {
+    for (const fn of options.middlewares.request) {
       input = await fn(addon, action, ctx, input);
     }
 
@@ -210,8 +216,17 @@ export const createAddonHandler = (
     }
 
     // Run event handlers
-    for (const fn of opts.middlewares.response) {
+    for (const fn of options.middlewares.response) {
       output = await fn(addon, action, ctx, input, output);
+    }
+
+    // Record
+    if (requestRecorder && record) {
+      record.addon = addon.getId();
+      record.action = action;
+      record.statusCode = statusCode;
+      record.output = output;
+      await requestRecorder.write(<RecordData>record);
     }
 
     // Send the response

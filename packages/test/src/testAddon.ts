@@ -2,6 +2,7 @@ import {
   AddonRequest,
   BasicAddonActions,
   BundleAddonActions,
+  createAddonHandlers,
   createApp,
   DefaultAddonRequest,
   DirectoryItem,
@@ -17,7 +18,7 @@ import {
   SubtitleRequest,
   WorkerAddonActions,
 } from "@watchedcom/sdk";
-import { BasicAddonClass, WorkerAddonClass } from "@watchedcom/sdk";
+import { BasicAddonClass } from "@watchedcom/sdk";
 import * as assert from "assert";
 import * as request from "supertest";
 
@@ -25,7 +26,7 @@ export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;
 
   constructor(public readonly addon: BasicAddonClass) {
-    this.app = request(createApp([this.addon]));
+    this.app = request(createApp(createAddonHandlers([this.addon])));
   }
 
   async call<T extends any>(

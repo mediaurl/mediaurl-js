@@ -36,6 +36,72 @@ export type AddonHandlerFn = (props: {
 }) => Promise<void>;
 
 /**
+ * Holder of all addons and it's handler function
+ */
+export type AddonHandler = {
+  addon: BasicAddonClass;
+  handler: AddonHandlerFn;
+};
+
+/**
+ * Addon handler options
+ */
+export type AddonHandlerOptions = {
+  /**
+   * Cache handler
+   */
+  cache: CacheHandler;
+
+  /**
+   * Write requests to the addon server to a file which can
+   * be replayed later. This is very useful for testing or
+   * to create test cases.
+   */
+  requestRecorderPath: null | string;
+
+  /**
+   * Whenever the app is in replay mode. This will mock the ctx.fetch function.
+   */
+  replayMode: boolean;
+
+  /**
+   * Middleware functions
+   */
+  middlewares: {
+    /**
+     * Called before any initialization.
+     * Have to return the input object.
+     */
+    init: ((
+      addon: BasicAddonClass,
+      action: string,
+      input: any
+    ) => Promise<any>)[];
+    /**
+     * Called immediately before the action handler is called
+     * Have to return the input object.
+     */
+    request: ((
+      addon: BasicAddonClass,
+      action: string,
+      ctx: ActionHandlerContext,
+      input: any
+    ) => Promise<any>)[];
+    /**
+     * Called right before the response is sent.
+     * Have to return the output object.
+     */
+    response: ((
+      addon: BasicAddonClass,
+      action: string,
+      ctx: ActionHandlerContext,
+      input: any,
+      output: any
+    ) => Promise<any>)[];
+  };
+};
+
+/**
  * Context of the action call. This object also holds tools like
  * the `cache` property, the remote `fetch` method or `recaptcha`.
  */
@@ -97,64 +163,6 @@ export interface ActionHandlerContext {
    */
   recaptcha: RecaptchaFn;
 }
-
-/**
- * Addon handler options
- */
-export type AddonHandlerOptions = {
-  /**
-   * Cache handler
-   */
-  cache: CacheHandler;
-
-  /**
-   * Write requests to the addon server to a file which can
-   * be replayed later. This is very useful for testing or
-   * to create test cases.
-   */
-  requestRecorderPath: null | string;
-
-  /**
-   * Whenever the app is in replay mode. This will mock the ctx.fetch function.
-   */
-  replayMode: boolean;
-
-  /**
-   * Middleware functions
-   */
-  middlewares: {
-    /**
-     * Called before any initialization.
-     * Have to return the input object.
-     */
-    init: ((
-      addon: BasicAddonClass,
-      action: string,
-      input: any
-    ) => Promise<any>)[];
-    /**
-     * Called immediately before the action handler is called
-     * Have to return the input object.
-     */
-    request: ((
-      addon: BasicAddonClass,
-      action: string,
-      ctx: ActionHandlerContext,
-      input: any
-    ) => Promise<any>)[];
-    /**
-     * Called right before the response is sent.
-     * Have to return the output object.
-     */
-    response: ((
-      addon: BasicAddonClass,
-      action: string,
-      ctx: ActionHandlerContext,
-      input: any,
-      output: any
-    ) => Promise<any>)[];
-  };
-};
 
 /**
  * Action handler function

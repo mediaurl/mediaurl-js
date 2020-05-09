@@ -69,6 +69,18 @@ export abstract class BasicAddonClass<
     return majorVersion;
   }
 
+  public setDefaultCacheOptions(options: CacheOptionsParam) {
+    this.defaultCacheOptions = {
+      ...this.defaultCacheOptions,
+      ...options,
+    };
+    return this;
+  }
+
+  public getDefaultCacheOptions() {
+    return this.defaultCacheOptions;
+  }
+
   public registerActionHandler<A extends Extract<keyof HM, string>>(
     action: A,
     handler: HM[A]
@@ -91,17 +103,5 @@ export abstract class BasicAddonClass<
 
   public hasActionHandler(action: keyof HandlersMap) {
     return !!this.handlersMap[action];
-  }
-
-  public setDefaultCacheOptions(options: CacheOptionsParam) {
-    this.defaultCacheOptions = {
-      ...this.defaultCacheOptions,
-      ...options,
-    };
-    return this;
-  }
-
-  public getDefaultCacheOptions() {
-    return this.defaultCacheOptions;
   }
 }

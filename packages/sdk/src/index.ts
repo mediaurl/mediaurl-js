@@ -11,5 +11,9 @@ export {
   serveAddons,
 } from "./express-server";
 export * from "./types";
-export { RecordData, replayRequests } from "./utils/request-recorder";
+export {
+  RecordData,
+  replayRecordData,
+  replayRecordFile,
+} from "./utils/request-recorder";
 export { translateDeep } from "./utils/translate-deep";

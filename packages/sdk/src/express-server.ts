@@ -5,10 +5,8 @@ import "express-async-errors";
 import * as morgan from "morgan";
 import * as path from "path";
 import "pug";
-import { BasicAddonClass } from "./addons";
-import { createAddonHandler } from "./engine";
 import { errorHandler } from "./error-handler";
-import { AddonHandlerOptions, RequestInfos } from "./types";
+import { AddonHandler, AddonHandlerOptions, RequestInfos } from "./types";
 
 export interface IExpressServerOptions {
   /**
@@ -82,7 +80,7 @@ const getOptions = (options?: Partial<IExpressServerOptions>) => ({
 });
 
 const createAddonRouter = (
-  addon: BasicAddonClass,
+  addonHandler: AddonHandler,
   options: IExpressServerOptions
 ) => {
   const router = express.Router();
@@ -95,7 +93,7 @@ const createAddonRouter = (
       // In single mode, render the index page
       // TODO: Get addon props from the action handler `addon`
       res.render("index", {
-        addons: [addon.getProps()],
+        addons: [addonHandler.addon.getProps()],
         options,
       });
     } else {
@@ -104,14 +102,11 @@ const createAddonRouter = (
     }
   });
 
-  // Create the action handler function for this addon
-  const handleAction = createAddonHandler(options.addonOptions, addon);
-
   // Register addon routes
   const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
   // const routeRegex = /^\/([^/]*?):\.watched$/; // New
   const routeHandler: express.RequestHandler = async (req, res, next) => {
-    await handleAction({
+    await addonHandler.handler({
       action: req.params[1] === "task" ? "task" : req.params[0],
       request: {
         ip: req.ip,
@@ -136,22 +131,22 @@ const createAddonRouter = (
 };
 
 export const createSingleAddonRouter = (
-  addons: BasicAddonClass[],
+  addonHandlers: AddonHandler[],
   options: IExpressServerOptions
 ) => {
-  if (addons.length !== 1) {
+  if (addonHandlers.length !== 1) {
     throw new Error(
       `The single addon router only supports one addon at a time. ` +
-        `You tried to start the server with ${addons.length} addons.`
+        `You tried to start the server with ${addonHandlers.length} addons.`
     );
   }
 
-  console.info(`Mounting addon ${addons[0].getId()} on /`);
-  return createAddonRouter(addons[0], options);
+  console.info(`Mounting addon ${addonHandlers[0].addon.getId()} on /`);
+  return createAddonRouter(addonHandlers[0], options);
 };
 
 export const createMultiAddonRouter = (
-  addons: BasicAddonClass[],
+  addonHandlers: AddonHandler[],
   options: IExpressServerOptions
 ) => {
   const router = express.Router();
@@ -162,12 +157,12 @@ export const createMultiAddonRouter = (
       // Send all addon id's
       res.send({
         watched: "index",
-        addons: addons.map((addon) => addon.getId()),
+        addons: addonHandlers.map(({ addon }) => addon.getId()),
       });
     } else {
       // TODO: Get get addon props from the action handler `addon`
       res.render("index", {
-        addons: addons.map((addon) => addon.getProps()),
+        addons: addonHandlers.map(({ addon }) => addon.getProps()),
         options,
       });
     }
@@ -177,24 +172,24 @@ export const createMultiAddonRouter = (
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",
-      addons: addons.map((addon) => addon.getId()),
+      addons: addonHandlers.map(({ addon }) => addon.getId()),
     });
   });
 
   const ids = new Set();
-  for (const addon of addons) {
-    const id = addon.getId();
+  for (const addonHandler of addonHandlers) {
+    const id = addonHandler.addon.getId();
     if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
     ids.add(id);
     console.info(`Mounting addon ${id}`);
-    router.use(`/${id}`, createAddonRouter(addon, options));
+    router.use(`/${id}`, createAddonRouter(addonHandler, options));
   }
 
   return router;
 };
 
 export const createApp = (
-  addons: BasicAddonClass[],
+  addonHandlers: AddonHandler[],
   opts?: Partial<IExpressServerOptions>
 ): express.Application => {
   const options: IExpressServerOptions = getOptions(opts);
@@ -222,10 +217,10 @@ export const createApp = (
   };
 
   if (options.singleMode) {
-    app.use("/", createSingleAddonRouter(addons, options));
+    app.use("/", createSingleAddonRouter(addonHandlers, options));
   } else {
     // Mount all addons on /<id>
-    app.use("/", createMultiAddonRouter(addons, options));
+    app.use("/", createMultiAddonRouter(addonHandlers, options));
   }
 
   app.get("/health", (req, res) => res.send("OK"));
@@ -240,11 +235,11 @@ export const createApp = (
 };
 
 export const serveAddons = (
-  addons: BasicAddonClass[],
+  addonHandlers: AddonHandler[],
   opts?: Partial<IExpressServerOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
   const options: IExpressServerOptions = getOptions(opts);
-  const app = createApp(addons, options);
+  const app = createApp(addonHandlers, options);
 
   const listenPromise = new Promise<void>((resolve) => {
     app.listen(app.get("port"), () => {

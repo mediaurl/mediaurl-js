@@ -121,11 +121,13 @@ npx watched-sdk replay --record test-session --watch
 Create a test case file, for example `src/record.test.ts`:
 
 ```javascript
-import { replayRequests } from "@watchedcom/sdk";
+import { replayRecordFile } from "@watchedcom/sdk";
 import { yourAddon } from "./index";
 
 test(`Replay recorded actions`, (done) => {
-  replayRequests([yourAddon], "test-session.record.js").then(done).catch(done);
+  replayRecordFile([yourAddon], "test-session.record.js")
+    .then(done)
+    .catch(done);
 });
 ```
 
