@@ -1,17 +1,17 @@
 import "dotenv/config";
 import * as path from "path";
 import { BasicAddonClass } from "../addons";
-import { ServeAddonOptions, serveAddons } from "../server";
+import { ExpressServerAddonOptions, serveAddons } from "../express-server";
 import { loadAddons } from "./load-addons";
 import { StartArgs } from "./types";
 
-const tryGetServeOpts = (onPath: string): ServeAddonOptions | null => {
+const tryGetServeOpts = (onPath: string): ExpressServerAddonOptions | null => {
   try {
     const requiredFile = require(onPath);
     const exportedValues = { default: requiredFile, ...requiredFile };
     const opts = Object.values(exportedValues).filter(
-      (val): val is ServeAddonOptions => {
-        if (val instanceof ServeAddonOptions) {
+      (val): val is ExpressServerAddonOptions => {
+        if (val instanceof ExpressServerAddonOptions) {
           return true;
         }
         return false;

@@ -3,13 +3,13 @@ import {
   AddonRequest,
   RepositoryAddon as RepositoryAddonProps,
   RepositoryAddonActions,
-  RepositoryRequest,
 } from "@watchedcom/schema";
 import fetch from "node-fetch";
-import { ActionHandlerContext, ActionHandlers } from "../interfaces";
+import { ActionHandlerContext } from "../types";
 import { makeCreateFunction } from "../utils/addon-func";
 import { validateAddonProps } from "../validators";
 import { BasicAddonClass } from "./BasicAddonClass";
+import { ActionHandlers } from "./types";
 
 export type RepositoryHandlers = Pick<
   ActionHandlers<RepositoryAddonClass>,
@@ -28,12 +28,9 @@ export class RepositoryAddonClass extends BasicAddonClass<
   constructor(props: RepositoryAddonProps) {
     super(props);
 
-    this.registerActionHandler(
-      "repository",
-      async (args: RepositoryRequest, ctx: ActionHandlerContext) => {
-        return this.getAllAddonProps(args, ctx);
-      }
-    );
+    this.registerActionHandler("repository", async (args, ctx) => {
+      return this.getAllAddonProps(args, ctx);
+    });
   }
 
   public validateAddon() {

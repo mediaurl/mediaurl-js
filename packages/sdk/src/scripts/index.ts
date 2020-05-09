@@ -63,8 +63,10 @@ export const startHandler = (files: string[], cmdObj: any) => {
       JSON.stringify(<StartArgs>{
         files,
         opts: {
-          singleMode: cmdObj.single ? true : false,
-          requestRecorderPath: cmdObj.record ? cmdObj.record : null,
+          addonOptions: {
+            requestRecorderPath: cmdObj.record || null,
+          },
+          singleMode: !!cmdObj.single,
         },
       }),
     ],

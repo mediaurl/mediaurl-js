@@ -1,4 +1,4 @@
-import { IExpressServerOptions } from "../interfaces";
+import { IExpressServerOptions } from "../express-server";
 
 export type StartArgs = {
   opts: Partial<IExpressServerOptions>;

@@ -6,27 +6,62 @@ import * as morgan from "morgan";
 import * as path from "path";
 import "pug";
 import { BasicAddonClass } from "./addons";
-import { CacheHandler, getCacheEngineFromEnv } from "./cache";
-import { handleAction, initializeAddon } from "./engine";
+import { createAddonHandler } from "./engine";
 import { errorHandler } from "./error-handler";
-import { IExpressServerOptions } from "./interfaces";
+import { AddonHandlerOptions, RequestInfos } from "./types";
 
-export class ServeAddonOptions implements Partial<IExpressServerOptions> {
+export interface IExpressServerOptions {
+  /**
+   * Addon handler options
+   */
+  addonOptions: Partial<AddonHandlerOptions>;
+
+  /**
+   * Start the server in single addon mode (default: false)
+   */
+  singleMode: boolean;
+
+  /**
+   * Log HTTP requests (default: true)
+   */
+  logRequests: boolean;
+
+  /**
+   * Express error handler
+   */
+  errorHandler: express.ErrorRequestHandler;
+
+  /**
+   * Listen port
+   */
+  port: number;
+
+  /**
+   * Middlewares prepending to all app routes
+   */
+  preMiddlewares: express.RequestHandler[];
+
+  /**
+   * Middlewares that are executed at the end, but BEFORE error handler
+   */
+  postMiddlewares: express.RequestHandler[];
+
+  /**
+   * Your custom Express app instance
+   */
+  app?: express.Application;
+}
+
+export class ExpressServerAddonOptions
+  implements Partial<IExpressServerOptions> {
   constructor(props: Partial<IExpressServerOptions>) {
     Object.assign(this, props);
   }
 }
 
-const defaultServeOpts: IExpressServerOptions = {
+const defaultOptions: IExpressServerOptions = {
   // Engine options
-  cache: new CacheHandler(getCacheEngineFromEnv()),
-  requestRecorderPath: null,
-  replayMode: false,
-  middlewares: {
-    init: [],
-    request: [],
-    response: [],
-  },
+  addonOptions: {},
 
   // Express options
   singleMode: false,
@@ -37,12 +72,12 @@ const defaultServeOpts: IExpressServerOptions = {
   postMiddlewares: [],
 };
 
-const applyDefaultOptions = (options?: Partial<IExpressServerOptions>) => ({
-  ...defaultServeOpts,
+const getOptions = (options?: Partial<IExpressServerOptions>) => ({
+  ...defaultOptions,
   ...options,
-  middlewares: {
-    ...defaultServeOpts.middlewares,
-    ...options?.middlewares,
+  serverOptions: {
+    ...defaultOptions.addonOptions,
+    ...options?.addonOptions,
   },
 });
 
@@ -69,25 +104,26 @@ const createAddonRouter = (
     }
   });
 
-  // Initialize the addon
-  initializeAddon(options, addon);
+  // Create the action handler function for this addon
+  const handleAction = createAddonHandler(options.addonOptions, addon);
 
   // Register addon routes
   const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
   // const routeRegex = /^\/([^/]*?):\.watched$/; // New
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await handleAction({
-      opts: options,
-      addon,
       action: req.params[1] === "task" ? "task" : req.params[0],
+      request: {
+        ip: req.ip,
+        headers: <RequestInfos["headers"]>req.headers,
+      },
+      sig: <string>req.headers["watched-sig"] ?? "",
       input:
         req.method === "POST"
           ? req.body
           : req.query.data
           ? JSON.parse(<string>req.query.data)
           : {},
-      sig: <string>req.headers["watched-sig"] ?? "",
-      request: req,
       sendResponse: async (statusCode, data) => {
         res.status(statusCode).json(data);
       },
@@ -161,7 +197,7 @@ export const createApp = (
   addons: BasicAddonClass[],
   opts?: Partial<IExpressServerOptions>
 ): express.Application => {
-  const options: IExpressServerOptions = applyDefaultOptions(opts);
+  const options: IExpressServerOptions = getOptions(opts);
   const app = options.app || express();
 
   if (options.logRequests) {
@@ -207,14 +243,12 @@ export const serveAddons = (
   addons: BasicAddonClass[],
   opts?: Partial<IExpressServerOptions>
 ): { app: express.Application; listenPromise: Promise<void> } => {
-  const options: IExpressServerOptions = applyDefaultOptions(opts);
+  const options: IExpressServerOptions = getOptions(opts);
   const app = createApp(addons, options);
 
   const listenPromise = new Promise<void>((resolve) => {
     app.listen(app.get("port"), () => {
-      console.info(`Using cache: ${options.cache.engine.constructor.name}`);
       console.info(`Listening on ${app.get("port")}`);
-
       resolve();
     });
   });

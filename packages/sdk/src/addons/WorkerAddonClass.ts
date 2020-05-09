@@ -5,9 +5,10 @@ import {
   WorkerAddonActions,
   WorkerAddonResourceActions,
 } from "@watchedcom/schema";
-import { ActionHandlerContext, ActionHandlers } from "../interfaces";
+import { ActionHandlerContext } from "../types";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";
+import { ActionHandlers } from "./types";
 
 export type WorkerHandlers = Pick<
   ActionHandlers<WorkerAddonClass>,

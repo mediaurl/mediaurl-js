@@ -1,7 +1,7 @@
 import { BundleAddon, BundleAddonActions } from "@watchedcom/schema";
-import { ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";
+import { ActionHandlers } from "./types";
 
 export type BundleHandlers = Pick<
   ActionHandlers<BundleAddonClass>,

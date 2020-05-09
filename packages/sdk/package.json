@@ -29,7 +29,6 @@
     "pug": "^2.0.4",
     "redis": "^3.0.2",
     "semver": "^7.3.2",
-    "supertest": "^4.0.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "uuid": "^7.0.2"
   },
@@ -47,6 +46,7 @@
     "@types/supertest": "^2.0.8",
     "@types/uuid": "^7.0.3",
     "jest": "^25.4.0",
+    "supertest": "^4.0.2",
     "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
   },

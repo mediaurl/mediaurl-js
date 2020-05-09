@@ -9,13 +9,15 @@ import {
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
 import { CacheOptionsParam } from "../cache";
-import { ActionHandler, HandlersMap } from "../interfaces";
+import { ActionHandler } from "../types";
 import { validateAddonProps } from "../validators";
 
 export type BasicHandlers = {
   selftest: ActionHandler<SelftestRequest, SelftestResponse, BasicAddonClass>;
   addon: ActionHandler<AddonRequest, AddonResponse, BasicAddonClass>;
 };
+
+type HandlersMap = Record<string, ActionHandler>;
 
 export abstract class BasicAddonClass<
   HM extends HandlersMap = BasicHandlers,

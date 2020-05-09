@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
 import { CacheHandler, IgnoreCacheError } from "../cache";
-import { SendResponseFn } from "../interfaces";
+import { SendResponseFn } from "../types";
 import { RecordData, writeRecordedRequest } from "../utils/request-recorder";
 
 export class Responder {

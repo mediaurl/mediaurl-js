@@ -3,7 +3,8 @@ import * as _ from "lodash";
 import * as path from "path";
 import * as util from "util";
 import { BasicAddonClass } from "../addons";
-import { createApp } from "../server";
+import { createAddonHandler } from "../engine";
+import { AddonHandlerFn } from "../types";
 
 export type RecordData = {
   id: number;
@@ -31,7 +32,7 @@ const getPath = (recordPath: string) => {
 };
 
 const log = (prefix: string, id: number, data: RecordData) => {
-  console.warn(
+  console.info(
     `${prefix}: id=${id}, addon=${data.addon}, action=${data.action}, statusCode=${data.statusCode}`
   );
 };
@@ -110,27 +111,58 @@ export const replayRequests = async (
   const request = await import("supertest");
   const recordData: RecordData[] = await import(getPath(recordPath));
 
-  const app = request(createApp(addons, { replayMode: true }));
+  const handlers: Record<string, AddonHandlerFn> = {};
+  for (const addon of addons) {
+    handlers[addon.getId()] = createAddonHandler(
+      {
+        replayMode: true,
+      },
+      addon
+    );
+  }
+
   for (const data of recordData) {
     if (ids && !ids.includes(data.id)) continue;
     if (!silent) log("Replay", data.id, data);
-    await app
-      .post(`/${data.addon}/${data.action}.watched`)
-      .send(data.input)
-      .expect(data.statusCode)
-      .expect((res) => {
-        // Comparing of string-only JSON responses is buggy in supertest,
-        // so let's use lodash.isEqual
-        if (typeof data.output === "function") {
-          const r = data.output(res);
-          if (r !== undefined && !r) {
-            throw new Error(`Output check failed, got ${inspect(res.body)}`);
-          }
-        } else if (!_.isEqual(res.body, data.output)) {
-          throw new Error(
-            `Expected: ${inspect(data.output)} output, got ${inspect(res.body)}`
-          );
-        }
-      });
+
+    const handler = handlers[data.addon];
+    if (!handler) throw new Error(`Addon ${data.addon} not found`);
+
+    let resolve: any;
+    const p = new Promise((r) => {
+      resolve = r;
+    });
+
+    handler({
+      action: data.action,
+      input: data.input,
+      sig: "",
+      request: {
+        ip: "127.0.0.1",
+        headers: {},
+      },
+      sendResponse: (statusCode, body) => resolve({ statusCode, body }),
+    }).catch((error) =>
+      resolve({ statusCode: 500, error: error.message ?? error })
+    );
+
+    const res: { statusCode: number; body: any } = <any>await p;
+    if (res.statusCode !== data.statusCode) {
+      throw new Error(
+        `Expected: Status code ${data.statusCode}, got ${res.statusCode}`
+      );
+    }
+    // Comparing of string-only JSON responses is buggy in supertest,
+    // so let's use lodash.isEqual
+    if (typeof data.output === "function") {
+      const r = data.output(res);
+      if (r !== undefined && !r) {
+        throw new Error(`Output check failed, got ${inspect(res.body)}`);
+      }
+    } else if (!_.isEqual(res.body, data.output)) {
+      throw new Error(
+        `Expected: ${inspect(data.output)} output, got ${inspect(res.body)}`
+      );
+    }
   }
 };

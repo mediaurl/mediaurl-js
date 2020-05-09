@@ -1,7 +1,7 @@
 import { IptvAddon, IptvAddonActions } from "@watchedcom/schema";
-import { ActionHandlers } from "../interfaces";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";
+import { ActionHandlers } from "./types";
 
 export type IptvHandlers = Pick<
   ActionHandlers<IptvAddonClass>,

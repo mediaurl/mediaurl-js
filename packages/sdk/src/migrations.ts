@@ -8,14 +8,14 @@ import {
   SubtitleRequest,
 } from "@watchedcom/schema";
 import { BasicAddonClass } from "./addons";
-import { ActionHandlerContext } from "./interfaces";
+import { ActionHandlerContext } from "./types";
 
 const sdkVersion: string = require("../package.json").version;
 
 export type MigrationContext = {
   addon: BasicAddonClass;
   data: any;
-  sig: ActionHandlerContext["sig"];
+  user: ActionHandlerContext["user"];
   validator: {
     request: (obj: any) => any;
     response: (obj: any) => any;
