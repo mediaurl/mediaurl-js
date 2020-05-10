@@ -242,6 +242,6 @@ const createAddonHandler = (
   }
 
   // Send the response
-  const id = await responder.send("response", statusCode, output);
+  const id = await responder.send(statusCode, output);
   responder.setSendResponse(id, null);
 };

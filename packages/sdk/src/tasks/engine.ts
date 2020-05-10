@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
 import { CacheHandler, IgnoreCacheError } from "../cache";
+import { SilentError } from "../errors";
 import { SendResponseFn } from "../types";
 
 export class Responder {
@@ -16,12 +17,7 @@ export class Responder {
     this.sendResponse = fn;
   }
 
-  async send(
-    type: "response" | "task",
-    statusCode: number,
-    body: any,
-    queueTimeout = 30 * 1000
-  ) {
+  async send(statusCode: number, body: any, queueTimeout = 30 * 1000) {
     // Since there can be always only one task, create a queue
     const id = uuid4().toString();
     this.queue.push(id);
@@ -49,12 +45,13 @@ export class Responder {
     if (sendResponse === null) {
       // When `sendResponse` is not set, it means that either the queue function
       // has a bug, or the responder was used after it sent the final response
-      throw new Error("Send response not set");
-    }
-    this.sendResponse = null;
+      console.warn("Send response is not set, client connection is broken");
+    } else {
+      this.sendResponse = null;
 
-    // Send the response
-    await sendResponse(statusCode, body);
+      // Send the response
+      await sendResponse(statusCode, body);
+    }
 
     // Return the queue id
     return id;
@@ -92,14 +89,22 @@ export const sendTask = async (
   // getServerValidators().models.task.request(task);
   // console.debug(`Task ${task.id} is starting`);
   await cache.set(`task.wait-${task.id}`, "1", timeout * 2);
-  const id = await responder.send("task", 200, task);
+  const id = await responder.send(200, task);
 
   // Wait for the response
-  const data: any = await cache.waitKey(
-    `task.response-${task.id}`,
-    timeout,
-    true
-  );
+  let data: string;
+  try {
+    data = await cache.waitKey(`task.response-${task.id}`, timeout, true);
+  } catch (error) {
+    if (error.message === "Wait timed out") {
+      console.warn(
+        `Task ${task.id} timed out, destroying connection to client`
+      );
+      responder.setSendResponse(id, null);
+      throw new SilentError("Task timed out");
+    }
+    throw error;
+  }
   const { responseChannel, response } = JSON.parse(data);
   // getServerValidators().models.task.response(response);
   // console.debug(`Task ${task.id} resolved`);
@@ -144,7 +149,9 @@ export const handleTask = async ({
 
   // Make sure the key exists to prevent spamming
   if (!(await cache.get(`task.wait-${task.id}`))) {
-    throw new Error(`Task wait key ${task.id} does not exist`);
+    console.warn(`Task ${task.id} not found or timed out`);
+    await sendResponse(500, { error: "Task not found or timed out" });
+    return;
   }
   await cache.delete(`task.wait-${task.id}`);
 
