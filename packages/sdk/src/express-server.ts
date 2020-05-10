@@ -133,8 +133,9 @@ export const createSingleAddonRouter = (
     );
   }
 
-  console.info(`Mounting addon ${engine[0].addon.getId()} on /`);
-  return createAddonRouter(engine, engine.addons[0], options);
+  const addon = engine.addons[0];
+  console.info(`Mounting addon ${addon.getId()} on /`);
+  return createAddonRouter(engine, addon, options);
 };
 
 export const createMultiAddonRouter = (

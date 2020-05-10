@@ -8,7 +8,7 @@ import { replayRecordFile } from "./utils/request-recorder";
 
 export const runCli = (
   engine: Engine | BasicAddonClass[],
-  expressOptions?: IExpressServerOptions
+  expressOptions?: Partial<IExpressServerOptions>
 ) => {
   const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;
 
@@ -21,9 +21,14 @@ export const runCli = (
       "-r, --record <record-file>",
       "Record all requests and responses so they can be used for testing"
     )
+    .option("--single", "LEGACY! Start server in single mode")
     .action((args: any) => {
       if (args.record) {
         myEngine.updateOptions({ requestRecorderPath: args.record });
+      }
+      if (args.single) {
+        if (!expressOptions) expressOptions = {};
+        expressOptions.singleMode = args.single;
       }
       serveAddons(myEngine, expressOptions);
     });
