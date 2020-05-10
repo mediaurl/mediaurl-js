@@ -30,6 +30,7 @@ export type SendResponseFn = (statusCode: number, body: any) => Promise<void>;
 export type Engine = {
   addons: BasicAddonClass[];
   updateOptions: (options: Partial<EngineOptions>) => void;
+  initialize: () => void;
   createAddonHandler: (addon: BasicAddonClass) => AddonHandlerFn;
 };
 

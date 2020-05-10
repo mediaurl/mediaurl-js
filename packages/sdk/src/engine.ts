@@ -50,32 +50,41 @@ export const createEngine = (
   let frozen = false;
   let requestRecorder: null | RequestRecorder = null;
 
+  const assertNotFrozen = () => {
+    if (frozen) {
+      throw new Error(
+        "Not allowed to update options after addon handlers are created"
+      );
+    }
+  };
+
+  const initialize = () => {
+    assertNotFrozen();
+
+    console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
+
+    if (opts.requestRecorderPath) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(
+          "Request recording is not supported in production builds"
+        );
+      }
+      requestRecorder = new RequestRecorder(opts.requestRecorderPath);
+      console.warn(`Logging requests to ${requestRecorder.path}`);
+    }
+
+    frozen = true;
+  };
+
   return {
     addons,
     updateOptions: (o: Partial<EngineOptions>) => {
-      if (frozen) {
-        throw new Error(
-          "Not allowed to update options after addon handlers are created"
-        );
-      }
+      assertNotFrozen();
       Object.assign(opts, o);
     },
+    initialize,
     createAddonHandler: (addon: BasicAddonClass) => {
-      if (!frozen) {
-        console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
-
-        if (opts.requestRecorderPath) {
-          if (process.env.NODE_ENV === "production") {
-            throw new Error(
-              "Request recording is not supported in production builds"
-            );
-          }
-          requestRecorder = new RequestRecorder(opts.requestRecorderPath);
-          console.warn(`Logging requests to ${requestRecorder.path}`);
-        }
-
-        frozen = true;
-      }
+      if (!frozen) initialize();
       return createAddonHandler(addon, opts, requestRecorder);
     },
   };

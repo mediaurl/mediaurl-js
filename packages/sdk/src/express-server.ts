@@ -134,6 +134,7 @@ export const createSingleAddonRouter = (
   }
 
   const addon = engine.addons[0];
+  engine.initialize();
   console.info(`Mounting addon ${addon.getId()} on /`);
   return createAddonRouter(engine, addon, options);
 };
@@ -168,6 +169,8 @@ export const createMultiAddonRouter = (
       addons: engine.addons.map((addon) => addon.getId()),
     });
   });
+
+  engine.initialize();
 
   const ids = new Set();
   for (const addon of engine.addons) {
