@@ -80,9 +80,16 @@ export class RepositoryAddonClass extends BasicAddonClass<
       promises.push(fn());
     }
 
+    const cache = ctx.cache.clone({
+      refreshInterval:
+        ctx.cache.options.ttl === null || ctx.cache.options.ttl < 5 * 60 * 1000
+          ? null
+          : 60 * 1000,
+    });
+
     for (const url of this.urls) {
       const key = [this.getVersion(), url, input.language, input.region];
-      ctx.cache.clone({ refreshInterval: 60 * 1000 }).call(key, async () => {});
+      cache.call(key, async () => {});
       const fn = async () => {
         try {
           const res = await fetch(
