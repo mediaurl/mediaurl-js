@@ -25,28 +25,28 @@ export type RequestInfos = {
 export type SendResponseFn = (statusCode: number, body: any) => Promise<void>;
 
 /**
- * Addon handler function returned by `createAddonHandler`
- */
-export type AddonHandlerFn = (props: {
-  action: string;
-  request: RequestInfos;
-  sig: string;
-  input: any;
-  sendResponse: SendResponseFn;
-}) => Promise<void>;
-
-/**
  * Holder of all addons and it's handler function
  */
 export type AddonHandler = {
   addon: BasicAddonClass;
-  handler: AddonHandlerFn;
+  call: (props: {
+    action: string;
+    request: RequestInfos;
+    sig: string;
+    input: any;
+    sendResponse: SendResponseFn;
+  }) => Promise<void>;
 };
 
 /**
- * Addon handler options
+ * The engine object
  */
-export type AddonHandlerOptions = {
+export type Engine = AddonHandler[];
+
+/**
+ * Addon engine options
+ */
+export type EngineOptions = {
   /**
    * Cache handler
    */
@@ -72,7 +72,7 @@ export type AddonHandlerOptions = {
      * Called before any initialization.
      * Have to return the input object.
      */
-    init: ((
+    init?: ((
       addon: BasicAddonClass,
       action: string,
       input: any
@@ -81,7 +81,7 @@ export type AddonHandlerOptions = {
      * Called immediately before the action handler is called
      * Have to return the input object.
      */
-    request: ((
+    request?: ((
       addon: BasicAddonClass,
       action: string,
       ctx: ActionHandlerContext,
@@ -91,7 +91,7 @@ export type AddonHandlerOptions = {
      * Called right before the response is sent.
      * Have to return the output object.
      */
-    response: ((
+    response?: ((
       addon: BasicAddonClass,
       action: string,
       ctx: ActionHandlerContext,

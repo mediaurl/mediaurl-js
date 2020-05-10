@@ -1,4 +1,4 @@
-import { createAddonHandlers, replayRecordFile } from "@watchedcom/sdk";
+import { createEngine, replayRecordFile } from "@watchedcom/sdk";
 import { testAddon } from "@watchedcom/test";
 import { repoExampleAddon } from "./repoExample";
 import { workerExampleAddon } from "./workerExample";
@@ -12,10 +12,6 @@ test(`Test addon "${repoExampleAddon.getId()}"`, (done) => {
 });
 
 test(`Replay recorded actions`, (done) => {
-  replayRecordFile(
-    createAddonHandlers([repoExampleAddon, workerExampleAddon]),
-    "src/index"
-  )
-    .then(done)
-    .catch(done);
+  const engine = createEngine([repoExampleAddon, workerExampleAddon]);
+  replayRecordFile(engine, "src/index").then(done).catch(done);
 });

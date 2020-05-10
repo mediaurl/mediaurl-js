@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { BasicAddonClass } from "../addons";
-import { createAddonHandlers } from "../engine";
+import { createEngine } from "../engine";
 import { replayRecordFile } from "../utils/request-recorder";
 import { loadAddons } from "./load-addons";
 import { ReplayArgs } from "./types";
@@ -17,13 +17,8 @@ const main = async () => {
   }
   process.env.SKIP_AUTH = "1";
   try {
-    const addonHandlers = createAddonHandlers(addons, { replayMode: true });
-    await replayRecordFile(
-      addonHandlers,
-      argv.recordPath,
-      argv.ids,
-      argv.silent
-    );
+    const engine = createEngine(addons, { replayMode: true });
+    await replayRecordFile(engine, argv.recordPath, argv.ids, argv.silent);
     console.log("Replay finished successful");
     process.exit(0);
   } catch (error) {

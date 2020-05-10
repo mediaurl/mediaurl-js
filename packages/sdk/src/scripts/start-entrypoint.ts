@@ -1,7 +1,7 @@
 import "dotenv/config";
 import * as path from "path";
 import { BasicAddonClass } from "../addons";
-import { createAddonHandlers } from "../engine";
+import { createEngine } from "../engine";
 import { ExpressServerAddonOptions, serveAddons } from "../express-server";
 import { loadAddons } from "./load-addons";
 import { StartArgs } from "./types";
@@ -38,8 +38,8 @@ const main = async () => {
     console.error(error);
     process.exit(1);
   }
-  const addonHandlers = createAddonHandlers(addons);
-  serveAddons(addonHandlers, { ...userDefinedOptions, ...argv.opts });
+  const engine = createEngine(addons);
+  serveAddons(engine, { ...userDefinedOptions, ...argv.opts });
 };
 
 main();

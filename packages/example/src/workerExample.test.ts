@@ -1,7 +1,7 @@
 import {
   AddonRequest,
-  createAddonHandlers,
   createApp,
+  createEngine,
   DirectoryRequest,
   ItemRequest,
   SourceRequest,
@@ -42,7 +42,8 @@ const itemDefaults: ItemRequest = {
   episode: {},
 };
 
-const app = request(createApp(createAddonHandlers([workerExampleAddon])));
+const engine = createEngine([workerExampleAddon]);
+const app = request(createApp(engine));
 
 test("action addon", async (done) => {
   app

@@ -129,7 +129,7 @@ export class CacheHandler {
     if (typeof errorTtl === "function") errorTtl = errorTtl(value);
     if (errorTtl === null) return;
     if (this.options.refreshInterval && !this.options.storeRefreshErrors) {
-      // Don't store an error if there is still a value set.
+      // Don't store an error, but only if there is still a value set.
       if (await this.engine.exists(key)) return;
     }
     await this._set(key, value, errorTtl);

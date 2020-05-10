@@ -2,8 +2,8 @@ import {
   AddonRequest,
   BasicAddonActions,
   BundleAddonActions,
-  createAddonHandlers,
   createApp,
+  createEngine,
   DefaultAddonRequest,
   DirectoryItem,
   DirectoryRequest,
@@ -26,7 +26,8 @@ export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;
 
   constructor(public readonly addon: BasicAddonClass) {
-    this.app = request(createApp(createAddonHandlers([this.addon])));
+    const engine = createEngine([this.addon]);
+    this.app = request(createApp(engine));
   }
 
   async call<T extends any>(

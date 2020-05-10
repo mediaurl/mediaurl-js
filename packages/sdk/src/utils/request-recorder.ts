@@ -2,8 +2,7 @@ import { createWriteStream, WriteStream } from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import * as util from "util";
-import { BasicAddonClass } from "../addons";
-import { AddonHandler, AddonHandlerFn } from "../types";
+import { AddonHandler, Engine } from "../types";
 
 export type RecordData = {
   id: number | string;
@@ -85,7 +84,7 @@ addRecord(${inspect(data)});
 }
 
 export const replayRecordData = async (
-  addonHandlers: AddonHandler[],
+  engine: Engine,
   recordData: RecordData[],
   ids: null | RecordData["id"][] = null,
   silent: boolean = false
@@ -94,9 +93,7 @@ export const replayRecordData = async (
     if (ids && !ids.includes(data.id)) continue;
     if (!silent) log("Replay", data.id, data);
 
-    const addonHandler = addonHandlers.find(
-      (h) => h.addon.getId() === data.addon
-    );
+    const addonHandler = engine.find((h) => h.addon.getId() === data.addon);
     if (!addonHandler) throw new Error(`Addon ${data.addon} not found`);
 
     let resolve: any;
@@ -105,7 +102,7 @@ export const replayRecordData = async (
     });
 
     addonHandler
-      .handler({
+      .call({
         action: data.action,
         input: data.input,
         sig: "",
@@ -141,11 +138,11 @@ export const replayRecordData = async (
 };
 
 export const replayRecordFile = async (
-  addonHandlers: AddonHandler[],
+  engine: Engine,
   recordPath: string,
   ids: null | RecordData["id"][] = null,
   silent: boolean = false
 ) => {
   const recordData: RecordData[] = await import(getPath(recordPath));
-  await replayRecordData(addonHandlers, recordData, ids, silent);
+  await replayRecordData(engine, recordData, ids, silent);
 };
