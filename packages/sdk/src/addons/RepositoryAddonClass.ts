@@ -82,7 +82,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
 
     for (const url of this.urls) {
       const key = [this.getVersion(), url, input.language, input.region];
-      ctx.cache.call(key, async () => {});
+      ctx.cache.clone({ refreshInterval: 60 * 1000 }).call(key, async () => {});
       const fn = async () => {
         try {
           const res = await fetch(
