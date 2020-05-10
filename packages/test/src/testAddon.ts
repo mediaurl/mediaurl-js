@@ -48,6 +48,11 @@ export class AddonTest {
 }
 
 export const testAddon = async (addon: BasicAddonClass) => {
+  console.warn("WARNING: The testAddon function is legacy!");
+  console.warn(
+    "WARNING: For testing addons, It is recommended to use request recording"
+  );
+
   const requestDefaults: DefaultAddonRequest = {
     sig: "mock",
     language: "en",

@@ -2,7 +2,9 @@ import { createWriteStream, WriteStream } from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import * as util from "util";
-import { AddonHandler, Engine } from "../types";
+import { BasicAddonClass } from "../addons";
+import { createEngine } from "../engine";
+import { Engine } from "../types";
 
 export type RecordData = {
   id: number | string;
@@ -93,28 +95,27 @@ export const replayRecordData = async (
     if (ids && !ids.includes(data.id)) continue;
     if (!silent) log("Replay", data.id, data);
 
-    const addonHandler = engine.find((h) => h.addon.getId() === data.addon);
-    if (!addonHandler) throw new Error(`Addon ${data.addon} not found`);
+    const addon = engine.addons.find((a) => a.getId() === data.addon);
+    if (!addon) throw new Error(`Addon ${data.addon} not found`);
 
     let resolve: any;
     const p = new Promise((r) => {
       resolve = r;
     });
 
-    addonHandler
-      .call({
-        action: data.action,
-        input: data.input,
-        sig: "",
-        request: {
-          ip: "127.0.0.1",
-          headers: {},
-        },
-        sendResponse: (statusCode, body) => resolve({ statusCode, body }),
-      })
-      .catch((error) =>
-        resolve({ statusCode: 500, error: error.message ?? error })
-      );
+    const addonHandler = engine.createAddonHandler(addon);
+    addonHandler({
+      action: data.action,
+      input: data.input,
+      sig: "",
+      request: {
+        ip: "127.0.0.1",
+        headers: {},
+      },
+      sendResponse: (statusCode, body) => resolve({ statusCode, body }),
+    }).catch((error) =>
+      resolve({ statusCode: 500, error: error.message ?? error })
+    );
 
     const res: { statusCode: number; body: any } = <any>await p;
     if (res.statusCode !== data.statusCode) {
@@ -138,11 +139,12 @@ export const replayRecordData = async (
 };
 
 export const replayRecordFile = async (
-  engine: Engine,
+  engine: Engine | BasicAddonClass[],
   recordPath: string,
   ids: null | RecordData["id"][] = null,
   silent: boolean = false
 ) => {
+  const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;
   const recordData: RecordData[] = await import(getPath(recordPath));
-  await replayRecordData(engine, recordData, ids, silent);
+  await replayRecordData(myEngine, recordData, ids, silent);
 };

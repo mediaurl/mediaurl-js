@@ -41,15 +41,18 @@ const indexHandlers = (addonVar, actions) =>
 const tsIndex = (input) => {
   const { name, actions } = input;
   const addonVar = `${name}Addon`;
-  const content = `import { createWorkerAddon } from "@watchedcom/sdk";
+  const content = `import { createWorkerAddon, createEngine, runCli } from "@watchedcom/sdk";
 
-export const ${addonVar} = createWorkerAddon(${JSON.stringify(
+const ${addonVar} = createWorkerAddon(${JSON.stringify(
     addonProps(input),
     null,
     2
   )});
 
 ${indexHandlers(addonVar, actions)}
+
+const engine = createEngine([${addonVar}]);
+runCli(engine);
 `;
   return content;
 };
@@ -81,7 +84,7 @@ ${testHandler(addonVar)}
 const jsIndex = (input) => {
   const { name, actions } = input;
   const addonVar = `${name}Addon`;
-  const content = `const { createWorkerAddon } = require("@watchedcom/sdk");
+  const content = `const { createWorkerAddon, createEngine, runCli } = require("@watchedcom/sdk");
 
 const ${addonVar} = createWorkerAddon(${JSON.stringify(
     addonProps(input),
@@ -91,7 +94,8 @@ const ${addonVar} = createWorkerAddon(${JSON.stringify(
 
 ${indexHandlers(addonVar, actions)}
 
-module.exports = ${addonVar};
+const engine = createEngine([${addonVar}]);
+runCli(engine);
 `;
 
   return content;
@@ -139,17 +143,15 @@ const packageJson = (input) => {
     main: ts ? "dist" : "src/index.js",
     scripts: {
       build: ts ? "tsc" : undefined,
-      start: "watched-sdk start --prod",
-      develop: "watched-sdk start",
-      ...(input.test
-        ? {
-            test: "jest",
-            "test:watch": "jest --watch",
-          }
-        : undefined),
+      start: "node .",
+      develop: "ts-node-dev --transpileOnly src",
+      ...(input.test ? { test: "jest" } : undefined),
     },
     dependencies: {
       "@watchedcom/sdk": "^0.0.0",
+    },
+    devDependencies: {
+      "ts-node-dev": "^0.0.0",
     },
   };
 

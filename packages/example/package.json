@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "watched-sdk start --prod",
-    "develop": "watched-sdk start",
+    "start": "node .",
+    "develop": "ts-node-dev --transpileOnly src",
     "test": "jest"
   },
   "dependencies": {

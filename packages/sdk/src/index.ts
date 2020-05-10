@@ -1,6 +1,7 @@
 export * from "@watchedcom/schema";
 export * from "./addons";
 export * from "./cache";
+export * from "./cli";
 export * from "./engine";
 export * from "./errors";
 export {

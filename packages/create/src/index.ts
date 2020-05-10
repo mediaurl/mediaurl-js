@@ -4,6 +4,11 @@ import { createHandler } from "./create";
 import { templateMap as vercelTemplate } from "./platforms/vercel";
 import { executeProjectTemplate } from "./templates";
 
+console.warn("WARNING: This addon creator script is legacy!");
+console.warn(
+  "WARNING: See our SDK readme for instructions on how to get started."
+);
+
 commander
   .arguments("<name>")
   .version(require("../package.json").version)

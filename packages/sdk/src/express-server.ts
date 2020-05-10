@@ -5,15 +5,11 @@ import "express-async-errors";
 import * as morgan from "morgan";
 import * as path from "path";
 import "pug";
+import { BasicAddonClass } from "./addons";
 import { errorHandler } from "./error-handler";
-import { AddonHandler, Engine, EngineOptions, RequestInfos } from "./types";
+import { Engine, RequestInfos } from "./types";
 
 export interface IExpressServerOptions {
-  /**
-   * Addon engine options
-   */
-  engineOptions: Partial<EngineOptions>;
-
   /**
    * Start the server in single addon mode (default: false)
    */
@@ -58,10 +54,6 @@ export class ExpressServerAddonOptions
 }
 
 const defaultOptions: IExpressServerOptions = {
-  // Engine options
-  engineOptions: {},
-
-  // Express options
   singleMode: false,
   logRequests: true,
   errorHandler,
@@ -76,7 +68,8 @@ const getOptions = (options?: Partial<IExpressServerOptions>) => ({
 });
 
 const createAddonRouter = (
-  addonHandler: AddonHandler,
+  engine: Engine,
+  addon: BasicAddonClass,
   options: IExpressServerOptions
 ) => {
   const router = express.Router();
@@ -89,7 +82,7 @@ const createAddonRouter = (
       // In single mode, render the index page
       // TODO: Get addon props from the action handler `addon`
       res.render("index", {
-        addons: [addonHandler.addon.getProps()],
+        addons: [addon.getProps()],
         options,
       });
     } else {
@@ -98,11 +91,14 @@ const createAddonRouter = (
     }
   });
 
+  // Get addon handler
+  const addonHandler = engine.createAddonHandler(addon);
+
   // Register addon routes
   const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
   // const routeRegex = /^\/([^/]*?):\.watched$/; // New
   const routeHandler: express.RequestHandler = async (req, res, next) => {
-    await addonHandler.call({
+    await addonHandler({
       action: req.params[1] === "task" ? "task" : req.params[0],
       request: {
         ip: req.ip,
@@ -130,15 +126,15 @@ export const createSingleAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {
-  if (engine.length !== 1) {
+  if (engine.addons.length !== 1) {
     throw new Error(
       `The single addon router only supports one addon at a time. ` +
-        `You tried to start the server with ${engine.length} addons.`
+        `You tried to start the server with ${engine.addons.length} addons.`
     );
   }
 
   console.info(`Mounting addon ${engine[0].addon.getId()} on /`);
-  return createAddonRouter(engine[0], options);
+  return createAddonRouter(engine, engine.addons[0], options);
 };
 
 export const createMultiAddonRouter = (
@@ -153,12 +149,12 @@ export const createMultiAddonRouter = (
       // Send all addon id's
       res.send({
         watched: "index",
-        addons: engine.map(({ addon }) => addon.getId()),
+        addons: engine.addons.map((addon) => addon.getId()),
       });
     } else {
       // TODO: Get get addon props from the action handler `addon`
       res.render("index", {
-        addons: engine.map(({ addon }) => addon.getProps()),
+        addons: engine.addons.map((addon) => addon.getProps()),
         options,
       });
     }
@@ -168,17 +164,17 @@ export const createMultiAddonRouter = (
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",
-      addons: engine.map(({ addon }) => addon.getId()),
+      addons: engine.addons.map((addon) => addon.getId()),
     });
   });
 
   const ids = new Set();
-  for (const addonHandler of engine) {
-    const id = addonHandler.addon.getId();
+  for (const addon of engine.addons) {
+    const id = addon.getId();
     if (ids.has(id)) throw new Error(`Addon ID "${id}" is already exists.`);
     ids.add(id);
     console.info(`Mounting addon ${id}`);
-    router.use(`/${id}`, createAddonRouter(addonHandler, options));
+    router.use(`/${id}`, createAddonRouter(engine, addon, options));
   }
 
   return router;

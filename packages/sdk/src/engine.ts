@@ -10,7 +10,7 @@ import {
 } from "./tasks";
 import {
   ActionHandlerContext,
-  AddonHandler,
+  AddonHandlerFn,
   Engine,
   EngineOptions,
 } from "./types";
@@ -47,40 +47,47 @@ export const createEngine = (
     middlewares: options?.middlewares ?? {},
   };
 
-  console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
-
+  let frozen = false;
   let requestRecorder: null | RequestRecorder = null;
-  if (opts.requestRecorderPath) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Request recodring is not supported in production builds"
-      );
-    }
-    requestRecorder = new RequestRecorder(opts.requestRecorderPath);
-    console.warn(`Logging requests to ${requestRecorder.path}`);
-  }
 
-  return addons.map((addon) => ({
-    addon,
-    call: createCall(addon, opts, requestRecorder),
-  }));
+  return {
+    addons,
+    updateOptions: (o: Partial<EngineOptions>) => {
+      if (frozen) {
+        throw new Error(
+          "Not allowed to update options after addon handlers are created"
+        );
+      }
+      Object.assign(opts, o);
+    },
+    createAddonHandler: (addon: BasicAddonClass) => {
+      if (!frozen) {
+        console.info(`Using cache: ${opts.cache.engine.constructor.name}`);
+
+        if (opts.requestRecorderPath) {
+          if (process.env.NODE_ENV === "production") {
+            throw new Error(
+              "Request recording is not supported in production builds"
+            );
+          }
+          requestRecorder = new RequestRecorder(opts.requestRecorderPath);
+          console.warn(`Logging requests to ${requestRecorder.path}`);
+        }
+
+        frozen = true;
+      }
+      return createAddonHandler(addon, opts, requestRecorder);
+    },
+  };
 };
 
-const createCall = (
+const createAddonHandler = (
   addon: BasicAddonClass,
   options: EngineOptions,
   requestRecorder: null | RequestRecorder
-): AddonHandler["call"] => async ({
-  action,
-  input,
-  sig,
-  request,
-  sendResponse,
-}) => {
-  // Store request data for recording
-  const record: null | Partial<RecordData> = requestRecorder
-    ? { input: cloneDeep(input) }
-    : null;
+): AddonHandlerFn => async ({ action, input, sig, request, sendResponse }) => {
+  // Store input data for recording
+  const originalInput = requestRecorder ? cloneDeep(input) : null;
 
   // Run event handlers
   if (options.middlewares.init) {
@@ -223,11 +230,14 @@ const createCall = (
   }
 
   // Record
-  if (requestRecorder && record) {
-    record.addon = addon.getId();
-    record.action = action;
-    record.statusCode = statusCode;
-    record.output = output;
+  if (requestRecorder) {
+    const record: Partial<RecordData> = {
+      addon: addon.getId(),
+      action: action,
+      input: originalInput,
+      output: output,
+      statusCode: statusCode,
+    };
     await requestRecorder.write(<RecordData>record);
   }
 

@@ -38,11 +38,11 @@ You should see something like this:
 
 ```
 > watched-addon-example@0.27.1 develop /home/myname/my-addon
-> watched-sdk start
+> ts-node-dev --transpileOnly src
 
-Using ts-node version 8.8.2, typescript version 3.8.3
-Mounting addon example
+Using ts-node version 8.9.1, typescript version 3.8.3
 Using cache: MemoryCache
+Mounting addon example
 Listening on 3000
 ```
 
@@ -99,7 +99,7 @@ We created some tools to make the development of addons more easy.
 Start your development server in the following way:
 
 ```shell
-npx watched-sdk start --record test-session
+npm run develop -- --record test-session
 ```
 
 This will create a file named `test-session.record.js` in the current directory. Now load your addon in the app and open directories, items or load sources. In the terminal, you should see some log messages regarding recording.
@@ -107,13 +107,13 @@ This will create a file named `test-session.record.js` in the current directory.
 To replay your recording, run this command:
 
 ```shell
-npx watched-sdk replay --record test-session
+npm run develop -- replay --record test-session
 ```
 
 To reply and watch for changes, use this:
 
 ```shell
-npx watched-sdk replay --record test-session --watch
+npm run develop -- replay --record test-session --watch
 ```
 
 ### Create a test case with a recorded session

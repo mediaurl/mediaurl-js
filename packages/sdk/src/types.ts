@@ -25,23 +25,24 @@ export type RequestInfos = {
 export type SendResponseFn = (statusCode: number, body: any) => Promise<void>;
 
 /**
- * Holder of all addons and it's handler function
+ * The engine object
  */
-export type AddonHandler = {
-  addon: BasicAddonClass;
-  call: (props: {
-    action: string;
-    request: RequestInfos;
-    sig: string;
-    input: any;
-    sendResponse: SendResponseFn;
-  }) => Promise<void>;
+export type Engine = {
+  addons: BasicAddonClass[];
+  updateOptions: (options: Partial<EngineOptions>) => void;
+  createAddonHandler: (addon: BasicAddonClass) => AddonHandlerFn;
 };
 
 /**
- * The engine object
+ * Holder of all addons and it's handler function
  */
-export type Engine = AddonHandler[];
+export type AddonHandlerFn = (props: {
+  action: string;
+  request: RequestInfos;
+  sig: string;
+  input: any;
+  sendResponse: SendResponseFn;
+}) => Promise<void>;
 
 /**
  * Addon engine options
