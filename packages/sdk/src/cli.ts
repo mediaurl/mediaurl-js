@@ -21,7 +21,8 @@ export const runCli = (
       "-r, --record <record-file>",
       "Record all requests and responses so they can be used for testing"
     )
-    .option("--single", "LEGACY! Start server in single mode")
+    .option("--prod", "LEGACY! Start server in single mode")
+    .option("--single", "LEGACY! Has no effect anymore")
     .action((args: any) => {
       if (args.record) {
         myEngine.updateOptions({ requestRecorderPath: args.record });
