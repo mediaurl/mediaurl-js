@@ -16,6 +16,12 @@
 
 Since the `watched-sdk` command is legacy, you can't export your addons anymore.
 
+- Install `ts-node-dev`:
+
+  ```shell
+  npm install --save-dev ts-node-dev
+  ```
+
 - **`package.json`** (change the `start` and `develop` scripts)
 
   ```json
