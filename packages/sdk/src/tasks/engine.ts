@@ -4,19 +4,15 @@ import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";
 import { CacheHandler, IgnoreCacheError } from "../cache";
 import { SendResponseFn } from "../types";
-import { RecordData, writeRecordedRequest } from "../utils/request-recorder";
 
 export class Responder {
-  record: null | Partial<RecordData>;
   queue: string[];
   emitter: EventEmitter;
   sendResponse: null | SendResponseFn;
 
-  constructor(record: null | Partial<RecordData>, fn: SendResponseFn) {
+  constructor(fn: SendResponseFn) {
     this.queue = [];
     this.emitter = new EventEmitter();
-
-    this.record = record;
     this.sendResponse = fn;
   }
 
@@ -46,13 +42,6 @@ export class Responder {
           reject(new IgnoreCacheError("Waiting for task slot timed out"));
         }, queueTimeout);
       });
-    }
-
-    // Record the response
-    if (this.record && type === "response") {
-      this.record.statusCode = statusCode;
-      this.record.output = body;
-      await writeRecordedRequest(<RecordData>this.record);
     }
 
     // Make sure we have a sendResponse handle

@@ -3,6 +3,7 @@ import {
   BasicAddonActions,
   BundleAddonActions,
   createApp,
+  createEngine,
   DefaultAddonRequest,
   DirectoryItem,
   DirectoryRequest,
@@ -17,7 +18,7 @@ import {
   SubtitleRequest,
   WorkerAddonActions,
 } from "@watchedcom/sdk";
-import { BasicAddonClass, WorkerAddonClass } from "@watchedcom/sdk";
+import { BasicAddonClass } from "@watchedcom/sdk";
 import * as assert from "assert";
 import * as request from "supertest";
 
@@ -25,7 +26,8 @@ export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;
 
   constructor(public readonly addon: BasicAddonClass) {
-    this.app = request(createApp([this.addon]));
+    const engine = createEngine([this.addon]);
+    this.app = request(createApp(engine));
   }
 
   async call<T extends any>(
@@ -46,6 +48,11 @@ export class AddonTest {
 }
 
 export const testAddon = async (addon: BasicAddonClass) => {
+  console.warn("WARNING: The testAddon function is legacy!");
+  console.warn(
+    "WARNING: For testing addons, It is recommended to use request recording"
+  );
+
   const requestDefaults: DefaultAddonRequest = {
     sig: "mock",
     language: "en",

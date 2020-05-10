@@ -3,11 +3,11 @@ import * as _ from "lodash";
 import * as path from "path";
 import * as util from "util";
 import { BasicAddonClass } from "../addons";
-import { createAddonHandler } from "../engine";
-import { AddonHandlerFn } from "../types";
+import { createEngine } from "../engine";
+import { Engine } from "../types";
 
 export type RecordData = {
-  id: number;
+  id: number | string;
   addon: string;
   action: string;
   input: any;
@@ -15,7 +15,7 @@ export type RecordData = {
   output: any;
 };
 
-const inspect = (data) =>
+const inspect = (data: any) =>
   util.inspect(data, {
     compact: false,
     depth: null,
@@ -31,7 +31,7 @@ const getPath = (recordPath: string) => {
   return path.resolve(getFile(recordPath));
 };
 
-const log = (prefix: string, id: number, data: RecordData) => {
+const log = (prefix: string, id: number | string, data: RecordData) => {
   console.info(
     `${prefix}: id=${id}, addon=${data.addon}, action=${data.action}, statusCode=${data.statusCode}`
   );
@@ -60,16 +60,13 @@ export class RequestRecorder {
     const id = this.currentId++;
     let text = "";
     if (id === 1) {
-      text += `var sdkVersion = require("@watchedcom/sdk/package.json").version;
-
-      module.exports = [];
-module.exports.version = 1;
+      text += `const module.exports = [];
 
 var currentId = 1;
 function addRecord(record) {
   record.id = currentId++;
   if (record.action === "addon" && record.statusCode === 200) {
-    record.output.sdkVersion = sdkVersion;
+    record.output.sdkVersion = require("@watchedcom/sdk/package.json").version;
   }
   module.exports.push(record);
 };
@@ -88,52 +85,26 @@ addRecord(${inspect(data)});
   }
 }
 
-let requestRecorder: RequestRecorder;
-
-export const setupRequestRecorder = (path: string) => {
-  if (!requestRecorder) {
-    requestRecorder = new RequestRecorder(path);
-    console.warn(`Logging requests to ${requestRecorder.path}`);
-  }
-};
-
-export const writeRecordedRequest = async (record: RecordData) => {
-  if (!requestRecorder) throw new Error("Request recorder is not set up");
-  await requestRecorder.write(record);
-};
-
-export const replayRequests = async (
-  addons: BasicAddonClass[],
-  recordPath: string,
-  ids: null | number[] = null,
+export const replayRecordData = async (
+  engine: Engine,
+  recordData: RecordData[],
+  ids: null | RecordData["id"][] = null,
   silent: boolean = false
 ) => {
-  const request = await import("supertest");
-  const recordData: RecordData[] = await import(getPath(recordPath));
-
-  const handlers: Record<string, AddonHandlerFn> = {};
-  for (const addon of addons) {
-    handlers[addon.getId()] = createAddonHandler(
-      {
-        replayMode: true,
-      },
-      addon
-    );
-  }
-
   for (const data of recordData) {
     if (ids && !ids.includes(data.id)) continue;
     if (!silent) log("Replay", data.id, data);
 
-    const handler = handlers[data.addon];
-    if (!handler) throw new Error(`Addon ${data.addon} not found`);
+    const addon = engine.addons.find((a) => a.getId() === data.addon);
+    if (!addon) throw new Error(`Addon ${data.addon} not found`);
 
     let resolve: any;
     const p = new Promise((r) => {
       resolve = r;
     });
 
-    handler({
+    const addonHandler = engine.createAddonHandler(addon);
+    addonHandler({
       action: data.action,
       input: data.input,
       sig: "",
@@ -165,4 +136,15 @@ export const replayRequests = async (
       );
     }
   }
+};
+
+export const replayRecordFile = async (
+  engine: Engine | BasicAddonClass[],
+  recordPath: string,
+  ids: null | RecordData["id"][] = null,
+  silent: boolean = false
+) => {
+  const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;
+  const recordData: RecordData[] = await import(getPath(recordPath));
+  await replayRecordData(myEngine, recordData, ids, silent);
 };

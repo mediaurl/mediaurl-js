@@ -5,10 +5,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "watched-sdk start --prod",
-    "develop": "watched-sdk start",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "start": "node .",
+    "develop": "ts-node-dev --transpileOnly src",
+    "test": "jest"
   },
   "dependencies": {
     "@watchedcom/sdk": "^0.30.0",
