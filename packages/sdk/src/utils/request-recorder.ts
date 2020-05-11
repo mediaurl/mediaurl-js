@@ -91,8 +91,9 @@ export const replayRecordData = async (
   ids: null | RecordData["id"][] = null,
   silent: boolean = false
 ) => {
+  if (ids) ids = ids.map(String);
   for (const data of recordData) {
-    if (ids && !ids.includes(data.id)) continue;
+    if (ids && !ids.includes(String(data.id))) continue;
     if (!silent) log("Replay", data.id, data);
 
     const addon = engine.addons.find((a) => a.getId() === data.addon);

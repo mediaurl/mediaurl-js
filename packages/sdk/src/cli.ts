@@ -4,7 +4,7 @@ import { BasicAddonClass } from "./addons";
 import { createEngine } from "./engine";
 import { IExpressServerOptions, serveAddons } from "./express-server";
 import { Engine } from "./types";
-import { replayRecordFile } from "./utils/request-recorder";
+import { RecordData, replayRecordFile } from "./utils/request-recorder";
 
 export const runCli = (
   engine: Engine | BasicAddonClass[],
@@ -17,12 +17,9 @@ export const runCli = (
   program
     .command("start", { isDefault: true })
     .description("Start the WATCHED SDK express server (default)")
-    .option(
-      "-r, --record <record-file>",
-      "Record all requests and responses so they can be used for testing"
-    )
-    .option("--prod", "LEGACY! Start server in single mode")
-    .option("--single", "LEGACY! Has no effect anymore")
+    .option("-r, --record <record-file>", "Record all requests and responses")
+    .option("--prod", "LEGACY! Has no effect anymore")
+    .option("--single", "LEGACY! Start server in single mode")
     .action((args: any) => {
       if (args.record) {
         myEngine.updateOptions({ requestRecorderPath: args.record });
@@ -35,25 +32,21 @@ export const runCli = (
     });
 
   program
-    .command("replay")
-    .description("Replay a previously recorded session")
-    .requiredOption(
-      "-r, --record <record-file>",
-      "The previously recorded file"
-    )
+    .command("replay <record-file>")
+    .description("Replay recorded requests")
     .option(
       "-i, --id <id>",
       "Choose which ID's to replay (komma separated list)"
     )
     .option("-s, --silent", "Be less verbose")
-    .action(async (files: string, args: any) => {
+    .action(async (file: string, args: any) => {
       process.env.SKIP_AUTH = "1";
       try {
         myEngine.updateOptions({ replayMode: true });
         await replayRecordFile(
           myEngine,
-          args.recordPath,
-          args.ids,
+          file,
+          args.ids.split(","),
           args.silent
         );
         console.log("Replay finished successful");
