@@ -2,10 +2,10 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.5",
     "husky": "^4.2.5",
     "lerna": "^3.20.2",
-    "lint-staged": "^10.1.7",
+    "lint-staged": "^10.2.2",
     "prettier": "^2.0.5",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
