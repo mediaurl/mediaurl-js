@@ -21,10 +21,10 @@ export type RequestInit = FetchRequestInit & {
   json?: any;
 
   /**
-   * Do this request `local` or via the `remote` client.
-   * Default: `remote`
+   * Do this request `direct` or `proxy` it via the client connection.
+   * Default: `proxy`
    */
-  connection?: "local" | "remote";
+  connection?: "direct" | "proxy";
 };
 
 export type FetchFn = (
@@ -58,7 +58,7 @@ export const createTaskFetch = (
     req = new Request(url.toString(), req);
   }
 
-  if (init?.connection === "local") {
+  if (init?.connection === "direct") {
     return await fetch(req);
   }
 
@@ -84,7 +84,7 @@ export const createTaskFetch = (
     await sendTask(testMode, responder, cache, task, timeout)
   );
 
-  if (response.status === 0) throw new Error(response.error);
+  if (response.error) throw new Error(response.error);
 
   const res: ResponseInit = {
     headers: response.headers,

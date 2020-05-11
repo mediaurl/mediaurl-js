@@ -15,7 +15,6 @@ definitions:
         $ref: "general.yaml#/definitions/Url"
       params:
         type: object
-        additionalProperties: false
         properties:
           method:
             type: string
@@ -41,8 +40,6 @@ definitions:
       type:
         type: string
         enum: [fetch]
-      error:
-        type: string
       status:
         type: number
       url:
