@@ -84,7 +84,7 @@ export const createTaskFetch = (
     await sendTask(testMode, responder, cache, task, timeout)
   );
 
-  if (response.error) throw new Error(response.error);
+  if (response.error) throw new Error((<any>response).error);
 
   const res: ResponseInit = {
     headers: response.headers,

@@ -1,6 +1,7 @@
 import {
   AddonRequest,
   BasicAddonActions,
+  BasicAddonClass,
   BundleAddonActions,
   createApp,
   createEngine,
@@ -13,12 +14,14 @@ import {
   PlayableItem,
   RepositoryAddonActions,
   RepositoryRequest,
+  SeriesItem,
   SourceRequest,
   SubItem,
   SubtitleRequest,
   WorkerAddonActions,
+  WorkerAddonClass,
+  WorkerAddonResourceActions,
 } from "@watchedcom/sdk";
-import { BasicAddonClass } from "@watchedcom/sdk";
 import * as assert from "assert";
 import * as request from "supertest";
 
@@ -87,8 +90,8 @@ export const testAddon = async (addon: BasicAddonClass) => {
       else if (items.length < 10) items.push(<PlayableItem>item);
     };
 
-    const hasAction = (action: WorkerAddonActions) =>
-      addon.getProps().actions.includes(action);
+    const hasAction = (action: WorkerAddonResourceActions) =>
+      (<WorkerAddonClass>addon).getProps().actions.includes(action);
 
     if (hasAction("directory")) {
       console.log('directory "root"');
@@ -156,7 +159,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
         console.log(`source "${item.name}"`);
         const res = await app.call(
           "source",
-          sourceRequest(item, item.episodes?.[0])
+          sourceRequest(item, (<SeriesItem>item).episodes?.[0])
         );
         console.log(`source "${item.name}": Found ${res.body.length}`);
       }
@@ -167,7 +170,7 @@ export const testAddon = async (addon: BasicAddonClass) => {
         console.log(`subtitle "${item.name}"`);
         const res = await app.call(
           "subtitle",
-          sourceRequest(item, item.episodes?.[0])
+          sourceRequest(item, (<SeriesItem>item).episodes?.[0])
         );
         console.log(`subtitle "${item.name}": Found ${res.body.length}`);
       }

@@ -38,7 +38,7 @@ export const migrations = {
       if (input.page !== undefined && input.cursor === undefined) {
         console.warn("Upgrading directory request from page to cursor system");
         ctx.data.update = 1;
-        input.cursor = input.page === 1 ? null : input.page;
+        (<any>input).cursor = input.page === 1 ? null : input.page;
       }
       return ctx.validator.request(input);
     },
@@ -57,7 +57,7 @@ export const migrations = {
   item: {
     request(ctx: MigrationContext, input: ItemRequest) {
       if (input.nameTranslations === undefined) {
-        input.nameTranslations = input.translatedNames ?? {};
+        (<any>input).nameTranslations = input.translatedNames ?? {};
       }
       return ctx.validator.request(input);
     },
@@ -65,7 +65,7 @@ export const migrations = {
   source: {
     request(ctx: MigrationContext, input: SourceRequest) {
       if (input.nameTranslations === undefined) {
-        input.nameTranslations = input.translatedNames ?? {};
+        (<any>input).nameTranslations = input.translatedNames ?? {};
       }
       return ctx.validator.request(input);
     },
@@ -73,7 +73,7 @@ export const migrations = {
   subtitle: {
     request(ctx: MigrationContext, input: SubtitleRequest) {
       if (input.nameTranslations === undefined) {
-        input.nameTranslations = input.translatedNames ?? {};
+        (<any>input).nameTranslations = input.translatedNames ?? {};
       }
       return ctx.validator.request(input);
     },

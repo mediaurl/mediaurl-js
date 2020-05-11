@@ -46,6 +46,8 @@ definitions:
         $ref: "general.yaml#/definitions/Url"
       headers:
         type: object
+        additionalProperties:
+          type: string
       text:
         type: string
       data:
