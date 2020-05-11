@@ -1,11 +1,35 @@
 import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
-import fetch, { Response, ResponseInit } from "node-fetch";
+import fetch, {
+  Request,
+  RequestInfo,
+  RequestInit as FetchRequestInit,
+  Response,
+  ResponseInit,
+} from "node-fetch";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 
+export type RequestInit = FetchRequestInit & {
+  /**
+   * Shorthand to set the URL query string.
+   */
+  qs?: URLSearchParams | Record<string, string>;
+
+  /**
+   * Shorthand to send JSON data.
+   */
+  json?: any;
+
+  /**
+   * Do this request `local` or via the `remote` client.
+   * Default: `remote`
+   */
+  connection?: "local" | "remote";
+};
+
 export type FetchFn = (
-  url: TaskFetchRequest["url"],
-  params?: TaskFetchRequest["params"],
+  url: RequestInfo,
+  init?: RequestInit,
   timeout?: number
 ) => Promise<Response>;
 
@@ -13,41 +37,69 @@ export const createTaskFetch = (
   testMode: boolean,
   responder: Responder,
   cache: CacheHandler
-): FetchFn => {
-  if (testMode) {
-    return async (url, params, timeout = 0) => {
-      console.debug(`Using mocked fetch for ${params?.method ?? "GET"} ${url}`);
-      return await fetch(url, params);
-    };
-  } else {
-    return async (url, params, timeout = 30 * 1000) => {
-      const task: TaskFetchRequest = {
-        type: "fetch",
-        url,
-        params,
-      };
-      const response = <TaskFetchResponse>(
-        await sendTask(testMode, responder, cache, task, timeout)
-      );
-
-      if (response.status === 0) throw new Error(response.error);
-
-      const init: ResponseInit = {
-        headers: response.headers,
-        status: response.status,
-        url: response.url,
-      };
-
-      let body: string | ArrayBuffer | undefined = undefined;
-      if (response.text) {
-        body = response.text;
-        init.size = response.text.length;
-      } else if (response.data) {
-        body = Buffer.from(response.data, "base64");
-        init.size = body.byteLength;
-      }
-
-      return new Response(body, init);
-    };
+): FetchFn => async (url, init, timeout = 30 * 1000) => {
+  if (init?.json !== undefined) {
+    if (!init.headers) init.headers = {};
+    init.headers["content-type"] = "application/json; charset=utf-8";
+    init.body = JSON.stringify(init.json);
   }
+
+  let req = new Request(url, init);
+
+  if (init?.qs) {
+    const url = new URL(req.url);
+    if (init.qs instanceof URLSearchParams) {
+      init.qs.forEach((value, key) => url.searchParams.set(key, value));
+    } else {
+      for (const key of Object.keys(init.qs)) {
+        url.searchParams.set(key, init.qs[key]);
+      }
+    }
+    req = new Request(url.toString(), req);
+  }
+
+  if (init?.connection === "local") {
+    return await fetch(req);
+  }
+
+  if (testMode) {
+    console.debug(`Using mocked fetch for ${init?.method ?? "GET"} ${url}`);
+    return await fetch(req);
+  }
+
+  const task: TaskFetchRequest = {
+    type: "fetch",
+    url: req.url,
+    params: {
+      method: <any>req.method,
+      headers: {
+        Referer: req.referrer ? req.referrer : undefined,
+        ...req.headers.raw(),
+      },
+      body: req.body ? req.body.toString() : undefined,
+      redirect: req.redirect,
+    },
+  };
+  const response = <TaskFetchResponse>(
+    await sendTask(testMode, responder, cache, task, timeout)
+  );
+
+  if (response.status === 0) throw new Error(response.error);
+
+  const res: ResponseInit = {
+    headers: response.headers,
+    status: response.status,
+    url: response.url,
+  };
+
+  let body: string | ArrayBuffer | undefined = undefined;
+  if (response.text) {
+    body = response.text;
+    res.size = response.text.length;
+  } else if (response.data) {
+    body = Buffer.from(response.data, "base64");
+    res.size = body.byteLength;
+  }
+
+  return new Response(body, res);
 };
