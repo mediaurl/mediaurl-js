@@ -107,13 +107,13 @@ This will create a file named `test-session.record.js` in the current directory.
 To replay your recording, run this command:
 
 ```shell
-npm run develop -- replay --record test-session
+npm run develop -- replay test-session
 ```
 
 To reply and watch for changes, use this:
 
 ```shell
-npm run develop -- replay --record test-session --watch
+npm run develop -- replay test-session --watch
 ```
 
 ### Create a test case with a recorded session
