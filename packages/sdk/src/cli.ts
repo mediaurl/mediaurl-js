@@ -46,7 +46,7 @@ export const runCli = (
         await replayRecordFile(
           myEngine,
           file,
-          args.ids.split(","),
+          args.ids ? args.ids.split(",") : null,
           args.silent
         );
         console.log("Replay finished successful");

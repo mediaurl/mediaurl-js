@@ -115,13 +115,15 @@ export const replayRecordData = async (
       },
       sendResponse: (statusCode, body) => resolve({ statusCode, body }),
     }).catch((error) =>
-      resolve({ statusCode: 500, error: error.message ?? error })
+      resolve({ statusCode: 500, body: { error: error.message ?? error } })
     );
 
     const res: { statusCode: number; body: any } = <any>await p;
     if (res.statusCode !== data.statusCode) {
       throw new Error(
-        `Expected: Status code ${data.statusCode}, got ${res.statusCode}`
+        `Expected: Status code ${data.statusCode}, got ${
+          res.statusCode
+        } with body ${inspect(res.body)}`
       );
     }
     // Comparing of string-only JSON responses is buggy in supertest,
