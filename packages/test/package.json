@@ -1,13 +1,13 @@
 {
   "name": "@watchedcom/test",
   "description": "Tools for testing WATCHED addons",
-  "version": "0.31.4",
+  "version": "0.31.5",
   "main": "dist",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
-    "@watchedcom/sdk": "^0.31.4",
+    "@watchedcom/sdk": "^0.31.5",
     "supertest": "^4.0.2",
     "ts-jest": "^25.5.1"
   },
