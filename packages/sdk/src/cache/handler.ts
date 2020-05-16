@@ -1,10 +1,7 @@
-import ms from "ms";
+import ms = require("ms");
 import { BasicCache } from "./engines";
 import { CacheFoundError, IgnoreCacheError, WaitTimedOut } from "./errors";
 import { CacheOptions, CacheOptionsParam, InlineCacheContext } from "./types";
-
-const mms = (value: number | string) =>
-  typeof value === "number" ? value : <number>ms(value);
 
 const defaultCacheOptions: CacheOptions = {
   ttl: ms("1 hour"),
@@ -16,6 +13,9 @@ const defaultCacheOptions: CacheOptions = {
   prefix: null,
   disableGet: false,
 };
+
+const mms = (value: number | string) =>
+  typeof value === "number" ? value : <number>ms(value);
 
 export class CacheHandler {
   public options: CacheOptions;
