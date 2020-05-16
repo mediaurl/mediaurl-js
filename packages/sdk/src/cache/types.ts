@@ -6,10 +6,12 @@ export type CacheOptions = {
    * an empty value.
    * To disable caching, set this to `null`.
    * To cache forever, set this to `Infinity`.
+   * You also can use string values like `5m` or `30s`. See
+   * https://github.com/zeit/ms for more infos.
    *
    * Default: 1 hour
    */
-  ttl: null | number | ((value: any) => null | number);
+  ttl: null | number | string | ((value: any) => null | number | string);
   /**
    * TTL for errors in milliseconds.
    * When it's a function, the error will be passed as parameter.
@@ -17,9 +19,9 @@ export type CacheOptions = {
    * To disable caching, set this to `null`.
    * To cache forever, set this to `Infinity`.
    *
-   * Default: 10 minutes
+   * Default: 5 minutes
    */
-  errorTtl: null | number | ((error: any) => null | number);
+  errorTtl: null | number | string | ((error: any) => null | number | string);
   /**
    * After this amount of miliseconds, the cache will be refreshed once.
    * Next requests will still access the currently cached value.
@@ -29,7 +31,7 @@ export type CacheOptions = {
    *
    * Default: `null`
    */
-  refreshInterval: null | number;
+  refreshInterval: null | number | string;
   /**
    * When the current cache is getting refreshed and an error occoured,
    * should this overwrite the current value?
@@ -50,7 +52,7 @@ export type CacheOptions = {
    *
    * Default: 30 seconds
    */
-  simultanLockTimeout: null | number;
+  simultanLockTimeout: null | number | string;
   /**
    * The `sleep` parameter of the `waitKey` function.
    *

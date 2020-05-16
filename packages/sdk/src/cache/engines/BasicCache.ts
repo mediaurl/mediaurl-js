@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { CacheOptions } from "../interfaces";
+import { CacheOptions } from "../types";
 
 export class BasicCache {
   public async exists(key: any): Promise<any> {

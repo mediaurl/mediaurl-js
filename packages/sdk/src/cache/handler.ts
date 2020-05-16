@@ -1,17 +1,17 @@
+import ms from "ms";
 import { BasicCache } from "./engines";
 import { CacheFoundError, IgnoreCacheError, WaitTimedOut } from "./errors";
-import {
-  CacheOptions,
-  CacheOptionsParam,
-  InlineCacheContext,
-} from "./interfaces";
+import { CacheOptions, CacheOptionsParam, InlineCacheContext } from "./types";
+
+const mms = (value: number | string) =>
+  typeof value === "number" ? value : <number>ms(value);
 
 const defaultCacheOptions: CacheOptions = {
-  ttl: 3600 * 1000,
-  errorTtl: 600 * 1000,
+  ttl: ms("1 hour"),
+  errorTtl: ms("5 minutes"),
   refreshInterval: null,
   storeRefreshErrors: false,
-  simultanLockTimeout: 30 * 1000,
+  simultanLockTimeout: ms("30 seconds"),
   simultanLockTimeoutSleep: 250,
   prefix: null,
   disableGet: false,
@@ -73,7 +73,7 @@ export class CacheHandler {
           await this.engine.set(
             `${key}-refresh`,
             1,
-            this.options.refreshInterval
+            mms(this.options.refreshInterval)
           );
         }
         return undefined;
@@ -85,7 +85,11 @@ export class CacheHandler {
   private async _set(key: string, value: any, ttl: number) {
     await this.engine.set(key, value, ttl);
     if (this.options.refreshInterval)
-      await this.engine.set(`${key}-refresh`, 1, this.options.refreshInterval);
+      await this.engine.set(
+        `${key}-refresh`,
+        1,
+        mms(this.options.refreshInterval)
+      );
   }
 
   public async set(key: any, value: any, ttl?: CacheOptions["ttl"]) {
@@ -93,7 +97,7 @@ export class CacheHandler {
     if (ttl === undefined) ttl = this.options.ttl;
     if (typeof ttl === "function") ttl = ttl(value);
     if (ttl === null) return;
-    await this._set(key, value, ttl);
+    await this._set(key, value, mms(ttl));
   }
 
   /**
@@ -129,10 +133,11 @@ export class CacheHandler {
     if (typeof errorTtl === "function") errorTtl = errorTtl(value);
     if (errorTtl === null) return;
     if (this.options.refreshInterval && !this.options.storeRefreshErrors) {
-      // Don't store an error, but only if there is still a value set.
+      // Store errors only if there not value set already. We don't want to
+      // overwrite healthy data.
       if (await this.engine.exists(key)) return;
     }
-    await this._set(key, value, errorTtl);
+    await this._set(key, value, mms(errorTtl));
   }
 
   private async lockRequest(key: string) {
@@ -144,7 +149,7 @@ export class CacheHandler {
       try {
         return await this.waitKey(
           key,
-          this.options.simultanLockTimeout,
+          mms(this.options.simultanLockTimeout),
           false,
           this.options.simultanLockTimeoutSleep
         );
@@ -181,7 +186,7 @@ export class CacheHandler {
       await this.engine.set(
         `${key}-call-lock`,
         1,
-        this.options.simultanLockTimeout
+        mms(this.options.simultanLockTimeout)
       );
     }
 
@@ -229,7 +234,7 @@ export class CacheHandler {
       await this.engine.set(
         `${key}-call-lock`,
         1,
-        this.options.simultanLockTimeout
+        mms(this.options.simultanLockTimeout)
       );
       releaseLock = async () => await this.engine.delete(`${key}-call-lock`);
     }

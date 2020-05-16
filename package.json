@@ -25,5 +25,8 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "dependencies": {
+    "ms": "^2.1.2"
   }
 }
