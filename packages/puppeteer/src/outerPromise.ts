@@ -2,6 +2,7 @@ export type OuterPromise<T = any> = Promise<T> & {
   resolve: (value?: any) => void;
   reject: (error: Error | string) => void;
   done: boolean;
+  timeout: number | undefined;
 };
 
 /**
@@ -17,7 +18,7 @@ export type OuterPromise<T = any> = Promise<T> & {
  * @param timeout Optional timeout.
  */
 export const outerPromise = (timeout?: number) => {
-  const temp: Partial<OuterPromise> = { done: false };
+  const temp: Partial<OuterPromise> = { done: false, timeout };
 
   let t: NodeJS.Timeout;
   const promise = new Promise((a, b) => {
@@ -38,6 +39,6 @@ export const outerPromise = (timeout?: number) => {
   temp.finally = (...args: any[]) => promise.finally(...args);
 
   const res = <OuterPromise>temp;
-  if (timeout) setTimeout(() => res.reject(new Error("Timeout")), timeout);
+  if (timeout) t = setTimeout(() => res.reject(new Error("Timeout")), timeout);
   return res;
 };

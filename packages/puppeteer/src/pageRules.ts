@@ -1,5 +1,4 @@
 import { ActionHandlerContext } from "@watchedcom/sdk";
-import fetch, { Response } from "node-fetch";
 import {
   HttpMethod,
   Page,
@@ -7,18 +6,21 @@ import {
   Request,
   RespondOptions,
 } from "puppeteer-core";
+import { makeFetchRequest } from "./fetch-utils";
 
 export type RuleAction = "allow" | "proxy" | "deny";
 
 export type ActionFn = (
+  page: Page,
   request: Request
 ) => PromiseLike<RuleAction | RespondOptions | undefined | null | void>;
 
 export type BeforeResponseFn = (
+  page: Page,
   request: Request,
   response: RespondOptions,
   fromCache: boolean
-) => PromiseLike<RespondOptions>;
+) => PromiseLike<RespondOptions | null>;
 
 export type Rule = {
   /**
@@ -158,22 +160,6 @@ const defaultRules = {
   ],
 };
 
-const convertFetchResponse = async (res: Response): Promise<RespondOptions> => {
-  const headers = {};
-  res.headers.forEach((value, name) => {
-    headers[name] = value;
-  });
-  delete headers["content-length"];
-  delete headers["connection"];
-  delete headers["accept-ranges"];
-  return {
-    status: res.status,
-    headers,
-    body: await res.buffer(),
-    contentType: headers["content-type"],
-  };
-};
-
 export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
   const opts = <PageRuleOptions>{ ...defaultOptions, ...options };
 
@@ -225,7 +211,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
 
         let action: RuleAction | "noop" | undefined;
         if (typeof rule.action === "function") {
-          const res = await rule.action(request);
+          const res = await rule.action(page, request);
           if (typeof res === "string") {
             action = res;
           } else if (res) {
@@ -253,26 +239,19 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
               request.continue();
               return;
             }
-            const res = await fetch(url, {
-              method,
-              headers: request.headers(),
-              body: request.postData(),
-              redirect: "follow",
-            });
-            response = await convertFetchResponse(res);
+            response = await makeFetchRequest(
+              opts.ctx,
+              "direct",
+              page,
+              request
+            );
             break;
           }
           case "proxy": {
             if (!rule.silent) {
               console.info(`PROXY: [${resourceType}] ${method} ${url}`);
             }
-            const res = await opts.ctx.fetch(url, {
-              method: <any>method,
-              headers: request.headers(),
-              body: request.postData(),
-              redirect: "follow",
-            });
-            response = await convertFetchResponse(res);
+            response = await makeFetchRequest(opts.ctx, "proxy", page, request);
             break;
           }
           case "deny":
@@ -295,8 +274,8 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
       }
 
       if (rule.beforeResponse) {
-        response = await rule.beforeResponse(request, response, true);
-        if (response === null) {
+        const res = await rule.beforeResponse(page, request, response, true);
+        if (res === null) {
           if (!rule.silent) {
             console.info(`DENY: [${resourceType}] ${method} ${url}`);
           }
@@ -304,6 +283,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
           await request.abort();
           return;
         }
+        response = res;
       }
 
       sent = true;

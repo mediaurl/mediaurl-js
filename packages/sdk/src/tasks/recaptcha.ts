@@ -4,11 +4,7 @@ import {
 } from "@watchedcom/schema";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
-
-export type RecaptchaFn = (
-  data: Omit<TaskRecaptchaRequest, "type">,
-  timeout?: number
-) => Promise<string>;
+import { RecaptchaFn } from "./types";
 
 const defaults: Partial<TaskRecaptchaRequest> = {
   version: 2,

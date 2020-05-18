@@ -1,37 +1,8 @@
 import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
-import fetch, {
-  Request,
-  RequestInfo,
-  RequestInit as FetchRequestInit,
-  Response,
-  ResponseInit,
-} from "node-fetch";
+import fetch, { Request, Response } from "node-fetch";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
-
-export type RequestInit = FetchRequestInit & {
-  /**
-   * Shorthand to set the URL query string.
-   */
-  qs?: URLSearchParams | Record<string, string>;
-
-  /**
-   * Shorthand to send JSON data.
-   */
-  json?: any;
-
-  /**
-   * Do this request `direct` or `proxy` it via the client connection.
-   * Default: `proxy`
-   */
-  connection?: "direct" | "proxy";
-};
-
-export type FetchFn = (
-  url: RequestInfo,
-  init?: RequestInit,
-  timeout?: number
-) => Promise<Response>;
+import { FetchFn, ResponseInit } from "./types";
 
 export const createTaskFetch = (
   testMode: boolean,
