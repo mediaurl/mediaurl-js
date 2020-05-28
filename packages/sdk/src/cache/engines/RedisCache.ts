@@ -70,6 +70,9 @@ export class RedisCache extends BasicCache {
         prefix === null
           ? await this.client.scan(cursor)
           : await this.client.scan(cursor, "MATCH", `${prefix}*`);
+      console.info(
+        `Cursor position ${nextCursor.toString()}, got ${keys.lengths} keys`
+      );
       for (let key of keys) {
         key = (<Buffer>key).toString();
         const ttl = await this.client.pttl(key);
