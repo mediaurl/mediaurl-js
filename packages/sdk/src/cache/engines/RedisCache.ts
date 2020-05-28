@@ -36,8 +36,8 @@ export class RedisCache extends BasicCache {
   public async get(key: string) {
     const value: Buffer = await this.client.get(getKey(key));
     if (value === null) return undefined;
-    const text = await decompress(value);
-    return JSON.parse(text);
+    const buffer = await decompress(value);
+    return JSON.parse(buffer.toString());
   }
 
   public async set(key: string, value: any, ttl: number) {

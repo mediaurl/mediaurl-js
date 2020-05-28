@@ -1,9 +1,9 @@
-import * as snappy from "snappy";
+import * as zlib from "zlib";
 
 export const compress = async (value: Buffer, minValueLength = 100) => {
   if (value.byteLength < minValueLength) return value;
   const temp = await new Promise<Buffer>((resolve, reject) =>
-    snappy.compress(value, (error, buffer) => {
+    zlib.brotliCompress(value, (error, buffer) => {
       if (error) {
         reject(error);
       } else if (buffer === undefined) {
@@ -25,16 +25,16 @@ export const compress = async (value: Buffer, minValueLength = 100) => {
 
 export const decompress = async (value: Buffer) => {
   if (value.byteLength <= 2 || value.readInt16LE(0) !== 0x1199) {
-    return value.toString();
+    return value;
   }
-  return await new Promise<string>((resolve, reject) =>
-    snappy.uncompress(value.slice(2), { asBuffer: true }, (error, buffer) => {
+  return await new Promise<Buffer>((resolve, reject) =>
+    zlib.brotliDecompress(value.slice(2), (error, buffer) => {
       if (error) {
         reject(error);
       } else if (buffer === undefined) {
         reject(new Error("Decompressed buffer is undefined"));
       } else {
-        resolve((<Buffer>buffer).toString());
+        resolve(buffer);
       }
     })
   );

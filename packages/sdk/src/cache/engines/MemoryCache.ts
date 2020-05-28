@@ -15,7 +15,8 @@ export class MemoryCache extends BasicCache {
     const d = this.data[key];
     if (d) {
       if (d[0] >= Date.now()) {
-        return JSON.parse(await decompress(d[1]));
+        const buffer = await decompress(d[1]);
+        return JSON.parse(buffer.toString());
       }
       delete this.data[key];
     }
