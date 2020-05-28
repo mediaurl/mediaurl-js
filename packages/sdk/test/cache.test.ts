@@ -39,20 +39,20 @@ const fn2 = async () => {
 
 const engines: [string, () => BasicCache | Promise<BasicCache>][] = [];
 
-engines.push(["memory", () => new MemoryCache()]);
+// engines.push(["memory", () => new MemoryCache()]);
 
-const tempPath = path.join(os.tmpdir(), "watched-sdk-test-");
-engines.push([
-  "disk",
-  async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
-]);
+// const tempPath = path.join(os.tmpdir(), "watched-sdk-test-");
+// engines.push([
+//   "disk",
+//   async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
+// ]);
 
 // engines.push([
 //   "mongodb",
 //   () => new MongoCache("mongodb://localhost/watched_test"),
 // ]);
 
-// engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);
+engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);
 
 for (const engine of engines) {
   describe(`CacheHandler with ${engine[0]} engine`, () => {
@@ -121,6 +121,23 @@ for (const engine of engines) {
       await expect(cache.get("hello")).resolves.toBe("1");
       await sleep(options.errorTtl * 1.2);
       await expect(cache.get("hello")).resolves.toBeUndefined();
+      done();
+    });
+
+    test("get, set, delete with compression", async (done) => {
+      const value1 = "-1-".repeat(100);
+      const value2 = "-2-".repeat(100);
+      await expect(cache.get("hello-compress")).resolves.toBeUndefined();
+      await expect(
+        cache.set("hello-compress", value1)
+      ).resolves.toBeUndefined();
+      await expect(cache.get("hello-compress")).resolves.toBe(value1);
+      await expect(
+        cache.set("hello-compress", value2)
+      ).resolves.toBeUndefined();
+      await expect(cache.get("hello-compress")).resolves.toBe(value2);
+      await expect(cache.delete("hello-compress")).resolves.toBeUndefined();
+      await expect(cache.get("hello-compress")).resolves.toBeUndefined();
       done();
     });
 

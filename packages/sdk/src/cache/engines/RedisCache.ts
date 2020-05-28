@@ -10,7 +10,7 @@ export class RedisCache extends BasicCache {
 
   constructor(
     clientConfig: redis.ClientOpts,
-    private readonly useCompression: boolean = true
+    private readonly minCompressionValueLength: number | null = 100
   ) {
     super();
     const redisClient = redis.createClient({
@@ -24,6 +24,8 @@ export class RedisCache extends BasicCache {
       psetex: promisify(redisClient.psetex).bind(redisClient),
       del: promisify(redisClient.del).bind(redisClient),
       flushdb: promisify(redisClient.flushdb).bind(redisClient),
+      scan: promisify(redisClient.scan).bind(redisClient),
+      pttl: promisify(redisClient.pttl).bind(redisClient),
     };
   }
 
@@ -34,12 +36,17 @@ export class RedisCache extends BasicCache {
   public async get(key: string) {
     const value: Buffer = await this.client.get(getKey(key));
     if (value === null) return undefined;
-    return JSON.parse(await decompress(value));
+    const text = await decompress(value);
+    return JSON.parse(text);
   }
 
   public async set(key: string, value: any, ttl: number) {
     const text = JSON.stringify(value);
-    const data = this.useCompression ? await compress(text) : text;
+    const buffer = Buffer.from(text);
+    const data =
+      this.minCompressionValueLength !== null
+        ? await compress(Buffer.from(buffer), this.minCompressionValueLength)
+        : buffer;
     if (ttl === Infinity) {
       await this.client.set(getKey(key), data);
     } else {
@@ -53,5 +60,25 @@ export class RedisCache extends BasicCache {
 
   public async deleteAll() {
     await this.client.flushdb();
+  }
+
+  public async migrateToCompress(prefix: string | null = null) {
+    if (this.minCompressionValueLength === null) return;
+    let cursor = 0;
+    do {
+      const [nextCursor, keys] =
+        prefix === null
+          ? await this.client.scan(cursor)
+          : await this.client.scan(cursor, "MATCH", `${prefix}*`);
+      for (let key of keys) {
+        key = (<Buffer>key).toString();
+        const ttl = await this.client.pttl(key);
+        if (ttl === -2) continue;
+        if (ttl !== -1 && ttl < 3600 * 1000) continue;
+        const value: Buffer = await this.get(`:${key}`);
+        await this.set(`:${key}`, value, ttl === -1 ? Infinity : ttl);
+      }
+      cursor = parseInt(nextCursor.toString());
+    } while (cursor > 0);
   }
 }

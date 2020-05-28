@@ -25,7 +25,7 @@ export class MemoryCache extends BasicCache {
   public async set(key: string, value: any, ttl: number) {
     this.data[key] = [
       ttl === Infinity ? Infinity : Date.now() + ttl,
-      await compress(JSON.stringify(value)),
+      await compress(Buffer.from(JSON.stringify(value))),
     ];
   }
 
