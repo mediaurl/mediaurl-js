@@ -10,11 +10,11 @@ export class BasicCache {
     throw new Error(`Not implemented`);
   }
 
-  public async set(key: any, value: any, ttl: number) {
+  public async set(key: any, value: any, ttl: number): Promise<void> {
     throw new Error(`Not implemented`);
   }
 
-  public async delete(key: any) {
+  public async delete(key: any): Promise<void> {
     throw new Error(`Not implemented`);
   }
 

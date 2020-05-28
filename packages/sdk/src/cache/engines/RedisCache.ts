@@ -1,13 +1,22 @@
 import * as redis from "redis";
 import { promisify } from "util";
 import { BasicCache } from "./BasicCache";
+import { compress, decompress } from "./utils/compress";
+
+const getKey = (key: string) => key.substring(1);
 
 export class RedisCache extends BasicCache {
   private client: any;
 
-  constructor(clientConfig: redis.ClientOpts) {
+  constructor(
+    clientConfig: redis.ClientOpts,
+    private readonly useCompression: boolean = true
+  ) {
     super();
-    const redisClient = redis.createClient(clientConfig);
+    const redisClient = redis.createClient({
+      ...clientConfig,
+      return_buffers: true,
+    });
     this.client = {
       exists: promisify(redisClient.exists).bind(redisClient),
       get: promisify(redisClient.get).bind(redisClient),
@@ -19,25 +28,27 @@ export class RedisCache extends BasicCache {
   }
 
   public async exists(key: string) {
-    return await this.client.exists(key.substring(1));
+    return await this.client.exists(getKey(key));
   }
 
   public async get(key: string) {
-    const value = await this.client.get(key.substring(1));
-    if (value !== null) return JSON.parse(value);
-    return undefined;
+    const value: Buffer = await this.client.get(getKey(key));
+    if (value === null) return undefined;
+    return JSON.parse(await decompress(value));
   }
 
   public async set(key: string, value: any, ttl: number) {
+    const text = JSON.stringify(value);
+    const data = this.useCompression ? await compress(text) : text;
     if (ttl === Infinity) {
-      await this.client.set(key.substring(1), JSON.stringify(value));
+      await this.client.set(getKey(key), data);
     } else {
-      await this.client.psetex(key.substring(1), ttl, JSON.stringify(value));
+      await this.client.psetex(getKey(key), ttl, data);
     }
   }
 
   public async delete(key: string) {
-    this.client.del(key.substring(1));
+    this.client.del(getKey(key));
   }
 
   public async deleteAll() {

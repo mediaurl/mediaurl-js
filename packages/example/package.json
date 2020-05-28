@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "node .",
     "develop": "ts-node-dev --transpileOnly src",
-    "test": "jest"
+    "test": "jest && npm run build"
   },
   "dependencies": {
     "@watchedcom/sdk": "^0.32.0",
