@@ -8,6 +8,7 @@ const defaultCacheOptions: CacheOptions = {
   errorTtl: ms("5 minutes"),
   refreshInterval: null,
   storeRefreshErrors: false,
+  fallbackToCachedValue: true,
   simultanLockTimeout: ms("30 seconds"),
   simultanLockTimeoutSleep: 250,
   prefix: null,
@@ -61,11 +62,21 @@ export class CacheHandler {
    */
   public async get<T = any>(
     key: any,
-    updateRefreshInterval: boolean = true
+    updateRefreshInterval = true
   ): Promise<T | undefined> {
-    if (this.options.disableGet) return undefined;
     key = this.createKey(key);
-    if (this.options.refreshInterval) {
+    return (await this._get(key, updateRefreshInterval)).value;
+  }
+
+  private async _get<T = any>(
+    key: string,
+    updateRefreshInterval = true,
+    ignoreRefresh = false
+  ): Promise<{ isRefreshing: boolean; value: T | undefined }> {
+    if (this.options.disableGet) {
+      return { isRefreshing: false, value: undefined };
+    }
+    if (!ignoreRefresh && this.options.refreshInterval) {
       const locked = await this.engine.get(`${key}-refresh`);
       if (!locked) {
         if (updateRefreshInterval) {
@@ -76,10 +87,18 @@ export class CacheHandler {
             mms(this.options.refreshInterval)
           );
         }
-        return undefined;
+        return { isRefreshing: true, value: undefined };
       }
     }
-    return await this.engine.get(key);
+    return { isRefreshing: false, value: await this.engine.get(key) };
+  }
+
+  public async set(key: any, value: any, ttl?: CacheOptions["ttl"]) {
+    key = this.createKey(key);
+    if (ttl === undefined) ttl = this.options.ttl;
+    if (typeof ttl === "function") ttl = ttl(value);
+    if (ttl === null) return;
+    await this._set(key, value, mms(ttl));
   }
 
   private async _set(key: string, value: any, ttl: number) {
@@ -90,14 +109,6 @@ export class CacheHandler {
         1,
         mms(this.options.refreshInterval)
       );
-  }
-
-  public async set(key: any, value: any, ttl?: CacheOptions["ttl"]) {
-    key = this.createKey(key);
-    if (ttl === undefined) ttl = this.options.ttl;
-    if (typeof ttl === "function") ttl = ttl(value);
-    if (ttl === null) return;
-    await this._set(key, value, mms(ttl));
   }
 
   /**
@@ -133,8 +144,8 @@ export class CacheHandler {
     if (typeof errorTtl === "function") errorTtl = errorTtl(value);
     if (errorTtl === null) return;
     if (this.options.refreshInterval && !this.options.storeRefreshErrors) {
-      // Store errors only if there not value set already. We don't want to
-      // overwrite healthy data.
+      // Store errors only if there is no value set already. We don't want to
+      // overwrite a healthy value.
       if (await this.engine.exists(key)) return;
     }
     await this._set(key, value, mms(errorTtl));
@@ -170,14 +181,14 @@ export class CacheHandler {
 
     key = this.createKey(key);
 
-    let data = await this.get(key);
-    if (data === undefined) data = await this.lockRequest(key);
+    let { isRefreshing, value } = await this._get(key);
+    if (value === undefined) value = await this.lockRequest(key);
 
-    if (data !== undefined) {
-      if (data.error && this.options.errorTtl !== null) {
-        throw new Error(data.error);
-      } else if (data.result) {
-        return data.result;
+    if (value !== undefined) {
+      if (value.error && this.options.errorTtl !== null) {
+        throw new Error(value.error);
+      } else if (value.result !== undefined) {
+        return value.result;
       }
     }
 
@@ -195,6 +206,12 @@ export class CacheHandler {
       await this.set(key, { result });
       return result;
     } catch (error) {
+      if (isRefreshing && this.options.fallbackToCachedValue) {
+        const r = await this._get(key, true, true);
+        if (r.value !== undefined && r.value.result !== undefined) {
+          return r.value.result;
+        }
+      }
       await this.setError(key, { error: error.message || error });
       throw error;
     } finally {
@@ -211,21 +228,21 @@ export class CacheHandler {
    *
    * It is basically a shortcut for things like
    * ```
-   * const data = await cache.get('key');
-   * if (data !== undefined) return data;
+   * const value = await cache.get('key');
+   * if (value !== undefined) return value;
    * ```
    */
   public async inline(key: any) {
     key = this.createKey(key);
 
-    let data = await this.get(key);
-    if (data === undefined) data = await this.lockRequest(key);
+    let value = await this.get(key);
+    if (value === undefined) value = await this.lockRequest(key);
 
-    if (data !== undefined) {
-      if (data.error && this.options.errorTtl !== null) {
-        throw new CacheFoundError(undefined, new Error(data.error));
-      } else if (data.result !== undefined) {
-        throw new CacheFoundError(data.result, null);
+    if (value !== undefined) {
+      if (value.error && this.options.errorTtl !== null) {
+        throw new CacheFoundError(undefined, new Error(value.error));
+      } else if (value.result !== undefined) {
+        throw new CacheFoundError(value.result, null);
       }
     }
 

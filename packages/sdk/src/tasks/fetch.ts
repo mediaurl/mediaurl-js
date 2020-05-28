@@ -1,5 +1,6 @@
 import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
 import fetch, { Request, Response } from "node-fetch";
+import { URL, URLSearchParams } from "url";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 import { FetchFn, ResponseInit } from "./types";

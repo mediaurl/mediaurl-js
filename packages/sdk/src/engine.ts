@@ -212,7 +212,7 @@ const createAddonHandler = (
     // Handle the requestCache
     if (inlineCache) await inlineCache.set(output);
   } catch (error) {
-    // Request cache had a hit
+    // Check if request cache had a hit
     if (error instanceof CacheFoundError) {
       if (error.result !== undefined) {
         output = error.result;

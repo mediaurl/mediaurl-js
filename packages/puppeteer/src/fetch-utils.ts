@@ -28,40 +28,38 @@ export const convertFetchResponse = async (
   page: Page,
   res: Response
 ): Promise<RespondOptions> => {
+  const rawHeaders = res.headers.raw();
+
   const parsedCookies = setCookieParser.parse(
-    <string>res.headers.get("set-cookie"),
+    setCookieParser.splitCookiesString(rawHeaders["set-cookie"]),
     { decodeValues: true }
   );
-  const cookies: any[] = [];
-  for (const cookie of parsedCookies) {
-    cookies.push({
-      ...cookie,
-      expires: cookie.expires
-        ? Math.round(cookie.expires.getTime() / 1000)
-        : undefined,
-    });
-  }
-  if (cookies.length > 0) await page.setCookie(...cookies);
-
-  const headers = {};
-  res.headers.forEach((value, name) => {
-    if (name !== "set-cookie") {
-      headers[name] = value;
+  if (parsedCookies.length > 0) {
+    const cookies: any[] = [];
+    for (const cookie of parsedCookies) {
+      cookies.push({
+        ...cookie,
+        expires: cookie.expires
+          ? Math.round(cookie.expires.getTime() / 1000)
+          : cookie.maxAge
+          ? Math.round(Date.now() / 1000) + cookie.maxAge
+          : -1,
+      });
     }
-  });
-
-  const contentType = headers["content-type"];
-  let body: string | Buffer;
-  if (
-    String(contentType).indexOf("text/") === 0 ||
-    String(contentType).includes("; charset=")
-  ) {
-    body = await res.text();
-    headers["content-length"] = String(body.length);
-  } else {
-    body = await res.buffer();
-    headers["content-length"] = String(body.byteLength);
+    await page.setCookie(...cookies);
   }
 
-  return { status: res.status, headers, contentType, body };
+  const headers: Record<string, string> = {};
+  for (const key of Object.keys(rawHeaders)) {
+    const value = rawHeaders[key];
+    if (Array.isArray(value)) headers[key] = value.join("\n");
+    else if (value) headers[key] = value;
+  }
+
+  return {
+    status: res.status,
+    headers,
+    contentType: headers["content-type"],
+    body: await res.buffer(),
+  };
 };

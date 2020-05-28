@@ -5,6 +5,7 @@ import {
   Response,
   ResponseInit as FetchResponseInit,
 } from "node-fetch";
+import { URLSearchParams } from "url";
 
 // Fetch
 

@@ -299,6 +299,7 @@ for (const engine of engines) {
         simultanLockTimeoutSleep: 10 * multiplicator,
         refreshInterval,
         storeRefreshErrors: true,
+        fallbackToCachedValue: false,
       });
       let t = Date.now();
       await expect(cache.call("hello", fn1)).resolves.toBe("1");
@@ -317,6 +318,34 @@ for (const engine of engines) {
 
       t = Date.now();
       await expect(cache.call("hello", fn2)).rejects.toThrowError("failed");
+      expect(Date.now() - t).toBeLessThan(functionWait);
+
+      done();
+    });
+
+    test("call success locked with error and refresh error store and fallback to cached value", async (done) => {
+      cache.setOptions({
+        simultanLockTimeout: functionWait / 2,
+        simultanLockTimeoutSleep: 10 * multiplicator,
+        refreshInterval,
+        storeRefreshErrors: true,
+        fallbackToCachedValue: true,
+      });
+      let t = Date.now();
+      await expect(cache.call("hello", fn1)).resolves.toBe("1");
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+
+      t = Date.now();
+      await expect(cache.call("hello", fn2)).resolves.toBe("1");
+      expect(Date.now() - t).toBeLessThan(functionWait);
+      await sleep(refreshInterval);
+
+      t = Date.now();
+      await expect(cache.call("hello", fnFailed)).resolves.toBe("1");
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+
+      t = Date.now();
+      await expect(cache.call("hello", fn2)).resolves.toBe("1");
       expect(Date.now() - t).toBeLessThan(functionWait);
 
       done();
