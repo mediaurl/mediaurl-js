@@ -20,6 +20,50 @@ definitions:
     type: array
     items:
       type: string
+  DirectorySort:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        $ref: "general.yaml#/definitions/GenericId"
+      name:
+        $ref: "general.yaml#/definitions/TranslatedText"
+      compatibleFilter:
+        $ref: "#/definitions/CompatibleDirectoryFeature"
+  DirectoryFilter:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        $ref: "general.yaml#/definitions/GenericId"
+      name:
+        $ref: "general.yaml#/definitions/TranslatedText"
+      multiselect:
+        description: If this is true, an array will be returned.
+        type: boolean
+        default: false
+      values:
+        description: Values used by filters (Genres, countries, ...).
+        type: array
+        items:
+          oneOf:
+            - type: object
+              additionalProperties: false
+              properties:
+                key:
+                  type: string
+                value:
+                  $ref: "general.yaml#/definitions/TranslatedText"
+              required: [key, value]
+            - $ref: "general.yaml#/definitions/TranslatedText"
+      defaultValue:
+        description: |
+          Default value of this filter, should be TranslatedText or
+          the key of a filter. Have to be one of `values`.
+        anyOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+          - type: string
+    required: [id, name, values]
   DirectoryFeatures:
     description: Directory features like search, sort and filter.
     type: object
@@ -41,52 +85,12 @@ definitions:
         description: Different sort columns and their caption including translations.
         type: array
         items:
-          type: object
-          additionalProperties: false
-          properties:
-            id:
-              $ref: "general.yaml#/definitions/GenericId"
-            name:
-              $ref: "general.yaml#/definitions/TranslatedText"
-            compatibleFilter:
-              $ref: "#/definitions/CompatibleDirectoryFeature"
+          $ref: "general.yaml#/definitions/DirectorySort"
       filter:
         description: Different sort column and their caption including translations.
         type: array
         items:
-          type: object
-          additionalProperties: false
-          properties:
-            id:
-              $ref: "general.yaml#/definitions/GenericId"
-            name:
-              $ref: "general.yaml#/definitions/TranslatedText"
-            multiselect:
-              description: If this is true, an array will be returned.
-              type: boolean
-              default: false
-            values:
-              description: Values used by filters (Genres, countries, ...).
-              type: array
-              items:
-                oneOf:
-                  - type: object
-                    additionalProperties: false
-                    properties:
-                      key:
-                        type: string
-                      value:
-                        $ref: "general.yaml#/definitions/TranslatedText"
-                    required: [key, value]
-                  - $ref: "general.yaml#/definitions/TranslatedText"
-            defaultValue:
-              description: |
-                Default value of this filter, should be TranslatedText or
-                the key of a filter. Have to be one of `values`.
-              anyOf:
-                - $ref: "general.yaml#/definitions/TranslatedText"
-                - type: string
-          required: [id, name, values]
+          $ref: "general.yaml#/definitions/DirectoryFilter"
   DirectoryArguments:
     description: |
       Request parameters for a directory call. This is nearly the same
