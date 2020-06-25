@@ -39,20 +39,20 @@ const fn2 = async () => {
 
 const engines: [string, () => BasicCache | Promise<BasicCache>][] = [];
 
-// engines.push(["memory", () => new MemoryCache()]);
+engines.push(["memory", () => new MemoryCache()]);
 
-// const tempPath = path.join(os.tmpdir(), "watched-sdk-test-");
-// engines.push([
-//   "disk",
-//   async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
-// ]);
+const tempPath = path.join(os.tmpdir(), "watched-sdk-test-");
+engines.push([
+  "disk",
+  async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
+]);
 
 // engines.push([
 //   "mongodb",
 //   () => new MongoCache("mongodb://localhost/watched_test"),
 // ]);
 
-engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);
+// engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);
 
 for (const engine of engines) {
   describe(`CacheHandler with ${engine[0]} engine`, () => {
