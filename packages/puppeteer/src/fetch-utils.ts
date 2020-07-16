@@ -39,11 +39,13 @@ export const convertFetchResponse = async (
     for (const cookie of parsedCookies) {
       cookies.push({
         ...cookie,
-        expires: cookie.expires
-          ? Math.round(cookie.expires.getTime() / 1000)
-          : cookie.maxAge
-          ? Math.round(Date.now() / 1000) + cookie.maxAge
-          : -1,
+        expires:
+          cookie.expires && cookie.expires.getTime()
+            ? cookie.expires.getTime() / 1000
+            : cookie.maxAge
+            ? Date.now() / 1000 + cookie.maxAge
+            : -1,
+        domain: cookie.domain || "." + new URL(res.url).hostname,
       });
     }
     await page.setCookie(...cookies);
