@@ -1,41 +1,91 @@
 import { IptvItem, PlayableItem, Source, Subtitle } from "@watchedcom/sdk";
 
-export const EXAMPLE_ITEMS: PlayableItem[] = [
-  {
+const itemExample1 = (fullData: boolean) =>
+  <PlayableItem>{
     type: "movie",
     ids: {
-      "watched-worker-example": "id1234",
+      "worker-example": "id1234",
     },
     name: "Example Item 1",
     description: "This item does not have any sources.",
     year: 2011, // Example years to demonstrate the sort feature
-  },
-  {
+  };
+
+const itemBigBuckBunny = (fullData: boolean) =>
+  <PlayableItem>{
     type: "movie",
     ids: {
-      "watched-worker-example": "id1235",
+      "worker-example": "id1235",
     },
     name: "Big Buck Bunny",
     year: 2013,
-  },
-  {
+    ...(fullData
+      ? {
+          similarItems: [
+            {
+              id: "test",
+              name: "Big Buck Bunny static similar items",
+              items: [itemExample1(false), itemElephant(false)],
+            },
+          ],
+        }
+      : undefined),
+  };
+
+const itemElephant = (fullData: boolean) =>
+  <PlayableItem>{
     type: "movie",
     ids: {
-      "watched-worker-example": "elephant",
+      "worker-example": "elephant",
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
     year: 2012,
-  },
-  {
+    ...(fullData
+      ? {
+          similarItems: [
+            {
+              id: "test",
+              name: "Elephants Dream static similar items",
+              items: [itemExample1(false), itemBigBuckBunny(false)],
+            },
+          ],
+        }
+      : undefined),
+  };
+
+const item4k = (fullData: boolean) =>
+  <PlayableItem>{
     type: "movie",
     ids: {
-      "watched-worker-example": "4ktest",
+      "worker-example": "4ktest",
     },
     name: "4k Test",
     description: "Test video with 4k resolution",
     year: 2012,
-  },
+    ...(fullData
+      ? {
+          similarItems: [
+            {
+              id: "test",
+              name: "Dynamic similar items",
+              args: {},
+            },
+            {
+              id: "test-2",
+              name: "Static similar items",
+              items: [itemExample1(false), itemBigBuckBunny(false)],
+            },
+          ],
+        }
+      : undefined),
+  };
+
+export const EXAMPLE_ITEMS: ((fullData: boolean) => PlayableItem)[] = [
+  itemExample1,
+  itemBigBuckBunny,
+  itemElephant,
+  item4k,
 ];
 
 type ExampleSources = {

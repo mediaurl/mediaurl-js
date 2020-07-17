@@ -1,4 +1,7 @@
-import { TaskRecaptchaRequest } from "@watchedcom/schema";
+import {
+  TaskNotificationRequest,
+  TaskRecaptchaRequest,
+} from "@watchedcom/schema";
 import {
   RequestInfo as FetchRequestInfo,
   RequestInit as FetchRequestInit,
@@ -43,3 +46,25 @@ export type RecaptchaFn = (
   data: Omit<TaskRecaptchaRequest, "type">,
   timeout?: number
 ) => Promise<string>;
+
+// Toast
+
+export type ToastFn = (text: string) => Promise<void>;
+
+// Notification
+
+export type NotificationFn = ({
+  caption,
+  text,
+  url,
+  closeOnClick,
+  theme,
+  timeout,
+}: {
+  caption?: string;
+  text?: string;
+  url?: string;
+  closeOnClick?: boolean;
+  theme?: TaskNotificationRequest["theme"];
+  timeout?: number;
+}) => Promise<void>;

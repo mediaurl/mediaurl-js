@@ -60,7 +60,7 @@ export class RequestRecorder {
     const id = this.currentId++;
     let text = "";
     if (id === 1) {
-      text += `const module.exports = [];
+      text += `module.exports = [];
 
 var currentId = 1;
 function addRecord(record) {

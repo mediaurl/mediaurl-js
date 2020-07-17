@@ -2,7 +2,7 @@ import { createIptvAddon } from "@watchedcom/sdk";
 import { EXAMPLE_IPTV_ITEMS } from "./exampleData";
 
 export const iptvExampleAddon = createIptvAddon({
-  id: "watched-iptv-worker-example",
+  id: "iptv-worker-example",
   name: "IPTV Example Addon",
   version: "1.0.0",
 });

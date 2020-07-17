@@ -4,7 +4,9 @@ import { CacheFoundError, CacheHandler, getCacheEngineFromEnv } from "./cache";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
+  createTaskNotification,
   createTaskRecaptcha,
+  createTaskToast,
   handleTask,
   Responder,
 } from "./tasks";
@@ -179,6 +181,8 @@ const createAddonHandler = (
     },
     fetch: createTaskFetch(testMode, responder, cache),
     recaptcha: createTaskRecaptcha(testMode, responder, cache),
+    toast: createTaskToast(testMode, responder, cache),
+    notification: createTaskNotification(testMode, responder, cache),
   };
 
   // Run event handlers

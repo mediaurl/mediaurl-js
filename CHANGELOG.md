@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.34.0
+
+### Changes
+
+- Dropping legacy Node.js versions (=> 12.9 is now required)
+- Added similar item system for items. See the `similarItem` property. Similar items will be displayed as horizontal lists below movie, series or channel items.
+- Created `toast` task to display toast messages inside the app (see `ctx.toast`)
+- Created `notification` task to display notifications with various options inside the app (see `ctx.notification`). Notifications can be displayed once every 30 minute per addon. You can set the `url` property to open an URL when the user clicks on the notification. WATCHED sharing URL's are handled internally, so you can promote for example an item or addon.
+- Various bugfixes and improvments
+
 ## v0.31.0
 
 ### Changes

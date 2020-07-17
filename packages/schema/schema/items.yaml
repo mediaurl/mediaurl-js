@@ -19,6 +19,47 @@ definitions:
     patternProperties:
       "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
         type: string
+  SimilarItems:
+    description: |
+      List of similar items directories which will be displayed on the item
+      screen. You can either return a list of `items` to be displayed, or define
+      a request (`args` property) which will be made to the specific addon.
+    type: array
+    items:
+      allOf:
+        - type: object
+          properties:
+            id:
+              description: ID of this directory item.
+              $ref: "general.yaml#/definitions/GenericId"
+              default: ""
+            name:
+              description: Name of item.
+              oneOf:
+                - $ref: "general.yaml#/definitions/TranslatedText"
+            options:
+              $ref: "#/definitions/DirectoryOptions"
+            features:
+              $ref: "#/definitions/DirectoryFeatures"
+            addonId:
+              description: |
+                Optional addon ID if this directory should be loaded via another
+                addon.
+              type: string
+            rootId:
+              description: ID of the root directory.
+              $ref: "general.yaml#/definitions/GenericId"
+              default: ""
+            args:
+              $ref: "#/definitions/DirectoryArguments"
+            items:
+              description: |
+                Optionally define a list of items. No `directory` request will be
+                made if this property is set.
+              type: array
+              items:
+                $ref: "general.yaml#/definitions/MainItem"
+          required: [name]
   ItemImages:
     description: Item images.
     type: object
@@ -37,7 +78,7 @@ definitions:
       `{ imdb_id: tt1234567, tmdb_id: 1234 }`.
       For most addons, it is recommended to use the addon
       ID as key for `ids`, for example:
-      `{ 'example.com-addon': 'someid12345' }`.
+      `{ 'example-addon': 'someid12345' }`.
       However, the key `id` will be internally translated to
       the addon ID, so `{ id: 'someid12345' }` is the same
       as above.
@@ -81,37 +122,31 @@ definitions:
         type: array
         items:
           type: string
-        default: []
       countries:
         description: Country list in ISO-3166-1 format.
         type: array
         items:
           $ref: "general.yaml#/definitions/Country"
-        default: []
       spokenLanguages:
         description: List of spoken languages in ISO-639-1 format.
         type: array
         items:
           $ref: "general.yaml#/definitions/Language"
-        default: []
       genres:
         description: Genre list.
         type: array
         items:
           type: string
-        default: []
       writer:
         description: List of writers.
         type: array
         items:
           type: string
-        default: []
       director:
         description: List of directors.
         type: array
         items:
           type: string
-        default: []
       cast:
         description: List of cast.
         type: array
@@ -128,7 +163,6 @@ definitions:
                 character:
                   type: string
               required: [name]
-        default: []
       homepage:
         description: Homepage.
         type: string
@@ -143,19 +177,8 @@ definitions:
         type: array
         items:
           $ref: "objects.yaml#/definitions/Source"
-        default: []
-      sources:
-        description: List of source objects.
-        type: array
-        items:
-          $ref: "objects.yaml#/definitions/Source"
-        default: []
-      sourcesExclusive:
-        description: |
-          If true, only this sources are offered to the user.
-          The app will not try to find more subtitles via other addons.
-        type: boolean
-        default: false
+      similarItems:
+        $ref: "general.yaml#/definitions/SimilarItems"
     required: [ids]
   MovieItem:
     allOf:
@@ -165,6 +188,17 @@ definitions:
           type:
             type: string
             enum: [movie]
+          sources:
+            description: List of source objects.
+            type: array
+            items:
+              $ref: "objects.yaml#/definitions/Source"
+          sourcesExclusive:
+            description: |
+              If true, only this sources are offered to the user.
+              The app will not try to find more subtitles via other addons.
+              Defaults to `false`.
+            type: boolean
         required: [type]
   SeriesItem:
     allOf:
@@ -216,13 +250,12 @@ definitions:
         type: array
         items:
           $ref: "objects.yaml#/definitions/Source"
-        default: []
       sourcesExclusive:
         description: |
           If true, only this sources are offered to the user.
           The app will not try to find more subtitles via other addons.
+          Defaults to `false`.
         type: boolean
-        default: false
     required: [ids, season, episode]
   ChannelItem:
     type: object
@@ -247,13 +280,14 @@ definitions:
         type: array
         items:
           $ref: "objects.yaml#/definitions/Source"
-        default: []
       sourcesExclusive:
         description: |
           If true, only this sources are offered to the user.
           The app will not try to find more subtitles via other addons.
+          Defaults to `false`.
         type: boolean
-        default: false
+      similarItems:
+        $ref: "general.yaml#/definitions/SimilarItems"
     required: [type, ids]
   IptvItem:
     type: object

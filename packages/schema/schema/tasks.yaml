@@ -86,6 +86,60 @@ definitions:
       token:
         type: string
     required: [type, token]
+  # Toast
+  TaskToastRequest:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [toast]
+      text:
+        description: Text for this toast.
+        type: string
+    required: [type, text]
+  TaskToastResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [toast]
+    required: [type]
+  # Notification
+  TaskNotificationRequest:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [notification]
+      caption:
+        description: Caption of this notification.
+        type: string
+      text:
+        description: Text of this notification.
+        type: string
+      url:
+        description: Optional URL which will be opened on click.
+        $ref: "general.yaml#/definitions/Url"
+      closeOnClick:
+        description: Close the notification when opening the `url`.
+        type: boolean
+      theme:
+        description: Background color of this notification, defaults to `light`.
+        type: string
+        enum: [dark, light, red, yellow, green]
+      timeout:
+        description: |
+          Timeout in seconds after which this notification will be closed
+          automatically.
+        type: number
+    required: [type]
+  TaskNotificationResponse:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [notification]
+    required: [type]
   # Handlers
   TaskRequest:
     type: object
@@ -99,6 +153,8 @@ definitions:
         oneOf:
           - $ref: "#/definitions/TaskFetchRequest"
           - $ref: "#/definitions/TaskRecaptchaRequest"
+          - $ref: "#/definitions/TaskToastRequest"
+          - $ref: "#/definitions/TaskNotificationRequest"
     required: [kind, id, data]
   TaskResponse:
     type: object
@@ -113,4 +169,6 @@ definitions:
           - $ref: "general.yaml#/definitions/Error"
           - $ref: "#/definitions/TaskFetchResponse"
           - $ref: "#/definitions/TaskRecaptchaResponse"
+          - $ref: "#/definitions/TaskToastResponse"
+          - $ref: "#/definitions/TaskNotificationResponse"
     required: [kind, id, data]

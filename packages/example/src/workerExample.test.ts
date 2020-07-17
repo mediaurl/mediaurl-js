@@ -35,7 +35,7 @@ const itemDefaults: ItemRequest = {
   type: "movie",
   ids: {
     id: "elephant",
-    "watched-worker-example": "elephant",
+    "worker-example": "elephant",
   },
   name: "Elephants Dream",
   nameTranslations: {},
@@ -65,7 +65,10 @@ test("action directory", async (done) => {
       filter: {},
       cursor: null,
     })
-    .expect(200, { items: EXAMPLE_ITEMS, nextCursor: null })
+    .expect(200, {
+      items: EXAMPLE_ITEMS.map((fn) => fn(false)),
+      nextCursor: null,
+    })
     .end(requestEnd(done));
 });
 
@@ -75,7 +78,9 @@ test("action item", async (done) => {
     .send(<ItemRequest>itemDefaults)
     .expect(
       200,
-      EXAMPLE_ITEMS.find((i) => i.ids["watched-worker-example"] === "elephant")
+      EXAMPLE_ITEMS.map((fn) => fn(true)).find(
+        (i) => i.ids["worker-example"] === "elephant"
+      )
     )
     .end(requestEnd(done));
 });

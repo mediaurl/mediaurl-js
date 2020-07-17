@@ -1,5 +1,6 @@
 import { replayRecordFile } from "@watchedcom/sdk";
 import { testAddon } from "@watchedcom/test";
+import { iptvExampleAddon } from "./iptvExample";
 import { repoExampleAddon } from "./repoExample";
 import { workerExampleAddon } from "./workerExample";
 
@@ -12,7 +13,10 @@ test(`Test addon "${repoExampleAddon.getId()}"`, (done) => {
 });
 
 test(`Replay recorded actions`, (done) => {
-  replayRecordFile([repoExampleAddon, workerExampleAddon], "src/index")
+  replayRecordFile(
+    [repoExampleAddon, workerExampleAddon, iptvExampleAddon],
+    "src/index"
+  )
     .then(done)
     .catch(done);
 });

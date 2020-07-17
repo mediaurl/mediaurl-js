@@ -1,6 +1,6 @@
 import { BasicAddonClass } from "./addons";
 import { CacheHandler, CacheOptionsParam } from "./cache";
-import { FetchFn, RecaptchaFn } from "./tasks";
+import { FetchFn, NotificationFn, RecaptchaFn, ToastFn } from "./tasks";
 
 /**
  * Some infos about the current request.
@@ -164,6 +164,16 @@ export interface ActionHandlerContext {
    * Solve a recaptcha via the client app.
    */
   recaptcha: RecaptchaFn;
+
+  /**
+   * Show a toast message inside the app.
+   */
+  toast: ToastFn;
+
+  /**
+   * Show a notification inside the app.
+   */
+  notification: NotificationFn;
 }
 
 /**
