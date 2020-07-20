@@ -18,7 +18,7 @@ definitions:
         properties:
           method:
             type: string
-            enum: [GET, POST, PUT, OPTIONS, DELETE, CONNECT]
+            enum: [GET, POST, PUT, OPTIONS, DELETE, CONNECT, HEAD]
             default: GET
           headers:
             type: object
