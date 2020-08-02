@@ -10,6 +10,22 @@
 - Created `notification` task to display notifications with various options inside the app (see `ctx.notification`). Notifications can be displayed once every 30 minute per addon. You can set the `url` property to open an URL when the user clicks on the notification. WATCHED sharing URL's are handled internally, so you can promote for example an item or addon.
 - Various bugfixes and improvments
 
+### Upgrade instructions
+
+Edit your `tsconfig.json` and replace
+
+```json
+  "target": "es5",
+```
+
+with
+
+```json
+  "target": "es2019",
+  "lib": ["es2020"],
+  "moduleResolution": "node",
+```
+
 ## v0.31.0
 
 ### Changes
