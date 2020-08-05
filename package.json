@@ -11,7 +11,7 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "test-all": "lerna bootstrap --hoist && npm audit && lerna run build && lerna run test",
+    "test-all": "lerna bootstrap --hoist && lerna run build && lerna run test",
     "publish": "npm run test-all && lerna publish"
   },
   "husky": {
