@@ -311,6 +311,9 @@ definitions:
       language:
         description: Language of this channel.
         type: string
+      category:
+        description: Category of this channel.
+        type: string
       group:
         description: Group of this channel.
         type: string

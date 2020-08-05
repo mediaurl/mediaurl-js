@@ -236,4 +236,16 @@ definitions:
         type: array
         items:
           $ref: "items.yaml#/definitions/IptvItem"
+      defaults:
+        description: Default filter values.
+        type: object
+        properties:
+          country:
+            type: string
+          language:
+            type: string
+          category:
+            type: string
+          group:
+            type: string
     required: [items]
