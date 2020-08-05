@@ -9,15 +9,15 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "i18next": "^19.4.4",
-    "i18next-fs-backend": "^1.0.2",
-    "i18next-locize-backend": "^4.0.7"
+    "i18next": "^19.6.3",
+    "i18next-fs-backend": "^1.0.7",
+    "i18next-locize-backend": "^4.1.1"
   },
   "devDependencies": {
     "@types/i18next-node-fs-backend": "^2.1.0",
     "@watchedcom/sdk": "^0.34.1",
-    "jest": "^26.0.1",
-    "ts-jest": "^25.5.1",
-    "typescript": "^3.8.3"
+    "jest": "^26.2.2",
+    "ts-jest": "^26.1.4",
+    "typescript": "^3.9.7"
   }
 }
