@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.35.0
+
+### Changes
+
+- Added `SetResultError` to set cache results in a different way. For more infos, see the code documentation.
+- Added IPTV category property and default filter values
+- Removed the `@watchedcom/create` package
+- Removed the `watched-sdk` command line tool
+
 ## v0.34.0
 
 ### Changes
