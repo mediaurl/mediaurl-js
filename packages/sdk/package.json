@@ -3,9 +3,6 @@
   "description": "WATCHED.com Javascript SDK",
   "version": "0.34.1",
   "main": "dist",
-  "bin": {
-    "watched-sdk": "dist/scripts/index.js"
-  },
   "scripts": {
     "test": "jest",
     "build": "tsc",
