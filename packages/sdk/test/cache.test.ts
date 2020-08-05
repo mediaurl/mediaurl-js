@@ -8,6 +8,7 @@ import {
   MemoryCache,
   MongoCache,
   RedisCache,
+  SetResultError,
 } from "../src/cache";
 
 // On slow computers the default waiting times may cause timeouts
@@ -391,6 +392,43 @@ for (const engine of engines) {
       t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("1");
       expect(Date.now() - t).toBeLessThan(functionWait);
+
+      done();
+    });
+
+    test("call with success error", async (done) => {
+      cache.setOptions({
+        refreshInterval,
+      });
+
+      const fn1 = async () => {
+        await sleep(functionWait);
+        throw new SetResultError("1");
+      };
+      const fn2 = async () => {
+        await sleep(functionWait);
+        throw new SetResultError("2");
+      };
+      let t = Date.now();
+      await expect(cache.call("hello", fn1)).resolves.toBe("1");
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+      await expect(cache.get("hello")).resolves.toMatchObject({ result: "1" });
+
+      t = Date.now();
+      await expect(cache.call("hello", fn1)).resolves.toBe("1");
+      expect(Date.now() - t).toBeLessThan(functionWait);
+
+      await sleep(refreshInterval * 1.2);
+
+      t = Date.now();
+      await expect(cache.call("hello", fn2)).resolves.toBe("1");
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+
+      await sleep(options.ttl);
+
+      t = Date.now();
+      await expect(cache.call("hello", fn2)).resolves.toBe("2");
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
 
       done();
     });

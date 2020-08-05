@@ -71,9 +71,9 @@ definitions:
     pattern: "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$"
   Error:
     description: |
-      Possible return value of all API functions. If the
-      error value is "empty", the response is treated as
-      not found and will be ignored.
+      Possible return value of all API functions.
+      If the error value equals to the string `empty`, the response for
+      the functions `item`, `source` and `subtitle` is treated as empty.
     type: object
     properties:
       error:

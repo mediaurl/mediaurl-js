@@ -1,6 +1,11 @@
 import ms = require("ms");
 import { BasicCache } from "./engines";
-import { CacheFoundError, IgnoreCacheError, WaitTimedOut } from "./errors";
+import {
+  CacheFoundError,
+  IgnoreCacheError,
+  SetResultError,
+  WaitTimedOut,
+} from "./errors";
 import { CacheOptions, CacheOptionsParam, InlineCacheContext } from "./types";
 
 const defaultCacheOptions: CacheOptions = {
@@ -49,6 +54,26 @@ export class CacheHandler {
     return this.engine.createKey(this.options.prefix, key);
   }
 
+  private async _setRefreshKey(key: string) {
+    if (this.options.refreshInterval) {
+      await this.engine.set(
+        `${key}-refresh`,
+        1,
+        mms(this.options.refreshInterval)
+      );
+    }
+  }
+
+  /**
+   * Returns `true` if `key` is cached. Note that with `refreshInterval` enabled,
+   * this function can return `true`, and a call to `get` will return an empty
+   * result.
+   */
+  public async exists(key: any) {
+    key = this.createKey(key);
+    return (await this.engine.exists(key)) ? true : false;
+  }
+
   /**
    * Returns the cached value or, if not found, `undefined`.
    *
@@ -81,11 +106,7 @@ export class CacheHandler {
       if (!locked) {
         if (updateRefreshInterval) {
           // Set this key now so the next request will hit the cache again
-          await this.engine.set(
-            `${key}-refresh`,
-            1,
-            mms(this.options.refreshInterval)
-          );
+          await this._setRefreshKey(key);
         }
         return { isRefreshing: true, value: undefined };
       }
@@ -96,19 +117,14 @@ export class CacheHandler {
   public async set(key: any, value: any, ttl?: CacheOptions["ttl"]) {
     key = this.createKey(key);
     if (ttl === undefined) ttl = this.options.ttl;
-    if (typeof ttl === "function") ttl = ttl(value);
+    if (typeof ttl === "function") ttl = await ttl(value);
     if (ttl === null) return;
     await this._set(key, value, mms(ttl));
   }
 
   private async _set(key: string, value: any, ttl: number) {
     await this.engine.set(key, value, ttl);
-    if (this.options.refreshInterval)
-      await this.engine.set(
-        `${key}-refresh`,
-        1,
-        mms(this.options.refreshInterval)
-      );
+    await this._setRefreshKey(key);
   }
 
   /**
@@ -141,7 +157,7 @@ export class CacheHandler {
     if (IgnoreCacheError instanceof IgnoreCacheError) return;
     key = this.createKey(key);
     if (errorTtl === undefined) errorTtl = this.options.errorTtl;
-    if (typeof errorTtl === "function") errorTtl = errorTtl(value);
+    if (typeof errorTtl === "function") errorTtl = await errorTtl(value);
     if (errorTtl === null) return;
     if (this.options.refreshInterval && !this.options.storeRefreshErrors) {
       // Store errors only if there is no value set already. We don't want to
@@ -170,6 +186,25 @@ export class CacheHandler {
         return undefined;
       }
     }
+  }
+
+  private async handleCallError(
+    key: string,
+    isRefreshing: boolean,
+    error: Error
+  ) {
+    if (isRefreshing && this.options.fallbackToCachedValue) {
+      const r = await this._get(key, true, true);
+      if (r.value !== undefined && r.value.result !== undefined) {
+        return r.value.result;
+      }
+    }
+    if (error instanceof SetResultError) {
+      await this.set(key, { result: error.forceResult });
+      return error.forceResult;
+    }
+    await this.setError(key, { error: error?.message || error });
+    return error;
   }
 
   /**
@@ -206,14 +241,9 @@ export class CacheHandler {
       await this.set(key, { result });
       return result;
     } catch (error) {
-      if (isRefreshing && this.options.fallbackToCachedValue) {
-        const r = await this._get(key, true, true);
-        if (r.value !== undefined && r.value.result !== undefined) {
-          return r.value.result;
-        }
-      }
-      await this.setError(key, { error: error.message || error });
-      throw error;
+      const newResult = await this.handleCallError(key, isRefreshing, error);
+      if (newResult === error) throw error;
+      return newResult;
     } finally {
       if (this.options.simultanLockTimeout) {
         await this.engine.delete(`${key}-call-lock`);
@@ -235,7 +265,7 @@ export class CacheHandler {
   public async inline(key: any) {
     key = this.createKey(key);
 
-    let value = await this.get(key);
+    let { isRefreshing, value } = await this._get(key);
     if (value === undefined) value = await this.lockRequest(key);
 
     if (value !== undefined) {
@@ -257,16 +287,14 @@ export class CacheHandler {
     }
 
     return <InlineCacheContext>{
-      set: async (result, ttl?: CacheOptions["ttl"]) => {
-        await this.set(key, { result }, ttl);
+      set: async (result) => {
+        await this.set(key, { result });
         await releaseLock();
       },
-      setError: async (
-        error,
-        errorTtl: CacheOptions["errorTtl"] | null = null
-      ) => {
-        await this.setError(key, { error: error?.message || error }, errorTtl);
+      setError: async (error) => {
+        const newResult = await this.handleCallError(key, isRefreshing, error);
         await releaseLock();
+        return newResult;
       },
     };
   }

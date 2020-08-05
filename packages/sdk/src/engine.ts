@@ -1,6 +1,11 @@
 import { cloneDeep } from "lodash";
 import { BasicAddonClass } from "./addons";
-import { CacheFoundError, CacheHandler, getCacheEngineFromEnv } from "./cache";
+import {
+  CacheFoundError,
+  CacheHandler,
+  getCacheEngineFromEnv,
+  SetResultError,
+} from "./cache";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
@@ -24,6 +29,8 @@ const defaultOptions = {
   requestRecorderPath: null,
   replayMode: false,
 };
+
+const NoResult = Symbol("no result");
 
 /**
  * Handle options and prepare addons
@@ -194,7 +201,7 @@ const createAddonHandler = (
 
   // Handle the request
   let statusCode = 200;
-  let output: any;
+  let output: any = NoResult;
   try {
     output = await handler(input, ctx, addon);
 
@@ -216,18 +223,20 @@ const createAddonHandler = (
     // Handle the requestCache
     if (inlineCache) await inlineCache.set(output);
   } catch (error) {
-    // Check if request cache had a hit
     if (error instanceof CacheFoundError) {
+      // Check if inline cache had a hit
       if (error.result !== undefined) {
         output = error.result;
-      } else {
-        statusCode = 500;
-        output = { error: error.error };
       }
-    } else {
-      // Handle the requestCache
-      if (inlineCache) await inlineCache.setError(error);
+    } else if (inlineCache) {
+      // Set the inline cache
+      const newResult = await inlineCache.setError(error);
+      if (newResult !== error) {
+        output = newResult;
+      }
+    }
 
+    if (output === NoResult) {
       // Set the error
       statusCode = 500;
       output = { error: error.message || error };
