@@ -148,6 +148,6 @@ export const replayRecordFile = async (
   silent: boolean = false
 ) => {
   const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;
-  const recordData: RecordData[] = await import(getPath(recordPath));
+  const recordData: RecordData[] = (await import(getPath(recordPath))).default;
   await replayRecordData(myEngine, recordData, ids, silent);
 };

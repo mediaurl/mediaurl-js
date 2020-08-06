@@ -22,8 +22,8 @@ import {
   WorkerAddonClass,
   WorkerAddonResourceActions,
 } from "@watchedcom/sdk";
-import * as assert from "assert";
-import * as request from "supertest";
+import assert from "assert";
+import request from "supertest";
 
 export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;

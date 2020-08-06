@@ -6,7 +6,7 @@ import {
   ItemRequest,
   SourceRequest,
 } from "@watchedcom/sdk";
-import * as request from "supertest";
+import request from "supertest";
 import {
   EXAMPLE_ITEMS,
   EXAMPLE_SOURCES,

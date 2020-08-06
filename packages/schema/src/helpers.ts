@@ -1,4 +1,4 @@
-import * as Ajv from "ajv";
+import Ajv from "ajv";
 
 export interface SchemaOptions {
   schema: any;

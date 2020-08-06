@@ -13,7 +13,6 @@ export class IgnoreCacheError extends Error {}
 export class SetResultError<T> extends Error {
   constructor(public forceResult: T) {
     super("SetResultError");
-    this.forceResult = forceResult;
   }
 }
 
