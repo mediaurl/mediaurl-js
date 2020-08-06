@@ -1,9 +1,9 @@
 import { TranslatedText } from "@watchedcom/schema";
-import * as bodyParser from "body-parser";
-import * as express from "express";
+import bodyParser from "body-parser";
+import express from "express";
 import "express-async-errors";
-import * as morgan from "morgan";
-import * as path from "path";
+import morgan from "morgan";
+import path from "path";
 import "pug";
 import { BasicAddonClass } from "./addons";
 import { errorHandler } from "./error-handler";
