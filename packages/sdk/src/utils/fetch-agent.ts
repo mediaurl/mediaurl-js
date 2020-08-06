@@ -3,7 +3,7 @@ import * as net from "net";
 import { ActionHandlerContext } from "../";
 
 /**
- * Experimental: can be used basically for GET requests.
+ * Experimental: can be used basically for GET or POST (with JSON payload)
  * More complex requests can cause issues
  */
 export class FetchAgent extends Agent {
@@ -19,6 +19,8 @@ export class FetchAgent extends Agent {
     fakeSocket.readable = true;
 
     const resp = await this.fetchFn((<any>opts).href, {
+      method: opts.method || "GET",
+      body: (<any>opts).body,
       headers: (opts.headers || {}) as { [key: string]: string },
     });
 
