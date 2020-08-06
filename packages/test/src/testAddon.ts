@@ -45,7 +45,7 @@ export class AddonTest {
   ) {
     return await this.app
       .post(`/${this.addon.getId()}/${action}.watched`)
-      .send(data)
+      .send(<any>data)
       .expect(expectedStatus);
   }
 }
