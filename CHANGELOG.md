@@ -8,6 +8,7 @@
 - Added IPTV category property and default filter values
 - Removed the `@watchedcom/create` package
 - Removed the `watched-sdk` command line tool
+- Added experimental `FetchAgent`
 
 ## v0.34.0
 
