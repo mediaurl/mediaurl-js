@@ -18,3 +18,4 @@ export {
   replayRecordFile,
 } from "./utils/request-recorder";
 export { translateDeep } from "./utils/translate-deep";
+export { FetchAgent } from "./utils/fetch-agent";
