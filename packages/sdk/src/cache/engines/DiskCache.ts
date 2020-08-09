@@ -1,5 +1,7 @@
+import { createHash } from "crypto";
 import { promises as fsPromises } from "fs";
 import * as path from "path";
+import { CacheOptions } from "../types";
 import { BasicCache } from "./BasicCache";
 
 export class DiskCache extends BasicCache {
@@ -68,6 +70,14 @@ export class DiskCache extends BasicCache {
   }
 
   public async deleteAll() {
-    await fsPromises.rmdir(this.rootPath, { maxRetries: 1, recursive: true });
+    await fsPromises.rmdir(this.rootPath, {
+      maxRetries: 1,
+      recursive: true,
+    });
+  }
+
+  public createKey(prefix: CacheOptions["prefix"], key: any) {
+    if (typeof key === "string" && key.indexOf(":") === 0) return key;
+    return super.createKey(prefix, key).replace(/\//g, "_");
   }
 }
