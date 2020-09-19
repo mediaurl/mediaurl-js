@@ -113,10 +113,12 @@ definitions:
         enum: [notification]
       caption:
         description: Caption of this notification.
-        type: string
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
       text:
         description: Text of this notification.
-        type: string
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
       url:
         description: Optional URL which will be opened on click.
         $ref: "general.yaml#/definitions/Url"
