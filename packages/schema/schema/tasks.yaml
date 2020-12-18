@@ -63,7 +63,8 @@ definitions:
         enum: [recaptcha]
       url:
         description: URL associated with the app (This is the domain url that you registered on Google Admin Console when getting a siteKey)
-        $ref: "general.yaml#/definitions/Url"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Url"
       siteKey:
         description: A string representing the siteKey provided in the Google reCaptcha admin console.
         type: string
@@ -121,7 +122,8 @@ definitions:
           - $ref: "general.yaml#/definitions/TranslatedText"
       url:
         description: Optional URL which will be opened on click.
-        $ref: "general.yaml#/definitions/Url"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Url"
       closeOnClick:
         description: Close the notification when opening the `url`.
         type: boolean

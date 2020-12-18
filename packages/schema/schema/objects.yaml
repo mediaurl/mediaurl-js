@@ -9,7 +9,8 @@ definitions:
           ID of this subtitle. By default the `url` is used. In some cases
           the `url` parameter changes on every call, so `id` is needed
           to prevent duplicate subtitles in the app.
-        $ref: "general.yaml#/definitions/GenericId"
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
       name:
         description: Optional informations about this subtitle.
         type: string
@@ -43,7 +44,8 @@ definitions:
           ID of this source. By default the `url` is used. In some cases
           the `url` parameter changes on every call, so `id` is needed
           to prevent duplicate sources in the app.
-        $ref: "general.yaml#/definitions/GenericId"
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
       url:
         description: URL to this source.
         $ref: "general.yaml#/definitions/Url"
@@ -60,7 +62,8 @@ definitions:
         description: |
           Icon which will be displayed on the source list. The default source
           icon is the addon icon.
-        $ref: "general.yaml#/definitions/Image"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Image"
       languages:
         description: |
           Languages of this source.

@@ -5,10 +5,12 @@ definitions:
     type: object
     properties:
       language:
-        $ref: "general.yaml#/definitions/Language"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Language"
         default: en
       region:
-        $ref: "general.yaml#/definitions/Country"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Country"
         default: "XX"
     required: [language, region]
   # Api requests and responses
@@ -43,12 +45,14 @@ definitions:
           rootId:
             description: |
               ID of the root directory.
-            $ref: "general.yaml#/definitions/GenericId"
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           id:
             description: |
               ID of the `Directory` object. Defaults to an empty string.
-            $ref: "general.yaml#/definitions/GenericId"
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           adult:
             description: Show adult items in result.
@@ -81,7 +85,8 @@ definitions:
     properties:
       rootId:
         description: Overwrite the `rootId` of a directory.
-        $ref: "general.yaml#/definitions/GenericId"
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
       options:
         description: Overwrite `options` of a directory or addon.
         oneOf:
@@ -129,7 +134,8 @@ definitions:
               - type: string
           year:
             description: Release year.
-            $ref: "general.yaml#/definitions/Year"
+            oneOf:
+              - $ref: "general.yaml#/definitions/Year"
         required: [type, ids, name]
   ItemResponse:
     oneOf:
@@ -194,7 +200,8 @@ definitions:
     type: object
     properties:
       region:
-        $ref: "general.yaml#/definitions/Country"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Country"
         default: "XX"
       url:
         $ref: "general.yaml#/definitions/Url"

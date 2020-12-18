@@ -27,7 +27,8 @@ definitions:
         $ref: "items.yaml#/definitions/ItemTypes"
       id:
         description: Used with directories.
-        $ref: "general.yaml#/definitions/GenericId"
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
       ids:
         description: Used with all items except directories.
         oneOf:

@@ -9,7 +9,8 @@ definitions:
         description: |
           Shape of the images.
           If not set, a value depening on the item type is used.
-        $ref: "general.yaml#/definitions/ImageShape"
+        oneOf:
+          - $ref: "general.yaml#/definitions/ImageShape"
       displayName:
         description: |
           Display the item name over the image.
@@ -128,7 +129,8 @@ definitions:
     properties:
       id:
         description: ID of this directory item.
-        $ref: "general.yaml#/definitions/GenericId"
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
         default: ""
       name:
         description: Name of item.
@@ -166,7 +168,8 @@ definitions:
             enum: [directory]
           rootId:
             description: This directory will use features and options from this directory.
-            $ref: "general.yaml#/definitions/GenericId"
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           args:
             $ref: "#/definitions/DirectoryArguments"
@@ -187,7 +190,8 @@ definitions:
             type: string
           rootId:
             description: This directory will use features and options from this directory.
-            $ref: "general.yaml#/definitions/GenericId"
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           id:
             description: |
@@ -195,7 +199,8 @@ definitions:
               To overwrite (or reconfigure) other dashboards, set
               this to an already existing dashboard. The found object
               then is merged with this one.
-            $ref: "general.yaml#/definitions/GenericId"
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
           args:
             $ref: "#/definitions/DirectoryArguments"
           config:

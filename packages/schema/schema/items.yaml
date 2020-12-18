@@ -31,7 +31,8 @@ definitions:
           properties:
             id:
               description: ID of this directory item.
-              $ref: "general.yaml#/definitions/GenericId"
+              oneOf:
+                - $ref: "general.yaml#/definitions/GenericId"
               default: ""
             name:
               description: Name of item.
@@ -48,7 +49,8 @@ definitions:
               type: string
             rootId:
               description: ID of the root directory.
-              $ref: "general.yaml#/definitions/GenericId"
+              oneOf:
+                - $ref: "general.yaml#/definitions/GenericId"
               default: ""
             args:
               $ref: "#/definitions/DirectoryArguments"
@@ -113,10 +115,12 @@ definitions:
           - type: string
       year:
         description: Production year. If not provided, releaseDate will be used.
-        $ref: "general.yaml#/definitions/Year"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Year"
       runtime:
         description: Runtime in miliseconds.
-        $ref: "general.yaml#/definitions/UnixTimestamp"
+        oneOf:
+          - $ref: "general.yaml#/definitions/UnixTimestamp"
       production:
         description: Production compnaies.
         type: array
@@ -330,10 +334,12 @@ definitions:
           properties:
             start:
               description: Start timestamp in UTC seconds.
-              $ref: "general.yaml#/definitions/UnixTimestamp"
+              oneOf:
+                - $ref: "general.yaml#/definitions/UnixTimestamp"
             stop:
               description: Stop timestamp in UTC seconds.
-              $ref: "general.yaml#/definitions/UnixTimestamp"
+              oneOf:
+                - $ref: "general.yaml#/definitions/UnixTimestamp"
             name:
               description: Name of the show.
               type: string

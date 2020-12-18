@@ -20,6 +20,7 @@ definitions:
           "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
             type: string
   Url:
+    description: Definition of an URL.
     type: string
     pattern: "[:/]" # There should be at least a colon or slash in a URL
   ImageShape:
@@ -49,7 +50,8 @@ definitions:
           considered as available everywhere.
         type: array
         items:
-          $ref: "#/definitions/Country"
+          oneOf:
+            - $ref: "#/definitions/Country"
           default: []
       forbidden:
         description: |

@@ -46,16 +46,19 @@ definitions:
         description: |
           Image which will be displayed on the addon detail page.
           Can be a relative path to the addon URL.
-        $ref: "general.yaml#/definitions/Image"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Image"
       icon:
         description: |
           Addon icon which is displayed on the addon index page and
           source list.
           Can be a relative path to the addon URL.
-        $ref: "general.yaml#/definitions/Image"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Image"
       homepage:
         description: Homepage.
-        $ref: "general.yaml#/definitions/Url"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Url"
       description:
         description: Short description of this addon.
         oneOf:
@@ -83,7 +86,8 @@ definitions:
           devModeOnly: false
       regions:
         description: Regions where this addon is available
-        $ref: "general.yaml#/definitions/Regions"
+        oneOf:
+          - $ref: "general.yaml#/definitions/Regions"
       metadata:
         description: Internally used.
         type: object
@@ -204,7 +208,8 @@ definitions:
             description: |
               URL to the playlist. If set, this playlist will be loaded by the app
               If not set, the `playlist` action handler will be called.
-            $ref: "general.yaml#/definitions/Url"
+            oneOf:
+              - $ref: "general.yaml#/definitions/Url"
           refreshInterval:
             description: Playlist refresh interval in hours.
             type: number
