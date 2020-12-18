@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { promises as fsPromises } from "fs";
 import * as path from "path";
 import { CacheOptions } from "../types";

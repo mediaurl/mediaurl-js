@@ -75,10 +75,7 @@ const createAddonRouter = (
   const router = express.Router();
   router.use(bodyParser.json({ limit: "10mb" }));
   router.get("/", async (req, res) => {
-    if (req.query.wtchDiscover) {
-      // Legacy. Got replaced by a GET /addon.watched call
-      res.send({ watched: "addon" });
-    } else if (options.singleMode) {
+    if (options.singleMode) {
       // In single mode, render the index page
       // TODO: Get addon props from the action handler `addon`
       res.render("index", {
@@ -95,8 +92,8 @@ const createAddonRouter = (
   const addonHandler = engine.createAddonHandler(addon);
 
   // Register addon routes
-  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
-  // const routeRegex = /^\/([^/]*?):\.watched$/; // New
+  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/; // Legacy
+  // const routeRegex = /^\/([^/]*?):\.(?:watched|json)$/; // New
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await addonHandler({
       action: req.params[1] === "task" ? "task" : req.params[0],
@@ -146,23 +143,14 @@ export const createMultiAddonRouter = (
   const router = express.Router();
 
   router.get("/", (req, res) => {
-    if (req.query.wtchDiscover) {
-      // Legacy. Got replaced by a GET /addon.watched call
-      // Send all addon id's
-      res.send({
-        watched: "index",
-        addons: engine.addons.map((addon) => addon.getId()),
-      });
-    } else {
-      // TODO: Get get addon props from the action handler `addon`
-      res.render("index", {
-        addons: engine.addons.map((addon) => addon.getProps()),
-        options,
-      });
-    }
+    // TODO: Get get addon props from the action handler `addon`
+    res.render("index", {
+      addons: engine.addons.map((addon) => addon.getProps()),
+      options,
+    });
   });
 
-  router.get("/addon.watched", (req, res) => {
+  router.get(["/addon.watched", "/addon.json"], (req, res) => {
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",
