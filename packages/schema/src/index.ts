@@ -1,4 +1,4 @@
-import * as Ajv from "ajv";
+import type { Options } from "ajv";
 import { Schema } from "./helpers";
 
 const schema = require("./schema");
@@ -165,7 +165,7 @@ function init(schemas: any) {
   return v;
 }
 
-const defaultOptions: Ajv.Options = {
+const defaultOptions: Options = {
   coerceTypes: true,
 };
 

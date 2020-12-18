@@ -40,14 +40,14 @@ const log = (prefix: string, id: number | string, data: RecordData) => {
 export class RequestRecorder {
   public readonly path: string;
   private readonly stream: WriteStream;
-  private w: (data: string) => Promise<unknown>;
+  private w: (data: string) => Promise<void>;
   private currentId: number;
 
   constructor(recordPath: string) {
     this.path = getFile(recordPath);
     this.stream = createWriteStream(getPath(this.path), { flags: "w" });
     this.w = async (data: string) =>
-      new Promise((resolve, reject) =>
+      new Promise<void>((resolve, reject) =>
         this.stream.write(data, (error?: Error) =>
           error ? reject(error) : resolve()
         )

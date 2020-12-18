@@ -239,10 +239,6 @@ definitions:
                 - type: string
                 - type: object
                   properties:
-                    engine:
-                      type: string
-                      enum: [watched]
-                      default: watched
                     id:
                       $ref: "general.yaml#/definitions/GenericId"
                     url:

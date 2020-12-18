@@ -23,7 +23,7 @@ export class Responder {
     this.queue.push(id);
     if (this.queue[0] !== id) {
       console.debug(`Task queue length ${this.queue.length}, waiting...`);
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         const on = () => {
           if (this.queue[0] === id) {
             this.emitter.removeListener("event", on);
