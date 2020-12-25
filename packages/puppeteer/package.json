@@ -1,5 +1,5 @@
 {
-  "name": "@watchedcom/puppeteer",
+  "name": "@mediaurl/puppeteer",
   "description": "Puppeteer helper module",
   "version": "0.35.2",
   "main": "dist",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@types/puppeteer-core": "^2.0.0",
-    "@watchedcom/sdk": "^0.35.2",
+    "@mediaurl/sdk": "^0.35.2",
     "puppeteer-core": "^3.0.4",
     "set-cookie-parser": "^2.4.5"
   },

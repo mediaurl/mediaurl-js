@@ -21,7 +21,7 @@ import {
   WorkerAddonActions,
   WorkerAddonClass,
   WorkerAddonResourceActions,
-} from "@watchedcom/sdk";
+} from "@mediaurl/sdk";
 import assert from "assert";
 import request from "supertest";
 
@@ -44,7 +44,7 @@ export class AddonTest {
     expectedStatus = 200
   ) {
     return await this.app
-      .post(`/${this.addon.getId()}/${action}.json`)
+      .post(`/${this.addon.getId()}/${action}`)
       .send(<any>data)
       .expect(expectedStatus);
   }

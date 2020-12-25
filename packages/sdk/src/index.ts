@@ -1,4 +1,4 @@
-export * from "@watchedcom/schema";
+export * from "@mediaurl/schema";
 export * from "./addons";
 export * from "./cache";
 export * from "./cli";

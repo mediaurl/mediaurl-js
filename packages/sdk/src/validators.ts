@@ -1,4 +1,4 @@
-import { Addon, getServerValidators } from "@watchedcom/schema";
+import { Addon, getServerValidators } from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);

@@ -19,7 +19,7 @@ import {
   SourceResponse,
   SubtitleRequest,
   SubtitleResponse,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import { ActionHandler } from "../types";
 import { BasicAddonClass } from "./BasicAddonClass";
 

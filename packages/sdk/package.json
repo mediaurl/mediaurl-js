@@ -1,6 +1,6 @@
 {
-  "name": "@watchedcom/sdk",
-  "description": "WATCHED.com Javascript SDK",
+  "name": "@mediaurl/sdk",
+  "description": "MediaURL Javascript SDK",
   "version": "0.35.2",
   "main": "dist",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@types/express": "^4.17.3",
-    "@watchedcom/schema": "^0.35.2",
+    "@mediaurl/schema": "^0.35.2",
     "agent-base": "^6.0.1",
     "body-parser": "^1.19.0",
     "commander": "^6.1.0",

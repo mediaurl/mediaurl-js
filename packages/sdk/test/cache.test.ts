@@ -42,7 +42,7 @@ const engines: [string, () => BasicCache | Promise<BasicCache>][] = [];
 
 engines.push(["memory", () => new MemoryCache()]);
 
-const tempPath = path.join(os.tmpdir(), "watched-sdk-test-");
+const tempPath = path.join(os.tmpdir(), "mediaurl-sdk-test-");
 engines.push([
   "disk",
   async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
@@ -50,7 +50,7 @@ engines.push([
 
 // engines.push([
 //   "mongodb",
-//   () => new MongoCache("mongodb://localhost/watched_test"),
+//   () => new MongoCache("mongodb://localhost/mediaurl_test"),
 // ]);
 
 // engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);

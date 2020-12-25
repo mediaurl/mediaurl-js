@@ -3,7 +3,7 @@ import {
   ItemRequest,
   SourceRequest,
   SubtitleRequest,
-} from "@watchedcom/sdk";
+} from "@mediaurl/sdk";
 import * as _ from "lodash";
 import {
   EXAMPLE_ITEMS,
@@ -96,7 +96,7 @@ workerExampleAddon.addResolveHandler(
   async (match, input, ctx) => {
     if (!input.url.includes("?chain=1")) {
       return {
-        url: input.url += "?chain=1",
+        url: (input.url += "?chain=1"),
         resolveAgain: true,
       };
     }

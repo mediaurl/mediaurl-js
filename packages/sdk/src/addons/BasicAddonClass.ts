@@ -5,7 +5,7 @@ import {
   AddonTypes,
   SelftestRequest,
   SelftestResponse,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import { cloneDeep } from "lodash";
 import * as semver from "semver";
 import { CacheOptionsParam } from "../cache";

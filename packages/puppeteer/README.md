@@ -1,4 +1,4 @@
-# WATCHED.com puppeteer support
+# MediaURL puppeteer support
 
 This module gives easy access to puppeteer to help scraping websites.
 
@@ -9,7 +9,7 @@ It has a special router integrated which allows fine grained control of how and 
 The recommended way to setup puppeteer is with a few [puppeteer-extra](https://github.com/berstend/puppeteer-extra) plugins enabled.
 
 ```shell
-npm i --save @watchedcom/puppeteer puppeteer-core puppeteer-extra puppeteer-extra-plugin-anonymize-ua puppeteer-extra-plugin-stealth
+npm i --save @mediaurl/puppeteer puppeteer-core puppeteer-extra puppeteer-extra-plugin-anonymize-ua puppeteer-extra-plugin-stealth
 # To install chromium
 npm i --save puppetter
 ```
@@ -17,7 +17,7 @@ npm i --save puppetter
 Inside your addon, add this code. In this example, two `puppeteer-extra` plugins are used.
 
 ```typescript
-import { setupPageRules } from "@watchedcom/puppeteer";
+import { setupPageRules } from "@mediaurl/puppeteer";
 import puppeteer from "puppeteer-extra";
 import AnonymizeUserAgentPlugin from "puppeteer-extra-plugin-anonymize-ua";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -36,9 +36,9 @@ addon.registerActionHandler("item", async (input, ctx) => {
     ctx,
     rules: [
       { url: [input.url, "example.com/api"], action: "allow" },
-      { url: "example.com/js", action: "allow", cache: true }
+      { url: "example.com/js", action: "allow", cache: true },
     ],
-    blockPopups: true
+    blockPopups: true,
   };
 
   // Get a browser instance
@@ -75,12 +75,12 @@ addon.registerActionHandler("resolve", async (input, ctx) => {
     {
       resourceType: "media",
       url: "example.com/mediapath/",
-      action: async request => {
+      action: async (request) => {
         // This action handler will be called during page load
         const url = await request.url();
         p.resolve(url);
-      }
-    }
+      },
+    },
   ];
 
   // Get a browser instance

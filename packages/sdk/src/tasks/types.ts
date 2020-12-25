@@ -1,7 +1,7 @@
 import {
   TaskNotificationRequest,
   TaskRecaptchaRequest,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import {
   RequestInfo as FetchRequestInfo,
   RequestInit as FetchRequestInit,

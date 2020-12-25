@@ -1,4 +1,4 @@
-import { TranslatedText } from "@watchedcom/schema";
+import { TranslatedText } from "@mediaurl/schema";
 
 const nextPath = (path: string, sub: string | number) => {
   if (path) path += ".";

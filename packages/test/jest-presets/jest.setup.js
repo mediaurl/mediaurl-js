@@ -1,5 +1,5 @@
-jest.mock("@watchedcom/sdk/dist/utils/signature", () => ({
+jest.mock("@mediaurl/sdk/dist/utils/signature", () => ({
   validateSignature(sig) {
     return {};
-  }
+  },
 }));

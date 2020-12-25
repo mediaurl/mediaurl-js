@@ -4,7 +4,7 @@ import {
   WorkerAddon,
   WorkerAddonActions,
   WorkerAddonResourceActions,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import { ActionHandlerContext } from "../types";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";

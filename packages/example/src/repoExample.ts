@@ -1,9 +1,9 @@
-import { createRepositoryAddon } from "@watchedcom/sdk";
+import { createRepositoryAddon } from "@mediaurl/sdk";
 import { iptvExampleAddon } from "./iptvExample";
 import { workerExampleAddon } from "./workerExample";
 
 export const repoExampleAddon = createRepositoryAddon({
-  id: "watched-repo-example",
+  id: "mediaurl-repo-example",
   name: {
     cn: "示例存储库",
     de: "Beispiel Repository",

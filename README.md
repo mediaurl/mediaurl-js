@@ -1,10 +1,10 @@
-# WATCHED.com SDK and tools
+# MediaURL SDK and tools
 
-This monorepo includes all javascript modules needed to create addons for [WATCHED](https://www.watched.com/).
+This monorepo includes all javascript modules needed to create _MediaURL_ addons.
 
 ## Getting started
 
-In best way to create your own WATCHED addon is by cloning our example addon and modify it.
+In best way to create your own MediaURL addon is by cloning our example addon and modify it.
 
 ### Prerequisites
 
@@ -14,10 +14,10 @@ In best way to create your own WATCHED addon is by cloning our example addon and
 
 ### Cloning the example addon
 
-The best way to start is to clone our [watched-addon-example](https://github.com/watchedcom/watched-addon-example) addon:
+The best way to start is to clone our [mediaurl-addon-example](https://github.com/mediaurl/mediaurl-addon-example) addon:
 
 ```shell
-git clone https://github.com/watchedcom/watched-addon-example.git my-addon
+git clone https://github.com/mediaurl/mediaurl-addon-example.git my-addon
 ```
 
 Now open the created folder `my-addon` with your editor.
@@ -37,7 +37,7 @@ npm run develop
 You should see something like this:
 
 ```
-> watched-addon-example@0.27.1 develop /home/myname/my-addon
+> mediaurl-addon-example@0.27.1 develop /home/myname/my-addon
 > ts-node-dev --transpileOnly src
 
 Using ts-node version 8.9.1, typescript version 3.8.3
@@ -48,9 +48,9 @@ Listening on 3000
 
 **2. Enable developer mode**
 
-In order to install addons in the WATCHED app, you first need to _unlock_ it:
+In order to install addons in the MediaURL app, you first need to _unlock_ it:
 
-1. Open the WATCHED app, go to settings and make sure the **Developer mode** is enabled.
+1. Open the MediaURL app, go to settings and make sure the **Developer mode** is enabled.
 2. Go to the addon manager and deactivate the bundle addon if there is one active.
 3. To make things more clean and easy, disabled all currently activated addons.
 
@@ -88,7 +88,7 @@ Please also check out our object schema here: https://www.watched.com/swagger
 
 ## Deploy your addon
 
-Please check our deployment documentation at [docs/deployment.md](https://github.com/watchedcom/watched-js/blob/master/docs/deployment.md).
+Please check our deployment documentation at [docs/deployment.md](https://github.com/mediaurl/mediaurl-js/blob/master/docs/deployment.md).
 
 ## Tips for development and testing
 
@@ -121,7 +121,7 @@ npm run develop -- replay test-session --watch
 Create a test case file, for example `src/record.test.ts`:
 
 ```javascript
-import { replayRecordFile } from "@watchedcom/sdk";
+import { replayRecordFile } from "@mediaurl/sdk";
 import { yourAddon } from "./index";
 
 test(`Replay recorded actions`, (done) => {
@@ -143,7 +143,7 @@ We offer a very flexible caching solution for your addon. Please see [docs/cachi
 
 ## Translate your addon
 
-For some suggestions regarding translations, please see either our `@watchedcom/i18n` package found inside [packages/i18n](packages/i18n), or the documentation at [docs/translations.md](docs/translations.md).
+For some suggestions regarding translations, please see either our `@mediaurl/i18n` package found inside [packages/i18n](packages/i18n), or the documentation at [docs/translations.md](docs/translations.md).
 
 ## Developing on this repo
 

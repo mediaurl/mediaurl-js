@@ -66,7 +66,7 @@ var currentId = 1;
 function addRecord(record) {
   record.id = currentId++;
   if (record.action === "addon" && record.statusCode === 200) {
-    record.output.sdkVersion = require("@watchedcom/sdk/package.json").version;
+    record.output.sdkVersion = require("@mediaurl/sdk/package.json").version;
   }
   module.exports.push(record);
 };

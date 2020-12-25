@@ -1,4 +1,4 @@
-import { createIptvAddon } from "@watchedcom/sdk";
+import { createIptvAddon } from "@mediaurl/sdk";
 import { EXAMPLE_IPTV_ITEMS } from "./exampleData";
 
 export const iptvExampleAddon = createIptvAddon({

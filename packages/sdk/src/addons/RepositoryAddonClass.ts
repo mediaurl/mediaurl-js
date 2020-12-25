@@ -3,7 +3,7 @@ import {
   AddonRequest,
   RepositoryAddon as RepositoryAddonProps,
   RepositoryAddonActions,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import fetch from "node-fetch";
 import { ActionHandlerContext } from "../types";
 import { makeCreateFunction } from "../utils/addon-func";
@@ -93,7 +93,7 @@ export class RepositoryAddonClass extends BasicAddonClass<
       const fn = async () => {
         try {
           const res = await fetch(
-            `${url.replace(/\/(addon\.(watched|json))?$/, "")}/addon.json`,
+            `${url.replace(/\/(addon(\.watched)?)?$/, "")}/addon`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

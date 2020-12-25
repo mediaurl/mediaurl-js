@@ -1,6 +1,6 @@
 # Deployment guide
 
-Instructions on how to deploy a WATCHED addon to various hosting providers.
+Instructions on how to deploy a MediaURL addon to various hosting providers.
 
 - [Heroku](#Heroku)
 
@@ -37,7 +37,7 @@ Go to your addon directory, then run the following code:
 
 ```shell
 # Add files related to vercel
-$ npx @watchedcom/create init-vercel
+$ npx @mediaurl/create init-vercel
 
 # Link project
 $ now

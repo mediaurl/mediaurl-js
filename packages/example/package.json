@@ -1,5 +1,5 @@
 {
-  "name": "watched-addon-example",
+  "name": "mediaurl-addon-example",
   "version": "0.35.2",
   "main": "dist",
   "private": true,
@@ -10,12 +10,12 @@
     "test": "jest && npm run build"
   },
   "dependencies": {
-    "@watchedcom/sdk": "^0.35.2",
+    "@mediaurl/sdk": "^0.35.2",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
     "@types/jest": "^26.0.13",
-    "@watchedcom/test": "^0.35.2",
+    "@mediaurl/test": "^0.35.2",
     "jest": "^26.4.2",
     "ts-jest": "^26.3.0",
     "ts-node-dev": "^1.0.0-pre.44",

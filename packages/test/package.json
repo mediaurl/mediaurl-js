@@ -1,13 +1,13 @@
 {
-  "name": "@watchedcom/test",
-  "description": "Tools for testing WATCHED addons",
+  "name": "@mediaurl/test",
+  "description": "Tools for testing MediaURL addons",
   "version": "0.35.2",
   "main": "dist",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
-    "@watchedcom/sdk": "^0.35.2",
+    "@mediaurl/sdk": "^0.35.2",
     "supertest": "^6.0.1",
     "ts-jest": "^26.3.0"
   },

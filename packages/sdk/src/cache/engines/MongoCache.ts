@@ -1,7 +1,7 @@
 import * as mongodb from "mongodb";
 import { BasicCache } from "./BasicCache";
 
-const COLLECTION_NAME = "watched_cache";
+const COLLECTION_NAME = "mediaurl_cache";
 const PAYLOAD_FIELD = "c";
 /** Expiration date */
 const DATE_FIELD = "d";

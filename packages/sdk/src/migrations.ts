@@ -6,7 +6,7 @@ import {
   ItemRequest,
   SourceRequest,
   SubtitleRequest,
-} from "@watchedcom/schema";
+} from "@mediaurl/schema";
 import { BasicAddonClass } from "./addons";
 import { ActionHandlerContext } from "./types";
 

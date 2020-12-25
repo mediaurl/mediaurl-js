@@ -1,4 +1,4 @@
-import { IptvItem, PlayableItem, Source, Subtitle } from "@watchedcom/sdk";
+import { IptvItem, PlayableItem, Source, Subtitle } from "@mediaurl/sdk";
 
 const itemExample1 = (fullData: boolean) =>
   <PlayableItem>{

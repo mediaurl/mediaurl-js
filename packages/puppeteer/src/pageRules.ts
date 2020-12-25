@@ -1,4 +1,4 @@
-import { ActionHandlerContext } from "@watchedcom/sdk";
+import { ActionHandlerContext } from "@mediaurl/sdk";
 import {
   HttpMethod,
   Page,

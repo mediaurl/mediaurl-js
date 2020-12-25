@@ -231,13 +231,13 @@ definitions:
               The values can be a URL to an addon, an addon ID
               or an addon ID with engine definition.
               Eg:
-              - `https://example.com/watched/v1/some.addon.id`
-              - `https://example.com/watched/v1/another.addon.id`
+              - `https://example.com/mediaurl/v1/some.addon.id`
+              - `https://example.com/mediaurl/v1/another.addon.id`
               - `./relative-url-to-addon` (have to start with `./` or `../`)
               - `addon-id-that-exists-in-an-avaliable-repository`
-              - `watched/other-addon-id-with-watched-engine`
-              - `{ "engine": "watched", "id": "watched.addon.id" }`
-              - `{ "id": "another.watched.addon.id" }`
+              - `mediaurl/other-addon-id-with-mediaurl-engine`
+              - `{ "engine": "mediaurl", "id": "mediaurl.addon.id" }`
+              - `{ "id": "another.mediaurl.addon.id" }`
             type: array
             items:
               oneOf:

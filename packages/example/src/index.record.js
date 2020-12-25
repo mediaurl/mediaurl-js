@@ -4,7 +4,7 @@ var currentId = 1;
 function addRecord(record) {
   record.id = currentId++;
   if (record.action === "addon" && record.statusCode === 200) {
-    record.output.sdkVersion = require("@watchedcom/sdk/package.json").version;
+    record.output.sdkVersion = require("@mediaurl/sdk/package.json").version;
   }
   module.exports.push(record);
 }
@@ -63,14 +63,14 @@ addRecord({
 
 // Record ID 2
 addRecord({
-  addon: "watched-repo-example",
+  addon: "mediaurl-repo-example",
   action: "addon",
   input: {
     language: "de",
     region: "CH",
   },
   output: {
-    id: "watched-repo-example",
+    id: "mediaurl-repo-example",
     name: {
       cn: "示例存储库",
       de: "Beispiel Repository",
@@ -105,7 +105,7 @@ addRecord({
 
 // Record ID 4
 addRecord({
-  addon: "watched-repo-example",
+  addon: "mediaurl-repo-example",
   action: "repository",
   input: {
     language: "de",
@@ -171,7 +171,7 @@ addRecord({
 
 // Record ID 5
 addRecord({
-  addon: "watched-repo-example",
+  addon: "mediaurl-repo-example",
   action: "repository",
   input: {
     language: "de",

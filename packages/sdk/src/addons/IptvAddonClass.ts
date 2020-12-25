@@ -1,4 +1,4 @@
-import { IptvAddon, IptvAddonActions } from "@watchedcom/schema";
+import { IptvAddon, IptvAddonActions } from "@mediaurl/schema";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";
 import { ActionHandlers } from "./types";

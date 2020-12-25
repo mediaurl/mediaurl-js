@@ -1,3 +1,3 @@
 module.exports = {
-  preset: "./node_modules/@watchedcom/test/jest-presets/typescript.js"
+  preset: "./node_modules/@mediaurl/test/jest-presets/typescript.js",
 };

@@ -1,4 +1,4 @@
-import { BundleAddon, BundleAddonActions } from "@watchedcom/schema";
+import { BundleAddon, BundleAddonActions } from "@mediaurl/schema";
 import { makeCreateFunction } from "../utils/addon-func";
 import { BasicAddonClass } from "./BasicAddonClass";
 import { ActionHandlers } from "./types";

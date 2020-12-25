@@ -1,4 +1,4 @@
-import { TaskFetchRequest, TaskFetchResponse } from "@watchedcom/schema";
+import { TaskFetchRequest, TaskFetchResponse } from "@mediaurl/schema";
 import fetch, { Request, Response } from "node-fetch";
 import { URL, URLSearchParams } from "url";
 import { CacheHandler } from "../cache";

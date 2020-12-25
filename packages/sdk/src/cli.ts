@@ -16,7 +16,7 @@ export const runCli = (
 
   program
     .command("start", { isDefault: true })
-    .description("Start the WATCHED SDK express server (default)")
+    .description("Start the MediaURL SDK express server (default)")
     .option("-r, --record <record-file>", "Record all requests and responses")
     .option("--prod", "LEGACY! Has no effect anymore")
     .option("--single", "LEGACY! Start server in single mode")

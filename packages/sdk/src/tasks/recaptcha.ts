@@ -1,7 +1,4 @@
-import {
-  TaskRecaptchaRequest,
-  TaskRecaptchaResponse,
-} from "@watchedcom/schema";
+import { TaskRecaptchaRequest, TaskRecaptchaResponse } from "@mediaurl/schema";
 import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 import { RecaptchaFn } from "./types";

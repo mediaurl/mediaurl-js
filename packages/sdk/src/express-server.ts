@@ -1,4 +1,4 @@
-import { TranslatedText } from "@watchedcom/schema";
+import { TranslatedText } from "@mediaurl/schema";
 import bodyParser from "body-parser";
 import express from "express";
 import "express-async-errors";
@@ -92,8 +92,8 @@ const createAddonRouter = (
   const addonHandler = engine.createAddonHandler(addon);
 
   // Register addon routes
-  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/; // Legacy
-  // const routeRegex = /^\/([^/]*?):\.(?:watched|json)$/; // New
+  // legacy: .watched extension
+  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await addonHandler({
       action: req.params[1] === "task" ? "task" : req.params[0],
@@ -101,7 +101,11 @@ const createAddonRouter = (
         ip: req.ip,
         headers: <RequestInfos["headers"]>req.headers,
       },
-      sig: <string>req.headers["watched-sig"] ?? "",
+      // legacy: watched-sig
+      sig:
+        <string>req.headers["mediaurl-signature"] ??
+        <string>req.headers["watched-sig"] ??
+        "",
       input:
         req.method === "POST"
           ? req.body
@@ -150,7 +154,8 @@ export const createMultiAddonRouter = (
     });
   });
 
-  router.get(["/addon.watched", "/addon.json"], (req, res) => {
+  // legacy: remove /addon.watched
+  router.get(["/addon.watched", "/addon"], (req, res) => {
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",

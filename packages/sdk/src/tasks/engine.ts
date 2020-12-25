@@ -1,4 +1,4 @@
-import { TaskRequest, TaskResponse } from "@watchedcom/schema";
+import { TaskRequest, TaskResponse } from "@mediaurl/schema";
 import { EventEmitter } from "events";
 import { v4 as uuid4 } from "uuid";
 import { BasicAddonClass } from "../addons";

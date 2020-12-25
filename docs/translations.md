@@ -18,7 +18,7 @@ This type supports either a string of text, or a mapping of language=>text pairs
 }
 ```
 
-## Using `@watchedcom/i18n`
+## Using `@mediaurl/i18n`
 
 Short after this documentation was written, I created a little helper module for `i18next`. Please see the documentation at `packages/i18n/README.md`.
 
@@ -43,7 +43,7 @@ i18next.use(
   new FsBackend(null, {
     loadPath: path.join("locales", "{{lng}}", "{{ns}}.json"),
     addPath: path.join("locales", "{{lng}}", "{{ns}}.missing.json"),
-    jsonIndent: 2
+    jsonIndent: 2,
   })
 );
 
@@ -55,7 +55,7 @@ i18next.init({
   defaultNS: "your-addon-id",
   load: "languageOnly",
   saveMissing: true,
-  updateMissing: true
+  updateMissing: true,
 });
 
 export const i18n = i18next;
@@ -143,23 +143,23 @@ After this you can deploy your addon without using locize. This has many benefit
 Imagine you want to translate the `name` property of this addon:
 
 ```javascript
-import { createWorkerAddon } from "@watchedcom/sdk";
+import { createWorkerAddon } from "@mediaurl/sdk";
 
 export const myAddon = createWorkerAddon({
   id: "i18n-example",
-  name: "Name of this addon"
+  name: "Name of this addon",
 });
 ```
 
 We created a helper function named `translateDeep` for cases like this. This function works similar to the `lodash.cloneDeep` function, but translates all strings beginning with a specific prefix (by default `i18n:`) using the `t` parameter.
 
 ```javascript
-import { createWorkerAddon, translateDeep } from "@watchedcom/sdk";
+import { createWorkerAddon, translateDeep } from "@mediaurl/sdk";
 import { i18n } from "./i18n";
 
 export const myAddon = createWorkerAddon({
   id: "i18n-example",
-  name: "i18n:Name of this addon"
+  name: "i18n:Name of this addon",
 });
 
 myAddon.registerActionHandler("addon", async (input, ctx, addon) => {

@@ -1,4 +1,4 @@
-import { Addon } from "@watchedcom/schema";
+import { Addon } from "@mediaurl/schema";
 
 type Opts<P, C> = {
   AddonClass: { new (props: P): C };

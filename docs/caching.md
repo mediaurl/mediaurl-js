@@ -19,7 +19,7 @@ A cache which uses the file system for storage. This is the most easy to setup c
 To enable this, set the environment variable `DISK_CACHE` to a path.
 
 ```shell
-export DISK_CACHE=/data/watched-cache
+export DISK_CACHE=/data/mediaurl-cache
 npm run develop
 ```
 

@@ -13,14 +13,14 @@ rl2iXzVO8gXUw97fDwIDAQAB
  */
 export const validateSignature = (sig: string): any => {
   if (!sig) {
-    throw new Error("Missing WATCHED signature");
+    throw new Error("Missing MediaURL signature");
   }
 
   const decodedSig = Buffer.from(sig, "base64").toString();
   try {
     JSON.parse(decodedSig);
   } catch {
-    throw new Error("Malformed WATCHED signature");
+    throw new Error("Malformed MediaURL signature");
   }
 
   const { data, signature } = JSON.parse(decodedSig);
@@ -29,12 +29,12 @@ export const validateSignature = (sig: string): any => {
   verifier.update(data);
   const isValid = verifier.verify(publicKey, signature, "base64");
   if (!isValid) {
-    throw new Error("Invalid WATCHED signature");
+    throw new Error("Invalid MediaURL signature");
   }
 
   const result = JSON.parse(data);
   if (new Date(result.validUntil) < new Date()) {
-    throw new Error("WATCHED signature timed out");
+    throw new Error("MediaURL signature timed out");
   }
 
   return result;

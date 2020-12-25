@@ -1,4 +1,4 @@
-import { ActionHandlerContext } from "@watchedcom/sdk";
+import { ActionHandlerContext } from "@mediaurl/sdk";
 import { Response } from "node-fetch";
 import { Page, Request, RespondOptions } from "puppeteer-core";
 import * as setCookieParser from "set-cookie-parser";

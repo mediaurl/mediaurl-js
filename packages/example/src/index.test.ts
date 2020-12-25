@@ -1,5 +1,5 @@
-import { replayRecordFile } from "@watchedcom/sdk";
-import { testAddon } from "@watchedcom/test";
+import { replayRecordFile } from "@mediaurl/sdk";
+import { testAddon } from "@mediaurl/test";
 import { iptvExampleAddon } from "./iptvExample";
 import { repoExampleAddon } from "./repoExample";
 import { workerExampleAddon } from "./workerExample";

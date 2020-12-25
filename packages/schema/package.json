@@ -1,6 +1,6 @@
 {
-  "name": "@watchedcom/schema",
-  "description": "WATCHED.com JSON Schema",
+  "name": "@mediaurl/schema",
+  "description": "MediaURL JSON Schema",
   "version": "0.35.2",
   "main": "dist",
   "scripts": {

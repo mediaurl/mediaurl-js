@@ -1,4 +1,4 @@
-# WATCHED i18n module
+# MediaURL i18n module
 
 Helper module to quickly set up translations for addons.
 
@@ -9,7 +9,7 @@ If you set the environment variables `LOCIZE_PROJECTID` and `LOCIZE_API_KEY`, th
 ## Installation
 
 ```shell
-npm i --save @watchedcom/i18n
+npm i --save @mediaurl/i18n
 ```
 
 ## Configuration
@@ -21,7 +21,7 @@ Run the `init` function somewhere at the beginning of your script. There are som
 Sometimes you may need direct access to the `t` function of i18next. This is how it's done with this module:
 
 ```javascript
-import { changeLanguage } from "@watchedcom/i18n";
+import { changeLanguage } from "@mediaurl/i18n";
 
 i18n.init({
   ["en", "fr", "tr"],
@@ -41,8 +41,8 @@ Mainly translations are needed for the addon metadata defined at the createAddon
 ### 1. With the `addon` action handler
 
 ```javascript
-import { createWorkerAddon, translateDeep } from "@watchedcom/sdk";
-import * as i18n from "@watchedcom/i18n";
+import { createWorkerAddon, translateDeep } from "@mediaurl/sdk";
+import * as i18n from "@mediaurl/i18n";
 
 i18n.init({
   ["en", "fr", "tr"],
@@ -67,8 +67,8 @@ The addon server supports resolving exported promises. This promises can return 
 Also we can benefit from the `TranslatedText` system. The `tAll` function will get all available translations for a key.
 
 ```javascript
-import { createWorkerAddon, translateDeep } from "@watchedcom/sdk";
-import { tAll } from "@watchedcom/i18n";
+import { createWorkerAddon, translateDeep } from "@mediaurl/sdk";
+import { tAll } from "@mediaurl/i18n";
 
 export default (async () => {
   await i18n.init({
