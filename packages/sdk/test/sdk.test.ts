@@ -6,7 +6,7 @@ import {
   createRepositoryAddon,
   createSingleAddonRouter,
   createWorkerAddon,
-  serveAddons
+  serveAddons,
 } from "../src";
 
 const exported = [
@@ -17,9 +17,9 @@ const exported = [
   createRepositoryAddon,
   createSingleAddonRouter,
   createWorkerAddon,
-  serveAddons
+  serveAddons,
 ];
 
 test("SDK should export all needed methods and properties", () => {
-  expect(exported.every(fn => fn)).toBeTruthy();
+  expect(exported.every((fn) => fn)).toBeTruthy();
 });

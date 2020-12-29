@@ -29,8 +29,8 @@ type TFunction = (
 export const translateDeep = (
   object: any,
   t: TFunction,
-  path: string = "",
-  triggerPrefix: string = "i18n:"
+  path = "",
+  triggerPrefix = "i18n:"
 ) => {
   if (typeof object === "string") {
     if (object.indexOf(triggerPrefix) === 0) {

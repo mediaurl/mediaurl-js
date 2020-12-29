@@ -93,7 +93,7 @@ const createAddonRouter = (
 
   // Register addon routes
   // legacy: .watched extension
-  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/; // Legacy
+  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/;
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await addonHandler({
       action: req.params[1] === "task" ? "task" : req.params[0],
@@ -155,7 +155,7 @@ export const createMultiAddonRouter = (
   });
 
   // legacy: remove /addon.watched
-  router.get(["/addon.watched", "/addon"], (req, res) => {
+  router.get(["/addon.watched", "/addon.json", "/addon"], (req, res) => {
     // New discovery which replaces wtchDiscover
     res.send({
       type: "server",

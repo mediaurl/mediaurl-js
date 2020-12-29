@@ -4,7 +4,7 @@ import { BasicAddonClass } from "./addons";
 import { createEngine } from "./engine";
 import { IExpressServerOptions, serveAddons } from "./express-server";
 import { Engine } from "./types";
-import { RecordData, replayRecordFile } from "./utils/request-recorder";
+import { replayRecordFile } from "./utils/request-recorder";
 
 export const runCli = (
   engine: Engine | BasicAddonClass[],

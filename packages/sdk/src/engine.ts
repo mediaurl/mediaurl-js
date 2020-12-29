@@ -1,11 +1,6 @@
 import { cloneDeep } from "lodash";
 import { BasicAddonClass } from "./addons";
-import {
-  CacheFoundError,
-  CacheHandler,
-  getCacheEngineFromEnv,
-  SetResultError,
-} from "./cache";
+import { CacheFoundError, CacheHandler, detectCacheEngine } from "./cache";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,
@@ -52,7 +47,7 @@ export const createEngine = (
   const opts: EngineOptions = {
     ...defaultOptions,
     ...options,
-    cache: options?.cache ?? new CacheHandler(getCacheEngineFromEnv()),
+    cache: options?.cache ?? new CacheHandler(detectCacheEngine()),
     middlewares: options?.middlewares ?? {},
   };
 

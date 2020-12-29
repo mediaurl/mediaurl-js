@@ -1,5 +1,5 @@
+import { compressCache, decompressCache } from "../utils/compress";
 import { BasicCache } from "./BasicCache";
-import { compress, decompress } from "./utils/compress";
 
 /**
  * In-memory cache, basically for testing
@@ -15,7 +15,7 @@ export class MemoryCache extends BasicCache {
     const d = this.data[key];
     if (d) {
       if (d[0] >= Date.now()) {
-        const buffer = await decompress(d[1]);
+        const buffer = await decompressCache(d[1]);
         return JSON.parse(buffer.toString());
       }
       delete this.data[key];
@@ -26,7 +26,7 @@ export class MemoryCache extends BasicCache {
   public async set(key: string, value: any, ttl: number) {
     this.data[key] = [
       ttl === Infinity ? Infinity : Date.now() + ttl,
-      await compress(Buffer.from(JSON.stringify(value))),
+      await compressCache(Buffer.from(JSON.stringify(value))),
     ];
   }
 

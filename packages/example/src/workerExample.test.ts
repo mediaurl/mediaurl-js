@@ -16,7 +16,7 @@ import { workerExampleAddon } from "./workerExample";
 
 const sdkVersion = require("@mediaurl/sdk/package.json").version;
 
-const requestEnd = (done: (err?: Error) => void, log: boolean = false) => (
+const requestEnd = (done: (err?: Error) => void, log = false) => (
   err: Error,
   res?: request.Response
 ) => {

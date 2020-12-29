@@ -14,7 +14,7 @@ In best way to create your own MediaURL addon is by cloning our example addon an
 
 ### Cloning the example addon
 
-The best way to start is to clone our [mediaurl-addon-example](https://github.com/mediaurl/mediaurl-addon-example) addon:
+The best way to start is to clone our [example addon](https://github.com/mediaurl/addon-example) addon:
 
 ```shell
 git clone https://github.com/mediaurl/mediaurl-addon-example.git my-addon

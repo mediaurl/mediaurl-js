@@ -144,6 +144,7 @@ definitions:
                 ]
               By default an ID named after `Addon.id` will be matched as well.
               type: array
+            type: array
             items:
               oneOf:
                 - type: array

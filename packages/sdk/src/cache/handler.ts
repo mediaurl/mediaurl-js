@@ -310,7 +310,7 @@ export class CacheHandler {
   ) {
     key = this.createKey(key);
     const t = Date.now();
-    while (true) {
+    for (;;) {
       const result = await this.get(key);
       if (result !== undefined) {
         if (del) await this.delete(key);

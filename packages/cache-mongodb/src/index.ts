@@ -1,5 +1,5 @@
+import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
 import * as mongodb from "mongodb";
-import { BasicCache } from "./BasicCache";
 
 const COLLECTION_NAME = "mediaurl_cache";
 const PAYLOAD_FIELD = "c";
@@ -10,7 +10,7 @@ const defaultOptions: mongodb.MongoClientOptions = {
   poolSize: 10,
 };
 
-export class MongoCache extends BasicCache {
+export class MongodbCache extends BasicCache {
   private initPromise: Promise<void>;
   private db: mongodb.Db;
 
@@ -54,7 +54,7 @@ export class MongoCache extends BasicCache {
 
   public async set(key: string, value: any, ttl: number) {
     await this.initPromise;
-    const x = await this.db.collection(COLLECTION_NAME).updateOne(
+    await this.db.collection(COLLECTION_NAME).updateOne(
       { _id: key.substring(1) },
       {
         $set: {
@@ -79,3 +79,7 @@ export class MongoCache extends BasicCache {
     this.initPromise = this.initCollection();
   }
 }
+
+registerCacheEngineCreator(() =>
+  process.env.MONGODB_URL ? new MongodbCache(process.env.MONGODB_URL) : null
+);

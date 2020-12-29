@@ -2,18 +2,18 @@ import { getClientValidators, getServerValidators } from "../src";
 
 const movie = () => ({
   type: "movie",
-  ids: { some: "id" }
+  ids: { some: "id" },
 });
 
 const directory = () => ({
   type: "directory",
-  id: null
+  id: null,
 });
 
-const directoryResponse = () => ({
-  items: [movie(), directory()],
-  nextCursor: null
-});
+// const directoryResponse = () => ({
+//   items: [movie(), directory()],
+//   nextCursor: null,
+// });
 
 test("Validate movie item", () => {
   expect(getServerValidators().models.item.movie(movie())).toBeTruthy();

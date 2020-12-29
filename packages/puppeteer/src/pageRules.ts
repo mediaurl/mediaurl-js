@@ -191,12 +191,12 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
       }
 
       let response: RespondOptions | undefined;
-      let fromCache: boolean;
+      // let fromCache: boolean;
       const cacheKey = rule.cache ? `${method}:${url}` : "";
       if (rule.cache) {
         response = await opts.ctx.cache.get(cacheKey);
         if (response) {
-          fromCache = true;
+          // fromCache = true;
           if ((<any>response.body)?.type === "Buffer") {
             response.body = Buffer.from(<any>response.body);
           }
@@ -207,7 +207,7 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
       }
 
       if (response === undefined) {
-        fromCache = false;
+        // fromCache = false;
 
         let action: RuleAction | "noop" | undefined;
         if (typeof rule.action === "function") {
@@ -296,7 +296,9 @@ export const applyPageRules = async (page: Page, options?: PageRuleOptions) => {
       if (!sent) {
         try {
           request.abort();
-        } catch (e) {}
+        } catch (e) {
+          // noop
+        }
       }
     }
   });

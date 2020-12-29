@@ -167,6 +167,7 @@ function init(schemas: any) {
 
 const defaultOptions: Options = {
   coerceTypes: true,
+  allowUnionTypes: true,
 };
 
 const schemaWithDefaults = new Schema({

@@ -1,66 +1,43 @@
-import { promises as fsPromises } from "fs";
-import * as os from "os";
-import * as path from "path";
-import {
-  BasicCache,
-  CacheHandler,
-  DiskCache,
-  MemoryCache,
-  MongoCache,
-  RedisCache,
-  SetResultError,
-} from "../src/cache";
+import { BasicCache, CacheHandler, SetResultError } from "@mediaurl/sdk";
 
-// On slow computers the default waiting times may cause timeouts
-const multiplicator = 2;
+export const testCache = (
+  name: string,
+  createEngine: () => BasicCache | Promise<BasicCache>,
+  /**
+   * On slow computers the default waiting times may cause timeouts
+   */
+  multiplicator = 2
+): void => {
+  const options = {
+    ttl: 1000 * multiplicator,
+    errorTtl: 500 * multiplicator,
+    prefix: "foobar",
+  };
 
-const options = {
-  ttl: 1000 * multiplicator,
-  errorTtl: 500 * multiplicator,
-  prefix: "foobar",
-};
-const refreshInterval = 200 * multiplicator;
-const functionWait = 150 * multiplicator;
+  const refreshInterval = 200 * multiplicator;
+  const functionWait = 150 * multiplicator;
 
-const sleep = async (t: number) =>
-  await new Promise((resolve) => setTimeout(resolve, t));
+  const sleep = async (t: number) =>
+    await new Promise((resolve) => setTimeout(resolve, t));
 
-const fnFailed = async () => {
-  await sleep(functionWait);
-  throw new Error("failed");
-};
-const fn1 = async () => {
-  await sleep(functionWait);
-  return "1";
-};
-const fn2 = async () => {
-  await sleep(functionWait);
-  return "2";
-};
+  const fnFailed = async () => {
+    await sleep(functionWait);
+    throw new Error("failed");
+  };
+  const fn1 = async () => {
+    await sleep(functionWait);
+    return "1";
+  };
+  const fn2 = async () => {
+    await sleep(functionWait);
+    return "2";
+  };
 
-const engines: [string, () => BasicCache | Promise<BasicCache>][] = [];
-
-engines.push(["memory", () => new MemoryCache()]);
-
-const tempPath = path.join(os.tmpdir(), "mediaurl-sdk-test-");
-engines.push([
-  "disk",
-  async () => new DiskCache(await fsPromises.mkdtemp(tempPath)),
-]);
-
-// engines.push([
-//   "mongodb",
-//   () => new MongoCache("mongodb://localhost/mediaurl_test"),
-// ]);
-
-// engines.push(["redis", () => new RedisCache({ url: "redis://localhost" })]);
-
-for (const engine of engines) {
-  describe(`CacheHandler with ${engine[0]} engine`, () => {
+  describe(`CacheHandler with ${name} engine`, () => {
     let cache: CacheHandler;
 
     beforeEach(async (done) => {
-      cache = new CacheHandler(await engine[1](), options);
+      cache = new CacheHandler(await createEngine(), options);
       await cache.engine.deleteAll();
       done();
     });
@@ -304,7 +281,7 @@ for (const engine of engines) {
           expect(Date.now() - t2).toBeGreaterThanOrEqual(functionWait);
         });
 
-      let t = Date.now();
+      const t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("2");
       expect(Date.now() - t).toBeLessThan(functionWait);
 
@@ -433,4 +410,4 @@ for (const engine of engines) {
       done();
     });
   });
-}
+};

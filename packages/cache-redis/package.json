@@ -1,24 +1,23 @@
 {
-  "name": "mediaurl-addon-example",
+  "name": "@mediaurl/cache-redis",
+  "description": "MediaURL MongoDB engine",
   "version": "0.35.2",
   "main": "dist",
-  "private": true,
   "scripts": {
+    "test": "jest",
     "build": "tsc",
-    "start": "node .",
-    "develop": "ts-node-dev --transpileOnly src",
-    "test": "jest && npm run build"
+    "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
     "@mediaurl/sdk": "^0.35.2",
-    "lodash": "^4.17.20"
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "@mediaurl/test-utils": "^0.35.2",
     "@types/jest": "^26.0.13",
-    "supertest": "^6.0.1",
+    "@types/redis": "^2.8.20",
+    "jest": "^26.4.2",
     "ts-jest": "^26.4.4",
-    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^4.1.3"
   }
 }

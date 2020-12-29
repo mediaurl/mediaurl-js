@@ -89,7 +89,7 @@ export const replayRecordData = async (
   engine: Engine,
   recordData: RecordData[],
   ids: null | RecordData["id"][] = null,
-  silent: boolean = false
+  silent = false
 ) => {
   if (ids) ids = ids.map(String);
   for (const data of recordData) {
@@ -145,7 +145,7 @@ export const replayRecordFile = async (
   engine: Engine | BasicAddonClass[],
   recordPath: string,
   ids: null | RecordData["id"][] = null,
-  silent: boolean = false
+  silent = false
 ) => {
   const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;
   const recordData: RecordData[] = (await import(getPath(recordPath))).default;

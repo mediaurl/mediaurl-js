@@ -7,7 +7,6 @@ import {
   SelftestResponse,
 } from "@mediaurl/schema";
 import { cloneDeep } from "lodash";
-import * as semver from "semver";
 import { CacheOptionsParam } from "../cache";
 import { ActionHandler } from "../types";
 import { validateAddonProps } from "../validators";
@@ -51,22 +50,12 @@ export abstract class BasicAddonClass<
     return this.props.type;
   }
 
-  public getId(): Addon["id"] {
+  public getId(): P["id"] {
     return this.props.id;
   }
 
-  public getVersion(): Addon["version"] {
+  public getVersion(): P["version"] {
     return this.props.version;
-  }
-
-  public getMajorVersion(): number {
-    const majorVersion = semver.parse(this.props.version)?.major;
-    if (majorVersion === undefined) {
-      throw new Error(
-        `Failed getting major version from  "${this.props.version}" of addon "${this.props.id}"`
-      );
-    }
-    return majorVersion;
   }
 
   public setDefaultCacheOptions(options: CacheOptionsParam) {
@@ -81,11 +70,16 @@ export abstract class BasicAddonClass<
     return this.defaultCacheOptions;
   }
 
+  protected onRegisterAction(action: string) {
+    // noop
+  }
+
   public registerActionHandler<A extends Extract<keyof HM, string>>(
     action: A,
     handler: HM[A]
   ) {
     this.handlersMap[action] = handler;
+    this.onRegisterAction(action);
     return this;
   }
 

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 
-const flatten = s => {
+const flatten = (s) => {
   if (Array.isArray(s)) return s.map(flatten);
   if (!s) return s;
   if (typeof s === "object") {
@@ -33,8 +33,8 @@ const load = () => {
       ...n,
       definitions: {
         ...data.definitions,
-        ...n.definitions
-      }
+        ...n.definitions,
+      },
     };
   }
   dir.closeSync();

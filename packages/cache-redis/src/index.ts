@@ -1,7 +1,11 @@
+import {
+  BasicCache,
+  compressCache,
+  decompressCache,
+  registerCacheEngineCreator,
+} from "@mediaurl/sdk";
 import * as redis from "redis";
 import { promisify } from "util";
-import { BasicCache } from "./BasicCache";
-import { compress, decompress } from "./utils/compress";
 
 const getKey = (key: string) => key.substring(1);
 
@@ -36,7 +40,7 @@ export class RedisCache extends BasicCache {
   public async get(key: string) {
     const value: Buffer = await this.client.get(getKey(key));
     if (value === null) return undefined;
-    const buffer = await decompress(value);
+    const buffer = await decompressCache(value);
     return JSON.parse(buffer.toString());
   }
 
@@ -45,7 +49,10 @@ export class RedisCache extends BasicCache {
     const buffer = Buffer.from(text);
     const data =
       this.minCompressionValueLength !== null
-        ? await compress(Buffer.from(buffer), this.minCompressionValueLength)
+        ? await compressCache(
+            Buffer.from(buffer),
+            this.minCompressionValueLength
+          )
         : buffer;
     if (ttl === Infinity) {
       await this.client.set(getKey(key), data);
@@ -85,3 +92,7 @@ export class RedisCache extends BasicCache {
     } while (cursor > 0);
   }
 }
+
+registerCacheEngineCreator(() =>
+  process.env.REDIS_URL ? new RedisCache({ url: process.env.REDIS_URL }) : null
+);

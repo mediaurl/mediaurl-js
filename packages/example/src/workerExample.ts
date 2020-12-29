@@ -4,7 +4,7 @@ import {
   SourceRequest,
   SubtitleRequest,
 } from "@mediaurl/sdk";
-import * as _ from "lodash";
+import _ from "lodash";
 import {
   EXAMPLE_ITEMS,
   EXAMPLE_SOURCES,

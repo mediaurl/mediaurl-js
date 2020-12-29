@@ -63,10 +63,7 @@ export class WorkerAddonClass extends BasicAddonClass<
     }
   }
 
-  public registerActionHandler<A extends Extract<keyof WorkerHandlers, string>>(
-    action: A,
-    handler: WorkerHandlers[A]
-  ) {
+  protected onRegisterAction(action: string) {
     // Add actions which are not yet defined
     const resourceAction = <WorkerAddonResourceActions>action;
     if (
@@ -75,8 +72,6 @@ export class WorkerAddonClass extends BasicAddonClass<
     ) {
       this.props.actions.push(resourceAction);
     }
-
-    return super.registerActionHandler(action, handler);
   }
 
   // Helper function to create resolver functions for multiple hosts.

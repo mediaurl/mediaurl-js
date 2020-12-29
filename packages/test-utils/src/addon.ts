@@ -44,7 +44,7 @@ export class AddonTest {
     expectedStatus = 200
   ) {
     return await this.app
-      .post(`/${this.addon.getId()}/${action}`)
+      .post(`/${this.addon.getId()}/${action}.json`)
       .send(<any>data)
       .expect(expectedStatus);
   }

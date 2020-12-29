@@ -1,6 +1,6 @@
 import * as zlib from "zlib";
 
-export const compress = async (value: Buffer, minValueLength = 100) => {
+export const compressCache = async (value: Buffer, minValueLength = 100) => {
   if (value.byteLength < minValueLength) return value;
   const temp = await new Promise<Buffer>((resolve, reject) =>
     zlib.brotliCompress(value, (error, buffer) => {
@@ -23,7 +23,7 @@ export const compress = async (value: Buffer, minValueLength = 100) => {
   return data;
 };
 
-export const decompress = async (value: Buffer) => {
+export const decompressCache = async (value: Buffer) => {
   if (value.byteLength <= 2 || value.readInt16LE(0) !== 0x1199) {
     return value;
   }
