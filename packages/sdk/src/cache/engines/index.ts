@@ -31,3 +31,15 @@ export const detectCacheEngine = (): BasicCache => {
   }
   return new (require("./MemoryCache").MemoryCache)();
 };
+
+for (const module of (process.env.LOAD_MEDIAURL_CACHE_MODULE ?? "").split(
+  / +/
+)) {
+  try {
+    require(module);
+  } catch (error) {
+    throw new Error(
+      `Failed loading MediaURL cache module "${module}": ${error.message}`
+    );
+  }
+}

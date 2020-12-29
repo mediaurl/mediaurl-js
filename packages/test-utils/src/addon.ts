@@ -29,7 +29,7 @@ export class AddonTest {
   public readonly app: request.SuperTest<request.Test>;
 
   constructor(public readonly addon: BasicAddonClass) {
-    const engine = createEngine([this.addon]);
+    const engine = createEngine([this.addon], { testMode: true });
     this.app = request(createApp(engine));
   }
 

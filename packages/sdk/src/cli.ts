@@ -40,9 +40,7 @@ export const runCli = (
     )
     .option("-s, --silent", "Be less verbose")
     .action(async (file: string, args: any) => {
-      process.env.SKIP_AUTH = "1";
       try {
-        myEngine.updateOptions({ replayMode: true });
         await replayRecordFile(
           myEngine,
           file,

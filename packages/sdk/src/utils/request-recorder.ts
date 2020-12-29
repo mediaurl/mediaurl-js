@@ -91,6 +91,7 @@ export const replayRecordData = async (
   ids: null | RecordData["id"][] = null,
   silent = false
 ) => {
+  engine.updateOptions({ testMode: true });
   if (ids) ids = ids.map(String);
   for (const data of recordData) {
     if (ids && !ids.includes(String(data.id))) continue;

@@ -22,7 +22,7 @@ import { getActionValidator } from "./validators";
 
 const defaultOptions = {
   requestRecorderPath: null,
-  replayMode: false,
+  testMode: false,
 };
 
 const NoResult = Symbol("no result");
@@ -124,7 +124,7 @@ const createAddonHandler = (
   const handler = addon.getActionHandler(action);
 
   // Check if we are running in test mode
-  const testMode = options.replayMode || action === "selftest";
+  const testMode = options.testMode || action === "selftest";
 
   // Validate the signature
   let user: ActionHandlerContext["user"];

@@ -1,21 +1,21 @@
 import { IptvItem, PlayableItem, Source, Subtitle } from "@mediaurl/sdk";
 
-const itemExample1 = (fullData: boolean) =>
+const itemTest1 = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     description: "This item does not have any sources.",
-    year: 2011, // Example years to demonstrate the sort feature
+    year: 2011, // Test year to demonstrate the sort feature
   };
 
 const itemBigBuckBunny = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-example": "id1235",
+      "worker-test": "id1235",
     },
     name: "Big Buck Bunny",
     year: 2013,
@@ -25,7 +25,7 @@ const itemBigBuckBunny = (fullData: boolean) =>
             {
               id: "test",
               name: "Big Buck Bunny static similar items",
-              items: [itemExample1(false), itemElephant(false)],
+              items: [itemTest1(false), itemElephant(false)],
             },
           ],
         }
@@ -36,7 +36,7 @@ const itemElephant = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
@@ -47,7 +47,7 @@ const itemElephant = (fullData: boolean) =>
             {
               id: "test",
               name: "Elephants Dream static similar items",
-              items: [itemExample1(false), itemBigBuckBunny(false)],
+              items: [itemTest1(false), itemBigBuckBunny(false)],
             },
           ],
         }
@@ -58,7 +58,7 @@ const item4k = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-example": "4ktest",
+      "worker-test": "4ktest",
     },
     name: "4k Test",
     description: "Test video with 4k resolution",
@@ -74,26 +74,26 @@ const item4k = (fullData: boolean) =>
             {
               id: "test-2",
               name: "Static similar items",
-              items: [itemExample1(false), itemBigBuckBunny(false)],
+              items: [itemTest1(false), itemBigBuckBunny(false)],
             },
           ],
         }
       : undefined),
   };
 
-export const EXAMPLE_ITEMS: ((fullData: boolean) => PlayableItem)[] = [
-  itemExample1,
+export const TEST_ITEMS: ((fullData: boolean) => PlayableItem)[] = [
+  itemTest1,
   itemBigBuckBunny,
   itemElephant,
   item4k,
 ];
 
-type ExampleSources = {
+type TestSources = {
   [k: string]: Source[];
 };
 
 // Export needed for tests
-export const EXAMPLE_SOURCES: ExampleSources = {
+export const TEST_SOURCES: TestSources = {
   id1235: [
     {
       type: "url",
@@ -127,12 +127,12 @@ export const EXAMPLE_SOURCES: ExampleSources = {
   ],
 };
 
-type ExampleSubtitle = {
+type TestSubtitle = {
   [k: string]: Subtitle[];
 };
 
 // Export needed for tests
-export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
+export const TEST_SUBTITLES: TestSubtitle = {
   elephant: [
     {
       id: "vtt",
@@ -153,12 +153,12 @@ export const EXAMPLE_SUBTITLES: ExampleSubtitle = {
   ],
 };
 
-export const EXAMPLE_IPTV_ITEMS: IptvItem[] = [
+export const TEST_IPTV_ITEMS: IptvItem[] = [
   {
     type: "iptv",
     ids: {},
     name: "Not really a livestream",
-    group: "Example!",
+    group: "Test!",
     url:
       "https://bitmovin-a.akamaihd.net/content/playhouse-vr/m3u8s/105560.m3u8",
   },

@@ -1,3 +1,3 @@
 module.exports = {
-  tabWidth: 2
+  preset: "ts-jest",
 };

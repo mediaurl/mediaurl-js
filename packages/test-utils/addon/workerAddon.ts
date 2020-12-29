@@ -5,15 +5,11 @@ import {
   SubtitleRequest,
 } from "@mediaurl/sdk";
 import _ from "lodash";
-import {
-  EXAMPLE_ITEMS,
-  EXAMPLE_SOURCES,
-  EXAMPLE_SUBTITLES,
-} from "./exampleData";
+import { TEST_ITEMS, TEST_SOURCES, TEST_SUBTITLES } from "./testData";
 
-export const workerExampleAddon = createWorkerAddon({
-  id: "worker-example",
-  name: "Typescript Example Addon",
+export const workerAddon = createWorkerAddon({
+  id: "worker-test",
+  name: "Typescript Test Addon",
   version: "1.0.0",
   itemTypes: ["movie"],
   rootDirectories: [
@@ -37,9 +33,9 @@ export const workerExampleAddon = createWorkerAddon({
   ],
 });
 
-workerExampleAddon.registerActionHandler("directory", async (input, ctx) => {
+workerAddon.registerActionHandler("directory", async (input, ctx) => {
   let items = _.sortBy(
-    EXAMPLE_ITEMS.map((fn) => fn(false)),
+    TEST_ITEMS.map((fn) => fn(false)),
     input.sort ?? "name"
   );
   if (input.search) {
@@ -55,43 +51,40 @@ workerExampleAddon.registerActionHandler("directory", async (input, ctx) => {
   };
 });
 
-workerExampleAddon.registerActionHandler(
-  "item",
-  async (input: ItemRequest, ctx) => {
-    const id = input.ids["worker-example"];
-    const item = EXAMPLE_ITEMS.map((fn) => fn(true)).find(
-      (item) => item.ids["worker-example"] === id
-    );
-    if (!item) throw new Error("Not found");
-    return item;
-  }
-);
+workerAddon.registerActionHandler("item", async (input: ItemRequest, ctx) => {
+  const id = input.ids["worker-test"];
+  const item = TEST_ITEMS.map((fn) => fn(true)).find(
+    (item) => item.ids["worker-test"] === id
+  );
+  if (!item) throw new Error("Not found");
+  return item;
+});
 
-workerExampleAddon.registerActionHandler(
+workerAddon.registerActionHandler(
   "source",
   async (input: SourceRequest, ctx) => {
-    const id = input.ids["worker-example"];
-    const sources = EXAMPLE_SOURCES[id];
+    const id = input.ids["worker-test"];
+    const sources = TEST_SOURCES[id];
     return sources ?? [];
   }
 );
 
-workerExampleAddon.registerActionHandler(
+workerAddon.registerActionHandler(
   "subtitle",
   async (input: SubtitleRequest, ctx) => {
-    // ids.id is an alias for ids["worker-example"] (the addon ID)
+    // ids.id is an alias for ids["worker-test"] (the addon ID)
     const id = input.ids.id;
     await ctx.requestCache(id);
-    const subtitles = EXAMPLE_SUBTITLES[id];
+    const subtitles = TEST_SUBTITLES[id];
     return subtitles ?? [];
   }
 );
 
-// Example for a resolver with "resolveAgain" system
+// Test for a resolver with "resolveAgain" system
 const chainResolveTestUrl =
   "https://thepaciellogroup.github.io/AT-browser-tests/video/ElephantsDream.webm";
 
-workerExampleAddon.addResolveHandler(
+workerAddon.addResolveHandler(
   chainResolveTestUrl,
   async (match, input, ctx) => {
     if (!input.url.includes("?chain=1")) {

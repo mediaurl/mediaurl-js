@@ -62,9 +62,10 @@ export type EngineOptions = {
   requestRecorderPath: null | string;
 
   /**
-   * Whenever the app is in replay mode. This will mock the ctx.fetch function.
+   * Whenever the app is in test mode. This will mock the ctx.fetch
+   * function and skip authentication.
    */
-  replayMode: boolean;
+  testMode: boolean;
 
   /**
    * Middleware functions

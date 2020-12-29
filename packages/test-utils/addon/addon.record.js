@@ -11,7 +11,7 @@ function addRecord(record) {
 
 // Record ID 1
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "addon",
   input: {
     language: "de",
@@ -19,8 +19,8 @@ addRecord({
   },
   output: {
     actions: ["directory", "item", "source", "subtitle", "resolve"],
-    id: "worker-example",
-    name: "Typescript Example Addon",
+    id: "worker-test",
+    name: "Typescript Test Addon",
     version: "1.0.0",
     itemTypes: ["movie"],
     rootDirectories: [
@@ -63,18 +63,18 @@ addRecord({
 
 // Record ID 2
 addRecord({
-  addon: "mediaurl-repo-example",
+  addon: "mediaurl-repo-test",
   action: "addon",
   input: {
     language: "de",
     region: "CH",
   },
   output: {
-    id: "mediaurl-repo-example",
+    id: "mediaurl-repo-test",
     name: {
       cn: "示例存储库",
-      de: "Beispiel Repository",
-      en: "Example Repository",
+      de: "Test Repository",
+      en: "Test Repository",
       ru: "Пример репозитория",
     },
     version: "1.0.0",
@@ -86,7 +86,7 @@ addRecord({
 
 // Record ID 3
 addRecord({
-  addon: "iptv-worker-example",
+  addon: "iptv-worker-test",
   action: "addon",
   input: {
     language: "de",
@@ -94,8 +94,8 @@ addRecord({
   },
   output: {
     actions: [],
-    id: "iptv-worker-example",
-    name: "IPTV Example Addon",
+    id: "iptv-worker-test",
+    name: "IPTV Test Addon",
     version: "1.0.0",
     type: "iptv",
     sdkVersion: "0.33.0",
@@ -105,7 +105,7 @@ addRecord({
 
 // Record ID 4
 addRecord({
-  addon: "mediaurl-repo-example",
+  addon: "mediaurl-repo-test",
   action: "repository",
   input: {
     language: "de",
@@ -114,8 +114,8 @@ addRecord({
   output: [
     {
       actions: ["directory", "item", "source", "subtitle", "resolve"],
-      id: "worker-example",
-      name: "Typescript Example Addon",
+      id: "worker-test",
+      name: "Typescript Test Addon",
       version: "1.0.0",
       itemTypes: ["movie"],
       rootDirectories: [
@@ -152,17 +152,17 @@ addRecord({
         "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm",
       ],
       metadata: {
-        url: "./worker-example",
+        url: "./worker-test",
       },
     },
     {
       actions: [],
-      id: "iptv-worker-example",
-      name: "IPTV Example Addon",
+      id: "iptv-worker-test",
+      name: "IPTV Test Addon",
       version: "1.0.0",
       type: "iptv",
       metadata: {
-        url: "./iptv-worker-example",
+        url: "./iptv-worker-test",
       },
     },
   ],
@@ -171,7 +171,7 @@ addRecord({
 
 // Record ID 5
 addRecord({
-  addon: "mediaurl-repo-example",
+  addon: "mediaurl-repo-test",
   action: "repository",
   input: {
     language: "de",
@@ -180,8 +180,8 @@ addRecord({
   output: [
     {
       actions: ["directory", "item", "source", "subtitle", "resolve"],
-      id: "worker-example",
-      name: "Typescript Example Addon",
+      id: "worker-test",
+      name: "Typescript Test Addon",
       version: "1.0.0",
       itemTypes: ["movie"],
       rootDirectories: [
@@ -218,17 +218,17 @@ addRecord({
         "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm",
       ],
       metadata: {
-        url: "./worker-example",
+        url: "./worker-test",
       },
     },
     {
       actions: [],
-      id: "iptv-worker-example",
-      name: "IPTV Example Addon",
+      id: "iptv-worker-test",
+      name: "IPTV Test Addon",
       version: "1.0.0",
       type: "iptv",
       metadata: {
-        url: "./iptv-worker-example",
+        url: "./iptv-worker-test",
       },
     },
   ],
@@ -237,7 +237,7 @@ addRecord({
 
 // Record ID 6
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "directory",
   input: {
     language: "de",
@@ -256,16 +256,16 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "id1234",
+          "worker-test": "id1234",
         },
-        name: "Example Item 1",
+        name: "Test Item 1",
         description: "This item does not have any sources.",
         year: 2011,
       },
       {
         type: "movie",
         ids: {
-          "worker-example": "id1235",
+          "worker-test": "id1235",
         },
         name: "Big Buck Bunny",
         year: 2013,
@@ -273,7 +273,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "elephant",
+          "worker-test": "elephant",
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
@@ -282,7 +282,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "4ktest",
+          "worker-test": "4ktest",
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
@@ -296,7 +296,7 @@ addRecord({
 
 // Record ID 7
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "directory",
   input: {
     language: "de",
@@ -315,16 +315,16 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "id1234",
+          "worker-test": "id1234",
         },
-        name: "Example Item 1",
+        name: "Test Item 1",
         description: "This item does not have any sources.",
         year: 2011,
       },
       {
         type: "movie",
         ids: {
-          "worker-example": "elephant",
+          "worker-test": "elephant",
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
@@ -333,7 +333,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "4ktest",
+          "worker-test": "4ktest",
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
@@ -342,7 +342,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "id1235",
+          "worker-test": "id1235",
         },
         name: "Big Buck Bunny",
         year: 2013,
@@ -355,26 +355,26 @@ addRecord({
 
 // Record ID 8
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "item",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
       id: "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     year: 2011,
     episode: {},
   },
   output: {
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     description: "This item does not have any sources.",
     year: 2011,
   },
@@ -383,17 +383,17 @@ addRecord({
 
 // Record ID 9
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "source",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
       id: "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     year: 2011,
     episode: {},
   },
@@ -403,14 +403,14 @@ addRecord({
 
 // Record ID 10
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "item",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1235",
+      "worker-test": "id1235",
       id: "id1235",
     },
     name: "Big Buck Bunny",
@@ -420,7 +420,7 @@ addRecord({
   output: {
     type: "movie",
     ids: {
-      "worker-example": "id1235",
+      "worker-test": "id1235",
     },
     name: "Big Buck Bunny",
     year: 2013,
@@ -432,16 +432,16 @@ addRecord({
           {
             type: "movie",
             ids: {
-              "worker-example": "id1234",
+              "worker-test": "id1234",
             },
-            name: "Example Item 1",
+            name: "Test Item 1",
             description: "This item does not have any sources.",
             year: 2011,
           },
           {
             type: "movie",
             ids: {
-              "worker-example": "elephant",
+              "worker-test": "elephant",
             },
             name: "Elephants Dream",
             description: "Dream of elephants?",
@@ -456,14 +456,14 @@ addRecord({
 
 // Record ID 11
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "source",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1235",
+      "worker-test": "id1235",
       id: "id1235",
     },
     name: "Big Buck Bunny",
@@ -484,14 +484,14 @@ addRecord({
 
 // Record ID 12
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "subtitle",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1235",
+      "worker-test": "id1235",
       id: "id1235",
     },
     name: "Big Buck Bunny",
@@ -504,26 +504,26 @@ addRecord({
 
 // Record ID 13
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "item",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
       id: "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     year: 2011,
     episode: {},
   },
   output: {
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     description: "This item does not have any sources.",
     year: 2011,
   },
@@ -532,17 +532,17 @@ addRecord({
 
 // Record ID 14
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "source",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "id1234",
+      "worker-test": "id1234",
       id: "id1234",
     },
-    name: "Example Item 1",
+    name: "Test Item 1",
     year: 2011,
     episode: {},
   },
@@ -552,14 +552,14 @@ addRecord({
 
 // Record ID 15
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "item",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
       id: "elephant",
     },
     name: "Elephants Dream",
@@ -569,7 +569,7 @@ addRecord({
   output: {
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
@@ -582,16 +582,16 @@ addRecord({
           {
             type: "movie",
             ids: {
-              "worker-example": "id1234",
+              "worker-test": "id1234",
             },
-            name: "Example Item 1",
+            name: "Test Item 1",
             description: "This item does not have any sources.",
             year: 2011,
           },
           {
             type: "movie",
             ids: {
-              "worker-example": "id1235",
+              "worker-test": "id1235",
             },
             name: "Big Buck Bunny",
             year: 2013,
@@ -605,14 +605,14 @@ addRecord({
 
 // Record ID 16
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "source",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
       id: "elephant",
     },
     name: "Elephants Dream",
@@ -638,14 +638,14 @@ addRecord({
 
 // Record ID 17
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "subtitle",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
       id: "elephant",
     },
     name: "Elephants Dream",
@@ -675,7 +675,7 @@ addRecord({
 
 // Record ID 18
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "resolve",
   input: {
     language: "de",
@@ -693,14 +693,14 @@ addRecord({
 
 // Record ID 19
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "subtitle",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
       id: "elephant",
     },
     name: "Elephants Dream",
@@ -730,7 +730,7 @@ addRecord({
 
 // Record ID 20
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "resolve",
   input: {
     language: "de",
@@ -745,14 +745,14 @@ addRecord({
 
 // Record ID 21
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "subtitle",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "elephant",
+      "worker-test": "elephant",
       id: "elephant",
     },
     name: "Elephants Dream",
@@ -782,14 +782,14 @@ addRecord({
 
 // Record ID 22
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "item",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "4ktest",
+      "worker-test": "4ktest",
       id: "4ktest",
     },
     name: "4k Test",
@@ -799,7 +799,7 @@ addRecord({
   output: {
     type: "movie",
     ids: {
-      "worker-example": "4ktest",
+      "worker-test": "4ktest",
     },
     name: "4k Test",
     description: "Test video with 4k resolution",
@@ -817,16 +817,16 @@ addRecord({
           {
             type: "movie",
             ids: {
-              "worker-example": "id1234",
+              "worker-test": "id1234",
             },
-            name: "Example Item 1",
+            name: "Test Item 1",
             description: "This item does not have any sources.",
             year: 2011,
           },
           {
             type: "movie",
             ids: {
-              "worker-example": "id1235",
+              "worker-test": "id1235",
             },
             name: "Big Buck Bunny",
             year: 2013,
@@ -840,7 +840,7 @@ addRecord({
 
 // Record ID 23
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "directory",
   input: {
     language: "de",
@@ -859,16 +859,16 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "id1234",
+          "worker-test": "id1234",
         },
-        name: "Example Item 1",
+        name: "Test Item 1",
         description: "This item does not have any sources.",
         year: 2011,
       },
       {
         type: "movie",
         ids: {
-          "worker-example": "id1235",
+          "worker-test": "id1235",
         },
         name: "Big Buck Bunny",
         year: 2013,
@@ -876,7 +876,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "elephant",
+          "worker-test": "elephant",
         },
         name: "Elephants Dream",
         description: "Dream of elephants?",
@@ -885,7 +885,7 @@ addRecord({
       {
         type: "movie",
         ids: {
-          "worker-example": "4ktest",
+          "worker-test": "4ktest",
         },
         name: "4k Test",
         description: "Test video with 4k resolution",
@@ -899,14 +899,14 @@ addRecord({
 
 // Record ID 24
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "source",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "4ktest",
+      "worker-test": "4ktest",
       id: "4ktest",
     },
     name: "4k Test",
@@ -926,14 +926,14 @@ addRecord({
 
 // Record ID 25
 addRecord({
-  addon: "worker-example",
+  addon: "worker-test",
   action: "subtitle",
   input: {
     language: "de",
     region: "CH",
     type: "movie",
     ids: {
-      "worker-example": "4ktest",
+      "worker-test": "4ktest",
       id: "4ktest",
     },
     name: "4k Test",
