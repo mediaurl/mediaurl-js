@@ -1,4 +1,4 @@
-# MediaURL i18n module
+# MediaURL i18n module (legacy)
 
 Helper module to quickly set up translations for addons.
 

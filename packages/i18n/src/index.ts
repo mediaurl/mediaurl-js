@@ -1,4 +1,4 @@
-import { TranslatedText } from "@mediaurl/sdk";
+import { TranslatedText } from "@mediaurl/schema";
 import i18next, { InitOptions, TFunction } from "i18next";
 import FsBackend from "i18next-fs-backend";
 import LocizeBackend from "i18next-locize-backend";
