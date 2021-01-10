@@ -4,7 +4,7 @@ const handleError = (kind: string, error: Error) => {
   console.error(error.message);
   console.error(
     `Data validation of ${kind} failed.\n` +
-      `Check out our schema at https://www.watched.com/swagger`
+      `Check out our schema at https://www.mediaurl.io/swagger`
   );
   return new Error("Validation error");
 };

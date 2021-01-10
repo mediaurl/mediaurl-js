@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.0.0
+
+- Renamed project to MediaURL
+- Moved Redis and MongoDB cache code to external modules
+- Allow `.json` extension for HTTP endpoints
+- Deprecated the `@mediaurl/i18n` module
+- Created new `@mediaurl/test-utils` module with utility functions to test addons and cache modules
+
+### Changes
+
+- Added `SetResultError` to set cache results in a different way. For more infos, see the code documentation.
+- Added IPTV category property and default filter values
+- Removed the `@mediaurl/create` package
+- Removed the `watched-sdk` command line tool
+- Added experimental `FetchAgent`
+
 ## v0.35.0
 
 ### Changes

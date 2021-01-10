@@ -76,7 +76,7 @@ When you change the metadata of your addon (like addin a new `item` or `source` 
 
 Much of our documentation is in our code. Depending on your editor you should see much of the documentation while writing or when hovering a variable or function.
 
-Please also check out our object schema here: https://www.watched.com/swagger
+Please also check out our object schema here: https://www.mediaurl.io/swagger
 
 ### Publish and rename
 
