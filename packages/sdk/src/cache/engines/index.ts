@@ -19,7 +19,26 @@ const defaultCreators = [
       : null,
 ];
 
+const initialized = false;
+
 export const detectCacheEngine = (): BasicCache => {
+  if (!initialized) {
+    // Load modules defined by environment. Do it here to prevent circular imports
+    (process.env.LOAD_MEDIAURL_CACHE_MODULE ?? "")
+      .split(/ +/)
+      .map((module) => module.replace(/ +/g, ""))
+      .filter((module) => module)
+      .forEach((module) => {
+        try {
+          require(module);
+        } catch (error) {
+          throw new Error(
+            `Failed loading MediaURL cache module "${module}": ${error.message}`
+          );
+        }
+      });
+  }
+
   let engine: BasicCache | null = null;
   for (const fn of creators) {
     engine = fn();
@@ -31,17 +50,3 @@ export const detectCacheEngine = (): BasicCache => {
   }
   return new (require("./MemoryCache").MemoryCache)();
 };
-
-(process.env.LOAD_MEDIAURL_CACHE_MODULE ?? "")
-  .split(/ +/)
-  .map((module) => module.replace(/ +/g, ""))
-  .filter((module) => module)
-  .forEach((module) => {
-    try {
-      require(module);
-    } catch (error) {
-      throw new Error(
-        `Failed loading MediaURL cache module "${module}": ${error.message}`
-      );
-    }
-  });
