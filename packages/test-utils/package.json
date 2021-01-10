@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/test-utils",
   "description": "Test utils for MediaURL addons",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -10,7 +10,7 @@
     "develop-addon": "ts-node-dev addon"
   },
   "dependencies": {
-    "@mediaurl/sdk": "^1.0.0-alpha.2",
+    "@mediaurl/sdk": "^1.0.0-alpha.3",
     "jest": "^26.4.2"
   },
   "devDependencies": {
