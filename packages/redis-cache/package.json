@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@mediaurl/test-utils": "^1.0.0-alpha.3",
-    "@types/jest": "^26.0.13",
+    "@types/jest": "^26.0.20",
     "@types/redis": "^2.8.20",
     "jest": "^26.4.2",
     "ts-jest": "^26.4.4",

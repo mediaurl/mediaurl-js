@@ -27,7 +27,7 @@ const load = () => {
     if (e === null) break;
     if (!/\.yaml$/.test(e.name)) continue;
     if (e.name === "openapi.yaml") continue;
-    const n = yaml.safeLoad(fs.readFileSync(path.join(p, e.name)));
+    const n = yaml.load(fs.readFileSync(path.join(p, e.name)));
     data = {
       ...data,
       ...n,
