@@ -123,7 +123,7 @@ const createAddonRouter = (
   return router;
 };
 
-export const createSingleAddonRouter = (
+const createSingleAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {
@@ -140,7 +140,7 @@ export const createSingleAddonRouter = (
   return createAddonRouter(engine, addon, options);
 };
 
-export const createMultiAddonRouter = (
+const createMultiAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {

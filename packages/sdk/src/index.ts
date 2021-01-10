@@ -6,8 +6,6 @@ export * from "./engine";
 export * from "./errors";
 export {
   createApp,
-  createMultiAddonRouter,
-  createSingleAddonRouter,
   ExpressServerAddonOptions,
   serveAddons,
 } from "./express-server";
