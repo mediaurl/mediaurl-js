@@ -2,7 +2,7 @@
   "name": "@mediaurl/i18n",
   "description": "MediaURL tools for translations",
   "private": true,
-  "version": "0.35.2",
+  "version": "1.0.0-alpha.0",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -15,7 +15,7 @@
     "i18next-locize-backend": "^4.1.6"
   },
   "devDependencies": {
-    "@mediaurl/schema": "^0.35.2",
+    "@mediaurl/schema": "^1.0.0-alpha.0",
     "@types/i18next-node-fs-backend": "^2.1.0",
     "jest": "^26.4.2",
     "ts-jest": "^26.4.4",
