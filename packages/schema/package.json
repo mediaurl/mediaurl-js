@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/schema",
   "description": "MediaURL JSON Schema",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "main": "dist",
   "scripts": {
     "prepublishOnly": "npm run build",

@@ -1,13 +1,13 @@
 {
   "name": "@mediaurl/puppeteer",
   "description": "Puppeteer helper module",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "main": "dist",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
-    "@mediaurl/sdk": "^1.0.0-alpha.3",
+    "@mediaurl/sdk": "^1.0.0-alpha.4",
     "@types/puppeteer-core": "^2.0.0",
     "puppeteer-core": "^3.0.4",
     "set-cookie-parser": "^2.4.5"
