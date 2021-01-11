@@ -43,7 +43,7 @@ const app = request(createApp(engine));
 
 test("action addon", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/addon.json`)
+    .post(`/${workerAddon.getId()}/mediaurl.json`)
     .send(<AddonRequest>{ ...defaults })
     .expect(200, { ...workerAddon.getProps(), sdkVersion })
     .end(requestEnd(done));
@@ -51,7 +51,7 @@ test("action addon", async (done) => {
 
 test("action directory", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/directory.json`)
+    .post(`/${workerAddon.getId()}/mediaurl-directory.json`)
     .send(<DirectoryRequest>{
       ...defaults,
       id: "",
@@ -70,7 +70,7 @@ test("action directory", async (done) => {
 
 test("action item", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/item.json`)
+    .post(`/${workerAddon.getId()}/mediaurl-item.json`)
     .send(<ItemRequest>itemDefaults)
     .expect(
       200,
@@ -83,7 +83,7 @@ test("action item", async (done) => {
 
 test("action source", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/source.json`)
+    .post(`/${workerAddon.getId()}/mediaurl-source.json`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, TEST_SOURCES.elephant)
     .end(requestEnd(done));
@@ -91,7 +91,7 @@ test("action source", async (done) => {
 
 test("action subtitle", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/subtitle.json`)
+    .post(`/${workerAddon.getId()}/mediaurl-subtitle.json`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, TEST_SUBTITLES.elephant)
     .end(requestEnd(done));
@@ -99,7 +99,7 @@ test("action subtitle", async (done) => {
 
 test("action subtitle (cached response)", async (done) => {
   app
-    .post(`/${workerAddon.getId()}/subtitle.json`)
+    .post(`/${workerAddon.getId()}/mediaurl-subtitle.json`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, TEST_SUBTITLES.elephant)
     .end(requestEnd(done));

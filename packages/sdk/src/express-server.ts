@@ -91,12 +91,9 @@ const createAddonRouter = (
   // Get addon handler
   const addonHandler = engine.createAddonHandler(addon);
 
-  // Register addon routes
-  // legacy: .watched extension
-  const routeRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/;
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await addonHandler({
-      action: req.params[1] === "task" ? "task" : req.params[0],
+      action: req.params[1] === "task" ? "task" : req.params[0] || "addon",
       request: {
         ip: req.ip,
         headers: <RequestInfos["headers"]>req.headers,
@@ -117,13 +114,22 @@ const createAddonRouter = (
       },
     });
   };
+
+  // /mediaurl-<action>.json
+  const routeRegex = /^\/mediaurl(?:-([^-]+))?\.json$/;
   router.get(routeRegex, routeHandler);
   router.post(routeRegex, routeHandler);
+
+  // Register addon routes
+  // legacy: .watched extension
+  const legacyRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/;
+  router.get(legacyRegex, routeHandler);
+  router.post(legacyRegex, routeHandler);
 
   return router;
 };
 
-const createSingleAddonRouter = (
+export const createSingleAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {
@@ -140,7 +146,7 @@ const createSingleAddonRouter = (
   return createAddonRouter(engine, addon, options);
 };
 
-const createMultiAddonRouter = (
+export const createMultiAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {
@@ -155,13 +161,22 @@ const createMultiAddonRouter = (
   });
 
   // legacy: remove /addon.watched
-  router.get(["/addon.watched", "/addon.json", "/addon"], (req, res) => {
-    // New discovery which replaces wtchDiscover
-    res.send({
-      type: "server",
-      addons: engine.addons.map((addon) => addon.getId()),
-    });
-  });
+  router.get(
+    [
+      "/addon.watched",
+      "/addon.json",
+      "/addon",
+      "/mediaurl.json",
+      "/mediaurl-addon.json",
+    ],
+    (req, res) => {
+      // New discovery which replaces wtchDiscover
+      res.send({
+        type: "server",
+        addons: engine.addons.map((addon) => addon.getId()),
+      });
+    }
+  );
 
   engine.initialize();
 

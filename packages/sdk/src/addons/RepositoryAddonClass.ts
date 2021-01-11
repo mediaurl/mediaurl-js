@@ -94,7 +94,10 @@ export class RepositoryAddonClass extends BasicAddonClass<
         try {
           const res = await fetch(
             // legacy: .watched extension
-            `${url.replace(/\/(addon(\.(json|watched))?)?$/, "")}/addon`,
+            `${url.replace(
+              /\/((addon|mediaurl)(\.(json|watched))?)?$/,
+              ""
+            )}/mediaurl.json`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
