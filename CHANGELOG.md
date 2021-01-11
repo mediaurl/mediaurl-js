@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.1
+
+- Added property `endpoints` to `Addon` object
+- Created a new URL schema for mediaurl routes
+
 ## v1.0.0
 
 - Renamed project to MediaURL
