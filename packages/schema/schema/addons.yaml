@@ -88,9 +88,21 @@ definitions:
         description: Regions where this addon is available
         oneOf:
           - $ref: "general.yaml#/definitions/Regions"
-      metadata:
-        description: Internally used.
-        type: object
+      endpoints:
+        description: |
+          List of API endpoints for this addon. If not set, the URL for the endpoint will
+          be set created when the addon is installed in the app.
+          Relative URL's are also supported.
+          For example:
+          `[
+            "https://www.addon-server.com/path/to/addon",
+            "https://www.backup-server.com/back/path",
+            "../other/path"
+          ]`
+        type: array
+        items:
+          type: string
+        default: []
     required: [id, name, version]
   RepositoryAddon:
     allOf:

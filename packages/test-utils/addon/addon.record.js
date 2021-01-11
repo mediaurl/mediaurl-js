@@ -151,6 +151,7 @@ addRecord({
       urlPatterns: [
         "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm",
       ],
+      endpoints: ["./worker-test"],
       metadata: {
         url: "./worker-test",
       },
@@ -161,6 +162,7 @@ addRecord({
       name: "IPTV Test Addon",
       version: "1.0.0",
       type: "iptv",
+      endpoints: ["./iptv-worker-test"],
       metadata: {
         url: "./iptv-worker-test",
       },
@@ -217,6 +219,7 @@ addRecord({
       urlPatterns: [
         "https:\\/\\/thepaciellogroup.github.io\\/AT-browser-tests\\/video\\/ElephantsDream.webm",
       ],
+      endpoints: ["./worker-test"],
       metadata: {
         url: "./worker-test",
       },
@@ -227,6 +230,7 @@ addRecord({
       name: "IPTV Test Addon",
       version: "1.0.0",
       type: "iptv",
+      endpoints: ["./iptv-worker-test"],
       metadata: {
         url: "./iptv-worker-test",
       },

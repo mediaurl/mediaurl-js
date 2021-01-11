@@ -71,7 +71,11 @@ export class RepositoryAddonClass extends BasicAddonClass<
             },
             addon
           );
-          props.metadata = { url: `./${id}` };
+          const url = `./${id}`;
+          if (!props.endpoints) props.endpoints = [];
+          if (!props.endpoints.includes(url)) props.endpoints.push(url);
+          // legacy: metadata property
+          props.metadata = { url };
           result.push(props);
         } catch (error) {
           console.warn(`Failed loading ${id}:`, error.message);
@@ -108,6 +112,9 @@ export class RepositoryAddonClass extends BasicAddonClass<
             throw new Error(`Get status code ${res.status}`);
           }
           const props = await res.json();
+          if (!props.endpoints) props.endpoints = [];
+          if (!props.endpoints.includes(url)) props.endpoints.push(url);
+          // legacy: metadata property
           props.metadata = { ...props.metadata, url };
           validateAddonProps(props);
           result.push(props);
