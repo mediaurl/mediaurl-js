@@ -116,7 +116,7 @@ const createAddonRouter = (
   };
 
   // /mediaurl-<action>.json
-  const routeRegex = /^\/mediaurl(?:-([^-]+))?\.json$/;
+  const routeRegex = /^\/mediaurl(?:-(\w+))?\.json$/;
   router.get(routeRegex, routeHandler);
   router.post(routeRegex, routeHandler);
 
