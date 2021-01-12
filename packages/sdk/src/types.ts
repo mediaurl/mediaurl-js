@@ -31,11 +31,28 @@ export type Engine = {
   addons: BasicAddonClass[];
   updateOptions: (options: Partial<EngineOptions>) => void;
   initialize: () => void;
+  createServerHandler: () => ServerHandlerFn;
+  createServerSelftestHandler: () => ServerSelftestHandlerFn;
   createAddonHandler: (addon: BasicAddonClass) => AddonHandlerFn;
 };
 
 /**
- * Holder of all addons and it's handler function
+ * Server handler function
+ */
+export type ServerHandlerFn = (props: {
+  sendResponse: SendResponseFn;
+}) => Promise<void>;
+
+/**
+ * Selftest handler function
+ */
+export type ServerSelftestHandlerFn = (props: {
+  request: RequestInfos;
+  sendResponse: SendResponseFn;
+}) => Promise<void>;
+
+/**
+ * Addon handler function
  */
 export type AddonHandlerFn = (props: {
   action: string;

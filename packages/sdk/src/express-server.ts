@@ -150,6 +150,8 @@ export const createMultiAddonRouter = (
   engine: Engine,
   options: IExpressServerOptions
 ) => {
+  engine.initialize();
+
   const router = express.Router();
 
   router.get("/", (req, res) => {
@@ -161,18 +163,38 @@ export const createMultiAddonRouter = (
   });
 
   // legacy: remove /addon.watched
+  const serverHandler = engine.createServerHandler();
+  const server = (req, res) => {
+    serverHandler({
+      sendResponse: async (statusCode, data) => {
+        res.status(statusCode).json(data);
+      },
+    });
+  };
   router.get(
     ["/addon.watched", "/addon", "/mediaurl.json", "/mediaurl-addon.json"],
-    (req, res) => {
-      // New discovery which replaces wtchDiscover
-      res.send({
-        type: "server",
-        addons: engine.addons.map((addon) => addon.getId()),
-      });
-    }
+    server
+  );
+  router.post(
+    ["/addon.watched", "/addon", "/mediaurl.json", "/mediaurl-addon.json"],
+    server
   );
 
-  engine.initialize();
+  // legacy: remove selftest.watched
+  const serverSelftestHandler = engine.createServerSelftestHandler();
+  const selftest = async (req, res) => {
+    await serverSelftestHandler({
+      request: {
+        ip: req.ip,
+        headers: <RequestInfos["headers"]>req.headers,
+      },
+      sendResponse: async (statusCode, data) => {
+        res.status(statusCode).json(data);
+      },
+    });
+  };
+  router.get(["selftest.watched", "/mediaurl-selftest.json"], selftest);
+  router.post(["selftest.watched", "/mediaurl-selftest.json"], selftest);
 
   const ids = new Set();
   for (const addon of engine.addons) {

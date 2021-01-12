@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3
+
+- Added selftest handlers for multi addon servers
+
 ## v1.0.2
 
 - Falling back to legacy URL's on `repository` action handler

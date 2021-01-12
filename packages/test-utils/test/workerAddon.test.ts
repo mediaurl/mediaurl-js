@@ -39,7 +39,7 @@ const itemDefaults: ItemRequest = {
 };
 
 const engine = createEngine([workerAddon], { testMode: true });
-const app = request(createApp(engine));
+const app = request(createApp(engine, { singleMode: false }));
 
 test("action addon", async (done) => {
   app
@@ -102,5 +102,29 @@ test("action subtitle (cached response)", async (done) => {
     .post(`/${workerAddon.getId()}/mediaurl-subtitle.json`)
     .send(<SourceRequest>itemDefaults)
     .expect(200, TEST_SUBTITLES.elephant)
+    .end(requestEnd(done));
+});
+
+test("action selftest", async (done) => {
+  app
+    .post(`/${workerAddon.getId()}/mediaurl-selftest.json`)
+    .send()
+    .expect(200, '"ok"')
+    .end(requestEnd(done));
+});
+
+test("action server selftest", async (done) => {
+  app
+    .post("/mediaurl-selftest.json")
+    .send()
+    .expect(200, { "worker-test": [200, "ok"] })
+    .end(requestEnd(done));
+});
+
+test("action server", async (done) => {
+  app
+    .post(`/mediaurl.json`)
+    .send()
+    .expect(200, { type: "server", addons: ["worker-test"] })
     .end(requestEnd(done));
 });

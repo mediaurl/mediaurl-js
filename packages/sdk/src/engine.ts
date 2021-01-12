@@ -15,6 +15,7 @@ import {
   AddonHandlerFn,
   Engine,
   EngineOptions,
+  ServerSelftestHandlerFn,
 } from "./types";
 import { RecordData, RequestRecorder } from "./utils/request-recorder";
 import { validateSignature } from "./utils/signature";
@@ -87,11 +88,56 @@ export const createEngine = (
       Object.assign(opts, o);
     },
     initialize,
+    createServerHandler: () => {
+      if (!frozen) initialize();
+      return createServerHandler(addons);
+    },
+    createServerSelftestHandler: () => {
+      if (!frozen) initialize();
+      return createServerSelftestHandler(addons, opts, requestRecorder);
+    },
     createAddonHandler: (addon: BasicAddonClass) => {
       if (!frozen) initialize();
       return createAddonHandler(addon, opts, requestRecorder);
     },
   };
+};
+
+const createServerHandler = (
+  addons: BasicAddonClass[]
+): ServerSelftestHandlerFn => async ({ sendResponse }) => {
+  sendResponse(200, {
+    type: "server",
+    addons: addons.map((addon) => addon.getId()),
+  });
+};
+
+const createServerSelftestHandler = (
+  addons: BasicAddonClass[],
+  options: EngineOptions,
+  requestRecorder: null | RequestRecorder
+): ServerSelftestHandlerFn => async ({ request, sendResponse }) => {
+  let hasErrors = false;
+  const result: Record<string, [number, any]> = {};
+  for (const addon of addons) {
+    const addonHandler = createAddonHandler(addon, options, requestRecorder);
+    try {
+      await addonHandler({
+        action: "selftest",
+        input: {},
+        sig: "",
+        request,
+        sendResponse: async (statusCode, data) => {
+          result[addon.getId()] = [statusCode, data];
+          if (statusCode !== 200) hasErrors = true;
+        },
+      });
+    } catch (error) {
+      result[addon.getId()] = [500, { error: error.message }];
+      hasErrors = true;
+    }
+  }
+  sendResponse(hasErrors ? 500 : 200, result);
 };
 
 const createAddonHandler = (
