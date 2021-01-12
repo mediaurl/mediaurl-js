@@ -193,8 +193,8 @@ export const createMultiAddonRouter = (
       },
     });
   };
-  router.get(["selftest.watched", "/mediaurl-selftest.json"], selftest);
-  router.post(["selftest.watched", "/mediaurl-selftest.json"], selftest);
+  router.get(["/selftest.watched", "/mediaurl-selftest.json"], selftest);
+  router.post(["/selftest.watched", "/mediaurl-selftest.json"], selftest);
 
   const ids = new Set();
   for (const addon of engine.addons) {
