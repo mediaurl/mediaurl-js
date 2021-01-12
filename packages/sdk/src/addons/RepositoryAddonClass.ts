@@ -96,18 +96,30 @@ export class RepositoryAddonClass extends BasicAddonClass<
       cache.call(key, async () => {});
       const fn = async () => {
         try {
-          const res = await fetch(
-            // legacy: .watched extension
-            `${url.replace(
-              /\/((addon|mediaurl)(\.(json|watched))?)?$/,
-              ""
-            )}/mediaurl.json`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(input),
-            }
+          // legacy: .watched extension
+          const baseUrl = url.replace(
+            /\/((addon|mediaurl)(\.(json|watched))?)?$/,
+            ""
           );
+          const options = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(input),
+          };
+
+          let res = await fetch(`${baseUrl}/mediaurl.json`, options);
+          if (
+            res.status === 500 &&
+            String(res.headers.get("content-type")).indexOf(
+              "application/json"
+            ) === 0
+          ) {
+            const data = await res.json();
+            if (data?.error === 'No handler for "mediaurl.json" action') {
+              console.warn(`Trying legacy endpoint ${baseUrl}/addon.watched`);
+              res = await fetch(`${baseUrl}/addon.watched`, options);
+            }
+          }
           if (!res.ok) {
             throw new Error(`Get status code ${res.status}`);
           }

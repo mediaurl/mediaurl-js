@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.2
+
+- Falling back to legacy URL's on `repository` action handler
+
 ## v1.0.1
 
 - Added property `endpoints` to `Addon` object
