@@ -123,20 +123,66 @@ export interface ActionHandlerContext {
    * User data
    */
   user: null | {
+    /**
+     * Current timestamp in miliseconds
+     */
     time: number;
+
+    /**
+     * Pro membership expire time in miliseconds
+     */
     validUntil: number;
+
+    /**
+     * Anonymized user ID
+     */
     user: string;
+
+    /**
+     * User status
+     */
     status: "guest" | "free" | "pro";
+
+    /**
+     * Indicator if the user is verified (deprecated)
+     */
     verified: boolean;
+
+    /**
+     * Allowed client IP's
+     */
     ips: string[];
+
+    /**
+     * In case of an error, this is the message
+     */
     error?: string;
+
+    /**
+     * Informations about the currently used client app
+     */
     app: {
-      platform: string;
+      /**
+       * Name of the app
+       */
+      name: string;
+
+      /**
+       * Version
+       */
       version: string;
+
+      /**
+       * Platform
+       */
+      platform: string;
+
+      /**
+       * If everything is fine, this is set to `true`. If it's `false`,
+       * you can raise an error
+       */
       ok: boolean;
-      [k: string]: any;
     };
-    [k: string]: any;
   };
 
   /**

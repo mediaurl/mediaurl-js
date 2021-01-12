@@ -162,13 +162,7 @@ export const createMultiAddonRouter = (
 
   // legacy: remove /addon.watched
   router.get(
-    [
-      "/addon.watched",
-      "/addon.json",
-      "/addon",
-      "/mediaurl.json",
-      "/mediaurl-addon.json",
-    ],
+    ["/addon.watched", "/addon", "/mediaurl.json", "/mediaurl-addon.json"],
     (req, res) => {
       // New discovery which replaces wtchDiscover
       res.send({
