@@ -129,7 +129,7 @@ export interface ActionHandlerContext {
     time: number;
 
     /**
-     * Pro membership expire time in miliseconds
+     * Timestamp until when this signed object is valid
      */
     validUntil: number;
 
