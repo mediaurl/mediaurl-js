@@ -14,10 +14,10 @@ In best way to create your own MediaURL addon is by cloning our example addon an
 
 ### Cloning the example addon
 
-The best way to start is to clone our [example addon](https://github.com/mediaurl/addon-example) addon:
+The best way to start is to clone our [example addon](https://github.com/mediaurl/mediaurl-example) addon:
 
 ```shell
-git clone https://github.com/mediaurl/mediaurl-addon-example.git my-addon
+git clone https://github.com/mediaurl/mediaurl-example.git my-addon
 ```
 
 Now open the created folder `my-addon` with your editor.
@@ -37,10 +37,11 @@ npm run develop
 You should see something like this:
 
 ```
-> mediaurl-addon-example@0.27.1 develop /home/myname/my-addon
-> ts-node-dev --transpileOnly src
+> mediaurl-example@0.0.0 develop /home/myname/mediaurl-example
+> ts-node-dev src
 
-Using ts-node version 8.9.1, typescript version 3.8.3
+[INFO] 22:50:11 ts-node-dev ver. 1.1.1 (using ts-node ver. 9.1.1, typescript ver. 4.1.3)
+Hint: Start the addon with `-h` to see all available command line options
 Using cache: MemoryCache
 Mounting addon example
 Listening on 3000
