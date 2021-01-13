@@ -28,7 +28,7 @@ Without any modifications, let's start the addon and see what will happen.
 
 **1. Start the addon server**
 
-Open your terminal, change to the `my-addon` folder and run:
+Open a terminal, change to the `my-addon` folder and run:
 
 ```shell
 npm run develop
@@ -47,35 +47,39 @@ Mounting addon example
 Listening on 3000
 ```
 
-**2. Enable developer mode**
+**2. Start the app**
 
-In order to install addons in the MediaURL app, you first need to _unlock_ it:
+MediaURL addons are currently compatible with different client apps like [WATCHED](https://www.watched.com/). It's most easy to start the desktop app on your computer.
 
-1. Open the MediaURL app, go to settings and make sure the **Developer mode** is enabled.
-2. Go to the addon manager and deactivate the bundle addon if there is one active.
-3. To make things more clean and easy, disabled all currently activated addons.
+**3. Enable developer mode**
 
-**3. Add your addon**
+In order to install addons in your app, you may first need to _unlock_ it:
 
-1. Find the local IP of your computer.
-   _(TODO: Tutorial on how to do this on different OS)_
-2. Go to the **Add Addon** screen, where you can enter an URL.
-3. Enter the IP address of your computer. For example `192.168.1.123`.
-   _On local IP addresses, the port `3000` as well as some other default ports are omitted, so it's enough to only enter your IP._
+1. Open the app, go to the **Settings** screen and make sure the **Developer mode** is enabled.
+2. Go to the addon manager and deactivate the bundle addon if there is one active. If you like you also can disable all other activated addons.
 
-Go to the start screen and you should see a dashboard of your addon.
+**4. Add your addon**
+
+1. Navigate to the **Add Addon** screen, where you can enter an URL.
+2. If you are running the app on the same computer as the addon is running, just type `localhost`.
+   
+   If you are on another device, you need to find the IP address of your computer (for example `192.168.1.123`), and enter it on the input box.
+
+   _Note: On local IP addresses, the port `3000` as well as some other default ports are omitted, so it's enough to only enter your IP._
+
+Go to the start screen and you should see a your addon in action.
 
 ### Modify your addon
 
 Open the `src/index.ts` file in your editor and start playing around. The server will restart automatically once you saved a file.
 
-To reload for screens in the app, swipe down until a refresh symbol appears. After the refresh your changes should appear.
+To reload screens in the app, swipe down until a refresh symbol appears. On the desktop app, press the refresh button on the top right corner. After the refresh, your changes should appear.
 
-When you change the metadata of your addon (like addin a new `item` or `source` handler, or adding new item types to your addon), you need to refresh the addon. To do this, go to the _addon manager_, click on it (I) symbol on the right side of your addon. Within the "addon detail screen", swipe down to refreh your addon.
+When you change the metadata of your addon (like adding a new `item` or `source` handler, or adding new item types to your addon), you need to refresh the addon. To do this, go to the _addon manager_, click on the `(I)` symbol on the right side of your addon. Once you see the addon details, swipe down to refreh.
 
 ### Documentation
 
-Much of our documentation is in our code. Depending on your editor you should see much of the documentation while writing or when hovering a variable or function.
+Much of our documentation is in our code. Depending on your editor you should see most of the documentation while writing or when hovering a variable or function.
 
 Please also check out our object schema here: https://www.mediaurl.io/swagger
 
@@ -111,12 +115,6 @@ To replay your recording, run this command:
 npm run develop -- replay test-session
 ```
 
-To reply and watch for changes, use this:
-
-```shell
-npm run develop -- replay test-session --watch
-```
-
 ### Create a test case with a recorded session
 
 Create a test case file, for example `src/record.test.ts`:
@@ -140,7 +138,9 @@ npm test
 
 ## Cache
 
-We offer a very flexible caching solution for your addon. Please see [docs/caching.md](docs/caching.md) for more infos.
+Often it is useful to cache responses or even single requests to external resources to reduce load and response speed.
+
+The SDK integrates a very flexible caching solution. Please see [docs/caching.md](docs/caching.md) for more infos.
 
 ## Translate your addon
 
