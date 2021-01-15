@@ -1,0 +1,18 @@
+{
+  "name": "@mediaurl/sql-cache",
+  "version": "1.0.3",
+  "description": "MediaURL SQL cache wrapper",
+  "main": "dist",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@mediaurl/sdk": "^1.0.3",
+    "mysql": "^2.18.1",
+    "pg": "^8.5.1",
+    "typeorm": "^0.2.30"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}
