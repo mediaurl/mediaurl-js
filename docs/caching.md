@@ -50,3 +50,14 @@ export LOAD_MEDIAURL_CACHE_MODULE="@mediaurl/mongodb-cache"
 export MONGODB_URL=mongodb://localhost/database
 npm run develop
 ```
+
+### `SqlCache`
+
+This cache engine is using PostgreSQL or MySQL as it's backend. To activate it, set the environment variable `PG_URL` or `MYSQL_URL` with connection string value.
+
+```shell
+npm install @mediaurl/sql-cache
+export LOAD_MEDIAURL_CACHE_MODULE="@mediaurl/sql-cache"
+export PG_URL=postgresql://dbuser:secretpassword@database.server.com:3211/mydb
+npm run develop
+```
