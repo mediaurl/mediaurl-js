@@ -1,12 +1,9 @@
-import { Entity, Column, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, Index, PrimaryColumn } from "typeorm";
 
 @Index(["k"], { unique: true })
 @Entity({ name: "mediaurl_cache" })
 export class CacheItem {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+  @PrimaryColumn()
   k: string;
 
   @Column("simple-json")

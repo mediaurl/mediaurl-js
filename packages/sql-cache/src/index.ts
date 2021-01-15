@@ -60,7 +60,6 @@ export class SqlCache extends BasicCache {
   async set(key: string, value: any, ttl: number) {
     await this.connectionP;
 
-    await getRepository(CacheItem).delete({ k: key });
     const item = new CacheItem();
     item.k = key;
     item.v = value;
