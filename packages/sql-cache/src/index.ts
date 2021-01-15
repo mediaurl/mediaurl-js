@@ -4,6 +4,7 @@ import {
   createConnection,
   Connection,
   getRepository,
+  LessThan,
 } from "typeorm";
 
 import { CacheItem } from "./CacheItem";
@@ -27,14 +28,20 @@ const checkTtl = (cacheResult: CacheItem) => {
 
 export class SqlCache extends BasicCache {
   private connectionP: Promise<Connection>;
+  private cleaner;
 
-  constructor(opts: Partial<ConnectionOptions>) {
+  constructor(opts: Partial<ConnectionOptions & { cleanupInterval: number }>) {
     super();
     this.connectionP = createConnection({
       ...opts,
       synchronize: true,
       entities: [CacheItem],
     } as ConnectionOptions);
+
+    this.cleaner = setInterval(
+      () => this.cleanup(),
+      opts.cleanupInterval || 1000 * 60 * 60
+    );
   }
 
   async exists(key: string) {
@@ -77,6 +84,12 @@ export class SqlCache extends BasicCache {
   async deleteAll() {
     await this.connectionP;
     await getRepository(CacheItem).delete({});
+  }
+
+  private async cleanup() {
+    await getRepository(CacheItem).delete({
+      d: LessThan(new Date()),
+    });
   }
 }
 
