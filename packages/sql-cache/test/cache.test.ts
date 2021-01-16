@@ -1,25 +1,17 @@
 import { testCache } from "@mediaurl/test-utils";
-import { ALLOWED_ENV_VARS_MAP, SqlCache } from "../src";
+import { createFromUrl, getTypeFromUrl } from "../src";
 
-let tested = false;
-for (const key of Object.keys(ALLOWED_ENV_VARS_MAP)) {
-  const url = <string>process.env[key];
-  if (url) {
-    tested = true;
-    const type = ALLOWED_ENV_VARS_MAP[key];
-    testCache(
-      type,
-      () =>
-        new SqlCache({
-          type,
-          url,
-          name: String(Math.random()),
-        })
-    );
-  }
+let i = 1;
+for (; ; i++) {
+  const url = process.env[`TEST_URL_${i}`];
+  if (!url) break;
+  const type = getTypeFromUrl(url);
+  testCache(<string>type, () =>
+    createFromUrl(url, { name: String(Math.random()) })
+  );
 }
 
-if (!tested) {
+if (i === 1) {
   describe("SqlCache", () => {
     test("noop", () => {});
   });

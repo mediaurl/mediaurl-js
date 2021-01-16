@@ -7,12 +7,7 @@ import {
 } from "typeorm";
 import { CacheItem } from "./CacheItem";
 
-export const ALLOWED_ENV_VARS_MAP: {
-  [envName: string]: ConnectionOptions["type"];
-} = {
-  POSTGRES_URL: "postgres",
-  MYSQL_URL: "mysql",
-};
+type CreateOptions = Partial<ConnectionOptions & { cleanupInterval: number }>;
 
 const checkTtl = (cacheResult: CacheItem) => {
   if (!cacheResult) {
@@ -30,7 +25,7 @@ export class SqlCache extends BasicCache {
   private connectionP: Promise<Connection>;
   private cleaner;
 
-  constructor(opts: Partial<ConnectionOptions & { cleanupInterval: number }>) {
+  constructor(opts: CreateOptions) {
     super();
     this.connectionP = createConnection({
       name: `sql-cache-${opts.type}`,
@@ -97,15 +92,25 @@ export class SqlCache extends BasicCache {
   }
 }
 
-registerCacheEngineCreator(() => {
-  const connectionVar = Object.keys(ALLOWED_ENV_VARS_MAP).find(
-    (envVar) => process.env[envVar]
-  );
+const allowedTypes: CreateOptions["type"][] = ["postgres", "mysql"];
 
-  return connectionVar
-    ? new SqlCache({
-        type: ALLOWED_ENV_VARS_MAP[connectionVar],
-        url: process.env[connectionVar],
-      })
-    : null;
+export const getTypeFromUrl = (url: string) => {
+  const type = <CreateOptions["type"]>new URL(url).protocol.replace(/:$/, "");
+  if (!allowedTypes.includes(type))
+    throw new Error(
+      `SQL engine "${type}" not available, use one of ${allowedTypes.join(
+        ", "
+      )}`
+    );
+  return type;
+};
+
+export const createFromUrl = (url: string, opts?: CreateOptions) => {
+  const type = getTypeFromUrl(url);
+  return new SqlCache(<CreateOptions>{ type, url, ...opts });
+};
+
+registerCacheEngineCreator(() => {
+  const url = process.env.SQL_CACHE_URL;
+  return url ? createFromUrl(url) : null;
 });
