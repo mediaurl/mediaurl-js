@@ -9,6 +9,6 @@ export class CacheItem {
   @Column("simple-json")
   v: string;
 
-  @Column({ nullable: true })
-  d?: Date;
+  @Column("bigint", { nullable: true })
+  d?: number;
 }

@@ -19,7 +19,7 @@ const checkTtl = (cacheResult: CacheItem) => {
     return;
   }
 
-  if (cacheResult.d && cacheResult.d < new Date()) {
+  if (cacheResult.d && cacheResult.d < +new Date()) {
     return;
   }
 
@@ -70,7 +70,7 @@ export class SqlCache extends BasicCache {
     const item = new CacheItem();
     item.k = key;
     item.v = value;
-    item.d = ttl === Infinity ? undefined : new Date(Date.now() + ttl);
+    item.d = ttl === Infinity ? undefined : +new Date(Date.now() + ttl);
 
     await getRepository(CacheItem).save(item);
     return;
@@ -88,7 +88,7 @@ export class SqlCache extends BasicCache {
 
   private async cleanup() {
     await getRepository(CacheItem).delete({
-      d: LessThan(new Date()),
+      d: LessThan(+new Date()),
     });
   }
 }
