@@ -9,8 +9,10 @@ import {
 
 import { CacheItem } from "./CacheItem";
 
-const ALLOWED_ENV_VARS_MAP: { [envName: string]: ConnectionOptions["type"] } = {
-  PG_URL: "postgres",
+export const ALLOWED_ENV_VARS_MAP: {
+  [envName: string]: ConnectionOptions["type"];
+} = {
+  POSTGRES_URL: "postgres",
   MYSQL_URL: "mysql",
 };
 
