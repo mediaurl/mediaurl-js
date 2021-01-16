@@ -182,7 +182,7 @@ definitions:
         items:
           $ref: "objects.yaml#/definitions/Source"
       similarItems:
-        $ref: "general.yaml#/definitions/SimilarItems"
+        $ref: "#/definitions/SimilarItems"
     required: [ids]
   MovieItem:
     allOf:
@@ -291,7 +291,7 @@ definitions:
           Defaults to `false`.
         type: boolean
       similarItems:
-        $ref: "general.yaml#/definitions/SimilarItems"
+        $ref: "#/definitions/SimilarItems"
     required: [type, ids]
   IptvItem:
     type: object
