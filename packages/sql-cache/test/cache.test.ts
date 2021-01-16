@@ -7,8 +7,15 @@ for (const key of Object.keys(ALLOWED_ENV_VARS_MAP)) {
   if (url) {
     tested = true;
     const type = ALLOWED_ENV_VARS_MAP[key];
-    console.log({ type, url });
-    testCache(type, () => new SqlCache({ type, url }));
+    testCache(
+      type,
+      () =>
+        new SqlCache({
+          type,
+          url,
+          name: String(Math.random()),
+        })
+    );
   }
 }
 

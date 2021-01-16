@@ -1,12 +1,10 @@
 import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
 import {
+  Connection,
   ConnectionOptions,
   createConnection,
-  Connection,
-  getRepository,
   LessThan,
 } from "typeorm";
-
 import { CacheItem } from "./CacheItem";
 
 export const ALLOWED_ENV_VARS_MAP: {
@@ -35,6 +33,7 @@ export class SqlCache extends BasicCache {
   constructor(opts: Partial<ConnectionOptions & { cleanupInterval: number }>) {
     super();
     this.connectionP = createConnection({
+      name: `sql-cache-${opts.type}`,
       ...opts,
       synchronize: true,
       entities: [CacheItem],
@@ -47,16 +46,18 @@ export class SqlCache extends BasicCache {
   }
 
   async exists(key: string) {
-    await this.connectionP;
-    return getRepository(CacheItem)
+    const c = await this.connectionP;
+    return c
+      .getRepository(CacheItem)
       .findOne({ k: key })
       .then(checkTtl)
       .then((_) => !!_);
   }
 
   async get(key: string) {
-    await this.connectionP;
-    return getRepository(CacheItem)
+    const c = await this.connectionP;
+    return c
+      .getRepository(CacheItem)
       .findOne({
         k: key,
       })
@@ -67,29 +68,30 @@ export class SqlCache extends BasicCache {
   }
 
   async set(key: string, value: any, ttl: number) {
-    await this.connectionP;
+    const c = await this.connectionP;
 
     const item = new CacheItem();
     item.k = key;
     item.v = value;
     item.d = ttl === Infinity ? undefined : new Date(Date.now() + ttl);
 
-    await getRepository(CacheItem).save(item);
+    await c.getRepository(CacheItem).save(item);
     return;
   }
 
   async delete(key: string) {
-    await this.connectionP;
-    await getRepository(CacheItem).delete({ k: key });
+    const c = await this.connectionP;
+    await c.getRepository(CacheItem).delete({ k: key });
   }
 
   async deleteAll() {
-    await this.connectionP;
-    await getRepository(CacheItem).delete({});
+    const c = await this.connectionP;
+    await c.getRepository(CacheItem).delete({});
   }
 
   private async cleanup() {
-    await getRepository(CacheItem).delete({
+    const c = await this.connectionP;
+    await c.getRepository(CacheItem).delete({
       d: LessThan(new Date()),
     });
   }
