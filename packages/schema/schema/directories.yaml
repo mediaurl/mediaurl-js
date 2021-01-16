@@ -86,12 +86,12 @@ definitions:
         description: Different sort columns and their caption including translations.
         type: array
         items:
-          $ref: "general.yaml#/definitions/DirectorySort"
+          $ref: "#/definitions/DirectorySort"
       filter:
         description: Different sort column and their caption including translations.
         type: array
         items:
-          $ref: "general.yaml#/definitions/DirectoryFilter"
+          $ref: "#/definitions/DirectoryFilter"
   DirectoryArguments:
     description: |
       Request parameters for a directory call. This is nearly the same

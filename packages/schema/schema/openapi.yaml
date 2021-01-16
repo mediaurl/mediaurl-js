@@ -2,6 +2,232 @@ openapi: 3.0.0
 info:
   title: MediaURL Addon API
   version: 1.0.0
+headers:
+paths:
+  /mediaurl.json:
+    get:
+      summary: Get addon metadata.
+      tags:
+        - Repository Addon
+        - Worker Addon
+        - IPTV Addon
+        - Bundle Addon
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/AddonResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    post:
+      summary: Get addon metadata.
+      tags:
+        - Repository Addon
+        - Worker Addon
+        - IPTV Addon
+        - Bundle Addon
+      parameters:
+        - $ref: '#/components/parameters/signature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/AddonRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/AddonResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-task.json:
+    post:
+      summary: Returns the result of a task
+      tags:
+        - Repository Addon
+        - Worker Addon
+        - IPTV Addon
+        - Bundle Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "tasks.yaml#/definitions/TaskResponse"
+      responses:
+        200:
+          description: |
+            The response will be the response of the original action.
+            If you called the `item` action before, then this `task`
+            call will either return another task, or the response of the
+            `item` action.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                  - type: array
+                  - type: number
+                  - type: string
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-repository.json:
+    get:
+      summary: Get a list of addons this repository knows.
+      tags:
+        - Repository Addon
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/RepositoryResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+    post:
+      summary: Get a list of addons this repository knows.
+      tags:
+        - Repository Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/RepositoryRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/RepositoryResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-iptv.json:
+    post:
+      summary: Get the channels of an IPTV addon.
+      tags:
+        - IPTV Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/IptvRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/IptvResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-directory.json:
+    post:
+      summary: Calls the directory action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/DirectoryRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/DirectoryResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-item.json:
+    post:
+      summary: Calls the item action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/ItemRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/ItemResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-source.json:
+    post:
+      summary: Calls the source action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/SourceRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/SourceResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-subtitle.json:
+    post:
+      summary: Calls the subtitle action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/SubtitleRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/SubtitleResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-resolve.json:
+    post:
+      summary: Calls the resolve action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/ResolveRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/ResolveResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+  /mediaurl-captcha.json:
+    post:
+      summary: Calls the captcha action of a worker addon.
+      tags:
+        - Worker Addon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "api.yaml#/definitions/CaptchaRequest"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "api.yaml#/definitions/CaptchaResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
 components:
   schemas:
     RepositoryAddon:
@@ -26,37 +252,51 @@ components:
       $ref: "objects.yaml#/definitions/Source"
     Subtitle:
       $ref: "objects.yaml#/definitions/Subtitle"
-    ResolvedUrl:
-      $ref: "objects.yaml#/definitions/ResolvedUrl"
-    AddonRequest:
-      $ref: "api.yaml#/definitions/AddonRequest"
-    AddonResponse:
-      $ref: "api.yaml#/definitions/AddonResponse"
-    RepositoryRequest:
-      $ref: "api.yaml#/definitions/RepositoryRequest"
-    RepositoryResponse:
-      $ref: "api.yaml#/definitions/RepositoryResponse"
-    DirectoryRequest:
-      $ref: "api.yaml#/definitions/DirectoryRequest"
-    DirectoryResponse:
-      $ref: "api.yaml#/definitions/DirectoryResponse"
-    ItemRequest:
-      $ref: "api.yaml#/definitions/ItemRequest"
-    ItemResponse:
-      $ref: "api.yaml#/definitions/ItemResponse"
-    SourceRequest:
-      $ref: "api.yaml#/definitions/SourceRequest"
-    SourceResponse:
-      $ref: "api.yaml#/definitions/SourceResponse"
-    SubtitleRequest:
-      $ref: "api.yaml#/definitions/SubtitleRequest"
-    SubtitleResponse:
-      $ref: "api.yaml#/definitions/SubtitleResponse"
-    ResolveRequest:
-      $ref: "api.yaml#/definitions/ResolveRequest"
-    ResolveResponse:
-      $ref: "api.yaml#/definitions/ResolveResponse"
-    CaptchaRequest:
-      $ref: "api.yaml#/definitions/CaptchaRequest"
-    CaptchaResponse:
-      $ref: "api.yaml#/definitions/CaptchaResponse"
+    # ResolvedUrl:
+    #   $ref: "objects.yaml#/definitions/ResolvedUrl"
+    # AddonRequest:
+    #   $ref: "api.yaml#/definitions/AddonRequest"
+    # AddonResponse:
+    #   $ref: "api.yaml#/definitions/AddonResponse"
+    # RepositoryRequest:
+    #   $ref: "api.yaml#/definitions/RepositoryRequest"
+    # RepositoryResponse:
+    #   $ref: "api.yaml#/definitions/RepositoryResponse"
+    # DirectoryRequest:
+    #   $ref: "api.yaml#/definitions/DirectoryRequest"
+    # DirectoryResponse:
+    #   $ref: "api.yaml#/definitions/DirectoryResponse"
+    # ItemRequest:
+    #   $ref: "api.yaml#/definitions/ItemRequest"
+    # ItemResponse:
+    #   $ref: "api.yaml#/definitions/ItemResponse"
+    # SourceRequest:
+    #   $ref: "api.yaml#/definitions/SourceRequest"
+    # SourceResponse:
+    #   $ref: "api.yaml#/definitions/SourceResponse"
+    # SubtitleRequest:
+    #   $ref: "api.yaml#/definitions/SubtitleRequest"
+    # SubtitleResponse:
+    #   $ref: "api.yaml#/definitions/SubtitleResponse"
+    # ResolveRequest:
+    #   $ref: "api.yaml#/definitions/ResolveRequest"
+    # ResolveResponse:
+    #   $ref: "api.yaml#/definitions/ResolveResponse"
+    # CaptchaRequest:
+    #   $ref: "api.yaml#/definitions/CaptchaRequest"
+    # CaptchaResponse:
+    #   $ref: "api.yaml#/definitions/CaptchaResponse"
+  parameters:
+    signature:
+      name: mediaurl-signature
+      in: header
+      description: The MediaURL client signature
+      required: true
+      schema:
+        type: string
+  responses:
+    DefaultError:
+      content:
+        application/json:
+          schema:
+            $ref: "general.yaml#/definitions/Error"

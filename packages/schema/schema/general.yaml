@@ -31,7 +31,7 @@ definitions:
   Image:
     description: Definition of an image.
     anyOf:
-      - $ref: "#/definitions/Url"
+      - $ref: "general.yaml#/definitions/Url"
       - type: string
         enum: [""]
       - type: "null"
@@ -51,14 +51,14 @@ definitions:
         type: array
         items:
           oneOf:
-            - $ref: "#/definitions/Country"
+            - $ref: "general.yaml#/definitions/Country"
           default: []
       forbidden:
         description: |
           Forbidden regions.
         type: array
         items:
-          $ref: "#/definitions/Country"
+          $ref: "general.yaml#/definitions/Country"
         default: []
     additionalProperties: false
     # default: {}
