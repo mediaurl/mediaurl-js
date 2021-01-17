@@ -92,7 +92,12 @@ export class SqlCache extends BasicCache {
       });
 
     updateKeys.forEach((key) => {
-      qb.setParameter(key, item[key]);
+      qb.setParameter(
+        key,
+        typeof item[key] === "object" && item[key] !== null
+          ? JSON.stringify(item[key])
+          : item[key]
+      );
     });
 
     await qb.execute();
