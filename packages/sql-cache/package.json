@@ -1,6 +1,6 @@
 {
   "name": "@mediaurl/sql-cache",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "MediaURL SQL cache wrapper",
   "main": "dist",
   "scripts": {
