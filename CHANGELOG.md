@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2
+
+- Fixed sql-cache duplicate primary key race conditions
+
 ## v1.1.0
 
 - Updated OpenAPI schema

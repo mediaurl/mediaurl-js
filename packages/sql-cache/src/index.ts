@@ -77,9 +77,6 @@ export class SqlCache extends BasicCache {
     // const result =await c.getRepository(CacheItem).save(item);
 
     const updateKeys = Object.keys(item).filter((_) => _ !== primaryKey);
-    const updateStr = updateKeys.map((key) => {
-      return `"${key}" = :${key}`;
-    });
 
     const qb = c
       .createQueryBuilder()
