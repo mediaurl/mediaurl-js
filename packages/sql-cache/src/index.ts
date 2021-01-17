@@ -21,6 +21,8 @@ const checkTtl = (cacheResult: CacheItem) => {
   return cacheResult;
 };
 
+const getKey = (key: string) => key.substring(1);
+
 export class SqlCache extends BasicCache {
   private connectionP: Promise<Connection>;
   private cleaner;
@@ -44,7 +46,7 @@ export class SqlCache extends BasicCache {
     const c = await this.connectionP;
     return c
       .getRepository(CacheItem)
-      .findOne({ k: key })
+      .findOne({ k: getKey(key) })
       .then(checkTtl)
       .then((_) => !!_);
   }
@@ -54,7 +56,7 @@ export class SqlCache extends BasicCache {
     return c
       .getRepository(CacheItem)
       .findOne({
-        k: key,
+        k: getKey(key),
       })
       .then(checkTtl)
       .then((cacheResult) => {
@@ -66,7 +68,7 @@ export class SqlCache extends BasicCache {
     const c = await this.connectionP;
 
     const item = new CacheItem();
-    item.k = key;
+    item.k = getKey(key);
     item.v = value;
     item.d = ttl === Infinity ? undefined : +new Date(Date.now() + ttl);
 
@@ -76,7 +78,7 @@ export class SqlCache extends BasicCache {
 
   async delete(key: string) {
     const c = await this.connectionP;
-    await c.getRepository(CacheItem).delete({ k: key });
+    await c.getRepository(CacheItem).delete({ k: getKey(key) });
   }
 
   async deleteAll() {
