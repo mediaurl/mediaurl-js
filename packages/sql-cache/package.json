@@ -1,6 +1,6 @@
 {
   "name": "@mediaurl/sql-cache",
-  "version": "1.0.3",
+  "version": "1.1.0-alpha.0",
   "description": "MediaURL SQL cache wrapper",
   "main": "dist",
   "scripts": {
@@ -9,13 +9,13 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@mediaurl/sdk": "^1.0.3",
+    "@mediaurl/sdk": "^1.1.0-alpha.0",
     "mysql": "^2.18.1",
     "pg": "^8.5.1",
     "typeorm": "^0.2.30"
   },
   "devDependencies": {
-    "@mediaurl/test-utils": "^1.0.3",
+    "@mediaurl/test-utils": "^1.1.0-alpha.0",
     "@types/jest": "^26.0.20",
     "jest": "^26.6.3",
     "ts-jest": "^26.4.4",
