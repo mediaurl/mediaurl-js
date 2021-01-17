@@ -7,6 +7,10 @@
 - Task responses can now use the normal action endpoints
 - Added @mediaurl/sql-cache module to add support for postgres and mysql backends
 
+### Update instructions
+
+On worker addons, rename the addon property from `requestArgs` to `triggers`.
+
 ## v1.0.3
 
 - Added selftest handlers for multi addon servers
@@ -56,7 +60,7 @@
 - Created `notification` task to display notifications with various options inside the app (see `ctx.notification`). Notifications can be displayed once every 30 minute per addon. You can set the `url` property to open an URL when the user clicks on the notification. MediaURL sharing URL's are handled internally, so you can promote for example an item or addon.
 - Various bugfixes and improvments
 
-### Upgrade instructions
+### Update instructions
 
 Edit your `tsconfig.json` and replace
 
@@ -84,7 +88,7 @@ with
 - The [`@mediaurl/create`](packages/create) command line tool is printing a legacy message
 - The `testAddon` function in [`@mediaurl/test`](packages/test) is printing a legacy message when it's used
 
-### Upgrade instructions
+### Update instructions
 
 Since the `watched-sdk` command is legacy, you can't export your addons anymore.
 
