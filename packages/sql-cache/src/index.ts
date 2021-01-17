@@ -86,7 +86,10 @@ export class SqlCache extends BasicCache {
       .insert()
       .into(CacheItem)
       .values(item)
-      .onConflict(`("${primaryKey}") DO UPDATE SET ${updateStr}`);
+      .orUpdate({
+        columns: updateKeys,
+        conflict_target: [`"${primaryKey}"`],
+      });
 
     updateKeys.forEach((key) => {
       qb.setParameter(key, item[key]);
