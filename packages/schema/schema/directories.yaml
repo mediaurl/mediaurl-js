@@ -121,9 +121,7 @@ definitions:
           current position. On the first request this value is always `null`.
           If there are more items available for the current page, return the current
           cursor with the `nextCursor` property of `DirectoryResponse`.
-        anyOf:
-          - type: string
-          - type: number
+        type: ["null", string, number]
         nullable: true
         default: null
     default: {}
