@@ -7,6 +7,7 @@ import {
   SourceRequest,
   SubtitleRequest,
 } from "@mediaurl/schema";
+import semver from "semver";
 import { BasicAddonClass } from "./addons";
 import { ActionHandlerContext } from "./types";
 
@@ -29,8 +30,25 @@ export const migrations = {
       input: AddonRequest,
       output: AddonResponse
     ) {
+      if (output.requestArgs) {
+        throw new Error(
+          `DEPRECATION: The worker addon property "requestArgs" was renamed to "triggers"`
+        );
+      }
       output.sdkVersion = sdkVersion;
-      return ctx.validator.response(output);
+      output = ctx.validator.response(output);
+      if (
+        output.triggers &&
+        (!ctx.user?.app?.version ||
+          !ctx.user?.app?.name ||
+          (ctx.user.app.name === "watched" &&
+            semver.lt("1.1.3", ctx.user.app.version)) ||
+          (ctx.user.app.name === "rokkr" &&
+            semver.lt("1.1.3", ctx.user.app.version)))
+      ) {
+        output.requestArgs = output.triggers;
+      }
+      return output;
     },
   },
   directory: {

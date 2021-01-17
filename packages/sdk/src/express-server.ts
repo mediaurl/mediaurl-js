@@ -122,7 +122,7 @@ const createAddonRouter = (
 
   // Register addon routes
   // legacy: .watched extension
-  const legacyRegex = /^\/([^/]*?)(?:-(task))?(?:\.(?:watched|json))?$/;
+  const legacyRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/;
   router.get(legacyRegex, routeHandler);
   router.post(legacyRegex, routeHandler);
 
@@ -162,27 +162,20 @@ export const createMultiAddonRouter = (
     });
   });
 
-  // legacy: remove /addon.watched
   const serverHandler = engine.createServerHandler();
-  const server = (req, res) => {
+  const server: express.RequestHandler = (req, res) => {
     serverHandler({
       sendResponse: async (statusCode, data) => {
         res.status(statusCode).json(data);
       },
     });
   };
-  router.get(
-    ["/addon.watched", "/addon", "/mediaurl.json", "/mediaurl-addon.json"],
-    server
-  );
-  router.post(
-    ["/addon.watched", "/addon", "/mediaurl.json", "/mediaurl-addon.json"],
-    server
-  );
+  // legacy: remove /addon.watched
+  router.get(["/addon.watched", "/mediaurl.json", "/mediaurl.json"], server);
+  router.post(["/addon.watched", "/mediaurl.json", "/mediaurl.json"], server);
 
-  // legacy: remove selftest.watched
   const serverSelftestHandler = engine.createServerSelftestHandler();
-  const selftest = async (req, res) => {
+  const selftest: express.RequestHandler = async (req, res) => {
     await serverSelftestHandler({
       request: {
         ip: req.ip,
@@ -193,6 +186,7 @@ export const createMultiAddonRouter = (
       },
     });
   };
+  // legacy: remove selftest.watched
   router.get(["/selftest.watched", "/mediaurl-selftest.json"], selftest);
   router.post(["/selftest.watched", "/mediaurl-selftest.json"], selftest);
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+- Renamed worker addon property `requestArgs` to `triggers`
+
 ## v1.0.3
 
 - Added selftest handlers for multi addon servers

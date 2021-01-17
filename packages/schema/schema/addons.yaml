@@ -139,7 +139,7 @@ definitions:
             items:
               $ref: "items.yaml#/definitions/ItemTypes"
             default: []
-          requestArgs:
+          triggers:
             description: |
               Actions: `item`, `source`, `subtitle`
               See `ItemRequest` for a list of supported keys. All
@@ -155,7 +155,6 @@ definitions:
                   ["name", "releaseDate"], // Need item.name and item.releaseDate
                 ]
               By default an ID named after `Addon.id` will be matched as well.
-              type: array
             type: array
             items:
               oneOf:
