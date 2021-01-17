@@ -1,6 +1,5 @@
 import { Entity, Column, Index, PrimaryColumn } from "typeorm";
 
-@Index(["k"], { unique: true })
 @Entity({ name: "mediaurl_cache" })
 export class CacheItem {
   @PrimaryColumn()
@@ -10,5 +9,5 @@ export class CacheItem {
   v: string;
 
   @Column("bigint", { nullable: true })
-  d?: number;
+  d: number | null;
 }

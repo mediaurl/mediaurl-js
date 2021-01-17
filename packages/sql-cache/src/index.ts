@@ -23,6 +23,8 @@ const checkTtl = (cacheResult: CacheItem) => {
 
 const getKey = (key: string) => key.substring(1);
 
+const primaryKey = "k";
+
 export class SqlCache extends BasicCache {
   private connectionP: Promise<Connection>;
   private cleaner;
@@ -70,9 +72,28 @@ export class SqlCache extends BasicCache {
     const item = new CacheItem();
     item.k = getKey(key);
     item.v = value;
-    item.d = ttl === Infinity ? undefined : +new Date(Date.now() + ttl);
+    item.d = ttl === Infinity ? null : +new Date(Date.now() + ttl);
 
-    await c.getRepository(CacheItem).save(item);
+    // const result =await c.getRepository(CacheItem).save(item);
+
+    const updateKeys = Object.keys(item).filter((_) => _ !== primaryKey);
+    const updateStr = updateKeys.map((key) => {
+      return `"${key}" = :${key}`;
+    });
+
+    const qb = c
+      .createQueryBuilder()
+      .insert()
+      .into(CacheItem)
+      .values(item)
+      .onConflict(`("${primaryKey}") DO UPDATE SET ${updateStr}`);
+
+    updateKeys.forEach((key) => {
+      qb.setParameter(key, item[key]);
+    });
+
+    await qb.execute();
+
     return;
   }
 
