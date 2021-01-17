@@ -31,7 +31,7 @@ npm run develop
 
 ### `RedisCache`
 
-This cache engine is using the [redis](https://www.npmjs.com/package/redis) package. To activate it, set the environment variable `REDIS_CACHE` to a redis connection URL.
+This cache engine is using the [redis](https://www.npmjs.com/package/redis) package. To activate it, set the environment variable `REDIS_URL` to a redis connection URL.
 
 ```shell
 npm install @mediaurl/redis-cache
@@ -42,7 +42,7 @@ npm run develop
 
 ### `MongoCache`
 
-This cache engine is using [mongodb](https://www.mongodb.com/) as it's backend. To activate it, set the environment variable `MONGO_CACHE` to a mongodb connection URL.
+This cache engine is using [mongodb](https://www.mongodb.com/) as it's backend. To activate it, set the environment variable `MONGO_URL` to a mongodb connection URL.
 
 ```shell
 npm install @mediaurl/mongodb-cache
@@ -53,11 +53,11 @@ npm run develop
 
 ### `SqlCache`
 
-This cache engine is using PostgreSQL or MySQL as it's backend. To activate it, set the environment variable `PG_URL` or `MYSQL_URL` with connection string value.
+This cache engine is using PostgreSQL or MySQL as it's backend. To activate it, set the environment variable `SQL_CACHE_URL` with connection string value.
 
 ```shell
 npm install @mediaurl/sql-cache
 export LOAD_MEDIAURL_CACHE_MODULE="@mediaurl/sql-cache"
-export PG_URL=postgresql://dbuser:secretpassword@database.server.com:3211/mydb
+export SQL_CACHE_URL=postgresql://dbuser:secretpassword@database.server.com:3211/mydb
 npm run develop
 ```
