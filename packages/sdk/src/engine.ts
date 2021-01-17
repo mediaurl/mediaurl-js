@@ -156,7 +156,7 @@ const createAddonHandler = (
   }
 
   // Handle task responses
-  if (action === "task") {
+  if (input?.kind === "taskResponse" || action === "task") {
     await handleTask({
       cache: options.cache,
       addon,

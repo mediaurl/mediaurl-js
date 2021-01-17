@@ -122,7 +122,7 @@ const createAddonRouter = (
 
   // Register addon routes
   // legacy: .watched extension
-  const legacyRegex = /^\/([^/]*?)(?:-(task))?(?:\.watched)?$/;
+  const legacyRegex = /^\/([^/]*?)(?:-(task))?\.watched$/;
   router.get(legacyRegex, routeHandler);
   router.post(legacyRegex, routeHandler);
 
@@ -171,8 +171,8 @@ export const createMultiAddonRouter = (
     });
   };
   // legacy: remove /addon.watched
-  router.get(["/addon.watched", "/mediaurl.json", "/mediaurl.json"], server);
-  router.post(["/addon.watched", "/mediaurl.json", "/mediaurl.json"], server);
+  router.get(["/addon.watched", "/mediaurl.json"], server);
+  router.post(["/addon.watched", "/mediaurl.json"], server);
 
   const serverSelftestHandler = engine.createServerSelftestHandler();
   const selftest: express.RequestHandler = async (req, res) => {

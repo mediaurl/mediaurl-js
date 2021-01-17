@@ -39,9 +39,9 @@ definitions:
               oneOf:
                 - $ref: "general.yaml#/definitions/TranslatedText"
             options:
-              $ref: "#/definitions/DirectoryOptions"
+              $ref: "directories.yaml#/definitions/DirectoryOptions"
             features:
-              $ref: "#/definitions/DirectoryFeatures"
+              $ref: "directories.yaml#/definitions/DirectoryFeatures"
             addonId:
               description: |
                 Optional addon ID if this directory should be loaded via another
@@ -53,14 +53,14 @@ definitions:
                 - $ref: "general.yaml#/definitions/GenericId"
               default: ""
             args:
-              $ref: "#/definitions/DirectoryArguments"
+              $ref: "directories.yaml#/definitions/DirectoryArguments"
             items:
               description: |
                 Optionally define a list of items. No `directory` request will be
                 made if this property is set.
               type: array
               items:
-                $ref: "general.yaml#/definitions/MainItem"
+                $ref: "#/definitions/MainItem"
           required: [name]
   ItemImages:
     description: Item images.

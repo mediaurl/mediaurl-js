@@ -28,6 +28,19 @@ definitions:
   AddonResponse:
     oneOf:
       - $ref: "addons.yaml#/definitions/Addon"
+      - type: object
+        description: |
+          This is the response of an addon server which hosts more than one addon
+          at once. The property `addons` returns the available addon ID's.
+        properties:
+          type:
+            type: string
+            enum: [server]
+          addons:
+            type: array
+            items:
+              type: string
+        required: [type, addons]
   RepositoryRequest:
     description: Get list of addons in this repository.
     oneOf:
@@ -77,7 +90,10 @@ definitions:
               current position. On the first request this value is always `null`.
               If there are more items available for the current page, return the current
               cursor with the `nextCursor` property of `DirectoryResponse`.
-            type: ["null", string, number]
+            anyOf:
+              - type: string
+              - type: number
+            nullable: true
             default: null
         required: [id, adult, search, sort, filter, cursor]
   DirectoryResponse:
@@ -105,7 +121,10 @@ definitions:
           Used for pagination. This describes the position of the current directory.
           This value will be used on the next request on `DirectoryRequest.cursor`.
           If the end of the directory is reached, set this to `null`.
-        type: ["null", string, number]
+        anyOf:
+          - type: string
+          - type: number
+        nullable: true
     required: [items, nextCursor]
   ItemRequest:
     description: Request parameters for a item request.
