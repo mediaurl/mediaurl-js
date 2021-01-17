@@ -2,7 +2,10 @@
 
 ## v1.1.0
 
+- Updated OpenAPI schema
 - Renamed worker addon property `requestArgs` to `triggers`
+- Task responses can now use the normal action endpoints
+- Added @mediaurl/sql-cache module to add support for postgres and mysql backends
 
 ## v1.0.3
 
