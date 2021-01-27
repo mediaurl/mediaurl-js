@@ -32,7 +32,6 @@ export class SqlCache extends BasicCache {
   private cleaner;
 
   constructor(opts: CreateOptions) {
-    console.log("creating");
     super();
     this.connectionP = retryPromise((retry) => {
       return createConnection({
