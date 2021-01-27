@@ -9,7 +9,17 @@ import retryPromise from "promise-retry";
 
 import { CacheItem } from "./CacheItem";
 
-type CreateOptions = Partial<ConnectionOptions & { cleanupInterval: number }>;
+type CreateOptions = Partial<
+  ConnectionOptions & {
+    /**
+     * By default, the intervall will be a random number in between
+     * 1 and 2 hours. This is to prevent simultan cleanups when
+     * multiple processes are started.
+     * To disable cleanup, set this to `null`.
+     */
+    cleanupInterval?: number | null;
+  }
+>;
 
 const checkTtl = (cacheResult: CacheItem) => {
   if (!cacheResult) {
@@ -48,10 +58,12 @@ export class SqlCache extends BasicCache {
       }
     );
 
-    this.cleaner = setInterval(
-      () => this.cleanup(),
-      opts.cleanupInterval || 1000 * 60 * 60
-    );
+    if (opts.cleanupInterval !== null) {
+      this.cleaner = setInterval(
+        () => this.cleanup(),
+        opts.cleanupInterval || 1000 * 60 * 60 * (1 + Math.random())
+      );
+    }
   }
 
   async exists(key: string) {
