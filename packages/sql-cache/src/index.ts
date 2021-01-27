@@ -5,6 +5,8 @@ import {
   createConnection,
   LessThan,
 } from "typeorm";
+import retryPromise from "promise-retry";
+
 import { CacheItem } from "./CacheItem";
 
 type CreateOptions = Partial<ConnectionOptions & { cleanupInterval: number }>;
@@ -30,13 +32,16 @@ export class SqlCache extends BasicCache {
   private cleaner;
 
   constructor(opts: CreateOptions) {
+    console.log("creating");
     super();
-    this.connectionP = createConnection({
-      name: `sql-cache-${opts.type}`,
-      ...opts,
-      synchronize: true,
-      entities: [CacheItem],
-    } as ConnectionOptions);
+    this.connectionP = retryPromise((retry) => {
+      return createConnection({
+        name: `sql-cache-${opts.type}`,
+        ...opts,
+        synchronize: true,
+        entities: [CacheItem],
+      } as ConnectionOptions).catch(retry);
+    });
 
     this.cleaner = setInterval(
       () => this.cleanup(),
