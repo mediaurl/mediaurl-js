@@ -33,14 +33,20 @@ export class SqlCache extends BasicCache {
 
   constructor(opts: CreateOptions) {
     super();
-    this.connectionP = retryPromise((retry) => {
-      return createConnection({
-        name: `sql-cache-${opts.type}`,
-        ...opts,
-        synchronize: true,
-        entities: [CacheItem],
-      } as ConnectionOptions).catch(retry);
-    });
+    this.connectionP = retryPromise(
+      (retry) => {
+        return createConnection({
+          name: `sql-cache-${opts.type}`,
+          ...opts,
+          synchronize: true,
+          entities: [CacheItem],
+        } as ConnectionOptions).catch(retry);
+      },
+      {
+        minTimeout: 100,
+        randomize: true,
+      }
+    );
 
     this.cleaner = setInterval(
       () => this.cleanup(),
