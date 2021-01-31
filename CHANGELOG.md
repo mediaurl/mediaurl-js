@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0
+
+- Updated dependencies
+- Switched to exact dependency versions
+- Added `cleanup-cache` command line function to run garbage collections
+- Removed the the automatic garbage collection of `sql-cache` package
+
 ## v1.1.2
 
 - Fixed sql-cache duplicate primary key race conditions
