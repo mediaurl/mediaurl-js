@@ -37,4 +37,13 @@ export class MemoryCache extends BasicCache {
   public async deleteAll() {
     this.data = {};
   }
+
+  public async cleanup() {
+    for (const key of Object.keys(this.data)) {
+      const d = this.data[key];
+      if (d && d[0] !== Infinity && d[0] < Date.now()) {
+        delete this.data[key];
+      }
+    }
+  }
 }

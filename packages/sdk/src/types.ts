@@ -34,6 +34,7 @@ export type Engine = {
   createServerHandler: () => ServerHandlerFn;
   createServerSelftestHandler: () => ServerSelftestHandlerFn;
   createAddonHandler: (addon: BasicAddonClass) => AddonHandlerFn;
+  getCacheHandler: () => CacheHandler;
 };
 
 /**

@@ -100,6 +100,7 @@ export const createEngine = (
       if (!frozen) initialize();
       return createAddonHandler(addon, opts, requestRecorder);
     },
+    getCacheHandler: () => opts.cache,
   };
 };
 

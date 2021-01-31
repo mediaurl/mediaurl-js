@@ -79,4 +79,8 @@ export class DiskCache extends BasicCache {
     if (typeof key === "string" && key.indexOf(":") === 0) return key;
     return super.createKey(prefix, key).replace(/\//g, "_");
   }
+
+  public async cleanup() {
+    // TODO
+  }
 }

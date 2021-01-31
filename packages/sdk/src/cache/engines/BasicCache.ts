@@ -35,4 +35,9 @@ export class BasicCache {
     hash.update(str);
     return ":" + prefix + hash.digest().toString("base64");
   }
+
+  /**
+   * Garbage collector, this function deleted outdated cache entries.
+   */
+  public async cleanup() {}
 }

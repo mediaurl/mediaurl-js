@@ -409,5 +409,32 @@ export const testCache = (
 
       done();
     });
+
+    test("cleanup and delete all", async (done) => {
+      await expect(cache.set("key1", 1)).resolves.toBeUndefined();
+      await expect(cache.set("key2", 2, "1m")).resolves.toBeUndefined();
+      await expect(cache.set("key3", 3, Infinity)).resolves.toBeUndefined();
+
+      await expect(cache.engine.cleanup()).resolves.toBeUndefined();
+
+      await expect(cache.get("key1")).resolves.toBe(1);
+      await expect(cache.get("key2")).resolves.toBe(2);
+      await expect(cache.get("key3")).resolves.toBe(3);
+
+      await sleep(options.ttl * 1.2);
+      await expect(cache.engine.cleanup()).resolves.toBeUndefined();
+
+      await expect(cache.get("key1")).resolves.toBeUndefined();
+      await expect(cache.get("key2")).resolves.toBe(2);
+      await expect(cache.get("key3")).resolves.toBe(3);
+
+      await expect(cache.engine.deleteAll()).resolves.toBeUndefined();
+
+      await expect(cache.get("key1")).resolves.toBeUndefined();
+      await expect(cache.get("key2")).resolves.toBeUndefined();
+      await expect(cache.get("key3")).resolves.toBeUndefined();
+
+      done();
+    });
   });
 };

@@ -18,9 +18,7 @@ export const runCli = (
     .command("start", { isDefault: true })
     .description("Start the MediaURL SDK express server (default)")
     .option("-r, --record <record-file>", "Record all requests and responses")
-    .option("--prod", "LEGACY! Has no effect anymore")
-    .option("--single", "LEGACY! Start server in single mode")
-    .action((args: any) => {
+    .action((args: Record<string, any>) => {
       if (args.record) {
         myEngine.updateOptions({ requestRecorderPath: args.record });
       }
@@ -39,7 +37,7 @@ export const runCli = (
       "Choose which ID's to replay (komma separated list)"
     )
     .option("-s, --silent", "Be less verbose")
-    .action(async (file: string, args: any) => {
+    .action(async (file: string, args: Record<string, any>) => {
       try {
         await replayRecordFile(
           myEngine,
@@ -54,6 +52,14 @@ export const runCli = (
         console.log("Replay finished with errors");
         process.exit(1);
       }
+    });
+
+  program
+    .command("cleanup-cache")
+    .description("Run the garbage collector of the caching engine")
+    .action(() => {
+      const cache = myEngine.getCacheHandler();
+      cache.engine.cleanup();
     });
 
   program.on("command:*", function () {

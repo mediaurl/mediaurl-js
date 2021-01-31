@@ -1,25 +1,14 @@
 import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
+import retryPromise from "promise-retry";
 import {
   Connection,
   ConnectionOptions,
   createConnection,
   LessThan,
 } from "typeorm";
-import retryPromise from "promise-retry";
-
 import { CacheItem } from "./CacheItem";
 
-type CreateOptions = Partial<
-  ConnectionOptions & {
-    /**
-     * By default, the intervall will be a random number in between
-     * 1 and 2 hours. This is to prevent simultan cleanups when
-     * multiple processes are started.
-     * To disable cleanup, set this to `null`.
-     */
-    cleanupInterval?: number | null;
-  }
->;
+type CreateOptions = Partial<ConnectionOptions>;
 
 const checkTtl = (cacheResult: CacheItem) => {
   if (!cacheResult) {
@@ -39,7 +28,6 @@ const primaryKey = "k";
 
 export class SqlCache extends BasicCache {
   private connectionP: Promise<Connection>;
-  private cleaner;
 
   constructor(opts: CreateOptions) {
     super();
@@ -57,13 +45,6 @@ export class SqlCache extends BasicCache {
         randomize: true,
       }
     );
-
-    if (opts.cleanupInterval !== null) {
-      this.cleaner = setInterval(
-        () => this.cleanup(),
-        opts.cleanupInterval || 1000 * 60 * 60 * (1 + Math.random())
-      );
-    }
   }
 
   async exists(key: string) {
@@ -134,7 +115,7 @@ export class SqlCache extends BasicCache {
     await c.getRepository(CacheItem).delete({});
   }
 
-  private async cleanup() {
+  public async cleanup() {
     const c = await this.connectionP;
     await c.getRepository(CacheItem).delete({
       d: LessThan(+new Date()),
