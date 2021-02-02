@@ -8,6 +8,7 @@ export class CacheItem {
   @Column("simple-json")
   v: string;
 
+  @Index()
   @Column("bigint", { nullable: true })
   d: number | null;
 }
