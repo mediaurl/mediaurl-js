@@ -2,7 +2,6 @@ openapi: 3.0.0
 info:
   title: MediaURL Addon API
   version: 1.0.0
-headers:
 paths:
   /mediaurl.json:
     get:
@@ -14,6 +13,7 @@ paths:
         - Bundle Addon
       responses:
         200:
+          description: Successful call of action `addon`.
           content:
             application/json:
               schema:
@@ -35,15 +35,14 @@ paths:
             schema:
               oneOf:
                 - $ref: "api.yaml#/definitions/AddonRequest"
-                - $ref: "api.yaml#/definitions/IptvRequest"
       responses:
         200:
+          description: Successful call of action `addon`.
           content:
             application/json:
               schema:
                 oneOf:
                   - $ref: "api.yaml#/definitions/AddonResponse"
-                  - $ref: "api.yaml#/definitions/IptvResponse"
         default:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-repository.json:
@@ -53,6 +52,7 @@ paths:
         - Repository Addon
       responses:
         200:
+          description: Successful call of action `repository`.
           content:
             application/json:
               schema:
@@ -71,15 +71,14 @@ paths:
             schema:
               oneOf:
                 - $ref: "api.yaml#/definitions/RepositoryRequest"
-                - $ref: "api.yaml#/definitions/IptvRequest"
       responses:
         200:
+          description: Successful call of action `repository`.
           content:
             application/json:
               schema:
                 oneOf:
                   - $ref: "api.yaml#/definitions/RepositoryResponse"
-                  - $ref: "api.yaml#/definitions/IptvResponse"
         default:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-iptv.json:
@@ -98,6 +97,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `iptv`.
           content:
             application/json:
               schema:
@@ -122,6 +122,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `directory`.
           content:
             application/json:
               schema:
@@ -146,6 +147,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `item`.
           content:
             application/json:
               schema:
@@ -170,6 +172,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `source`.
           content:
             application/json:
               schema:
@@ -194,6 +197,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `subtitle`.
           content:
             application/json:
               schema:
@@ -218,6 +222,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `resolve`.
           content:
             application/json:
               schema:
@@ -242,6 +247,7 @@ paths:
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
+          description: Successful call of action `captcha`.
           content:
             application/json:
               schema:
@@ -318,6 +324,7 @@ components:
         type: string
   responses:
     DefaultError:
+      description: Error response
       content:
         application/json:
           schema:
