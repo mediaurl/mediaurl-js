@@ -174,18 +174,27 @@ const createAddonHandler = (
   const testMode = options.testMode || action === "selftest";
 
   // Validate the signature
-  let user: ActionHandlerContext["user"];
+  let user: ActionHandlerContext["user"] = null;
   try {
-    user =
+    user = validateSignature(sig);
+  } catch (error) {
+    const allowInvalidSignature =
       testMode ||
       process.env.SKIP_AUTH === "1" ||
+      process.env.NODE_ENV !== "production" ||
       action === "addon" ||
-      (addon.getType() === "repository" && action === "repository")
-        ? null
-        : validateSignature(sig);
-  } catch (error) {
-    sendResponse(403, { error: error.message || error });
-    return;
+      (addon.getType() === "repository" && action === "repository");
+    if (
+      !allowInvalidSignature &&
+      [
+        "Missing MediaURL signature",
+        "Invalid MediaURL signature",
+        "MediaURL signature timed out",
+      ].includes(error.message)
+    ) {
+      sendResponse(403, { error: error.message || error });
+      return;
+    }
   }
 
   // Migration and input validation
