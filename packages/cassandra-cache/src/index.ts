@@ -42,7 +42,9 @@ export class CassandraCache extends BasicCache {
     const value = await this.client
       .execute(`SELECT value from mediaurl.cache WHERE key = ?`, [key])
       .then((result) =>
-        result.rowLength > 0 ? JSON.parse(result.rows[0].get("value")) : null
+        result.rowLength > 0
+          ? JSON.parse(result.rows[0].get("value"))
+          : undefined
       );
 
     return value;
