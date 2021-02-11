@@ -31,6 +31,12 @@ export class CassandraCache extends BasicCache {
     this.tableName = this.clientOpts.tableName || "mediaurl_cache";
     this.keyspace = this.clientOpts.keyspace || "mediaurl";
 
+    /**
+     * Cassandra driver will throw connection error if keyspace doesn't exist.
+     * We might want to syncronize it, so deleting from opts
+     */
+    delete this.clientOpts.keyspace;
+
     this.client = new cassandra.Client(this.clientOpts);
 
     this.initPromise = this.client.connect().then(async () => {
