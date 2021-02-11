@@ -1,28 +1,42 @@
 import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
-import cassandra from "cassandra-driver";
+import cassandra, { DseClientOptions } from "cassandra-driver";
+
+export interface CassandraCacheOpts extends DseClientOptions {
+  /** default: false */
+  synchronize?: boolean;
+
+  /** default: "mediaurl_cache" */
+  tableName?: string;
+}
 
 export class CassandraCache extends BasicCache {
   private initPromise: Promise<void>;
   private client: cassandra.Client;
+  private clientOpts: CassandraCacheOpts;
+  private tableName: string;
+  private keyspace: string;
 
-  constructor(url: string) {
+  constructor(_opts: string | CassandraCacheOpts) {
     super();
 
-    this.client = new cassandra.Client({
-      contactPoints: url.split(","),
-      localDataCenter: "datacenter1",
-    });
+    this.clientOpts =
+      typeof _opts === "string"
+        ? {
+            contactPoints: _opts.split(","),
+            localDataCenter: "datacenter1",
+            synchronize: true,
+          }
+        : _opts;
+
+    this.tableName = this.clientOpts.tableName || "mediaurl_cache";
+    this.keyspace = this.clientOpts.keyspace || "mediaurl";
+
+    this.client = new cassandra.Client(this.clientOpts);
 
     this.initPromise = this.client.connect().then(async () => {
-      await this.client.execute(
-        `CREATE KEYSPACE IF NOT EXISTS mediaurl WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};`
-      );
-      await this.client.execute(
-        `
-          CREATE TABLE IF NOT EXISTS mediaurl.cache
-          (key TEXT PRIMARY KEY, value TEXT)
-          `
-      );
+      if (this.clientOpts.synchronize) {
+        await this.synchronizeSchema();
+      }
     });
   }
 
@@ -30,7 +44,10 @@ export class CassandraCache extends BasicCache {
     await this.initPromise;
 
     const result = await this.client
-      .execute(`SELECT key FROM mediaurl.cache WHERE key = ? LIMIT 1`, [key])
+      .execute(
+        `SELECT key FROM ${this.keyspace}.${this.tableName} WHERE key = ? LIMIT 1`,
+        [key]
+      )
       .then((d) => d.rows.length > 0);
 
     return result;
@@ -40,7 +57,10 @@ export class CassandraCache extends BasicCache {
     await this.initPromise;
 
     const value = await this.client
-      .execute(`SELECT value from mediaurl.cache WHERE key = ?`, [key])
+      .execute(
+        `SELECT value from ${this.keyspace}.${this.tableName} WHERE key = ?`,
+        [key]
+      )
       .then((result) =>
         result.rowLength > 0
           ? JSON.parse(result.rows[0].get("value"))
@@ -55,7 +75,7 @@ export class CassandraCache extends BasicCache {
 
     await this.client.execute(
       `
-      INSERT INTO mediaurl.cache (key, value) VALUES (?, ?)
+      INSERT INTO ${this.keyspace}.${this.tableName} (key, value) VALUES (?, ?)
       ${ttl === Infinity ? "" : `USING TTL ${Math.ceil(ttl / 1000)}`}
       `,
       [key, JSON.stringify(value)]
@@ -65,20 +85,44 @@ export class CassandraCache extends BasicCache {
   public async delete(key: string) {
     await this.initPromise;
 
-    await this.client.execute(`DELETE FROM mediaurl.cache WHERE key = ?`, [
-      key,
-    ]);
+    await this.client.execute(
+      `DELETE FROM ${this.keyspace}.${this.tableName} WHERE key = ?`,
+      [key]
+    );
   }
 
   public async deleteAll() {
     await this.initPromise;
 
-    await this.client.execute(`DELETE FROM mediaurl.cache`);
+    await this.client.execute(`DELETE FROM ${this.keyspace}.${this.tableName}`);
+  }
+
+  private async synchronizeSchema() {
+    await this.client.execute(
+      `CREATE KEYSPACE IF NOT EXISTS ${this.keyspace} WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};`
+    );
+    await this.client.execute(
+      `
+        CREATE TABLE IF NOT EXISTS ${this.keyspace}.${this.tableName}
+        (key TEXT PRIMARY KEY, value TEXT)
+        `
+    );
   }
 }
 
-registerCacheEngineCreator(() =>
-  process.env.CASSANDRA_URL
-    ? new CassandraCache(process.env.CASSANDRA_URL)
-    : null
-);
+registerCacheEngineCreator(() => {
+  const configPayload = process.env.CASSANDRA_CONFIG;
+
+  if (!configPayload) return null;
+
+  /** Assuming it's plain connection url */
+  let config = configPayload;
+
+  try {
+    config = JSON.parse(configPayload);
+  } catch {
+    /** do nothing */
+  }
+
+  return new CassandraCache(config);
+});
