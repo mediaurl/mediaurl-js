@@ -1,13 +1,13 @@
 import program from "commander";
 import "dotenv/config";
-import { BasicAddonClass } from "./addons";
+import { AddonClass } from "./addon";
 import { createEngine } from "./engine";
 import { IExpressServerOptions, serveAddons } from "./express-server";
 import { Engine } from "./types";
 import { replayRecordFile } from "./utils/request-recorder";
 
 export const runCli = (
-  engine: Engine | BasicAddonClass[],
+  engine: Engine | AddonClass[],
   expressOptions?: Partial<IExpressServerOptions>
 ) => {
   const myEngine = Array.isArray(engine) ? createEngine(engine) : engine;

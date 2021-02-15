@@ -7,8 +7,6 @@ definitions:
       kind:
         type: string
         enum: [addon]
-      type:
-        $ref: "addons.yaml#/definitions/AddonTypes"
       name:
         type: string
       key:

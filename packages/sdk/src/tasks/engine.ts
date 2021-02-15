@@ -1,7 +1,7 @@
 import { TaskRequest, TaskResponse } from "@mediaurl/schema";
 import { EventEmitter } from "events";
 import { v4 as uuid4 } from "uuid";
-import { BasicAddonClass } from "../addons";
+import { AddonClass } from "../addon";
 import { CacheHandler, IgnoreCacheError } from "../cache";
 import { SilentError } from "../errors";
 import { SendResponseFn } from "../types";
@@ -125,7 +125,7 @@ export const sendTask = async (
 
 type HandleTaskProps = {
   cache: CacheHandler;
-  addon: BasicAddonClass;
+  addon: AddonClass;
   timeout?: number;
   input: any;
   sendResponse: SendResponseFn;

@@ -1,15 +1,16 @@
+import { AddonActions } from "@mediaurl/schema";
 import { createWriteStream, WriteStream } from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 import * as util from "util";
-import { BasicAddonClass } from "../addons";
+import { AddonClass } from "../addon";
 import { createEngine } from "../engine";
 import { Engine } from "../types";
 
 export type RecordData = {
   id: number | string;
   addon: string;
-  action: string;
+  action: AddonActions;
   input: any;
   statusCode: number;
   output: any;
@@ -143,7 +144,7 @@ export const replayRecordData = async (
 };
 
 export const replayRecordFile = async (
-  engine: Engine | BasicAddonClass[],
+  engine: Engine | AddonClass[],
   recordPath: string,
   ids: null | RecordData["id"][] = null,
   silent = false

@@ -1,5 +1,5 @@
 export * from "@mediaurl/schema";
-export * from "./addons";
+export * from "./addon";
 export * from "./cache";
 export * from "./cli";
 export * from "./engine";

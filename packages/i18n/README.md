@@ -41,7 +41,7 @@ Mainly translations are needed for the addon metadata defined at the createAddon
 ### 1. With the `addon` action handler
 
 ```javascript
-import { createWorkerAddon, translateDeep } from "@mediaurl/sdk";
+import { createAddon, translateDeep } from "@mediaurl/sdk";
 import * as i18n from "@mediaurl/i18n";
 
 i18n.init({
@@ -49,7 +49,7 @@ i18n.init({
   { debug: true }
 });
 
-export const myAddon = createWorkerAddon({
+export const myAddon = createAddon({
   id: "i18n-example",
   name: "i18n:Name of this addon"
 });
@@ -67,7 +67,7 @@ The addon server supports resolving exported promises. This promises can return 
 Also we can benefit from the `TranslatedText` system. The `tAll` function will get all available translations for a key.
 
 ```javascript
-import { createWorkerAddon, translateDeep } from "@mediaurl/sdk";
+import { createAddon, translateDeep } from "@mediaurl/sdk";
 import { tAll } from "@mediaurl/i18n";
 
 export default (async () => {
@@ -76,7 +76,7 @@ export default (async () => {
     { debug: true }
   });
 
-  const myAddon = createWorkerAddon(translateDeep(
+  const myAddon = createAddon(translateDeep(
     {
       id: "i18n-example",
       name: "i18n:Name of this addon"

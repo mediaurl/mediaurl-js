@@ -8,13 +8,13 @@ import {
   SubtitleRequest,
 } from "@mediaurl/schema";
 import semver from "semver";
-import { BasicAddonClass } from "./addons";
+import { AddonClass } from "./addon";
 import { ActionHandlerContext } from "./types";
 
 const sdkVersion: string = require("../package.json").version;
 
 export type MigrationContext = {
-  addon: BasicAddonClass;
+  addon: AddonClass;
   data: any;
   user: ActionHandlerContext["user"];
   validator: {
@@ -32,7 +32,7 @@ export const migrations = {
     ) {
       if (output.requestArgs) {
         throw new Error(
-          `DEPRECATION: The worker addon property "requestArgs" was renamed to "triggers"`
+          `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
         );
       }
       output.sdkVersion = sdkVersion;
