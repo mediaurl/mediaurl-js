@@ -1,10 +1,6 @@
-export { iptvAddon } from "./iptvAddon";
-export { repoAddon } from "./repoAddon";
-export { workerAddon } from "./workerAddon";
+export { dummyAddon } from "./dummyAddon";
 
 import { runCli } from "@mediaurl/sdk";
-import { iptvAddon } from "./iptvAddon";
-import { repoAddon } from "./repoAddon";
-import { workerAddon } from "./workerAddon";
+import { dummyAddon } from "./dummyAddon";
 
-runCli([workerAddon, iptvAddon, repoAddon]);
+runCli([dummyAddon]);

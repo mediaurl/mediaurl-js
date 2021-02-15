@@ -1,4 +1,4 @@
-import { Addon, getServerValidators } from "@mediaurl/schema";
+import { Addon, AddonActions, getServerValidators } from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -11,30 +11,16 @@ const handleError = (kind: string, error: Error) => {
 
 export const validateAddonProps = <T extends Addon>(input: any): T => {
   try {
-    const validator = getServerValidators().models.addon[input.type];
-    if (!validator) {
-      throw new Error(`No validator for addon type "${input.type}" found`);
-    }
-    return validator(input);
+    return getServerValidators().models.addon(input);
   } catch (error) {
     throw handleError("addon", error);
   }
 };
 
-export const getActionValidator = (addonType: string, action: string) => {
-  const validators = getServerValidators();
-  const validator =
-    validators.actions[addonType]?.[action] ?? validators.actions.basic[action];
+export const getActionValidator = (action: AddonActions) => {
+  const validator = getServerValidators().actions[action];
   if (!validator) {
     throw new Error(`No validator for action "${action}" found`);
-  }
-  if (
-    validator.addonTypes !== undefined &&
-    !validator.addonTypes.includes(addonType)
-  ) {
-    throw new Error(
-      `No validator for action "${action}" and addon type "${addonType}" found`
-    );
   }
   return {
     request: (data: any) => {

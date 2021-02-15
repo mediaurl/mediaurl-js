@@ -1,36 +1,16 @@
 $schema: "http://json-schema.org/draft-07/schema#"
 definitions:
-  AddonTypes:
-    description: Valid addon types.
+  AddonResourceActions:
     type: string
-    enum: [repository, worker, iptv, bundle]
-  BasicAddonActions:
-    type: string
-    enum: [selftest, addon]
-  RepositoryAddonActions:
+    enum: [directory, item, source, subtitle, resolve, captcha, iptv]
+  AddonActions:
     oneOf:
-      - $ref: "#/definitions/BasicAddonActions"
       - type: string
-        enum: [repository]
-  WorkerAddonResourceActions:
-    type: string
-    enum: [directory, item, source, subtitle, resolve, captcha]
-  WorkerAddonActions:
-    oneOf:
-      - $ref: "#/definitions/BasicAddonActions"
-      - $ref: "#/definitions/WorkerAddonResourceActions"
-  IptvAddonResourceActions:
-    type: string
-    enum: [iptv]
-  IptvAddonActions:
-    oneOf:
-      - $ref: "#/definitions/BasicAddonActions"
-      - $ref: "#/definitions/IptvAddonResourceActions"
-  BundleAddonActions:
-    oneOf:
-      - $ref: "#/definitions/BasicAddonActions"
-  VirtualAddon:
+        enum: [selftest, addon]
+      - $ref: "#/definitions/AddonResourceActions"
+  Addon:
     type: object
+    required: [id, name, version]
     properties:
       id:
         description: ID of this addon.
@@ -103,176 +83,121 @@ definitions:
         items:
           type: string
         default: []
-    required: [id, name, version]
-  RepositoryAddon:
-    allOf:
-      - $ref: "#/definitions/VirtualAddon"
-      - type: object
-        properties:
-          type:
-            type: string
-            enum: [repository]
-        required: [type]
-  WorkerAddon:
-    allOf:
-      - $ref: "#/definitions/VirtualAddon"
-      - type: object
-        properties:
-          type:
-            type: string
-            enum: [worker]
-          actions:
-            description: |
-              Worker addon actions.
-              If the action `directory` is set, but no `dashboards`
-              are defined, the app will create a default dashboard.
-            type: array
-            items:
-              $ref: "#/definitions/WorkerAddonResourceActions"
-          itemTypes:
-            description: |
-              Actions: `directory`, `item`, `source`, `subtitle`
-              Item types this addon provised.
-              This is needed for the actions `directory`, `item`,
-              `source` and `subtitle`.
-            type: array
-            items:
-              $ref: "items.yaml#/definitions/ItemTypes"
-            default: []
-          triggers:
-            description: |
-              Actions: `item`, `source`, `subtitle`
-              See `ItemRequest` for a list of supported keys. All
-              keys except `name`, `year`, `releaseDate`, `season`
-              and `episode` are treated as an ID. Use an array to
-              require a combination of keys.
-              Example:
-                [
-                  "id/tmdb", // Need item.ids.tmdb
-                  "id/imdb_id", // Need item.ids.tmdb
-                  "otherid", // Need item.ids.otherid
-                  ["name", "year"], // Need item.name and item.year
-                  ["name", "releaseDate"], // Need item.name and item.releaseDate
-                ]
-              By default an ID named after `Addon.id` will be matched as well.
-            type: array
-            items:
-              oneOf:
-                - type: array
-                  items:
-                    type: string
-                - type: string
-            default: []
-          urlPatterns:
-            description: |
-              Actions: `resolve`
-              URL patterns which match against `Source.url` URL's.
-              If a pattern matches, the addon's `resolve` action is called.
-              By default all URL's matching the pattern `{addonId}://` will
-              call your addon.
-            type: array
-            items:
-              type: string
-            default: []
-          captchaTypes:
-            description: |
-              Actions: `captcha`
-              Captcha types this addon can handle.
-            type: array
-            items:
-              $ref: "tasks.yaml#/definitions/CaptchaTypes"
-            default: []
-          defaultDirectoryOptions:
-            $ref: "directories.yaml#/definitions/DirectoryOptions"
-          defaultDirectoryFeatures:
-            $ref: "directories.yaml#/definitions/DirectoryFeatures"
-          rootDirectories:
-            description: |
-              Predefined root directories. Here you also can define features.
-              `DashboardItem` objects can reference to this objects by it's `id` field.
-              Directories which have the `search` feature enabled will be displayed
-              on the search screen of the client app.
-            type: array
-            items:
-              $ref: "directories.yaml#/definitions/RootDirectoryItem"
-            default: []
-          dashboards:
-            description: |
-              Predefined dashboards. This dashboards get updated when the addon is
-              updated. The dashboard configuration is preserved.
-            type: array
-            items:
-              $ref: "directories.yaml#/definitions/DashboardItem"
-            default: []
-        required: [type, actions]
-  IptvAddon:
-    description: |
-      Model for the IPTV engine. This is internally converted
-      to a worker addon.
-    allOf:
-      - $ref: "#/definitions/VirtualAddon"
-      - type: object
-        properties:
-          type:
-            type: string
-            enum: [iptv]
-          playlistUrl:
-            description: |
-              URL to the playlist. If set, this playlist will be loaded by the app
-              If not set, the `playlist` action handler will be called.
-            oneOf:
-              - $ref: "general.yaml#/definitions/Url"
-          refreshInterval:
-            description: Playlist refresh interval in hours.
-            type: number
-            minimum: 1
-            maximum: 1000
-            default: 12
-        required: [type]
-  BundleAddon:
-    allOf:
-      - $ref: "#/definitions/VirtualAddon"
-      - type: object
-        properties:
-          type:
-            type: string
-            enum: [bundle]
-          requirements:
-            description: |
-              List of required addons.
-              The values can be a URL to an addon, an addon ID
-              or an addon ID with engine definition.
-              Eg:
-              - `https://example.com/mediaurl/v1/some.addon.id`
-              - `https://example.com/mediaurl/v1/another.addon.id`
-              - `./relative-url-to-addon` (have to start with `./` or `../`)
-              - `addon-id-that-exists-in-an-avaliable-repository`
-              - `mediaurl/other-addon-id-with-mediaurl-engine`
-              - `{ "engine": "mediaurl", "id": "mediaurl.addon.id" }`
-              - `{ "id": "another.mediaurl.addon.id" }`
-            type: array
-            items:
-              oneOf:
-                - type: string
-                - type: object
-                  properties:
-                    id:
-                      $ref: "general.yaml#/definitions/GenericId"
-                    url:
-                      $ref: "general.yaml#/definitions/Url"
-          dashboards:
-            description: |
-              Predefined dashboards. This dashboards get's applied only
-              once during bundle installation.
-            type: array
-            items:
-              $ref: "directories.yaml#/definitions/DashboardItem"
-            default: []
-        required: [type, requirements]
-  Addon:
-    description: Automatically selects the fitting addon model.
-    anyOf:
-      - $ref: "#/definitions/RepositoryAddon"
-      - $ref: "#/definitions/WorkerAddon"
-      - $ref: "#/definitions/IptvAddon"
-      - $ref: "#/definitions/BundleAddon"
+      actions:
+        description: |
+          Addon actions.
+          If the action `directory` is set, but no `dashboards`
+          are defined, a default dashboard will be created.
+        type: array
+        items:
+          $ref: "#/definitions/AddonResourceActions"
+      itemTypes:
+        description: |
+          Actions: `directory`, `item`, `source`, `subtitle`
+          Item types this addon provised.
+          This is needed for the actions `directory`, `item`,
+          `source` and `subtitle`.
+        type: array
+        items:
+          $ref: "items.yaml#/definitions/ItemTypes"
+        default: []
+      triggers:
+        description: |
+          Actions: `item`, `source`, `subtitle`
+          See `ItemRequest` for a list of supported keys. All
+          keys except `name`, `year`, `releaseDate`, `season`
+          and `episode` are treated as an ID. Use an array to
+          require a combination of keys.
+          Example:
+            [
+              "id/tmdb", // Need item.ids.tmdb
+              "id/imdb_id", // Need item.ids.tmdb
+              "otherid", // Need item.ids.otherid
+              ["name", "year"], // Need item.name and item.year
+              ["name", "releaseDate"], // Need item.name and item.releaseDate
+            ]
+          By default an ID named after `Addon.id` will be matched as well.
+        type: array
+        items:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: string
+        default: []
+      urlPatterns:
+        description: |
+          Actions: `resolve`
+          URL patterns which match against `Source.url` URL's.
+          If a pattern matches, the addon's `resolve` action is called.
+          By default all URL's matching the pattern `{addonId}://` will
+          call your addon.
+        type: array
+        items:
+          type: string
+        default: []
+      captchaTypes:
+        description: |
+          Actions: `captcha`
+          Captcha types this addon can handle.
+        type: array
+        items:
+          $ref: "tasks.yaml#/definitions/CaptchaTypes"
+        default: []
+      defaultDirectoryOptions:
+        $ref: "directories.yaml#/definitions/DirectoryOptions"
+      defaultDirectoryFeatures:
+        $ref: "directories.yaml#/definitions/DirectoryFeatures"
+      rootDirectories:
+        description: |
+          Predefined root directories. Here you also can define features.
+          `DashboardItem` objects can reference to this objects by it's `id` field.
+          Directories which have the `search` feature enabled will be displayed
+          on the search screen of the client app.
+        type: array
+        items:
+          $ref: "directories.yaml#/definitions/RootDirectoryItem"
+        default: []
+      dashboards:
+        description: |
+          Predefined dashboards. This dashboards get updated when the addon is
+          updated. The dashboard configuration is preserved.
+        type: array
+        items:
+          $ref: "directories.yaml#/definitions/DashboardItem"
+        default: []
+      requirements:
+        description: |
+          List of required addons.
+          The values can be an URL to an addon, or also a
+          relative path to the current addon.
+          Eg:
+          - `https://example.com/mediaurl/v1/some.addon.id`
+          - `../relative/path-to/current/addon`
+        type: array
+        items:
+          $ref: "general.yaml#/definitions/Url"
+  # IptvAddon:
+  #   description: |
+  #     Model for the IPTV engine. This is internally converted
+  #     to a worker addon.
+  #   allOf:
+  #     - $ref: "#/definitions/VirtualAddon"
+  #     - type: object
+  #       properties:
+  #         type:
+  #           type: string
+  #           enum: [iptv]
+  #         playlistUrl:
+  #           description: |
+  #             URL to the playlist. If set, this playlist will be loaded by the app
+  #             If not set, the `playlist` action handler will be called.
+  #           oneOf:
+  #             - $ref: "general.yaml#/definitions/Url"
+  #         refreshInterval:
+  #           description: Playlist refresh interval in hours.
+  #           type: number
+  #           minimum: 1
+  #           maximum: 1000
+  #           default: 12
+  #       required: [type]

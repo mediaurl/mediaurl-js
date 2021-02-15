@@ -1,11 +1,11 @@
-import { TranslatedText } from "@mediaurl/schema";
+import { AddonActions, TranslatedText } from "@mediaurl/schema";
 import bodyParser from "body-parser";
 import express from "express";
 import "express-async-errors";
 import morgan from "morgan";
 import path from "path";
 import "pug";
-import { BasicAddonClass } from "./addons";
+import { AddonClass } from "./addon";
 import { errorHandler } from "./error-handler";
 import { Engine, RequestInfos } from "./types";
 
@@ -69,7 +69,7 @@ const getOptions = (options?: Partial<IExpressServerOptions>) => ({
 
 const createAddonRouter = (
   engine: Engine,
-  addon: BasicAddonClass,
+  addon: AddonClass,
   options: IExpressServerOptions
 ) => {
   const router = express.Router();
@@ -93,7 +93,7 @@ const createAddonRouter = (
 
   const routeHandler: express.RequestHandler = async (req, res, next) => {
     await addonHandler({
-      action: req.params[1] === "task" ? "task" : req.params[0] || "addon",
+      action: <AddonActions>req.params[0] || "addon",
       request: {
         ip: req.ip,
         headers: <RequestInfos["headers"]>req.headers,

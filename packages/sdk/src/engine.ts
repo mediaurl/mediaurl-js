@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash";
-import { BasicAddonClass } from "./addons";
+import { AddonClass } from "./addon";
 import { CacheFoundError, CacheHandler, detectCacheEngine } from "./cache";
 import { migrations } from "./migrations";
 import {
@@ -32,7 +32,7 @@ const NoResult = Symbol("no result");
  * Handle options and prepare addons
  */
 export const createEngine = (
-  addons: BasicAddonClass[],
+  addons: AddonClass[],
   options?: Partial<EngineOptions>
 ): Engine => {
   for (const addon of addons) {
@@ -96,7 +96,7 @@ export const createEngine = (
       if (!frozen) initialize();
       return createServerSelftestHandler(addons, opts, requestRecorder);
     },
-    createAddonHandler: (addon: BasicAddonClass) => {
+    createAddonHandler: (addon: AddonClass) => {
       if (!frozen) initialize();
       return createAddonHandler(addon, opts, requestRecorder);
     },
@@ -105,7 +105,7 @@ export const createEngine = (
 };
 
 const createServerHandler = (
-  addons: BasicAddonClass[]
+  addons: AddonClass[]
 ): ServerSelftestHandlerFn => async ({ sendResponse }) => {
   sendResponse(200, {
     type: "server",
@@ -114,7 +114,7 @@ const createServerHandler = (
 };
 
 const createServerSelftestHandler = (
-  addons: BasicAddonClass[],
+  addons: AddonClass[],
   options: EngineOptions,
   requestRecorder: null | RequestRecorder
 ): ServerSelftestHandlerFn => async ({ request, sendResponse }) => {
@@ -142,7 +142,7 @@ const createServerSelftestHandler = (
 };
 
 const createAddonHandler = (
-  addon: BasicAddonClass,
+  addon: AddonClass,
   options: EngineOptions,
   requestRecorder: null | RequestRecorder
 ): AddonHandlerFn => async ({ action, input, sig, request, sendResponse }) => {
@@ -157,7 +157,7 @@ const createAddonHandler = (
   }
 
   // Handle task responses
-  if (input?.kind === "taskResponse" || action === "task") {
+  if (input?.kind === "taskResponse") {
     await handleTask({
       cache: options.cache,
       addon,
@@ -180,10 +180,9 @@ const createAddonHandler = (
   } catch (error) {
     const allowInvalidSignature =
       testMode ||
-      process.env.SKIP_AUTH === "1" ||
-      process.env.NODE_ENV !== "production" ||
       action === "addon" ||
-      (addon.getType() === "repository" && action === "repository");
+      process.env.SKIP_AUTH === "1" ||
+      process.env.NODE_ENV !== "production";
     if (
       !allowInvalidSignature &&
       [
@@ -202,7 +201,7 @@ const createAddonHandler = (
     addon,
     data: {},
     user,
-    validator: getActionValidator(addon.getType(), action),
+    validator: getActionValidator(action),
   };
   try {
     if (migrations[action]?.request) {

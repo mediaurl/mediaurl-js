@@ -6,11 +6,6 @@ paths:
   /mediaurl.json:
     get:
       summary: Get addon metadata.
-      tags:
-        - Repository Addon
-        - Worker Addon
-        - IPTV Addon
-        - Bundle Addon
       responses:
         200:
           description: Successful call of action `addon`.
@@ -22,11 +17,6 @@ paths:
           $ref: "#/components/responses/DefaultError"
     post:
       summary: Get addon metadata.
-      tags:
-        - Repository Addon
-        - Worker Addon
-        - IPTV Addon
-        - Bundle Addon
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -45,72 +35,9 @@ paths:
                   - $ref: "api.yaml#/definitions/AddonResponse"
         default:
           $ref: "#/components/responses/DefaultError"
-  /mediaurl-repository.json:
-    get:
-      summary: Get a list of addons this repository knows.
-      tags:
-        - Repository Addon
-      responses:
-        200:
-          description: Successful call of action `repository`.
-          content:
-            application/json:
-              schema:
-                $ref: "api.yaml#/definitions/RepositoryResponse"
-        default:
-          $ref: "#/components/responses/DefaultError"
-    post:
-      summary: Get a list of addons this repository knows.
-      tags:
-        - Repository Addon
-      parameters:
-        - $ref: '#/components/parameters/Signature'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: "api.yaml#/definitions/RepositoryRequest"
-      responses:
-        200:
-          description: Successful call of action `repository`.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "api.yaml#/definitions/RepositoryResponse"
-        default:
-          $ref: "#/components/responses/DefaultError"
-  /mediaurl-iptv.json:
-    post:
-      summary: Get the channels of an IPTV addon.
-      tags:
-        - IPTV Addon
-      parameters:
-        - $ref: '#/components/parameters/Signature'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - $ref: "api.yaml#/definitions/IptvRequest"
-                - $ref: "tasks.yaml#/definitions/TaskResponse"
-      responses:
-        200:
-          description: Successful call of action `iptv`.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "api.yaml#/definitions/IptvResponse"
-                  - $ref: "tasks.yaml#/definitions/TaskRequest"
-        default:
-          $ref: "#/components/responses/DefaultError"
   /mediaurl-directory.json:
     post:
-      summary: Calls the directory action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the directory action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -133,9 +60,7 @@ paths:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-item.json:
     post:
-      summary: Calls the item action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the item action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -158,9 +83,7 @@ paths:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-source.json:
     post:
-      summary: Calls the source action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the source action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -183,9 +106,7 @@ paths:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-subtitle.json:
     post:
-      summary: Calls the subtitle action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the subtitle action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -208,9 +129,7 @@ paths:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-resolve.json:
     post:
-      summary: Calls the resolve action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the resolve action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -233,9 +152,7 @@ paths:
           $ref: "#/components/responses/DefaultError"
   /mediaurl-captcha.json:
     post:
-      summary: Calls the captcha action of a worker addon.
-      tags:
-        - Worker Addon
+      summary: Calls the captcha action of an addon.
       parameters:
         - $ref: '#/components/parameters/Signature'
       requestBody:
@@ -256,16 +173,33 @@ paths:
                   - $ref: "tasks.yaml#/definitions/TaskRequest"
         default:
           $ref: "#/components/responses/DefaultError"
+  /mediaurl-iptv.json:
+    post:
+      summary: Get the channels of an IPTV addon.
+      parameters:
+        - $ref: '#/components/parameters/Signature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "api.yaml#/definitions/IptvRequest"
+                - $ref: "tasks.yaml#/definitions/TaskResponse"
+      responses:
+        200:
+          description: Successful call of action `iptv`.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "api.yaml#/definitions/IptvResponse"
+                  - $ref: "tasks.yaml#/definitions/TaskRequest"
+        default:
+          $ref: "#/components/responses/DefaultError"
 components:
   schemas:
-    RepositoryAddon:
-      $ref: "addons.yaml#/definitions/RepositoryAddon"
-    WorkerAddon:
-      $ref: "addons.yaml#/definitions/WorkerAddon"
-    IptvAddon:
-      $ref: "addons.yaml#/definitions/IptvAddon"
-    BundleAddon:
-      $ref: "addons.yaml#/definitions/BundleAddon"
+    Addon:
+      $ref: "addons.yaml#/definitions/Addon"
     DirectoryItem:
       $ref: "directories.yaml#/definitions/DirectoryItem"
     MovieItem:
