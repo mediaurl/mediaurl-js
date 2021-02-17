@@ -1,7 +1,7 @@
 {
     "name": "@mediaurl/cassandra-cache",
     "description": "MediaURL Cassandra cache wrapper",
-    "version": "1.3.0-alpha.1",
+    "version": "1.3.0",
     "main": "dist",
     "scripts": {
         "test": "jest",
