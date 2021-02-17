@@ -1,4 +1,4 @@
-import { Entity, Column, Index, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity({ name: "mediaurl_cache" })
 export class CacheItem {
@@ -8,7 +8,6 @@ export class CacheItem {
   @Column("simple-json")
   v: string;
 
-  @Index()
   @Column("bigint", { nullable: true })
   d: number | null;
 }
