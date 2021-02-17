@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.0
+
+- Added cassandra caching engine
+
 ## v1.2.0
 
 - Updated dependencies
