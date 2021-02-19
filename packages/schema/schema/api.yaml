@@ -32,6 +32,7 @@ definitions:
         description: |
           This is the response of an addon server which hosts more than one addon
           at once. The property `addons` returns the available addon ID's.
+        additionalProperties: false
         properties:
           type:
             type: string

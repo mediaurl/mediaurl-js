@@ -2,7 +2,16 @@ $schema: "http://json-schema.org/draft-07/schema#"
 definitions:
   AddonResourceActions:
     type: string
-    enum: [directory, item, source, subtitle, resolve, captcha, iptv]
+    enum:
+      - directory
+      - item
+      - source
+      - subtitle
+      - resolve
+      - captcha
+      # LEGACY
+      - repository
+      - iptv
   AddonActions:
     oneOf:
       - type: string
@@ -10,7 +19,7 @@ definitions:
       - $ref: "#/definitions/AddonResourceActions"
   Addon:
     type: object
-    required: [id, name, version]
+    required: [id, name]
     properties:
       id:
         description: ID of this addon.
@@ -22,12 +31,7 @@ definitions:
       version:
         description: Version in semver format.
         type: string
-      poster:
-        description: |
-          Image which will be displayed on the addon detail page.
-          Can be a relative path to the addon URL.
-        oneOf:
-          - $ref: "general.yaml#/definitions/Image"
+        default: "1.0.0"
       icon:
         description: |
           Addon icon which is displayed on the addon index page and
@@ -43,35 +47,23 @@ definitions:
         description: Short description of this addon.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
-      flags:
-        description: Flags.
-        type: object
-        properties:
-          adult:
-            description: Have to be `true` if this addon provides adult content.
-            type: boolean
-          devModeOnly:
-            description: |
-              If `true`, this addon is only available when developer mode is enabled.
-            type: boolean
-          platforms:
-            description: |
-              Array of platforms where this addon is available. If it's an empty array
-              or not set, it's available on all platforms.
-            type: array
-            items:
-              type: string
-        default:
-          adult: false
-          devModeOnly: false
+      adult:
+        description: Have to be `true` if this addon provides adult content.
+        type: boolean
+        default: false
+      devModeOnly:
+        description: |
+          If `true`, this addon is only available when developer mode is enabled.
+        type: boolean
+        default: false
       regions:
-        description: Regions where this addon is available
+        description: Regions where this addon is available, or forbidden.
         oneOf:
           - $ref: "general.yaml#/definitions/Regions"
       endpoints:
         description: |
-          List of API endpoints for this addon. If not set, the URL for the endpoint will
-          be set created when the addon is installed in the app.
+          List of mirror endpoints for this addon. If not set, the URL for the endpoint
+          will be created when the addon is installed.
           Relative URL's are also supported.
           For example:
           `[
@@ -82,12 +74,8 @@ definitions:
         type: array
         items:
           type: string
-        default: []
       actions:
-        description: |
-          Addon actions.
-          If the action `directory` is set, but no `dashboards`
-          are defined, a default dashboard will be created.
+        description: Addon actions this addon provides.
         type: array
         items:
           $ref: "#/definitions/AddonResourceActions"
@@ -100,7 +88,6 @@ definitions:
         type: array
         items:
           $ref: "items.yaml#/definitions/ItemTypes"
-        default: []
       triggers:
         description: |
           Actions: `item`, `source`, `subtitle`
@@ -124,7 +111,6 @@ definitions:
               items:
                 type: string
             - type: string
-        default: []
       urlPatterns:
         description: |
           Actions: `resolve`
@@ -135,7 +121,6 @@ definitions:
         type: array
         items:
           type: string
-        default: []
       captchaTypes:
         description: |
           Actions: `captcha`
@@ -143,13 +128,13 @@ definitions:
         type: array
         items:
           $ref: "tasks.yaml#/definitions/CaptchaTypes"
-        default: []
       defaultDirectoryOptions:
         $ref: "directories.yaml#/definitions/DirectoryOptions"
       defaultDirectoryFeatures:
         $ref: "directories.yaml#/definitions/DirectoryFeatures"
       rootDirectories:
         description: |
+          Actions: `directory`
           Predefined root directories. Here you also can define features.
           `DashboardItem` objects can reference to this objects by it's `id` field.
           Directories which have the `search` feature enabled will be displayed
@@ -157,47 +142,21 @@ definitions:
         type: array
         items:
           $ref: "directories.yaml#/definitions/RootDirectoryItem"
-        default: []
       dashboards:
         description: |
+          Actions: `directory`
           Predefined dashboards. This dashboards get updated when the addon is
           updated. The dashboard configuration is preserved.
         type: array
         items:
           $ref: "directories.yaml#/definitions/DashboardItem"
-        default: []
       requirements:
         description: |
-          List of required addons.
-          The values can be an URL to an addon, or also a
-          relative path to the current addon.
+          List of other addons which should be installed. The values can be an
+          URL to an addon, or a path relative to the current addon.
           Eg:
           - `https://example.com/mediaurl/v1/some.addon.id`
           - `../relative/path-to/current/addon`
         type: array
         items:
-          $ref: "general.yaml#/definitions/Url"
-  # IptvAddon:
-  #   description: |
-  #     Model for the IPTV engine. This is internally converted
-  #     to a worker addon.
-  #   allOf:
-  #     - $ref: "#/definitions/VirtualAddon"
-  #     - type: object
-  #       properties:
-  #         type:
-  #           type: string
-  #           enum: [iptv]
-  #         playlistUrl:
-  #           description: |
-  #             URL to the playlist. If set, this playlist will be loaded by the app
-  #             If not set, the `playlist` action handler will be called.
-  #           oneOf:
-  #             - $ref: "general.yaml#/definitions/Url"
-  #         refreshInterval:
-  #           description: Playlist refresh interval in hours.
-  #           type: number
-  #           minimum: 1
-  #           maximum: 1000
-  #           default: 12
-  #       required: [type]
+          type: string

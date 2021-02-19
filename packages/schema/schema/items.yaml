@@ -65,6 +65,7 @@ definitions:
   ItemImages:
     description: Item images.
     type: object
+    additionalProperties: false
     properties:
       logo:
         $ref: "general.yaml#/definitions/Image"

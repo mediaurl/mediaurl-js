@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0
+
+- Moved all addon types into one addon
+- Removed `repository` addon functionality
+- Removed `poster` and `platforms` properties from `Addon` object
+
 ## v1.3.0
 
 - Added cassandra caching engine
