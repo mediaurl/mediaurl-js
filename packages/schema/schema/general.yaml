@@ -22,7 +22,7 @@ definitions:
   Url:
     description: Definition of an URL.
     type: string
-    pattern: "[:/]" # There should be at least a colon or slash in a URL
+    pattern: "[:/]" # There should be at least a colon or slash in an URL
   ImageShape:
     description: Shape of an image.
     type: string

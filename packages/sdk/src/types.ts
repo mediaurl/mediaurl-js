@@ -12,6 +12,7 @@ import {
   ItemResponse,
   RepositoryRequest,
   RepositoryResponse,
+  ResolvedUrl,
   ResolveRequest,
   ResolveResponse,
   SelftestRequest,

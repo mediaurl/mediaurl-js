@@ -63,12 +63,7 @@ function init(schemas: any) {
       },
       addon: {
         request: createValidator(schemas, "in", "AddonRequest"),
-        originalResponse: createValidator(schemas, "out", "AddonResponse"),
-        response: (obj: any) => {
-          const fn =
-            v.models.addon[obj?.type] ?? v.actions.basic.addon.originalResponse;
-          return fn(obj);
-        },
+        response: createValidator(schemas, "out", "AddonResponse"),
       },
       directory: {
         request: createValidator(schemas, "in", "DirectoryRequest"),
@@ -113,6 +108,10 @@ function init(schemas: any) {
       iptv: {
         request: createValidator(schemas, "in", "IptvRequest"),
         response: createValidator(schemas, "out", "IptvResponse"),
+      },
+      repository: {
+        request: createValidator(schemas, "in", "RepositoryRequest"),
+        response: createValidator(schemas, "out", "RepositoryResponse"),
       },
     },
   };

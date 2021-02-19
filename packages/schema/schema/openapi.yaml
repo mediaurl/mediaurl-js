@@ -18,7 +18,7 @@ paths:
     post:
       summary: Get addon metadata.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -39,7 +39,7 @@ paths:
     post:
       summary: Calls the directory action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -62,7 +62,7 @@ paths:
     post:
       summary: Calls the item action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -85,7 +85,7 @@ paths:
     post:
       summary: Calls the source action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -108,7 +108,7 @@ paths:
     post:
       summary: Calls the subtitle action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -131,7 +131,7 @@ paths:
     post:
       summary: Calls the resolve action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -154,7 +154,7 @@ paths:
     post:
       summary: Calls the captcha action of an addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
@@ -177,7 +177,7 @@ paths:
     post:
       summary: Get the channels of an IPTV addon.
       parameters:
-        - $ref: '#/components/parameters/Signature'
+        - $ref: "#/components/parameters/Signature"
       requestBody:
         content:
           application/json:
