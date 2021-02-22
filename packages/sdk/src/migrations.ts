@@ -1,8 +1,9 @@
 import {
+  Addon,
   AddonRequest,
   AddonResponse,
-  DirectoryRequest,
-  DirectoryResponse,
+  CatalogRequest,
+  CatalogResponse,
   ItemRequest,
   SourceRequest,
   SubtitleRequest,
@@ -30,31 +31,35 @@ export const migrations = {
       input: AddonRequest,
       output: AddonResponse
     ) {
-      if (output.requestArgs) {
-        throw new Error(
-          `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
-        );
-      }
-      output.sdkVersion = sdkVersion;
-      output = ctx.validator.response(output);
-      if (
-        output.triggers &&
-        (!ctx.user?.app?.version ||
-          !ctx.user?.app?.name ||
-          (ctx.user.app.name === "watched" &&
-            semver.lt("1.1.3", ctx.user.app.version)) ||
-          (ctx.user.app.name === "rokkr" &&
-            semver.lt("1.1.3", ctx.user.app.version)))
-      ) {
-        output.requestArgs = output.triggers;
+      let addon = <Addon>output;
+      if (addon.type !== "server") {
+        if (addon.requestArgs) {
+          throw new Error(
+            `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
+          );
+        }
+        addon.sdkVersion = sdkVersion;
+        addon = ctx.validator.response(addon);
+        if (
+          addon.triggers &&
+          (!ctx.user?.app?.version ||
+            !ctx.user?.app?.name ||
+            (ctx.user.app.name === "watched" &&
+              semver.lt("1.1.3", ctx.user.app.version)) ||
+            (ctx.user.app.name === "rokkr" &&
+              semver.lt("1.1.3", ctx.user.app.version)))
+        ) {
+          addon.requestArgs = addon.triggers;
+        }
+        output = addon;
       }
       return output;
     },
   },
-  directory: {
-    request(ctx: MigrationContext, input: DirectoryRequest) {
+  catalog: {
+    request(ctx: MigrationContext, input: CatalogRequest) {
       if (input.page !== undefined && input.cursor === undefined) {
-        console.warn("Upgrading directory request from page to cursor system");
+        console.warn("Upgrading catalog request from page to cursor system");
         ctx.data.update = 1;
         (<any>input).cursor = input.page === 1 ? null : input.page;
       }
@@ -62,11 +67,11 @@ export const migrations = {
     },
     response(
       ctx: MigrationContext,
-      input: DirectoryRequest,
-      output: DirectoryResponse
+      input: CatalogRequest,
+      output: CatalogResponse
     ) {
       if (ctx.data.update === 1) {
-        const o = <DirectoryResponse>output;
+        const o = <CatalogResponse>output;
         o.hasMore = o.nextCursor !== null;
       }
       return ctx.validator.response(output);

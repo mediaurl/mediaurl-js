@@ -17,7 +17,7 @@ export const dummyAddon = createAddon({
   name: "Typescript Test Addon",
   version: "1.0.0",
   itemTypes: ["movie"],
-  rootDirectories: [
+  catalogs: [
     {
       features: {
         search: { enabled: true },
@@ -29,7 +29,7 @@ export const dummyAddon = createAddon({
     },
   ],
   dashboards: [
-    {}, // Root directory
+    {}, // Root catalog
     {
       id: "by-year",
       name: "By year",
@@ -38,7 +38,7 @@ export const dummyAddon = createAddon({
   ],
 });
 
-dummyAddon.registerActionHandler("directory", async (input, ctx) => {
+dummyAddon.registerActionHandler("catalog", async (input, ctx) => {
   let items = _.sortBy(
     TEST_ITEMS.map((fn) => fn(false)),
     input.sort ?? "name"

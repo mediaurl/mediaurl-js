@@ -3,15 +3,13 @@ definitions:
   AddonResourceActions:
     type: string
     enum:
-      - directory
+      - catalog
       - item
       - source
       - subtitle
       - resolve
       - captcha
-      # LEGACY
-      - repository
-      - iptv
+      - iptv # Legacy?!
   AddonActions:
     oneOf:
       - type: string
@@ -81,13 +79,29 @@ definitions:
           $ref: "#/definitions/AddonResourceActions"
       itemTypes:
         description: |
-          Actions: `directory`, `item`, `source`, `subtitle`
-          Item types this addon provised.
-          This is needed for the actions `directory`, `item`,
-          `source` and `subtitle`.
+          Actions: `catalog`, `item`, `source`, `subtitle`
+          Item types this addon provides.
         type: array
         items:
           $ref: "items.yaml#/definitions/ItemTypes"
+      catalogs:
+        description: |
+          Actions: `catalog`
+          Predefined "root" catalogs. Here you also can define features.
+          `DashboardItem` objects can reference to this objects by it's `id` field.
+          Catalogs which have the `search` feature enabled will be displayed
+          on the search screen of the client app.
+        type: array
+        items:
+          $ref: "catalogs.yaml#/definitions/Catalog"
+      dashboards:
+        description: |
+          Actions: `catalog`
+          Predefined dashboards. This dashboards get updated when the addon is
+          updated. The dashboard configuration is preserved.
+        type: array
+        items:
+          $ref: "catalogs.yaml#/definitions/DashboardItem"
       triggers:
         description: |
           Actions: `item`, `source`, `subtitle`
@@ -128,28 +142,6 @@ definitions:
         type: array
         items:
           $ref: "tasks.yaml#/definitions/CaptchaTypes"
-      defaultDirectoryOptions:
-        $ref: "directories.yaml#/definitions/DirectoryOptions"
-      defaultDirectoryFeatures:
-        $ref: "directories.yaml#/definitions/DirectoryFeatures"
-      rootDirectories:
-        description: |
-          Actions: `directory`
-          Predefined root directories. Here you also can define features.
-          `DashboardItem` objects can reference to this objects by it's `id` field.
-          Directories which have the `search` feature enabled will be displayed
-          on the search screen of the client app.
-        type: array
-        items:
-          $ref: "directories.yaml#/definitions/RootDirectoryItem"
-      dashboards:
-        description: |
-          Actions: `directory`
-          Predefined dashboards. This dashboards get updated when the addon is
-          updated. The dashboard configuration is preserved.
-        type: array
-        items:
-          $ref: "directories.yaml#/definitions/DashboardItem"
       requirements:
         description: |
           List of other addons which should be installed. The values can be an
@@ -157,6 +149,21 @@ definitions:
           Eg:
           - `https://example.com/mediaurl/v1/some.addon.id`
           - `../relative/path-to/current/addon`
+        type: array
+        items:
+          type: string
+  Server:
+    type: object
+    description: |
+      This is the response of an addon server which hosts more than one addon
+      at once. The property `addons` returns the available addon ID's.
+    additionalProperties: false
+    required: [type, addons]
+    properties:
+      type:
+        type: string
+        enum: [server]
+      addons:
         type: array
         items:
           type: string

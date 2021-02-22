@@ -27,44 +27,23 @@ definitions:
       - $ref: "#/definitions/DefaultAddonRequest"
   AddonResponse:
     oneOf:
+      - $ref: "addons.yaml#/definitions/Server"
       - $ref: "addons.yaml#/definitions/Addon"
-      - type: object
-        description: |
-          This is the response of an addon server which hosts more than one addon
-          at once. The property `addons` returns the available addon ID's.
-        additionalProperties: false
-        properties:
-          type:
-            type: string
-            enum: [server]
-          addons:
-            type: array
-            items:
-              type: string
-        required: [type, addons]
-  RepositoryRequest:
-    description: Get list of addons in this repository.
-    oneOf:
-      - $ref: "#/definitions/DefaultAddonRequest"
-  RepositoryResponse:
-    type: array
-    items:
-      $ref: "addons.yaml#/definitions/Addon"
-  DirectoryRequest:
-    description: Request parameters for a directory call.
+  CatalogRequest:
+    description: Request parameters for a catalog call.
     allOf:
       - $ref: "#/definitions/DefaultAddonRequest"
       - type: object
         properties:
-          rootId:
+          catalogId:
             description: |
-              ID of the root directory.
+              ID of the catalog.
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           id:
             description: |
-              ID of the `Directory` object. Defaults to an empty string.
+              ID of the `catalog` object. Defaults to an empty string.
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
             default: ""
@@ -86,30 +65,30 @@ definitions:
             default: {}
           cursor:
             description: |
-              Used for pagination. This describes the position inside the directory.
+              Used for pagination. This describes the position inside the catalog.
               Normally this should be a page or offset number, or an ID representing the
               current position. On the first request this value is always `null`.
               If there are more items available for the current page, return the current
-              cursor with the `nextCursor` property of `DirectoryResponse`.
+              cursor with the `nextCursor` property of `CatalogResponse`.
             type: ["null", string, number]
             nullable: true
             default: null
         required: [id, adult, search, sort, filter, cursor]
-  DirectoryResponse:
+  CatalogResponse:
     type: object
     properties:
-      rootId:
-        description: Overwrite the `rootId` of a directory.
+      catalogId:
+        description: Overwrite the `catalogId` of a catalog.
         oneOf:
           - $ref: "general.yaml#/definitions/GenericId"
       options:
-        description: Overwrite `options` of a directory or addon.
+        description: Overwrite `options` of a catalog.
         oneOf:
-          - $ref: "directories.yaml#/definitions/DirectoryOptions"
+          - $ref: "catalogs.yaml#/definitions/CatalogOptions"
       features:
-        description: Overwrite `features` of a directory or addon.
+        description: Overwrite `features` of a catalog.
         oneOf:
-          - $ref: "directories.yaml#/definitions/DirectoryFeatures"
+          - $ref: "catalogs.yaml#/definitions/CatalogFeatures"
       items:
         description: Array of items.
         type: array
@@ -117,9 +96,9 @@ definitions:
           $ref: "items.yaml#/definitions/MainItem"
       nextCursor:
         description: |
-          Used for pagination. This describes the position of the current directory.
-          This value will be used on the next request on `DirectoryRequest.cursor`.
-          If the end of the directory is reached, set this to `null`.
+          Used for pagination. This describes the position of the current catalog.
+          This value will be used on the next request on `CatalogRequest.cursor`.
+          If the end of the catalog is reached, set this to `null`.
         type: ["null", string, number]
         nullable: true
     required: [items, nextCursor]
@@ -241,7 +220,7 @@ definitions:
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
       - type: "null"
   IptvRequest:
-    description: Request parameters for an IPTV directory call.
+    description: Request parameters for an IPTV catalog call.
     allOf:
       - $ref: "#/definitions/DefaultAddonRequest"
       - type: object

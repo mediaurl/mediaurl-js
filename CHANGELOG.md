@@ -5,6 +5,8 @@
 - Moved all addon types into one addon
 - Removed `repository` addon functionality
 - Removed `poster` and `platforms` properties from `Addon` object
+- Renamed `directory` action to `catalog`
+- Renamed `Addon.rootDirectories` to `Addon.catalogs`
 
 ## v1.3.0
 

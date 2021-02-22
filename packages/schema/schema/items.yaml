@@ -21,47 +21,28 @@ definitions:
         type: string
   SimilarItems:
     description: |
-      List of similar items directories which will be displayed on the item
-      screen. You can either return a list of `items` to be displayed, or define
-      a request (`args` property) which will be made to the specific addon.
+      This is basically a `directory`.
+      List of similar items which will be displayed on the item screen. You
+      can either return a list of `items` to be displayed, or define a request
+      `catalog` which will be made to the specific addon.
     type: array
     items:
       allOf:
+        - $ref: "catalogs.yaml#/definitions/BaseDirectoryItem"
         - type: object
           properties:
             id:
-              description: ID of this directory item.
+              description: Directory ID item.
               oneOf:
                 - $ref: "general.yaml#/definitions/GenericId"
               default: ""
-            name:
-              description: Name of item.
-              oneOf:
-                - $ref: "general.yaml#/definitions/TranslatedText"
-            options:
-              $ref: "directories.yaml#/definitions/DirectoryOptions"
-            features:
-              $ref: "directories.yaml#/definitions/DirectoryFeatures"
-            addonId:
-              description: |
-                Optional addon ID if this directory should be loaded via another
-                addon.
-              type: string
-            rootId:
-              description: ID of the root directory.
-              oneOf:
-                - $ref: "general.yaml#/definitions/GenericId"
-              default: ""
-            args:
-              $ref: "directories.yaml#/definitions/DirectoryArguments"
             items:
               description: |
-                Optionally define a list of items. No `directory` request will be
+                Optionally define a list of items. No `catalog` request will be
                 made if this property is set.
               type: array
               items:
                 $ref: "#/definitions/MainItem"
-          required: [name]
   ItemImages:
     description: Item images.
     type: object
@@ -355,17 +336,21 @@ definitions:
           required: [start, stop, name]
         default: []
     required: [type, ids]
-  PlayableItem:
-    description: All items which could be played, excludes `DirectoryItem`.
+  VODItem:
+    description: All items which could be played, excludes `directory` and `iptv`.
     anyOf:
       - $ref: "#/definitions/MovieItem"
       - $ref: "#/definitions/SeriesItem"
       - $ref: "#/definitions/ChannelItem"
+  PlayableItem:
+    description: All items which could be played, excludes `directory`.
+    anyOf:
+      - $ref: "#/definitions/VODItem"
       - $ref: "#/definitions/IptvItem"
   MainItem:
-    description: All items, including `DirectoryItem`.
+    description: All items, including `directory`.
     anyOf:
-      - $ref: "directories.yaml#/definitions/DirectoryItem"
+      - $ref: "catalogs.yaml#/definitions/DirectoryItem"
       - $ref: "#/definitions/PlayableItem"
   SubItem:
     description: All sub items, currently only `SeriesEpisodeItem`.

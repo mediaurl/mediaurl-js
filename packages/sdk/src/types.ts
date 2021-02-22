@@ -4,15 +4,12 @@ import {
   AddonResponse,
   CaptchaRequest,
   CaptchaResponse,
-  DirectoryRequest,
-  DirectoryResponse,
+  CatalogRequest,
+  CatalogResponse,
   IptvRequest,
   IptvResponse,
   ItemRequest,
   ItemResponse,
-  RepositoryRequest,
-  RepositoryResponse,
-  ResolvedUrl,
   ResolveRequest,
   ResolveResponse,
   SelftestRequest,
@@ -281,8 +278,7 @@ type ActionHandler<InputType = any, OutputType = any> = (
 export type ActionHandlers = {
   selftest: ActionHandler<SelftestRequest, SelftestResponse>;
   addon: ActionHandler<AddonRequest, AddonResponse>;
-  repository: ActionHandler<RepositoryRequest, RepositoryResponse>;
-  directory: ActionHandler<DirectoryRequest, DirectoryResponse>;
+  catalog: ActionHandler<CatalogRequest, CatalogResponse>;
   item: ActionHandler<ItemRequest, ItemResponse>;
   source: ActionHandler<SourceRequest, SourceResponse>;
   subtitle: ActionHandler<SubtitleRequest, SubtitleResponse>;
