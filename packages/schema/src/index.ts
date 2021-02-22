@@ -36,6 +36,7 @@ function init(schemas: any) {
   const v: any = {
     models: {
       addon: createValidator(schemas, "out", "Addon"),
+      server: createValidator(schemas, "out", "Server"),
       item: {
         directory: createValidator(schemas, "out", "DirectoryItem"),
         movie: createValidator(schemas, "out", "MovieItem"),
@@ -65,13 +66,13 @@ function init(schemas: any) {
         request: createValidator(schemas, "in", "AddonRequest"),
         response: createValidator(schemas, "out", "AddonResponse"),
       },
-      directory: {
-        request: createValidator(schemas, "in", "DirectoryRequest"),
-        originalResponse: createValidator(schemas, "out", "DirectoryResponse"),
+      catalog: {
+        request: createValidator(schemas, "in", "CatalogRequest"),
+        originalResponse: createValidator(schemas, "out", "CatalogResponse"),
         response: (obj: any) => {
           const items = obj?.items;
           obj.items = Array.isArray(items) ? [] : items;
-          v.actions.directory.originalResponse(obj);
+          v.actions.catalog.originalResponse(obj);
           for (const item of items) {
             const fn = v.models.item[item?.type] ?? v.models.item.all;
             fn(item);
