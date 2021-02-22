@@ -35,9 +35,9 @@ paths:
                   - $ref: "api.yaml#/definitions/AddonResponse"
         default:
           $ref: "#/components/responses/DefaultError"
-  /mediaurl-directory.json:
+  /mediaurl-catalog.json:
     post:
-      summary: Calls the directory action of an addon.
+      summary: Calls the catalog action of an addon.
       parameters:
         - $ref: "#/components/parameters/Signature"
       requestBody:
@@ -45,16 +45,16 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: "api.yaml#/definitions/DirectoryRequest"
+                - $ref: "api.yaml#/definitions/CatalogRequest"
                 - $ref: "tasks.yaml#/definitions/TaskResponse"
       responses:
         200:
-          description: Successful call of action `directory`.
+          description: Successful call of action `catalog`.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "api.yaml#/definitions/DirectoryResponse"
+                  - $ref: "api.yaml#/definitions/CatalogResponse"
                   - $ref: "tasks.yaml#/definitions/TaskRequest"
         default:
           $ref: "#/components/responses/DefaultError"
@@ -201,7 +201,7 @@ components:
     Addon:
       $ref: "addons.yaml#/definitions/Addon"
     DirectoryItem:
-      $ref: "directories.yaml#/definitions/DirectoryItem"
+      $ref: "catalogs.yaml#/definitions/DirectoryItem"
     MovieItem:
       $ref: "items.yaml#/definitions/MovieItem"
     SeriesItem:
@@ -216,38 +216,6 @@ components:
       $ref: "objects.yaml#/definitions/Subtitle"
     # ResolvedUrl:
     #   $ref: "objects.yaml#/definitions/ResolvedUrl"
-    # AddonRequest:
-    #   $ref: "api.yaml#/definitions/AddonRequest"
-    # AddonResponse:
-    #   $ref: "api.yaml#/definitions/AddonResponse"
-    # RepositoryRequest:
-    #   $ref: "api.yaml#/definitions/RepositoryRequest"
-    # RepositoryResponse:
-    #   $ref: "api.yaml#/definitions/RepositoryResponse"
-    # DirectoryRequest:
-    #   $ref: "api.yaml#/definitions/DirectoryRequest"
-    # DirectoryResponse:
-    #   $ref: "api.yaml#/definitions/DirectoryResponse"
-    # ItemRequest:
-    #   $ref: "api.yaml#/definitions/ItemRequest"
-    # ItemResponse:
-    #   $ref: "api.yaml#/definitions/ItemResponse"
-    # SourceRequest:
-    #   $ref: "api.yaml#/definitions/SourceRequest"
-    # SourceResponse:
-    #   $ref: "api.yaml#/definitions/SourceResponse"
-    # SubtitleRequest:
-    #   $ref: "api.yaml#/definitions/SubtitleRequest"
-    # SubtitleResponse:
-    #   $ref: "api.yaml#/definitions/SubtitleResponse"
-    # ResolveRequest:
-    #   $ref: "api.yaml#/definitions/ResolveRequest"
-    # ResolveResponse:
-    #   $ref: "api.yaml#/definitions/ResolveResponse"
-    # CaptchaRequest:
-    #   $ref: "api.yaml#/definitions/CaptchaRequest"
-    # CaptchaResponse:
-    #   $ref: "api.yaml#/definitions/CaptchaResponse"
   parameters:
     Signature:
       name: Mediaurl-Signature

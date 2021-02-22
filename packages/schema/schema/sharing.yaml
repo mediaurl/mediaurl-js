@@ -24,11 +24,11 @@ definitions:
       type:
         $ref: "items.yaml#/definitions/ItemTypes"
       id:
-        description: Used with directories.
+        description: Used with catalogs.
         oneOf:
           - $ref: "general.yaml#/definitions/GenericId"
       ids:
-        description: Used with all items except directories.
+        description: Used with all items except catalogs.
         oneOf:
           - $ref: "items.yaml#/definitions/ItemIDs"
       url:

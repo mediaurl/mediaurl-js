@@ -2,7 +2,7 @@ import {
   AddonRequest,
   createApp,
   createEngine,
-  DirectoryRequest,
+  CatalogRequest,
   ItemRequest,
   SourceRequest,
 } from "@mediaurl/sdk";
@@ -49,10 +49,10 @@ test("action addon", async (done) => {
     .end(requestEnd(done));
 });
 
-test("action directory", async (done) => {
+test("action catalog", async (done) => {
   app
-    .post(`/${dummyAddon.getId()}/mediaurl-directory.json`)
-    .send(<DirectoryRequest>{
+    .post(`/${dummyAddon.getId()}/mediaurl-catalog.json`)
+    .send(<CatalogRequest>{
       ...defaults,
       id: "",
       adult: false,

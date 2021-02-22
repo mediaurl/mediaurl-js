@@ -1,6 +1,6 @@
 $schema: "http://json-schema.org/draft-07/schema#"
 definitions:
-  DirectoryOptions:
+  CatalogOptions:
     description: Options on how to display images.
     type: object
     additionalProperties: false
@@ -16,12 +16,12 @@ definitions:
           Display the item name over the image.
           If not set, a value depening on the item type is used.
         type: boolean
-  CompatibleDirectoryFeature:
+  CompatibleCatalogFeature:
     description: List of compatible filters or sort keys, if not set, all will be used.
     type: array
     items:
       type: string
-  DirectorySort:
+  CatalogFeatureSort:
     type: object
     additionalProperties: false
     properties:
@@ -30,8 +30,8 @@ definitions:
       name:
         $ref: "general.yaml#/definitions/TranslatedText"
       compatibleFilter:
-        $ref: "#/definitions/CompatibleDirectoryFeature"
-  DirectoryFilter:
+        $ref: "#/definitions/CompatibleCatalogFeature"
+  CatalogFeatureFilter:
     type: object
     additionalProperties: false
     properties:
@@ -65,8 +65,8 @@ definitions:
           - $ref: "general.yaml#/definitions/TranslatedText"
           - type: string
     required: [id, name, values]
-  DirectoryFeatures:
-    description: Directory features like search, sort and filter.
+  CatalogFeatures:
+    description: Catalog features like search, sort and filter.
     type: object
     additionalProperties: false
     properties:
@@ -79,23 +79,23 @@ definitions:
             type: boolean
             default: false
           compatibleSort:
-            $ref: "#/definitions/CompatibleDirectoryFeature"
+            $ref: "#/definitions/CompatibleCatalogFeature"
           compatibleFilter:
-            $ref: "#/definitions/CompatibleDirectoryFeature"
+            $ref: "#/definitions/CompatibleCatalogFeature"
       sort:
         description: Different sort columns and their caption including translations.
         type: array
         items:
-          $ref: "#/definitions/DirectorySort"
+          $ref: "#/definitions/CatalogFeatureSort"
       filter:
         description: Different sort column and their caption including translations.
         type: array
         items:
-          $ref: "#/definitions/DirectoryFilter"
-  DirectoryArguments:
+          $ref: "#/definitions/CatalogFeatureFilter"
+  CatalogArguments:
     description: |
-      Request parameters for a directory call. This is nearly the same
-      as on `DirectoryRequest`.
+      Request parameters for a catalog call. This is nearly the same
+      as on `CatalogRequest`.
     type: object
     properties:
       adult:
@@ -116,23 +116,18 @@ definitions:
         default: {}
       cursor:
         description: |
-          Used for pagination. This describes the position inside the directory.
+          Used for pagination. This describes the position inside the catalog.
           Normally this should be a page or offset number, or an ID representing the
           current position. On the first request this value is always `null`.
           If there are more items available for the current page, return the current
-          cursor with the `nextCursor` property of `DirectoryResponse`.
+          cursor with the `nextCursor` property of `CatalogResponse`.
         type: ["null", string, number]
         nullable: true
         default: null
     default: {}
-  BasicDirectoryItem:
+  BaseCatalogItem:
     type: object
     properties:
-      id:
-        description: ID of this directory item.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
-        default: ""
       name:
         description: Name of item.
         oneOf:
@@ -143,73 +138,88 @@ definitions:
           - $ref: "general.yaml#/definitions/TranslatedText"
       images:
         $ref: "items.yaml#/definitions/ItemImages"
-      itemTypes:
-        description: |
-          Item types returned by this directory. If not set,
-          it will fallback to the addon item types.
-        type: array
-        items:
-          $ref: "items.yaml#/definitions/ItemTypes"
       options:
-        $ref: "#/definitions/DirectoryOptions"
+        $ref: "#/definitions/CatalogOptions"
       features:
-        $ref: "#/definitions/DirectoryFeatures"
-  RootDirectoryItem:
-    oneOf:
-      - $ref: "#/definitions/BasicDirectoryItem"
-  DirectoryItem:
-    description: An item which points to a directory.
+        $ref: "#/definitions/CatalogFeatures"
+  Catalog:
     type: object
     allOf:
-      - $ref: "#/definitions/BasicDirectoryItem"
+      - $ref: "#/definitions/BaseCatalogItem"
       - type: object
+        properties:
+          id:
+            description: ID of catalog.
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
+            default: ""
+          itemTypes:
+            description: |
+              Item types returned by this catalog. If not set,
+              it will fallback to the addon item types.
+            type: array
+            items:
+              $ref: "items.yaml#/definitions/ItemTypes"
+  BaseDirectoryItem:
+    type: object
+    properties:
+      catalogId:
+        description: |
+          Catalog this directory belongs to. It will use the `options` and `features`
+          of the catalog.
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
+        default: ""
+      addonId:
+        description: |
+          Addon ID which should be called for this addon. By default this value is set
+          automatically.
+        type: string
+      name:
+        description: Name of directory.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      description:
+        description: Description of directory.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      options:
+        $ref: "#/definitions/CatalogOptions"
+      features:
+        $ref: "#/definitions/CatalogFeatures"
+      args:
+        $ref: "#/definitions/CatalogArguments"
+  DirectoryItem:
+    description: A directory is a sub directory of a catalog.
+    allOf:
+      - $ref: "#/definitions/BaseDirectoryItem"
+      - type: object
+        required: [type, id]
         properties:
           type:
             type: string
             enum: [directory]
-          rootId:
-            description: This directory will use features and options from this directory.
+          id:
+            description: ID of directory.
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
-            default: ""
-          args:
-            $ref: "#/definitions/DirectoryArguments"
-        required: [type]
+          images:
+            $ref: "items.yaml#/definitions/ItemImages"
   DashboardItem:
     description: |
-      Lists which can be displayed on the dashboard. This items
-      are defined inside the addon.
-    type: object
+      Directories which will be displayed on the dashboard in the app.
     allOf:
-      - $ref: "#/definitions/BasicDirectoryItem"
+      - $ref: "#/definitions/BaseDirectoryItem"
       - type: object
         properties:
-          addonId:
-            description: |
-              If this dashboard should be executed with another addon,
-              specify the ID here.
-            type: string
-          rootId:
-            description: This directory will use features and options from this directory.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
-            default: ""
           id:
             description: |
-              ID of this dashboard.
+              ID of dashboard.
               To overwrite (or reconfigure) other dashboards, set
               this to an already existing dashboard. The found object
               then is merged with this one.
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
-          args:
-            $ref: "#/definitions/DirectoryArguments"
-          config:
-            description: Configuration of this dashboard.
-            type: object
-            additionalProperties: false
-            properties:
-              showOnHomescreen:
-                type: boolean
-                default: true
-            default: {}
+          hideOnHomescreen:
+            description: Hide this dashboard from the home screen. Defaults to false.
+            type: boolean

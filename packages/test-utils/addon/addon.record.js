@@ -18,12 +18,12 @@ addRecord({
     region: "CH",
   },
   output: {
-    actions: ["directory", "item", "source", "subtitle", "resolve", "iptv"],
+    actions: ["catalog", "item", "source", "subtitle", "resolve", "iptv"],
     id: "dummy-test",
     name: "Typescript Test Addon",
     version: "1.0.0",
     itemTypes: ["movie"],
-    rootDirectories: [
+    catalogs: [
       {
         features: {
           search: {
@@ -63,7 +63,7 @@ addRecord({
 // Record ID 6
 addRecord({
   addon: "dummy-test",
-  action: "directory",
+  action: "catalog",
   input: {
     language: "de",
     region: "CH",
@@ -122,7 +122,7 @@ addRecord({
 // Record ID 7
 addRecord({
   addon: "dummy-test",
-  action: "directory",
+  action: "catalog",
   input: {
     language: "de",
     region: "CH",
@@ -666,7 +666,7 @@ addRecord({
 // Record ID 23
 addRecord({
   addon: "dummy-test",
-  action: "directory",
+  action: "catalog",
   input: {
     language: "de",
     region: "CH",

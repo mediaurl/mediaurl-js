@@ -68,27 +68,11 @@ function init(schemas: any) {
       },
       catalog: {
         request: createValidator(schemas, "in", "CatalogRequest"),
-        originalResponse: createValidator(schemas, "out", "CatalogResponse"),
-        response: (obj: any) => {
-          const items = obj?.items;
-          obj.items = Array.isArray(items) ? [] : items;
-          v.actions.catalog.originalResponse(obj);
-          for (const item of items) {
-            const fn = v.models.item[item?.type] ?? v.models.item.all;
-            fn(item);
-          }
-          obj.items = items;
-          return obj;
-        },
+        response: createValidator(schemas, "out", "CatalogResponse"),
       },
       item: {
         request: createValidator(schemas, "in", "ItemRequest"),
-        originalResponse: createValidator(schemas, "out", "ItemResponse"),
-        response: (obj: any) => {
-          const fn =
-            v.models.item[obj?.type] ?? v.actions.item.originalResponse;
-          return fn(obj);
-        },
+        response: createValidator(schemas, "out", "ItemResponse"),
       },
       source: {
         request: createValidator(schemas, "in", "SourceRequest"),
@@ -109,10 +93,6 @@ function init(schemas: any) {
       iptv: {
         request: createValidator(schemas, "in", "IptvRequest"),
         response: createValidator(schemas, "out", "IptvResponse"),
-      },
-      repository: {
-        request: createValidator(schemas, "in", "RepositoryRequest"),
-        response: createValidator(schemas, "out", "RepositoryResponse"),
       },
     },
   };

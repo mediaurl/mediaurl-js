@@ -3,11 +3,11 @@ import {
   AddonClass,
   AddonRequest,
   AddonResourceActions,
+  DirectoryItem,
+  CatalogRequest,
   createApp,
   createEngine,
   DefaultAddonRequest,
-  DirectoryItem,
-  DirectoryRequest,
   ItemRequest,
   MainItem,
   PlayableItem,
@@ -42,7 +42,7 @@ export class AddonTest {
 export const testAddon = async (addon: AddonClass) => {
   console.warn("WARNING: The testAddon function is legacy!");
   console.warn(
-    "WARNING: To test addons, it is recommended to use request recording"
+    "WARNING: To test addons, it is recommended to use request recording."
   );
 
   const requestDefaults: DefaultAddonRequest = {
@@ -51,7 +51,7 @@ export const testAddon = async (addon: AddonClass) => {
     region: "UK",
   };
 
-  const directoryDefaults: DirectoryRequest = {
+  const catalogDefaults: CatalogRequest = {
     ...requestDefaults,
     id: "",
     adult: false,
@@ -77,26 +77,24 @@ export const testAddon = async (addon: AddonClass) => {
   const hasAction = (action: AddonActions) =>
     addon.getProps().actions?.includes(<AddonResourceActions>action);
 
-  if (hasAction("directory")) {
-    console.log('directory "root"');
-    const res = await app.call<DirectoryRequest>("directory", {
-      ...directoryDefaults,
+  if (hasAction("catalog")) {
+    console.log('catalog "root"');
+    const res = await app.call<CatalogRequest>("catalog", {
+      ...catalogDefaults,
     });
     assert(!!res.body.items);
     res.body.items.forEach(addItem);
     console.log(`subtitle "root": Found ${res.body.items.length}`);
 
-    for (const directory of directories) {
-      console.log(`directory "${directory.name}"`);
-      const res = await app.call<DirectoryRequest>("directory", {
-        ...directoryDefaults,
-        id: directory.id ?? "",
+    for (const catalog of directories) {
+      console.log(`catalog "${catalog.name}"`);
+      const res = await app.call<CatalogRequest>("catalog", {
+        ...catalogDefaults,
+        id: catalog.id ?? "",
       });
       assert(!!res.body.items);
       res.body.items.forEach(addItem);
-      console.log(
-        `subtitle "${directory.name}": Found ${res.body.items.length}`
-      );
+      console.log(`subtitle "${catalog.name}": Found ${res.body.items.length}`);
     }
   }
 
