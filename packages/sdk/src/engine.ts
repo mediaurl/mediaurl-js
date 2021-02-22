@@ -178,19 +178,22 @@ const createAddonHandler = (
   try {
     user = validateSignature(sig);
   } catch (error) {
+    const isSignatureError = [
+      "Missing MediaURL signature",
+      "Invalid MediaURL signature",
+      "MediaURL signature timed out",
+    ].includes(error.message);
+    if (!isSignatureError) {
+      sendResponse(500, { error: error.message || error });
+      return;
+    }
+
     const allowInvalidSignature =
       testMode ||
       action === "addon" ||
       process.env.SKIP_AUTH === "1" ||
       process.env.NODE_ENV !== "production";
-    if (
-      !allowInvalidSignature &&
-      [
-        "Missing MediaURL signature",
-        "Invalid MediaURL signature",
-        "MediaURL signature timed out",
-      ].includes(error.message)
-    ) {
+    if (!allowInvalidSignature) {
       sendResponse(403, { error: error.message || error });
       return;
     }
