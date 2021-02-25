@@ -2,11 +2,17 @@
 
 ## v2.0.0
 
+Simplified the whole addon system.
+
 - Moved all addon types into one addon
-- Removed `repository` addon functionality
-- Removed `poster` and `platforms` properties from `Addon` object
-- Renamed `directory` action to `catalog`
-- Renamed `Addon.rootDirectories` to `Addon.catalogs`
+- Changes on the `Addon` object:
+  - Removed `repository` functionality
+  - Removed `poster` and `platforms` properties from `Addon` object
+  - Flattened `flags` property of `Addon` object
+  - Renamed `directory` action to `catalog`
+  - Renamed `rootDirectories` to `catalogs`
+- Renamed `Directory.rootId` to `Directory.catalogId`
+- Various other fixes and improvments
 
 ## v1.3.0
 
