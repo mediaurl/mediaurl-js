@@ -33,6 +33,7 @@ definitions:
     description: Request parameters for a catalog call.
     allOf:
       - $ref: "#/definitions/DefaultAddonRequest"
+      - $ref: "catalogs.yaml#/definitions/CatalogArguments"
       - type: object
         properties:
           catalogId:
@@ -47,32 +48,32 @@ definitions:
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
             default: ""
-          adult:
-            description: Show adult items in result.
-            type: boolean
-            default: false
-          search:
-            description: Search query string.
-            type: string
-            default: ""
-          sort:
-            description: Sort the list by this column.
-            type: string
-            default: ""
-          filter:
-            description: Filter values.
-            type: object
-            default: {}
-          cursor:
-            description: |
-              Used for pagination. This describes the position inside the catalog.
-              Normally this should be a page or offset number, or an ID representing the
-              current position. On the first request this value is always `null`.
-              If there are more items available for the current page, return the current
-              cursor with the `nextCursor` property of `CatalogResponse`.
-            type: ["null", string, number]
-            nullable: true
-            default: null
+          # adult:
+          #   description: Return adult items.
+          #   type: boolean
+          #   default: false
+          # search:
+          #   description: Search query string.
+          #   type: string
+          #   default: ""
+          # sort:
+          #   description: Sort results by this column.
+          #   type: string
+          #   default: ""
+          # filter:
+          #   description: Filter values.
+          #   type: object
+          #   default: {}
+          # cursor:
+          #   description: |
+          #     Used for pagination. This describes the position inside the catalog.
+          #     Normally this should be a page or offset number, or an ID representing the
+          #     current position. On the first request this value is always `null`.
+          #     If there are more items available for the current page, return the current
+          #     cursor with the `nextCursor` property of `CatalogResponse`.
+          #   type: ["null", string, number]
+          #   nullable: true
+          #   default: null
         required: [id, adult, search, sort, filter, cursor]
   CatalogResponse:
     type: object

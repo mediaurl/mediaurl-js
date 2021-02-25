@@ -94,12 +94,11 @@ definitions:
           $ref: "#/definitions/CatalogFeatureFilter"
   CatalogArguments:
     description: |
-      Request parameters for a catalog call. This is nearly the same
-      as on `CatalogRequest`.
+      Request parameters for a catalog call. This is nearly the same as `CatalogRequest`.
     type: object
     properties:
       adult:
-        description: Show adult items in search result.
+        description: Return adult items.
         type: boolean
         default: false
       search:
@@ -107,7 +106,7 @@ definitions:
         type: string
         default: ""
       sort:
-        description: Sort the list by this column.
+        description: Sort results by this column.
         type: string
         default: ""
       filter:
@@ -160,6 +159,10 @@ definitions:
             type: array
             items:
               $ref: "items.yaml#/definitions/ItemTypes"
+          adult:
+            description: Have to be `true` if this catalog provides adult content.
+            type: boolean
+            default: false
   BaseDirectoryItem:
     type: object
     properties:
