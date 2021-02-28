@@ -1,7 +1,7 @@
 {
     "name": "@mediaurl/cassandra-cache",
     "description": "MediaURL Cassandra cache wrapper",
-    "version": "2.0.0-alpha.0",
+    "version": "2.0.0-alpha.1",
     "main": "dist",
     "scripts": {
         "test": "jest",
@@ -9,11 +9,11 @@
         "prepublishOnly": "rm -rf dist && npm run build"
     },
     "dependencies": {
-        "@mediaurl/sdk": "^2.0.0-alpha.0",
+        "@mediaurl/sdk": "^2.0.0-alpha.1",
         "cassandra-driver": "^4.6.1"
     },
     "devDependencies": {
-        "@mediaurl/test-utils": "^2.0.0-alpha.0",
+        "@mediaurl/test-utils": "^2.0.0-alpha.1",
         "@types/jest": "26.0.20",
         "jest": "26.6.3",
         "ts-jest": "26.5.0",
