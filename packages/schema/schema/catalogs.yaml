@@ -124,9 +124,14 @@ definitions:
         nullable: true
         default: null
     default: {}
-  BaseCatalogItem:
+  Catalog:
     type: object
     properties:
+      id:
+        description: ID of catalog.
+        oneOf:
+          - $ref: "general.yaml#/definitions/GenericId"
+        default: ""
       name:
         description: Name of item.
         oneOf:
@@ -141,28 +146,17 @@ definitions:
         $ref: "#/definitions/CatalogOptions"
       features:
         $ref: "#/definitions/CatalogFeatures"
-  Catalog:
-    type: object
-    allOf:
-      - $ref: "#/definitions/BaseCatalogItem"
-      - type: object
-        properties:
-          id:
-            description: ID of catalog.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
-            default: ""
-          itemTypes:
-            description: |
-              Item types returned by this catalog. If not set,
-              it will fallback to the addon item types.
-            type: array
-            items:
-              $ref: "items.yaml#/definitions/ItemTypes"
-          adult:
-            description: Have to be `true` if this catalog provides adult content.
-            type: boolean
-            default: false
+      itemTypes:
+        description: |
+          Item types returned by this catalog. If not set,
+          it will fallback to the addon item types.
+        type: array
+        items:
+          $ref: "items.yaml#/definitions/ItemTypes"
+      adult:
+        description: Have to be `true` if this catalog provides adult content.
+        type: boolean
+        default: false
   BaseDirectoryItem:
     type: object
     properties:
