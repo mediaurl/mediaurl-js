@@ -19,30 +19,6 @@ definitions:
     patternProperties:
       "^([a-z]{2}|[a-z]{2}(-[A-Z]{2})?)$":
         type: string
-  SimilarItems:
-    description: |
-      This is basically a `directory`.
-      List of similar items which will be displayed on the item screen. You
-      can either return a list of `items` to be displayed, or define a request
-      `catalog` which will be made to the specific addon.
-    type: array
-    items:
-      allOf:
-        - $ref: "catalogs.yaml#/definitions/BaseDirectoryItem"
-        - type: object
-          properties:
-            id:
-              description: Directory ID item.
-              oneOf:
-                - $ref: "general.yaml#/definitions/GenericId"
-              default: ""
-            items:
-              description: |
-                Optionally define a list of items. No `catalog` request will be
-                made if this property is set.
-              type: array
-              items:
-                $ref: "#/definitions/MainItem"
   ItemImages:
     description: Item images.
     type: object
@@ -164,7 +140,10 @@ definitions:
         items:
           $ref: "objects.yaml#/definitions/Source"
       similarItems:
-        $ref: "#/definitions/SimilarItems"
+        type: array
+        items:
+          oneOf:
+            - $ref: "catalogs.yaml#/definitions/SimilarItem"
     required: [ids]
   MovieItem:
     allOf:
@@ -273,7 +252,10 @@ definitions:
           Defaults to `false`.
         type: boolean
       similarItems:
-        $ref: "#/definitions/SimilarItems"
+        type: array
+        items:
+          oneOf:
+            - $ref: "catalogs.yaml#/definitions/SimilarItem"
     required: [type, ids]
   IptvItem:
     type: object

@@ -59,7 +59,7 @@ definitions:
             - $ref: "general.yaml#/definitions/TranslatedText"
       defaultValue:
         description: |
-          Default value of this filter, should be TranslatedText or
+          Default value of this filter, should be `TranslatedText` or
           the key of a filter. Have to be one of `values`.
         anyOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
@@ -220,3 +220,25 @@ definitions:
           hideOnHomescreen:
             description: Hide this dashboard from the home screen. Defaults to false.
             type: boolean
+  SimilarItem:
+    description: |
+      This is basically a `directory`.
+      List of similar items which will be displayed on the item screen. You
+      can either return a list of `items` to be displayed, or define a `catalog`
+      request which will be made to the specific addon.
+    allOf:
+      - $ref: "#/definitions/BaseDirectoryItem"
+      - type: object
+        properties:
+          id:
+            description: Directory ID item.
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
+            default: ""
+          items:
+            description: |
+              Optionally define a list of items. No `catalog` request will be
+              made if this property is set.
+            type: array
+            items:
+              $ref: "#/definitions/MainItem"
