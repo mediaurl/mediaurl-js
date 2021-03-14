@@ -186,22 +186,6 @@ definitions:
         $ref: "#/definitions/CatalogFeatures"
       args:
         $ref: "#/definitions/CatalogArguments"
-  DirectoryItem:
-    description: A directory is a sub directory of a catalog.
-    allOf:
-      - $ref: "#/definitions/BaseDirectoryItem"
-      - type: object
-        required: [type, id]
-        properties:
-          type:
-            type: string
-            enum: [directory]
-          id:
-            description: ID of directory.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
-          images:
-            $ref: "items.yaml#/definitions/ItemImages"
   DashboardItem:
     description: |
       Directories which will be displayed on the dashboard in the app.
@@ -220,12 +204,28 @@ definitions:
           hideOnHomescreen:
             description: Hide this dashboard from the home screen. Defaults to false.
             type: boolean
+  DirectoryItem:
+    description: A directory is a sub directory of a catalog.
+    allOf:
+      - $ref: "#/definitions/BaseDirectoryItem"
+      - type: object
+        required: [type, id]
+        properties:
+          type:
+            type: string
+            enum: [directory]
+          id:
+            description: ID of directory.
+            oneOf:
+              - $ref: "general.yaml#/definitions/GenericId"
+          images:
+            $ref: "items.yaml#/definitions/ItemImages"
   SimilarItem:
     description: |
       This is basically a `directory`.
-      List of similar items which will be displayed on the item screen. You
-      can either return a list of `items` to be displayed, or define a `catalog`
-      request which will be made to the specific addon.
+      List of similar items which will be displayed on the item screen. You can
+      either return a list of `items` to be displayed. When `items` is not set,
+      a `catalog` request will be made.
     allOf:
       - $ref: "#/definitions/BaseDirectoryItem"
       - type: object
@@ -242,3 +242,8 @@ definitions:
             type: array
             items:
               $ref: "#/definitions/MainItem"
+  DirectoryLikeItem:
+    anyOf:
+      - $ref: "#/definitions/DashboardItem"
+      - $ref: "#/definitions/DirectoryItem"
+      - $ref: "#/definitions/SimilarItem"
