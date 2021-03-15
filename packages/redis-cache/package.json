@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/redis-cache",
   "description": "MediaURL Redis cache wrapper",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0-alpha.5",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -9,7 +9,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@mediaurl/cache": "^2.0.0-alpha.4",
+    "@mediaurl/cache": "^2.0.0-alpha.5",
     "redis": "3.0.2"
   },
   "devDependencies": {
