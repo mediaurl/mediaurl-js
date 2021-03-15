@@ -1,7 +1,7 @@
 import { promises as fsPromises } from "fs";
 import * as path from "path";
+import { BasicCache } from "../cache";
 import { CacheOptions } from "../types";
-import { BasicCache } from "./BasicCache";
 
 export class DiskCache extends BasicCache {
   constructor(

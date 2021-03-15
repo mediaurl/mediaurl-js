@@ -1,5 +1,5 @@
+import { CacheHandler } from "@mediaurl/cache";
 import { TaskRecaptchaRequest, TaskRecaptchaResponse } from "@mediaurl/schema";
-import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 import { RecaptchaFn } from "./types";
 

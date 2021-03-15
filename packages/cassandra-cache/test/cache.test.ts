@@ -1,4 +1,4 @@
-import { testCache } from "@mediaurl/test-utils";
+import { testCache } from "@mediaurl/cache/dist/utils/test-utils";
 import { CassandraCache } from "../src";
 
 if (process.env.CASSANDRA_CONFIG) {

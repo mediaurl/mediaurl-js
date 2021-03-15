@@ -1,6 +1,6 @@
+import { CacheOptionsParam } from "@mediaurl/cache";
 import { Addon, AddonActions, AddonResourceActions } from "@mediaurl/schema";
 import { cloneDeep } from "lodash";
-import { CacheOptionsParam } from "./cache";
 import { ActionHandlers, ResolverHandlerFn } from "./types";
 import { validateAddonProps } from "./validators";
 

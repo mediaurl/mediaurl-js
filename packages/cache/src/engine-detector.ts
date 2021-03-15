@@ -1,8 +1,4 @@
-import { BasicCache } from "./BasicCache";
-
-export * from "./BasicCache";
-export * from "./DiskCache";
-export * from "./MemoryCache";
+import { BasicCache } from "./cache";
 
 export type CacheEngineCreator = () => BasicCache | null;
 
@@ -15,7 +11,7 @@ export const registerCacheEngineCreator = (fn: CacheEngineCreator) => {
 const defaultCreators = [
   () =>
     process.env.DISK_CACHE
-      ? new (require("./DiskCache").DiskCache)(process.env.DISK_CACHE)
+      ? new (require("./engines/disk").DiskCache)(process.env.DISK_CACHE)
       : null,
 ];
 
@@ -48,5 +44,5 @@ export const detectCacheEngine = (): BasicCache => {
     engine = fn();
     if (engine) return engine;
   }
-  return new (require("./MemoryCache").MemoryCache)();
+  return new (require("./engines/memory").MemoryCache)();
 };

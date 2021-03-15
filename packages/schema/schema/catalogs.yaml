@@ -136,12 +136,12 @@ definitions:
         description: Name of item.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
-      description:
-        description: Description of item.
-        oneOf:
-          - $ref: "general.yaml#/definitions/TranslatedText"
-      images:
-        $ref: "items.yaml#/definitions/ItemImages"
+      # description:
+      #   description: Description of item.
+      #   oneOf:
+      #     - $ref: "general.yaml#/definitions/TranslatedText"
+      # images:
+      #   $ref: "items.yaml#/definitions/ItemImages"
       options:
         $ref: "#/definitions/CatalogOptions"
       features:

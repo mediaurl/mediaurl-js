@@ -1,8 +1,8 @@
+import { CacheHandler, IgnoreCacheError } from "@mediaurl/cache";
 import { TaskRequest, TaskResponse } from "@mediaurl/schema";
 import { EventEmitter } from "events";
 import { v4 as uuid4 } from "uuid";
 import { AddonClass } from "../addon";
-import { CacheHandler, IgnoreCacheError } from "../cache";
 import { SilentError } from "../errors";
 import { SendResponseFn } from "../types";
 

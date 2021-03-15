@@ -1,4 +1,4 @@
-import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
+import { BasicCache, registerCacheEngineCreator } from "@mediaurl/cache";
 import retryPromise from "promise-retry";
 import {
   Connection,

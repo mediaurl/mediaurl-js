@@ -1,4 +1,6 @@
-import { BasicCache, CacheHandler, SetResultError } from "@mediaurl/sdk";
+import { BasicCache } from "../cache";
+import { SetResultError } from "../errors";
+import { CacheHandler } from "../handler";
 
 export const testCache = (
   name: string,

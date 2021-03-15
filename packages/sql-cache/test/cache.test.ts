@@ -1,4 +1,4 @@
-import { testCache } from "@mediaurl/test-utils";
+import { testCache } from "@mediaurl/cache/dist/utils/test-utils";
 import { createFromUrl, getTypeFromUrl } from "../src";
 
 let i = 1;

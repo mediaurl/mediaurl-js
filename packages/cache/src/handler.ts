@@ -1,5 +1,5 @@
 import ms = require("ms");
-import { BasicCache } from "./engines";
+import { BasicCache } from "./cache";
 import {
   CacheFoundError,
   IgnoreCacheError,

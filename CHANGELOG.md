@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.0-alpha.1
+## v2.0.0-alpha.5
 
 Simplified the whole addon system.
 
@@ -13,6 +13,7 @@ Simplified the whole addon system.
   - Renamed `rootDirectories` to `catalogs`
 - Renamed `Directory.rootId` to `Directory.catalogId`
 - Various other fixes and improvments
+- Moved caching logic to module `@mediaurl/cache`
 
 ## v1.3.0
 

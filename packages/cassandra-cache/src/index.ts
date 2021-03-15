@@ -1,4 +1,4 @@
-import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
+import { BasicCache, registerCacheEngineCreator } from "@mediaurl/cache";
 import cassandra, { DseClientOptions } from "cassandra-driver";
 
 export interface CassandraCacheOpts extends DseClientOptions {

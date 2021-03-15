@@ -1,8 +1,9 @@
-import { DiskCache, MemoryCache } from "@mediaurl/sdk";
 import { promises as fsPromises } from "fs";
 import * as os from "os";
 import * as path from "path";
-import { testCache } from "../src";
+import { DiskCache } from "../src/engines/disk";
+import { MemoryCache } from "../src/engines/memory";
+import { testCache } from "../src/utils/test-utils";
 
 describe(`MemoryCache`, () => {
   testCache("memory", () => new MemoryCache());

@@ -1,5 +1,5 @@
+import { CacheHandler } from "@mediaurl/cache";
 import { TaskNotificationRequest } from "@mediaurl/schema";
-import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 import { NotificationFn } from "./types";
 

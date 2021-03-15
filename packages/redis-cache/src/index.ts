@@ -1,9 +1,8 @@
+import { BasicCache, registerCacheEngineCreator } from "@mediaurl/cache";
 import {
-  BasicCache,
   compressCache,
   decompressCache,
-  registerCacheEngineCreator,
-} from "@mediaurl/sdk";
+} from "@mediaurl/cache/dist/utils/compress";
 import * as redis from "redis";
 import { promisify } from "util";
 

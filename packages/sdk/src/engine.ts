@@ -1,6 +1,10 @@
+import {
+  CacheFoundError,
+  CacheHandler,
+  detectCacheEngine,
+} from "@mediaurl/cache";
 import { cloneDeep } from "lodash";
 import { AddonClass } from "./addon";
-import { CacheFoundError, CacheHandler, detectCacheEngine } from "./cache";
 import { migrations } from "./migrations";
 import {
   createTaskFetch,

@@ -9,6 +9,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
+    "@mediaurl/cache": "^2.0.0-alpha.4",
     "@mediaurl/schema": "^2.0.0-alpha.4",
     "@types/express": "4.17.11",
     "@types/node-fetch": "^2.5.8",

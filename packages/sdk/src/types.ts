@@ -1,3 +1,4 @@
+import { CacheHandler, CacheOptionsParam } from "@mediaurl/cache";
 import {
   AddonActions,
   AddonRequest,
@@ -20,7 +21,6 @@ import {
   SubtitleResponse,
 } from "@mediaurl/schema";
 import { AddonClass } from "./addon";
-import { CacheHandler, CacheOptionsParam } from "./cache";
 import { FetchFn, NotificationFn, RecaptchaFn, ToastFn } from "./tasks";
 
 /**

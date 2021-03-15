@@ -1,10 +1,10 @@
+import { BasicCache } from "../cache";
 import { compressCache, decompressCache } from "../utils/compress";
-import { BasicCache } from "./BasicCache";
 
 /**
  * In-memory cache, basically for testing
  */
-export class MemoryCache extends BasicCache {
+export class CompressedMemoryCache extends BasicCache {
   private data: Record<string, [number, Buffer]> = {};
 
   public async exists(key: string) {
@@ -12,6 +12,9 @@ export class MemoryCache extends BasicCache {
   }
 
   public async get(key: string) {
+    // without this the test case would fail
+    await new Promise((r) => setImmediate(r));
+
     const d = this.data[key];
     if (d) {
       if (d[0] >= Date.now()) {
