@@ -1,10 +1,10 @@
-import { BasicCache } from "../cache";
 import { SetResultError } from "../errors";
 import { CacheHandler } from "../handler";
+import { CacheEngine } from "../types";
 
 export const testCache = (
   name: string,
-  createEngine: () => BasicCache | Promise<BasicCache>,
+  createEngine: () => CacheEngine | Promise<CacheEngine>,
   /**
    * On slow computers the default waiting times may cause timeouts
    */

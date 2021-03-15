@@ -1,6 +1,6 @@
-import { BasicCache } from "./cache";
+import { CacheEngine } from "./types";
 
-export type CacheEngineCreator = () => BasicCache | null;
+export type CacheEngineCreator = () => CacheEngine | null;
 
 const creators: CacheEngineCreator[] = [];
 
@@ -17,7 +17,7 @@ const defaultCreators = [
 
 const initialized = false;
 
-export const detectCacheEngine = (): BasicCache => {
+export const detectCacheEngine = (): CacheEngine => {
   if (!initialized) {
     // Load modules defined by environment. Do it here to prevent circular imports
     (process.env.LOAD_MEDIAURL_CACHE_MODULE ?? "")
@@ -35,7 +35,7 @@ export const detectCacheEngine = (): BasicCache => {
       });
   }
 
-  let engine: BasicCache | null = null;
+  let engine: CacheEngine | null = null;
   for (const fn of creators) {
     engine = fn();
     if (engine) return engine;

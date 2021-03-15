@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
-import { CacheOptions } from "./types";
+import { CacheEngine, CacheOptions } from "./types";
 
-export class BasicCache {
+export class BasicCache implements CacheEngine {
   public async exists(key: any): Promise<any> {
     throw new Error(`Not implemented`);
   }
