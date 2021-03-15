@@ -1,5 +1,5 @@
-import { BasicCache } from "../cache";
 import { compressCache, decompressCache } from "../utils/compress";
+import { BasicCache } from "./basic";
 
 /**
  * In-memory cache, basically for testing
