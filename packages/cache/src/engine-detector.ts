@@ -8,13 +8,6 @@ export const registerCacheEngineCreator = (fn: CacheEngineCreator) => {
   creators.push(fn);
 };
 
-const defaultCreators = [
-  () =>
-    process.env.DISK_CACHE
-      ? new (require("./engines/disk").DiskCache)(process.env.DISK_CACHE)
-      : null,
-];
-
 const initialized = false;
 
 export const detectCacheEngine = (): CacheEngine => {
@@ -37,10 +30,6 @@ export const detectCacheEngine = (): CacheEngine => {
 
   let engine: CacheEngine | null = null;
   for (const fn of creators) {
-    engine = fn();
-    if (engine) return engine;
-  }
-  for (const fn of defaultCreators) {
     engine = fn();
     if (engine) return engine;
   }

@@ -1,10 +1,8 @@
+import { CacheEngine, CacheOptions } from "../types";
 import { compressCache, decompressCache } from "../utils/compress";
-import { BasicCache } from "./basic";
+import { djb2 } from "../utils/djb2";
 
-/**
- * In-memory cache, basically for testing
- */
-export class CompressedMemoryCache extends BasicCache {
+export class CompressedMemoryCache implements CacheEngine {
   private data: Record<string, [number, Buffer]> = {};
 
   public async exists(key: string) {
@@ -48,5 +46,12 @@ export class CompressedMemoryCache extends BasicCache {
         delete this.data[key];
       }
     }
+  }
+
+  public createKey(prefix: CacheOptions["prefix"], key: any) {
+    if (typeof key === "string" && key.indexOf(":") === 0) return key;
+    const str = typeof key === "string" ? key : JSON.stringify(key);
+    prefix = prefix === null ? "" : `${prefix}:`;
+    return `:${prefix}-${djb2(str)}-${djb2(prefix + str)}`;
   }
 }

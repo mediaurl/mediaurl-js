@@ -2,6 +2,7 @@ import {
   CacheFoundError,
   CacheHandler,
   detectCacheEngine,
+  registerCacheEngineCreator,
 } from "@mediaurl/cache";
 import { cloneDeep } from "lodash";
 import { AddonClass } from "./addon";
@@ -48,6 +49,12 @@ export const createEngine = (
       );
     }
   }
+
+  registerCacheEngineCreator(() =>
+    process.env.DISK_CACHE
+      ? new (require("./engines/disk").DiskCache)(process.env.DISK_CACHE)
+      : null
+  );
 
   const opts: EngineOptions = {
     ...defaultOptions,

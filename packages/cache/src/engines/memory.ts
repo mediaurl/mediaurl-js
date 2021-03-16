@@ -1,9 +1,7 @@
-import { BasicCache } from "./basic";
+import { CacheEngine, CacheOptions } from "../types";
+import { djb2 } from "../utils/djb2";
 
-/**
- * In-memory cache, basically for testing
- */
-export class MemoryCache extends BasicCache {
+export class MemoryCache implements CacheEngine {
   private data: Record<string, [number, string]> = {};
 
   public async exists(key: string) {
@@ -18,8 +16,6 @@ export class MemoryCache extends BasicCache {
     if (d) {
       if (d[0] >= Date.now()) {
         return JSON.parse(d[1]);
-        // const buffer = await decompressCache(d[1]);
-        // return JSON.parse(buffer.toString());
       }
       delete this.data[key];
     }
@@ -30,7 +26,6 @@ export class MemoryCache extends BasicCache {
     this.data[key] = [
       ttl === Infinity ? Infinity : Date.now() + ttl,
       JSON.stringify(value),
-      // await compressCache(Buffer.from(JSON.stringify(value))),
     ];
   }
 
@@ -49,5 +44,12 @@ export class MemoryCache extends BasicCache {
         delete this.data[key];
       }
     }
+  }
+
+  public createKey(prefix: CacheOptions["prefix"], key: any) {
+    if (typeof key === "string" && key.indexOf(":") === 0) return key;
+    const str = typeof key === "string" ? key : JSON.stringify(key);
+    prefix = prefix === null ? "" : `${prefix}:`;
+    return `:${prefix}-${djb2(str)}-${djb2(prefix + str)}`;
   }
 }
