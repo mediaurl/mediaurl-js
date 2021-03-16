@@ -1,6 +1,6 @@
 {
   "name": "@mediaurl/sql-cache",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.7",
   "description": "MediaURL SQL cache wrapper",
   "main": "dist",
   "scripts": {
@@ -9,7 +9,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@mediaurl/cache": "^2.0.0-alpha.6",
+    "@mediaurl/cache": "^2.0.0-alpha.7",
     "mysql": "2.18.1",
     "pg": "8.5.1",
     "promise-retry": "2.0.1",
