@@ -208,6 +208,8 @@ components:
       $ref: "items.yaml#/definitions/SeriesItem"
     ChannelItem:
       $ref: "items.yaml#/definitions/ChannelItem"
+    UnknownItem:
+      $ref: "items.yaml#/definitions/UnknownItem"
     IptvItem:
       $ref: "items.yaml#/definitions/IptvItem"
     Source:

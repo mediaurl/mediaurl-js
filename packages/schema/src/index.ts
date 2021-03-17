@@ -42,6 +42,7 @@ function init(schemas: any) {
         movie: createValidator(schemas, "out", "MovieItem"),
         series: createValidator(schemas, "out", "SeriesItem"),
         channel: createValidator(schemas, "out", "ChannelItem"),
+        unknown: createValidator(schemas, "out", "UnknownItem"),
         iptv: createValidator(schemas, "out", "IptvItem"),
         all: createValidator(schemas, "out", "MainItem"),
       },

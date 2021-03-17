@@ -3,7 +3,7 @@ definitions:
   ItemTypes:
     description: Valid item types.
     type: string
-    enum: [directory, movie, series, channel, iptv]
+    enum: [directory, movie, series, channel, unknown, iptv]
   AllItemTypes:
     description: Valid item types.
     oneOf:
@@ -223,6 +223,7 @@ definitions:
         type: boolean
     required: [ids, season, episode]
   ChannelItem:
+    description: General purpose VOD item type.
     type: object
     properties:
       type:
@@ -257,6 +258,26 @@ definitions:
           oneOf:
             - $ref: "catalogs.yaml#/definitions/SimilarItem"
     required: [type, ids]
+  UnknownItem:
+    description: This item can be mutated to a `movie`, `series` or `channel` item.
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [unknown]
+      ids:
+        $ref: "#/definitions/ItemIDs"
+      name:
+        description: Name of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      description:
+        description: Description of item.
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      images:
+        $ref: "#/definitions/ItemImages"
+    required: [type, ids]
   IptvItem:
     type: object
     properties:
@@ -265,7 +286,7 @@ definitions:
         enum: [iptv]
       ids:
         description: |
-          Optional ID's for this channel, like TGV ID or similar.
+          Optional ID's for this TV channel, like TGV ID or similar.
           You just can leave this empty.
         oneOf:
           - $ref: "#/definitions/ItemIDs"
@@ -274,16 +295,16 @@ definitions:
         description: Name of item.
         type: string
       country:
-        description: Country of this channel.
+        description: Country of this TV channel.
         type: string
       language:
-        description: Language of this channel.
+        description: Language of this TV channel.
         type: string
       category:
-        description: Category of this channel.
+        description: Category of this TV channel.
         type: string
       group:
-        description: Group of this channel.
+        description: Group of this TV channel.
         type: string
       url:
         description: Streaming URL for this IPTV item.
@@ -324,6 +345,7 @@ definitions:
       - $ref: "#/definitions/MovieItem"
       - $ref: "#/definitions/SeriesItem"
       - $ref: "#/definitions/ChannelItem"
+      - $ref: "#/definitions/UnknownItem"
   PlayableItem:
     description: All items which could be played, excludes `directory`.
     anyOf:
