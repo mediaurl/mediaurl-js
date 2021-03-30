@@ -9,15 +9,12 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
+    "@mediaurl/schema": "^2.0.0-alpha.7",
     "i18next": "^19.9.2",
     "i18next-fs-backend": "^1.1.0",
     "i18next-locize-backend": "^4.1.10"
   },
-  "peerDependencies": {
-    "@mediaurl/schema": "=> 2.0.0-alpha.7"
-  },
   "devDependencies": {
-    "@mediaurl/schema": "^2.0.0-alpha.8",
     "@types/i18next-node-fs-backend": "^2.1.0",
     "@types/jest": "^26.0.20",
     "jest": "^26.6.3",

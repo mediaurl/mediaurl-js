@@ -7,15 +7,12 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@mediaurl/sdk": "^2.0.0-alpha.7",
     "@types/puppeteer-core": "^2.0.0",
     "puppeteer-core": "^3.0.4",
     "set-cookie-parser": "^2.4.8"
   },
-  "peerDependencies": {
-    "@mediaurl/sdk": "=> 2.0.0-alpha.7"
-  },
   "devDependencies": {
-    "@mediaurl/sdk": "^2.0.0-alpha.8",
     "@types/generic-pool": "^3.1.9",
     "@types/node-fetch": "^2.5.8",
     "@types/set-cookie-parser": "^2.4.0",

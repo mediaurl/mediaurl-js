@@ -9,13 +9,10 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
+    "@mediaurl/cache": "^2.0.0-alpha.7",
     "mongodb": "^3.6.5"
   },
-  "peerDependencies": {
-    "@mediaurl/cache": "=> 2.0.0-alpha.7"
-  },
   "devDependencies": {
-    "@mediaurl/cache": "^2.0.0-alpha.8",
     "@types/jest": "^26.0.20",
     "@types/mongodb": "^3.6.10",
     "jest": "^26.6.3",
