@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/mongodb-cache",
   "description": "MediaURL MongoDB cache wrapper",
-  "version": "2.0.0-alpha.7",
+  "version": "2.0.0-alpha.8",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -15,7 +15,7 @@
     "@mediaurl/cache": "=> 2.0.0-alpha.7"
   },
   "devDependencies": {
-    "@mediaurl/cache": "^2.0.0-alpha.7",
+    "@mediaurl/cache": "^2.0.0-alpha.8",
     "@types/jest": "^26.0.20",
     "@types/mongodb": "^3.6.10",
     "jest": "^26.6.3",
