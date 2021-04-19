@@ -39,6 +39,13 @@ export const dummyAddon = createAddon({
 });
 
 dummyAddon.registerActionHandler("catalog", async (input, ctx) => {
+  if (input.id === "iptv") {
+    return {
+      items: TEST_IPTV_ITEMS,
+      nextCursor: null,
+    };
+  }
+
   let items = _.sortBy(
     TEST_ITEMS.map((fn) => fn(false)),
     input.sort ?? "name"
@@ -97,8 +104,4 @@ dummyAddon.addResolveHandler(chainResolveTestUrl, async (match, input, ctx) => {
     };
   }
   return input.url;
-});
-
-dummyAddon.registerActionHandler("iptv", async (input, ctx) => {
-  return { items: TEST_IPTV_ITEMS };
 });

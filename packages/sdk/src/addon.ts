@@ -11,7 +11,6 @@ const resourceActions: AddonResourceActions[] = [
   "subtitle",
   "resolve",
   "captcha",
-  "iptv",
 ];
 
 type Resolver = {

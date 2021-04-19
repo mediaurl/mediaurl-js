@@ -334,11 +334,16 @@ definitions:
               type: array
               items:
                 $ref: "general.yaml#/definitions/TranslatedText"
+            languages:
+              description: List of languages in ISO-639-1 format.
+              type: array
+              items:
+                $ref: "general.yaml#/definitions/Language"
             poster:
               $ref: "general.yaml#/definitions/Image"
           required: [start, stop, name]
         default: []
-    required: [type, ids]
+    required: [type, ids, url]
   VODItem:
     description: All items which could be played, excludes `directory` and `iptv`.
     anyOf:
