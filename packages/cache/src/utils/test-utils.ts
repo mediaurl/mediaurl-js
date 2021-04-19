@@ -300,7 +300,7 @@ export const testCache = (
       });
       let t = Date.now();
       await expect(cache.call("hello", fn1)).resolves.toBe("1");
-      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait - 5);
 
       t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("1");
@@ -401,7 +401,7 @@ export const testCache = (
 
       t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("1");
-      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait - 5);
 
       await sleep(options.ttl);
 
