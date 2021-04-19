@@ -18,7 +18,7 @@ addRecord({
     region: "CH",
   },
   output: {
-    actions: ["catalog", "item", "source", "subtitle", "resolve", "iptv"],
+    actions: ["catalog", "item", "source", "subtitle", "resolve"],
     id: "dummy-test",
     name: "Typescript Test Addon",
     version: "1.0.0",
