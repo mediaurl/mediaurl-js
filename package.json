@@ -20,11 +20,11 @@
     "publish": "npm run test-all && lerna publish"
   },
   "simple-git-hooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
     "*.{js,ts,tsx,css,md}": [
-      "eslint --fix",
+      "npx eslint --fix",
       "git add"
     ]
   },
