@@ -1,4 +1,9 @@
-import { Addon, AddonActions, getServerValidators } from "@mediaurl/schema";
+import {
+  Addon,
+  AddonActions,
+  GenericId,
+  getServerValidators,
+} from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -9,9 +14,34 @@ const handleError = (kind: string, error: Error) => {
   return new Error("Validation error");
 };
 
-export const validateAddonProps = <T extends Addon>(input: any): T => {
+export const validateAddonProps = (input: Addon) => {
   try {
-    return getServerValidators().models.addon(input);
+    const addon: Addon = getServerValidators().models.addon(input);
+    if (addon.catalogs) {
+      const ids = new Set<GenericId>([]);
+      for (const e of addon.catalogs) {
+        const id = e.id ?? "";
+        if (ids.has(id)) {
+          throw new Error(
+            `Catalog ID's must be unique, ID "${e.id}" already exists`
+          );
+        }
+        ids.add(id);
+      }
+    }
+    if (addon.dashboards) {
+      const ids = new Set<GenericId>([]);
+      for (const e of addon.dashboards) {
+        const id = e.id ?? "";
+        if (ids.has(id)) {
+          throw new Error(
+            `Dashboard ID's must be unique, ID "${e.id}" already exists`
+          );
+        }
+        ids.add(id);
+      }
+    }
+    return addon;
   } catch (error) {
     throw handleError("addon", error);
   }
