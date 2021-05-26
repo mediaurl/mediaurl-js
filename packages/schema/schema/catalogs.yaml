@@ -9,8 +9,9 @@ definitions:
         description: |
           Shape of the images.
           If not set, a value depening on the item type is used.
-        oneOf:
-          - $ref: "general.yaml#/definitions/ImageShape"
+        type: string
+        enum: [regular, square, landscape]
+        default: regular
       displayName:
         description: |
           Display the item name over the image.
@@ -201,9 +202,6 @@ definitions:
               then is merged with this one.
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
-          hideOnHomescreen:
-            description: Hide this dashboard from the home screen. Defaults to false.
-            type: boolean
   DirectoryItem:
     description: A directory is a sub directory of a catalog.
     allOf:

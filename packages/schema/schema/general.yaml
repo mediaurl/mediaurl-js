@@ -23,11 +23,6 @@ definitions:
     description: Definition of an URL.
     type: string
     pattern: "[:/]" # There should be at least a colon or slash in an URL
-  ImageShape:
-    description: Shape of an image.
-    type: string
-    enum: [regular, square, landscape]
-    default: regular
   Image:
     description: Definition of an image.
     anyOf:
