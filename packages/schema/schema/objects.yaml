@@ -103,6 +103,10 @@ definitions:
         default: []
       regions:
         $ref: "general.yaml#/definitions/Regions"
+      forbidDownload:
+        description: Forbid the client to download this source.
+        type: boolean
+        default: false
     required: [type, url]
   ResolvedUrl:
     description: A response of `source` or `subtitle` functions.
