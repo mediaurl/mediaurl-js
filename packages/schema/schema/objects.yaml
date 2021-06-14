@@ -33,7 +33,7 @@ definitions:
       Some links need pre-processing before they can be played. For that,
       please see the `resolve` function.
     type: object
-    required: [url]
+    required: [type, url]
     properties:
       type:
         description: Type of this source. Can be `url` or `externalUrl`.
@@ -108,7 +108,6 @@ definitions:
         description: Forbid the client to download this source.
         type: boolean
         default: false
-    required: [type, url]
   ResolvedUrl:
     description: A response of `source` or `subtitle` functions.
     type: object
