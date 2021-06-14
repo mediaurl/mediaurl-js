@@ -111,3 +111,26 @@ export type InlineCacheContext = {
 };
 
 export type CacheOptionsParam = Partial<CacheOptions>;
+
+export interface CacheEngine {
+  exists(key: any): Promise<any>;
+  get(key: any): Promise<any>;
+  set(key: any, value: any, ttl: number): Promise<void>;
+  delete(key: any): Promise<void>;
+
+  /**
+   * This function should remove all cached data. Currently this
+   * is only used for testing.
+   */
+  deleteAll(): Promise<void>;
+
+  /**
+   * Add cache prefixes and prevent too long cache keys.
+   */
+  createKey(prefix: CacheOptions["prefix"], key: any): any;
+
+  /**
+   * Garbage collector, this function deleted outdated cache entries.
+   */
+  cleanup(): Promise<void>;
+}

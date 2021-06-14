@@ -1,8 +1,10 @@
-import { BasicCache, CacheHandler, SetResultError } from "@mediaurl/sdk";
+import { SetResultError } from "../errors";
+import { CacheHandler } from "../handler";
+import { CacheEngine } from "../types";
 
 export const testCache = (
   name: string,
-  createEngine: () => BasicCache | Promise<BasicCache>,
+  createEngine: () => CacheEngine | Promise<CacheEngine>,
   /**
    * On slow computers the default waiting times may cause timeouts
    */
@@ -298,7 +300,7 @@ export const testCache = (
       });
       let t = Date.now();
       await expect(cache.call("hello", fn1)).resolves.toBe("1");
-      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait - 5);
 
       t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("1");
@@ -399,7 +401,7 @@ export const testCache = (
 
       t = Date.now();
       await expect(cache.call("hello", fn2)).resolves.toBe("1");
-      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait);
+      expect(Date.now() - t).toBeGreaterThanOrEqual(functionWait - 5);
 
       await sleep(options.ttl);
 

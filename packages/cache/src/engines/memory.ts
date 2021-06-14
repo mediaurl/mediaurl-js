@@ -1,22 +1,21 @@
-import { compressCache, decompressCache } from "../utils/compress";
-import { BasicCache } from "./BasicCache";
+import { CacheEngine, CacheOptions } from "../types";
+import { djb2 } from "../utils/djb2";
 
-/**
- * In-memory cache, basically for testing
- */
-export class MemoryCache extends BasicCache {
-  private data: Record<string, [number, Buffer]> = {};
+export class MemoryCache implements CacheEngine {
+  private data: Record<string, [number, string]> = {};
 
   public async exists(key: string) {
     return (await this.get(key)) !== undefined;
   }
 
   public async get(key: string) {
+    // without this the test case would fail
+    await new Promise((r) => setImmediate(r));
+
     const d = this.data[key];
     if (d) {
       if (d[0] >= Date.now()) {
-        const buffer = await decompressCache(d[1]);
-        return JSON.parse(buffer.toString());
+        return JSON.parse(d[1]);
       }
       delete this.data[key];
     }
@@ -26,7 +25,7 @@ export class MemoryCache extends BasicCache {
   public async set(key: string, value: any, ttl: number) {
     this.data[key] = [
       ttl === Infinity ? Infinity : Date.now() + ttl,
-      await compressCache(Buffer.from(JSON.stringify(value))),
+      JSON.stringify(value),
     ];
   }
 
@@ -45,5 +44,12 @@ export class MemoryCache extends BasicCache {
         delete this.data[key];
       }
     }
+  }
+
+  public createKey(prefix: CacheOptions["prefix"], key: any) {
+    if (typeof key === "string" && key.indexOf(":") === 0) return key;
+    const str = typeof key === "string" ? key : JSON.stringify(key);
+    prefix = prefix === null ? "" : `${prefix}:`;
+    return `:${prefix}-${djb2(str)}-${djb2(prefix + str)}`;
   }
 }

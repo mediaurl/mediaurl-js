@@ -1,4 +1,9 @@
-import { Addon, getServerValidators } from "@mediaurl/schema";
+import {
+  Addon,
+  AddonActions,
+  GenericId,
+  getServerValidators,
+} from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -9,32 +14,43 @@ const handleError = (kind: string, error: Error) => {
   return new Error("Validation error");
 };
 
-export const validateAddonProps = <T extends Addon>(input: any): T => {
+export const validateAddonProps = (input: Addon) => {
   try {
-    const validator = getServerValidators().models.addon[input.type];
-    if (!validator) {
-      throw new Error(`No validator for addon type "${input.type}" found`);
+    const addon: Addon = getServerValidators().models.addon(input);
+    if (addon.catalogs) {
+      const ids = new Set<GenericId>([]);
+      for (const e of addon.catalogs) {
+        const id = e.id ?? "";
+        if (ids.has(id)) {
+          throw new Error(
+            `Catalog ID's must be unique, ID "${e.id}" already exists`
+          );
+        }
+        ids.add(id);
+      }
     }
-    return validator(input);
+    if (addon.dashboards) {
+      const ids = new Set<GenericId>([]);
+      for (const e of addon.dashboards) {
+        const id = e.id ?? "";
+        if (ids.has(id)) {
+          throw new Error(
+            `Dashboard ID's must be unique, ID "${e.id}" already exists`
+          );
+        }
+        ids.add(id);
+      }
+    }
+    return addon;
   } catch (error) {
     throw handleError("addon", error);
   }
 };
 
-export const getActionValidator = (addonType: string, action: string) => {
-  const validators = getServerValidators();
-  const validator =
-    validators.actions[addonType]?.[action] ?? validators.actions.basic[action];
+export const getActionValidator = (action: AddonActions) => {
+  const validator = getServerValidators().actions[action];
   if (!validator) {
     throw new Error(`No validator for action "${action}" found`);
-  }
-  if (
-    validator.addonTypes !== undefined &&
-    !validator.addonTypes.includes(addonType)
-  ) {
-    throw new Error(
-      `No validator for action "${action}" and addon type "${addonType}" found`
-    );
   }
   return {
     request: (data: any) => {

@@ -10,7 +10,7 @@ const directory = () => ({
   id: null,
 });
 
-// const directoryResponse = () => ({
+// const catalogResponse = () => ({
 //   items: [movie(), directory()],
 //   nextCursor: null,
 // });
@@ -25,11 +25,11 @@ test("Validate directory item with null as id", () => {
   expect(getClientValidators().models.item.directory(directory())).toBeTruthy();
 });
 
-// test("Validate directory response", () => {
+// test("Validate catalog response", () => {
 //   expect(
-//     getServerValidators().actions.directory.response(directoryResponse())
+//     getServerValidators().actions.catalog.response(catalogResponse())
 //   ).toBeTruthy();
 //   expect(
-//     getClientValidators().actions.directory.response(directoryResponse())
+//     getClientValidators().actions.catalog.response(catalogResponse())
 //   ).toBeTruthy();
 // });

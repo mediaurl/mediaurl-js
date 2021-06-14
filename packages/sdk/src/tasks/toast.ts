@@ -1,5 +1,5 @@
+import { CacheHandler } from "@mediaurl/cache";
 import { TaskToastRequest } from "@mediaurl/schema";
-import { CacheHandler } from "../cache";
 import { Responder, sendTask } from "./engine";
 import { ToastFn } from "./types";
 

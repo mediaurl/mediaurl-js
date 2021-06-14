@@ -1,22 +1,22 @@
 {
   "name": "@mediaurl/puppeteer",
   "description": "Puppeteer helper module",
-  "version": "1.2.1",
+  "version": "2.0.0-alpha.10",
   "main": "dist",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
-    "@mediaurl/sdk": "^1.2.1",
-    "@types/puppeteer-core": "2.0.0",
-    "puppeteer-core": "3.0.4",
-    "set-cookie-parser": "2.4.7"
+    "@mediaurl/sdk": "^2.0.0-alpha.10",
+    "@types/puppeteer-core": "^2.0.0",
+    "puppeteer-core": "^3.0.4",
+    "set-cookie-parser": "^2.4.8"
   },
   "devDependencies": {
-    "@types/generic-pool": "3.1.9",
-    "@types/node-fetch": "2.5.8",
-    "@types/set-cookie-parser": "2.4.0",
-    "typescript": "4.1.3"
+    "@types/generic-pool": "^3.1.9",
+    "@types/node-fetch": "^2.5.10",
+    "@types/set-cookie-parser": "^2.4.0",
+    "typescript": "^4.2.4"
   },
   "publishConfig": {
     "access": "public"

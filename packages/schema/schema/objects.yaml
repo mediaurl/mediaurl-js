@@ -33,6 +33,7 @@ definitions:
       Some links need pre-processing before they can be played. For that,
       please see the `resolve` function.
     type: object
+    required: [url]
     properties:
       type:
         description: Type of this source. Can be `url` or `externalUrl`.

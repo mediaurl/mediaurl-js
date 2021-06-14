@@ -8,8 +8,8 @@ rl2iXzVO8gXUw97fDwIDAQAB
 -----END PUBLIC KEY-----`;
 
 /**
- * Verifies sig field
- * @param body express request body
+ * Verifies the MediaURL signature
+ * @param sig Base64 encoded string
  */
 export const validateSignature = (sig: string): any => {
   if (!sig) {

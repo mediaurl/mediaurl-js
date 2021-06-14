@@ -1,6 +1,6 @@
 import { Agent, ClientRequest, RequestOptions } from "agent-base";
 import * as net from "net";
-import { ActionHandlerContext } from "../";
+import { ActionHandlerContext } from "../types";
 
 /**
  * Experimental: can be used basically for GET or POST (with JSON payload)

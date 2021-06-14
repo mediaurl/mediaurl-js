@@ -1,5 +1,26 @@
-import { BasicAddonClass } from "./addons";
-import { CacheHandler, CacheOptionsParam } from "./cache";
+import { CacheHandler, CacheOptionsParam } from "@mediaurl/cache";
+import {
+  AddonActions,
+  AddonRequest,
+  AddonResponse,
+  CaptchaRequest,
+  CaptchaResponse,
+  CatalogRequest,
+  CatalogResponse,
+  IptvRequest,
+  IptvResponse,
+  ItemRequest,
+  ItemResponse,
+  ResolveRequest,
+  ResolveResponse,
+  SelftestRequest,
+  SelftestResponse,
+  SourceRequest,
+  SourceResponse,
+  SubtitleRequest,
+  SubtitleResponse,
+} from "@mediaurl/schema";
+import { AddonClass } from "./addon";
 import { FetchFn, NotificationFn, RecaptchaFn, ToastFn } from "./tasks";
 
 /**
@@ -28,12 +49,12 @@ export type SendResponseFn = (statusCode: number, body: any) => Promise<void>;
  * The engine object
  */
 export type Engine = {
-  addons: BasicAddonClass[];
+  addons: AddonClass[];
   updateOptions: (options: Partial<EngineOptions>) => void;
   initialize: () => void;
   createServerHandler: () => ServerHandlerFn;
   createServerSelftestHandler: () => ServerSelftestHandlerFn;
-  createAddonHandler: (addon: BasicAddonClass) => AddonHandlerFn;
+  createAddonHandler: (addon: AddonClass) => AddonHandlerFn;
   getCacheHandler: () => CacheHandler;
 };
 
@@ -56,7 +77,7 @@ export type ServerSelftestHandlerFn = (props: {
  * Addon handler function
  */
 export type AddonHandlerFn = (props: {
-  action: string;
+  action: AddonActions;
   request: RequestInfos;
   sig: string;
   input: any;
@@ -94,8 +115,8 @@ export type EngineOptions = {
      * Have to return the input object.
      */
     init?: ((
-      addon: BasicAddonClass,
-      action: string,
+      addon: AddonClass,
+      action: AddonActions,
       input: any
     ) => Promise<any>)[];
     /**
@@ -103,8 +124,8 @@ export type EngineOptions = {
      * Have to return the input object.
      */
     request?: ((
-      addon: BasicAddonClass,
-      action: string,
+      addon: AddonClass,
+      action: AddonActions,
       ctx: ActionHandlerContext,
       input: any
     ) => Promise<any>)[];
@@ -113,8 +134,8 @@ export type EngineOptions = {
      * Have to return the output object.
      */
     response?: ((
-      addon: BasicAddonClass,
-      action: string,
+      addon: AddonClass,
+      action: AddonActions,
       ctx: ActionHandlerContext,
       input: any,
       output: any
@@ -244,12 +265,33 @@ export interface ActionHandlerContext {
 /**
  * Action handler function
  */
-export type ActionHandler<
-  InputType = any,
-  OutputType = any,
-  AddonClass extends BasicAddonClass = BasicAddonClass
-> = (
+type ActionHandler<InputType = any, OutputType = any> = (
   input: InputType,
   context: ActionHandlerContext,
   addon: AddonClass
 ) => Promise<OutputType>;
+
+/**
+ * Should include all available handlers.
+ * It's base type to pick from (by action).
+ */
+export type ActionHandlers = {
+  selftest: ActionHandler<SelftestRequest, SelftestResponse>;
+  addon: ActionHandler<AddonRequest, AddonResponse>;
+  catalog: ActionHandler<CatalogRequest, CatalogResponse>;
+  item: ActionHandler<ItemRequest, ItemResponse>;
+  source: ActionHandler<SourceRequest, SourceResponse>;
+  subtitle: ActionHandler<SubtitleRequest, SubtitleResponse>;
+  resolve: ActionHandler<ResolveRequest, ResolveResponse>;
+  captcha: ActionHandler<CaptchaRequest, CaptchaResponse>;
+  iptv: ActionHandler<IptvRequest, IptvResponse>;
+};
+
+/**
+ * Resolve handler function used for `AddonClass.addResolveHandler`.
+ */
+export type ResolverHandlerFn = (
+  match: RegExpExecArray,
+  input: ResolveRequest,
+  ctx: ActionHandlerContext
+) => Promise<ResolveResponse>;

@@ -1,4 +1,5 @@
-import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
+import { registerCacheEngineCreator } from "@mediaurl/cache";
+import { BasicCache } from "@mediaurl/cache/dist/engines/basic";
 import retryPromise from "promise-retry";
 import {
   Connection,
@@ -6,6 +7,7 @@ import {
   createConnection,
   LessThan,
 } from "typeorm";
+import { URL } from "url";
 import { CacheItem } from "./CacheItem";
 
 type CreateOptions = Partial<ConnectionOptions>;

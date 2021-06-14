@@ -1,10 +1,6 @@
-import { BasicCache } from "./BasicCache";
+import { CacheEngine } from "./types";
 
-export * from "./BasicCache";
-export * from "./DiskCache";
-export * from "./MemoryCache";
-
-export type CacheEngineCreator = () => BasicCache | null;
+export type CacheEngineCreator = () => CacheEngine | null;
 
 const creators: CacheEngineCreator[] = [];
 
@@ -12,16 +8,9 @@ export const registerCacheEngineCreator = (fn: CacheEngineCreator) => {
   creators.push(fn);
 };
 
-const defaultCreators = [
-  () =>
-    process.env.DISK_CACHE
-      ? new (require("./DiskCache").DiskCache)(process.env.DISK_CACHE)
-      : null,
-];
-
 const initialized = false;
 
-export const detectCacheEngine = (): BasicCache => {
+export const detectCacheEngine = (): CacheEngine => {
   if (!initialized) {
     // Load modules defined by environment. Do it here to prevent circular imports
     (process.env.LOAD_MEDIAURL_CACHE_MODULE ?? "")
@@ -39,14 +28,10 @@ export const detectCacheEngine = (): BasicCache => {
       });
   }
 
-  let engine: BasicCache | null = null;
+  let engine: CacheEngine | null = null;
   for (const fn of creators) {
     engine = fn();
     if (engine) return engine;
   }
-  for (const fn of defaultCreators) {
-    engine = fn();
-    if (engine) return engine;
-  }
-  return new (require("./MemoryCache").MemoryCache)();
+  return new (require("./engines/memory").MemoryCache)();
 };

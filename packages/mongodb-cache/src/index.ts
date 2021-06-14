@@ -1,4 +1,5 @@
-import { BasicCache, registerCacheEngineCreator } from "@mediaurl/sdk";
+import { registerCacheEngineCreator } from "@mediaurl/cache";
+import { BasicCache } from "@mediaurl/cache/dist/engines/basic";
 import * as mongodb from "mongodb";
 
 const COLLECTION_NAME = "mediaurl_cache";

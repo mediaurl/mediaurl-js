@@ -61,3 +61,14 @@ export LOAD_MEDIAURL_CACHE_MODULE="@mediaurl/sql-cache"
 export SQL_CACHE_URL=postgresql://dbuser:secretpassword@database.server.com:3211/mydb
 npm run develop
 ```
+
+### `CassandraCache`
+
+This cache engine is using Cassandra as it's backend. This database is very suitable for long term caching. To activate it, set the environment variable `CASSANDRA_OPTIONS` with a komma separated list of Cassandra hosts, or a JSON encoded connection string.
+
+```shell
+npm install @mediaurl/cassandra-cache
+export LOAD_MEDIAURL_CACHE_MODULE="@mediaurl/cassandra-cache"
+export SQL_CACHE_URL=cassandra-host-1,cassandra-host-2,cassandra-host-3
+npm run develop
+```

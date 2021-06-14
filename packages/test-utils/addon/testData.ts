@@ -4,7 +4,7 @@ const itemTest1 = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-test": "id1234",
+      "dummy-test": "id1234",
     },
     name: "Test Item 1",
     description: "This item does not have any sources.",
@@ -15,7 +15,7 @@ const itemBigBuckBunny = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-test": "id1235",
+      "dummy-test": "id1235",
     },
     name: "Big Buck Bunny",
     year: 2013,
@@ -36,7 +36,7 @@ const itemElephant = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-test": "elephant",
+      "dummy-test": "elephant",
     },
     name: "Elephants Dream",
     description: "Dream of elephants?",
@@ -58,7 +58,7 @@ const item4k = (fullData: boolean) =>
   <PlayableItem>{
     type: "movie",
     ids: {
-      "worker-test": "4ktest",
+      "dummy-test": "4ktest",
     },
     name: "4k Test",
     description: "Test video with 4k resolution",

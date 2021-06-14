@@ -1,4 +1,4 @@
-import { testCache } from "@mediaurl/test-utils";
+import { testCache } from "@mediaurl/cache/dist/utils/test-utils";
 import { RedisCache } from "../src";
 
 if (process.env.REDIS_URL) {
