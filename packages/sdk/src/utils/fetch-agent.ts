@@ -18,7 +18,10 @@ export class FetchAgent extends Agent {
     const fakeSocket = new net.Socket({ writable: false });
     fakeSocket.readable = true;
 
-    const resp = await this.fetchFn((<any>opts).href, {
+    const url: string =
+      (<any>opts).href ||
+      `${req.protocol}//${(<any>req).auth || ""}${req.host}${req.path}`;
+    const resp = await this.fetchFn(url, {
       method: opts.method || "GET",
       body: (<any>opts).body,
       headers: (opts.headers || {}) as { [key: string]: string },
