@@ -1,9 +1,4 @@
-import {
-  Addon,
-  AddonActions,
-  GenericId,
-  getServerValidators,
-} from "@mediaurl/schema";
+import { Addon, AddonActions, getServerValidators } from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -18,38 +13,37 @@ export const validateAddonProps = (input: Addon) => {
   try {
     const addon: Addon = getServerValidators().models.addon(input);
     if (addon.catalogs) {
-      const ids = new Set<GenericId>([]);
-      for (const e of addon.catalogs) {
-        const id = e.id ?? "";
-        if (ids.has(id)) {
+      const catalogIds = new Set<string>([]);
+      for (const catalog of addon.catalogs) {
+        const id = catalog.id ?? "";
+        if (catalogIds.has(id)) {
           throw new Error(
-            `Catalog ID's must be unique, ID "${e.id}" already exists`
+            `Catalog ID's must be unique, ID "${catalog.id}" already exists`
           );
         }
-        ids.add(id);
+        catalogIds.add(id);
       }
     }
     if (addon.pages) {
-      const ids = new Set<GenericId>([]);
-      for (const e of addon.pages) {
-        const id = e.id ?? "";
-        if (ids.has(id)) {
+      const pageIds = new Set<string>([]);
+      for (const page of addon.pages) {
+        const pageId = page.id ?? "";
+        if (pageIds.has(pageId)) {
           throw new Error(
-            `Page ID's must be unique, ID "${e.id}" already exists`
+            `Page ID's must be unique, ID "${page.id}" already exists`
           );
         }
-        ids.add(id);
-        if (e.dashboards) {
-          const dashboardIds = new Set<GenericId>([]);
-          const ids = new Set<GenericId>([]);
-          for (const d of e.dashboards) {
-            const id = d.id ?? "";
+        pageIds.add(pageId);
+        if (page.dashboards) {
+          const dashboardIds = new Set<string>([]);
+          for (const dashboard of page.dashboards) {
+            const id = dashboard.id ?? "";
             if (dashboardIds.has(id)) {
               throw new Error(
-                `Dashboard ID's must be unique, ID "${d.id}" already exists`
+                `Dashboard ID's must be unique, ID "${page.id}/${dashboard.id}" already exists`
               );
             }
-            ids.add(id);
+            dashboardIds.add(id);
           }
         }
       }

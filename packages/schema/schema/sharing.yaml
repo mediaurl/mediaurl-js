@@ -25,8 +25,7 @@ definitions:
         $ref: "items.yaml#/definitions/ItemTypes"
       id:
         description: Used with catalogs.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
       ids:
         description: Used with all items except catalogs.
         oneOf:

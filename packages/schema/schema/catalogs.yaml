@@ -26,7 +26,7 @@ definitions:
     additionalProperties: false
     properties:
       id:
-        $ref: "general.yaml#/definitions/GenericId"
+        type: string
       name:
         $ref: "general.yaml#/definitions/TranslatedText"
       compatibleFilter:
@@ -36,7 +36,7 @@ definitions:
     additionalProperties: false
     properties:
       id:
-        $ref: "general.yaml#/definitions/GenericId"
+        type: string
       name:
         $ref: "general.yaml#/definitions/TranslatedText"
       multiselect:
@@ -129,8 +129,7 @@ definitions:
     properties:
       id:
         description: ID of catalog.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
         default: ""
       name:
         description: Name of item.
@@ -164,8 +163,7 @@ definitions:
         description: |
           Catalog this directory belongs to. It will use the `options` and `features`
           of the catalog.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
         default: ""
       addonId:
         description: |
@@ -199,8 +197,7 @@ definitions:
               To overwrite (or reconfigure) other dashboards, set
               this to an already existing dashboard. The found object
               then is merged with this one.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
+            type: string
   DirectoryItem:
     description: A directory is a sub directory of a catalog.
     allOf:
@@ -213,8 +210,7 @@ definitions:
             enum: [directory]
           id:
             description: ID of directory.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
+            type: string
           images:
             $ref: "items.yaml#/definitions/ItemImages"
   SimilarItem:
@@ -229,8 +225,7 @@ definitions:
         properties:
           id:
             description: Directory ID item.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
+            type: string
             default: ""
           items:
             description: |

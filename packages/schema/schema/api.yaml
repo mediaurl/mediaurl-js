@@ -51,14 +51,11 @@ definitions:
             description: |
               ID of the catalog.
             type: string
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
             default: ""
           id:
             description: |
               ID of the `catalog` object. Defaults to an empty string.
-            oneOf:
-              - $ref: "general.yaml#/definitions/GenericId"
+            type: string
             default: ""
           # The following properties are 1:1 the ones from
           # `catalogs.yaml#/definitions/CatalogArguments`, but  with all
@@ -96,8 +93,7 @@ definitions:
     properties:
       catalogId:
         description: Overwrite the `catalogId` of a catalog.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
       options:
         description: Overwrite `options` of a catalog.
         oneOf:

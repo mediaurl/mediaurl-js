@@ -9,8 +9,7 @@ definitions:
           ID of this subtitle. By default the `url` is used. In some cases
           the `url` parameter changes on every call, so `id` is needed
           to prevent duplicate subtitles in the app.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
       name:
         description: Optional informations about this subtitle.
         type: string
@@ -45,8 +44,7 @@ definitions:
           ID of this source. By default the `url` is used. In some cases
           the `url` parameter changes on every call, so `id` is needed
           to prevent duplicate sources in the app.
-        oneOf:
-          - $ref: "general.yaml#/definitions/GenericId"
+        type: string
       url:
         description: URL to this source.
         $ref: "general.yaml#/definitions/Url"

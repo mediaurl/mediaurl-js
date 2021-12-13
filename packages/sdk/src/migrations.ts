@@ -51,6 +51,12 @@ export const migrations = {
         ) {
           addon.requestArgs = addon.triggers;
         }
+        if (
+          addon.pages &&
+          (!ctx.user?.app?.version || semver.lt("1.8.0", ctx.user.app.version))
+        ) {
+          addon.dashboards = addon.pages[0]?.dashboards || [];
+        }
         output = addon;
       }
       return output;

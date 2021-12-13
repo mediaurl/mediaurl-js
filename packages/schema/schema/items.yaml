@@ -45,7 +45,7 @@ definitions:
     type: object
     patternProperties:
       string:
-        $ref: "general.yaml#/definitions/GenericId"
+        type: string
   VirtualMovieItem:
     type: object
     properties:

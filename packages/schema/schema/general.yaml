@@ -56,12 +56,6 @@ definitions:
           $ref: "general.yaml#/definitions/Country"
         default: []
     additionalProperties: false
-    # default: {}
-  GenericId:
-    description: A ID for an object. Can be numeric or a string.
-    anyOf:
-      - type: number
-      - type: string
   Language:
     description: Language in ISO-639-1 format.
     type: string
