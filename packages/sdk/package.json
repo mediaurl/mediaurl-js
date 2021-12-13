@@ -33,7 +33,7 @@
     "@types/lodash": "^4.14.168",
     "@types/morgan": "^1.9.2",
     "@types/ms": "^0.7.31",
-    "@types/pug": "^2.0.4",
+    "@types/pug": "^2.0.5",
     "@types/semver": "^7.3.4",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^8.3.0",
@@ -43,5 +43,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "8f07b584824ad55eb2d52f4fc509b962d1bb147e"
 }
