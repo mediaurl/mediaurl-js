@@ -23,7 +23,7 @@
     "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,css,md}": [
+    "*.{js,ts,tsx,css}": [
       "npx eslint --fix",
       "git add"
     ]

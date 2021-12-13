@@ -10,7 +10,7 @@ definitions:
           Shape of the images.
           If not set, a value depening on the item type is used.
         type: string
-        enum: [regular, square, landscape]
+        enum: [regular, landscape, square]
       displayName:
         description: |
           Display the item name over the image.

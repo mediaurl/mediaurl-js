@@ -1,6 +1,13 @@
 # Changelog
 
-## v2.0.0-alpha.5
+## v2.1.0
+
+- Moved dashboard system from `addon.dashboards` to `addon.pages`
+- Created `page` action
+- Removed `GenericID`, most ID's are of type `string` now
+- Made typing of some objects more strict
+
+## v2.0.0
 
 Simplified the whole addon system.
 

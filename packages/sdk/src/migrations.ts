@@ -24,6 +24,9 @@ export type MigrationContext = {
   };
 };
 
+const isPreVersion = (ctx: MigrationContext, version: string) =>
+  !ctx.user?.app?.version || semver.lt(version, ctx.user.app.version);
+
 export const migrations = {
   addon: {
     response(
@@ -31,30 +34,19 @@ export const migrations = {
       input: AddonRequest,
       output: AddonResponse
     ) {
-      let addon = <Addon>output;
+      const addon = <Addon>ctx.validator.response(output);
       if ((<any>addon).type !== "server") {
         if ((<any>addon).requestArgs) {
           throw new Error(
             `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
           );
         }
-        addon = ctx.validator.response(addon);
-        (<any>addon).sdkVersion = sdkVersion;
-        if (
-          addon.triggers &&
-          (!ctx.user?.app?.version ||
-            !ctx.user?.app?.name ||
-            (ctx.user.app.name === "watched" &&
-              semver.lt("1.1.3", ctx.user.app.version)) ||
-            (ctx.user.app.name === "rokkr" &&
-              semver.lt("1.1.3", ctx.user.app.version)))
-        ) {
+
+        if (addon.triggers && isPreVersion(ctx, "1.1.3")) {
           (<any>addon).requestArgs = addon.triggers;
         }
-        if (
-          addon.pages?.length &&
-          (!ctx.user?.app?.version || semver.lt("1.8.0", ctx.user.app.version))
-        ) {
+
+        if (addon.pages?.length && isPreVersion(ctx, "1.8.0")) {
           if (!addon.pages[0]?.dashboards) {
             throw new Error(
               `Legacy app version ${ctx.user?.app?.version} requires predefined dashboards on first page`
@@ -62,9 +54,10 @@ export const migrations = {
           }
           (<any>addon).dashboards = addon.pages[0].dashboards;
         }
-        output = addon;
+
+        (<any>addon).sdkVersion = sdkVersion;
       }
-      return output;
+      return addon;
     },
   },
   catalog: {
@@ -73,6 +66,7 @@ export const migrations = {
         console.warn("Upgrading catalog request from page to cursor system");
         ctx.data.update = 1;
         (<any>input).cursor = input.page === 1 ? null : input.page;
+        delete input.page;
       }
       return ctx.validator.request(input);
     },
@@ -81,17 +75,19 @@ export const migrations = {
       input: CatalogRequest,
       output: CatalogResponse
     ) {
+      output = ctx.validator.response(output);
       if (ctx.data.update === 1) {
         const o = <CatalogResponse>output;
         (<any>o).hasMore = o.nextCursor !== null;
       }
-      return ctx.validator.response(output);
+      return output;
     },
   },
   item: {
     request(ctx: MigrationContext, input: ItemRequest) {
       if (input.nameTranslations === undefined) {
         (<any>input).nameTranslations = input.translatedNames ?? {};
+        delete input.translatedNames;
       }
       return ctx.validator.request(input);
     },
@@ -100,6 +96,7 @@ export const migrations = {
     request(ctx: MigrationContext, input: SourceRequest) {
       if (input.nameTranslations === undefined) {
         (<any>input).nameTranslations = input.translatedNames ?? {};
+        delete input.translatedNames;
       }
       return ctx.validator.request(input);
     },
@@ -108,6 +105,7 @@ export const migrations = {
     request(ctx: MigrationContext, input: SubtitleRequest) {
       if (input.nameTranslations === undefined) {
         (<any>input).nameTranslations = input.translatedNames ?? {};
+        delete input.translatedNames;
       }
       return ctx.validator.request(input);
     },
