@@ -39,6 +39,7 @@ definitions:
             type: string
             description: Page ID, see `Addon.pages`.
   PageResponse:
+    type: array
     items:
       $ref: "catalogs.yaml#/definitions/DashboardItem"
   CatalogRequest:
