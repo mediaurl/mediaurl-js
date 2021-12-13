@@ -158,6 +158,27 @@ definitions:
         description: Have to be `true` if this catalog provides adult content.
         type: boolean
         default: false
+  Page:
+    type: object
+    description: |
+      A page which contains dashboards.
+      If the property `dashboards` is not set, a `page` request to the addon
+      will be made.
+    additionalProperties: false
+    properties:
+      id:
+        type: string
+      name:
+        oneOf:
+          - $ref: "general.yaml#/definitions/TranslatedText"
+      dashboards:
+        description: |
+          Actions: `catalog`
+          Predefined dashboards. This dashboards get updated when the addon is
+          updated. The dashboard configuration is preserved.
+        type: array
+        items:
+          $ref: "#/definitions/DashboardItem"
   BaseDirectoryItem:
     type: object
     properties:

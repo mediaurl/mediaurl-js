@@ -101,26 +101,7 @@ definitions:
           Pages which contains a collection of dashboards.
         type: array
         items:
-          type: object
-          description: |
-            If the property `dashboards` is not set, a `page` request to the addon
-            will be made.
-          additionalProperties: false
-          required: [dashboards]
-          properties:
-            id:
-              type: string
-            name:
-              oneOf:
-                - $ref: "general.yaml#/definitions/TranslatedText"
-            dashboards:
-              description: |
-                Actions: `catalog`
-                Predefined dashboards. This dashboards get updated when the addon is
-                updated. The dashboard configuration is preserved.
-              type: array
-              items:
-                $ref: "catalogs.yaml#/definitions/DashboardItem"
+          $ref: "catalogs.yaml#/definitions/Page"
       triggers:
         description: |
           Actions: `item`, `source`, `subtitle`
@@ -160,7 +141,8 @@ definitions:
           Captcha types this addon can handle.
         type: array
         items:
-          $ref: "tasks.yaml#/definitions/CaptchaTypes"
+          oneOf:
+            - $ref: "tasks.yaml#/definitions/CaptchaTypes"
       requirements:
         description: |
           List of other addons which should be installed. The values can be an
