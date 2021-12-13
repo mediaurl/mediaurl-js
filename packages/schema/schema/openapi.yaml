@@ -35,6 +35,29 @@ paths:
                   - $ref: "api.yaml#/definitions/AddonResponse"
         default:
           $ref: "#/components/responses/DefaultError"
+  /mediaurl-page.json:
+    post:
+      summary: Calls the page action of an addon.
+      parameters:
+        - $ref: "#/components/parameters/Signature"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "api.yaml#/definitions/PageRequest"
+                - $ref: "tasks.yaml#/definitions/TaskResponse"
+      responses:
+        200:
+          description: Successful call of action `page`.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "api.yaml#/definitions/PageResponse"
+                  - $ref: "tasks.yaml#/definitions/TaskRequest"
+        default:
+          $ref: "#/components/responses/DefaultError"
   /mediaurl-catalog.json:
     post:
       summary: Calls the catalog action of an addon.

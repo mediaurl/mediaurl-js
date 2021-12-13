@@ -29,6 +29,18 @@ definitions:
     oneOf:
       - $ref: "addons.yaml#/definitions/Server"
       - $ref: "addons.yaml#/definitions/Addon"
+  PageRequest:
+    description: Get detailed infos about an addon.
+    allOf:
+      - $ref: "#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Page ID, see `Addon.pages`.
+  PageResponse:
+    items:
+      $ref: "catalogs.yaml#/definitions/DashboardItem"
   CatalogRequest:
     description: Request parameters for a catalog call.
     allOf:
@@ -38,6 +50,7 @@ definitions:
           catalogId:
             description: |
               ID of the catalog.
+            type: string
             oneOf:
               - $ref: "general.yaml#/definitions/GenericId"
             default: ""

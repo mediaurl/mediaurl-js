@@ -3,6 +3,7 @@ definitions:
   AddonResourceActions:
     type: string
     enum:
+      - page
       - catalog
       - item
       - source
@@ -93,14 +94,32 @@ definitions:
         type: array
         items:
           $ref: "catalogs.yaml#/definitions/Catalog"
-      dashboards:
+      pages:
         description: |
-          Actions: `catalog`
-          Predefined dashboards. This dashboards get updated when the addon is
-          updated. The dashboard configuration is preserved.
+          Actions: `page`
+          Pages which contains a collection of dashboards.
         type: array
         items:
-          $ref: "catalogs.yaml#/definitions/DashboardItem"
+          type: object
+          description: |
+            If the property `dashboards` is not set, a `page` request to the addon
+            will be made.
+          additionalProperties: false
+          required: [dashboards]
+          properties:
+            id:
+              type: string
+            name:
+              oneOf:
+                - $ref: "general.yaml#/definitions/TranslatedText"
+            dashboards:
+              description: |
+                Actions: `catalog`
+                Predefined dashboards. This dashboards get updated when the addon is
+                updated. The dashboard configuration is preserved.
+              type: array
+              items:
+                $ref: "catalogs.yaml#/definitions/DashboardItem"
       triggers:
         description: |
           Actions: `item`, `source`, `subtitle`

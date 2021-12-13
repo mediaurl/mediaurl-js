@@ -29,16 +29,29 @@ export const validateAddonProps = (input: Addon) => {
         ids.add(id);
       }
     }
-    if (addon.dashboards) {
+    if (addon.pages) {
       const ids = new Set<GenericId>([]);
-      for (const e of addon.dashboards) {
+      for (const e of addon.pages) {
         const id = e.id ?? "";
         if (ids.has(id)) {
           throw new Error(
-            `Dashboard ID's must be unique, ID "${e.id}" already exists`
+            `Page ID's must be unique, ID "${e.id}" already exists`
           );
         }
         ids.add(id);
+        if (e.dashboards) {
+          const dashboardIds = new Set<GenericId>([]);
+          const ids = new Set<GenericId>([]);
+          for (const d of e.dashboards) {
+            const id = d.id ?? "";
+            if (dashboardIds.has(id)) {
+              throw new Error(
+                `Dashboard ID's must be unique, ID "${d.id}" already exists`
+              );
+            }
+            ids.add(id);
+          }
+        }
       }
     }
     return addon;
