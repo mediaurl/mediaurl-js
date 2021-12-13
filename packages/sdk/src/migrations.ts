@@ -52,10 +52,15 @@ export const migrations = {
           addon.requestArgs = addon.triggers;
         }
         if (
-          addon.pages &&
+          addon.pages?.length &&
           (!ctx.user?.app?.version || semver.lt("1.8.0", ctx.user.app.version))
         ) {
-          addon.dashboards = addon.pages[0]?.dashboards || [];
+          if (!addon.pages[0]?.dashboards) {
+            throw new Error(
+              `Legacy app version ${ctx.user?.app?.version} requires predefined dashboards on first page`
+            );
+          }
+          addon.dashboards = addon.pages[0].dashboards;
         }
         output = addon;
       }
