@@ -208,6 +208,23 @@ const createAddonHandler = (
       sendResponse(403, { error: error.message || error });
       return;
     }
+
+    if (testMode) {
+      user = {
+        time: Date.now(),
+        validUntil: Date.now() + 60 * 1000,
+        user: "test",
+        status: "guest",
+        verified: true,
+        ips: [],
+        app: {
+          name: "test",
+          version: "1.8.0",
+          platform: "test",
+          ok: true,
+        },
+      };
+    }
   }
 
   // Migration and input validation

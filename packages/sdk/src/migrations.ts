@@ -32,14 +32,14 @@ export const migrations = {
       output: AddonResponse
     ) {
       let addon = <Addon>output;
-      if (addon.type !== "server") {
-        if (addon.requestArgs) {
+      if ((<any>addon).type !== "server") {
+        if ((<any>addon).requestArgs) {
           throw new Error(
             `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
           );
         }
-        addon.sdkVersion = sdkVersion;
         addon = ctx.validator.response(addon);
+        (<any>addon).sdkVersion = sdkVersion;
         if (
           addon.triggers &&
           (!ctx.user?.app?.version ||
@@ -49,7 +49,7 @@ export const migrations = {
             (ctx.user.app.name === "rokkr" &&
               semver.lt("1.1.3", ctx.user.app.version)))
         ) {
-          addon.requestArgs = addon.triggers;
+          (<any>addon).requestArgs = addon.triggers;
         }
         if (
           addon.pages?.length &&
@@ -60,7 +60,7 @@ export const migrations = {
               `Legacy app version ${ctx.user?.app?.version} requires predefined dashboards on first page`
             );
           }
-          addon.dashboards = addon.pages[0].dashboards;
+          (<any>addon).dashboards = addon.pages[0].dashboards;
         }
         output = addon;
       }
@@ -83,7 +83,7 @@ export const migrations = {
     ) {
       if (ctx.data.update === 1) {
         const o = <CatalogResponse>output;
-        o.hasMore = o.nextCursor !== null;
+        (<any>o).hasMore = o.nextCursor !== null;
       }
       return ctx.validator.response(output);
     },

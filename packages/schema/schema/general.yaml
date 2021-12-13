@@ -66,6 +66,7 @@ definitions:
       If the error value equals to the string `empty`, the response for
       the functions `item`, `source` and `subtitle` is treated as empty.
     type: object
+    additionalProperties: false
     properties:
       error:
         type: string

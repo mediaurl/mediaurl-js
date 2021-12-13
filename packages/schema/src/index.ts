@@ -67,6 +67,10 @@ function init(schemas: any) {
         request: createValidator(schemas, "in", "AddonRequest"),
         response: createValidator(schemas, "out", "AddonResponse"),
       },
+      page: {
+        request: createValidator(schemas, "in", "PageRequest"),
+        response: createValidator(schemas, "out", "PageResponse"),
+      },
       catalog: {
         request: createValidator(schemas, "in", "CatalogRequest"),
         response: createValidator(schemas, "out", "CatalogResponse"),

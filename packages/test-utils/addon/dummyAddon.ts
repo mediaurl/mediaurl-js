@@ -12,6 +12,15 @@ import {
   TEST_SUBTITLES,
 } from "./testData";
 
+const dashboards = [
+  {}, // Root catalog
+  {
+    id: "by-year",
+    name: "By year",
+    args: { sort: "year" },
+  },
+];
+
 export const dummyAddon = createAddon({
   id: "dummy-test",
   name: "Typescript Test Addon",
@@ -28,14 +37,18 @@ export const dummyAddon = createAddon({
       },
     },
   ],
-  dashboards: [
-    {}, // Root catalog
+  pages: [
     {
-      id: "by-year",
-      name: "By year",
-      args: { sort: "year" },
+      dashboards,
     },
   ],
+});
+
+dummyAddon.registerActionHandler("page", async (input, ctx) => {
+  if (input.id ?? "" !== "") {
+    throw new Error("Unknown page");
+  }
+  return dashboards;
 });
 
 dummyAddon.registerActionHandler("catalog", async (input, ctx) => {

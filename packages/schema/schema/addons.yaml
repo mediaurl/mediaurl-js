@@ -17,6 +17,7 @@ definitions:
       - $ref: "#/definitions/AddonResourceActions"
   Addon:
     type: object
+    additionalProperties: false
     required: [id, name]
     properties:
       id:

@@ -11,6 +11,8 @@ import {
   IptvResponse,
   ItemRequest,
   ItemResponse,
+  PageRequest,
+  PageResponse,
   ResolveRequest,
   ResolveResponse,
   SelftestRequest,
@@ -185,7 +187,7 @@ export interface ActionHandlerContext {
     /**
      * Indicator if the user is verified (deprecated)
      */
-    verified: boolean;
+    verified?: boolean;
 
     /**
      * Allowed client IP's
@@ -278,6 +280,7 @@ type ActionHandler<InputType = any, OutputType = any> = (
 export type ActionHandlers = {
   selftest: ActionHandler<SelftestRequest, SelftestResponse>;
   addon: ActionHandler<AddonRequest, AddonResponse>;
+  page: ActionHandler<PageRequest, PageResponse>;
   catalog: ActionHandler<CatalogRequest, CatalogResponse>;
   item: ActionHandler<ItemRequest, ItemResponse>;
   source: ActionHandler<SourceRequest, SourceResponse>;

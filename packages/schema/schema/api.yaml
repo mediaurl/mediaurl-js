@@ -90,6 +90,7 @@ definitions:
         required: [id, adult, search, sort, filter, cursor]
   CatalogResponse:
     type: object
+    additionalProperties: false
     properties:
       catalogId:
         description: Overwrite the `catalogId` of a catalog.
@@ -245,6 +246,7 @@ definitions:
         required: [adult]
   IptvResponse:
     type: object
+    additionalProperties: false
     properties:
       items:
         description: Array of IPTV items.
@@ -254,6 +256,7 @@ definitions:
       defaults:
         description: Default filter values.
         type: object
+        additionalProperties: false
         properties:
           country:
             type: string

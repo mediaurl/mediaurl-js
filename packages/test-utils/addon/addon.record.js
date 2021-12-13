@@ -18,7 +18,7 @@ addRecord({
     region: "CH",
   },
   output: {
-    actions: ["catalog", "item", "source", "subtitle", "resolve"],
+    actions: ["page", "catalog", "item", "source", "subtitle", "resolve"],
     id: "dummy-test",
     name: "Typescript Test Addon",
     version: "1.0.0",
@@ -42,14 +42,18 @@ addRecord({
         },
       },
     ],
-    dashboards: [
-      {},
+    pages: [
       {
-        id: "by-year",
-        name: "By year",
-        args: {
-          sort: "year",
-        },
+        dashboards: [
+          {},
+          {
+            id: "by-year",
+            name: "By year",
+            args: {
+              sort: "year",
+            },
+          },
+        ],
       },
     ],
     urlPatterns: [

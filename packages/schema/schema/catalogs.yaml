@@ -96,6 +96,7 @@ definitions:
     description: |
       Request parameters for a catalog call. This is nearly the same as `CatalogRequest`.
     type: object
+    additionalProperties: false
     properties:
       adult:
         description: Return adult items.
@@ -126,6 +127,7 @@ definitions:
     default: {}
   Catalog:
     type: object
+    additionalProperties: false
     properties:
       id:
         description: ID of catalog.

@@ -316,6 +316,7 @@ definitions:
         type: array
         items:
           type: object
+          additionalProperties: false
           properties:
             start:
               description: Start timestamp in UTC seconds.

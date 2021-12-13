@@ -21,7 +21,6 @@ const requestEnd = (done: (err?: Error) => void, log = false) => (
 };
 
 const defaults = {
-  sig: "mock",
   language: "en",
   region: "UK",
 };
@@ -46,6 +45,14 @@ test("action addon", async (done) => {
     .post(`/${dummyAddon.getId()}/mediaurl.json`)
     .send(<AddonRequest>{ ...defaults })
     .expect(200, { ...dummyAddon.getProps(), sdkVersion })
+    .end(requestEnd(done));
+});
+
+test("action page", async (done) => {
+  app
+    .post(`/${dummyAddon.getId()}/mediaurl-page.json`)
+    .send(<AddonRequest>{ ...defaults, id: "" })
+    .expect(200, dummyAddon.getProps().pages?.[0].dashboards)
     .end(requestEnd(done));
 });
 

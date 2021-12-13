@@ -3,6 +3,7 @@ definitions:
   Subtitle:
     description: Subtitles for sources.
     type: object
+    additionalProperties: false
     properties:
       id:
         description:
@@ -32,6 +33,7 @@ definitions:
       Some links need pre-processing before they can be played. For that,
       please see the `resolve` function.
     type: object
+    additionalProperties: false
     required: [type, url]
     properties:
       type:
@@ -86,6 +88,7 @@ definitions:
         type: array
         items:
           type: object
+          additionalProperties: false
           properties:
             type:
               type: string
@@ -109,6 +112,7 @@ definitions:
   ResolvedUrl:
     description: A response of `source` or `subtitle` functions.
     type: object
+    additionalProperties: false
     properties:
       name:
         description: Name of this resolved URL. Will be displayed in player.

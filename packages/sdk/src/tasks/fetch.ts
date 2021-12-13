@@ -39,24 +39,31 @@ export const createTaskFetch = (
     return await fetch(req);
   }
 
+  const rawHeaders = req.headers.raw();
+  const headers: Record<string, string> = {};
+  for (const k of Object.keys(rawHeaders)) {
+    headers[k] = rawHeaders[k]?.[0] ?? <string>(<any>rawHeaders[k]);
+  }
+  if (req.referrer) {
+    headers.referer = req.referrer;
+  }
+
   const task: TaskFetchRequest = {
     type: "fetch",
     url: req.url,
     params: {
       method: <any>req.method,
-      headers: {
-        Referer: req.referrer ? req.referrer : undefined,
-        ...req.headers.raw(),
-      },
+      headers,
       body: req.body ? req.body.toString() : undefined,
       redirect: req.redirect,
     },
   };
+
   const response = <TaskFetchResponse>(
     await sendTask(testMode, responder, cache, task, timeout)
   );
 
-  if (response.error) throw new Error((<any>response).error);
+  if ((<any>response).error) throw new Error((<any>response).error);
 
   const res: ResponseInit = {
     headers: response.headers,
