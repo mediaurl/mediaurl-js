@@ -6,6 +6,7 @@
 - Created `page` action
 - Removed `GenericID`, most ID's are of type `string` now
 - Made typing of some objects more strict
+- Various other bugfixes and improvments
 
 ## v2.0.0
 
