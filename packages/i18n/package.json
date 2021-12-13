@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/i18n",
   "description": "MediaURL tools for translations",
-  "version": "2.1.0-alpha.2",
+  "version": "2.1.0-alpha.3",
   "main": "dist",
   "scripts": {
     "test": "jest",
@@ -9,7 +9,7 @@
     "prepublishOnly": "rm -rf dist && npm run build"
   },
   "dependencies": {
-    "@mediaurl/schema": "^2.1.0-alpha.2",
+    "@mediaurl/schema": "^2.1.0-alpha.3",
     "i18next": "^20.2.1",
     "i18next-fs-backend": "^1.1.1",
     "i18next-locize-backend": "^4.2.0"
