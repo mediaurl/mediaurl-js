@@ -22,7 +22,7 @@ definitions:
     type: string
     enum: [ok]
   AddonRequest:
-    description: Get detailed infos about an addon.
+    description: Get the addon manifest.
     oneOf:
       - $ref: "#/definitions/DefaultAddonRequest"
   AddonResponse:
