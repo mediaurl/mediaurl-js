@@ -9,7 +9,6 @@ definitions:
       - subtitle
       - resolve
       - captcha
-      - iptv # legacy
   AddonActions:
     oneOf:
       - type: string

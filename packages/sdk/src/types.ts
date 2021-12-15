@@ -7,8 +7,6 @@ import {
   CaptchaResponse,
   CatalogRequest,
   CatalogResponse,
-  IptvRequest,
-  IptvResponse,
   ItemRequest,
   ItemResponse,
   ResolveRequest,
@@ -284,7 +282,6 @@ export type ActionHandlers = {
   subtitle: ActionHandler<SubtitleRequest, SubtitleResponse>;
   resolve: ActionHandler<ResolveRequest, ResolveResponse>;
   captcha: ActionHandler<CaptchaRequest, CaptchaResponse>;
-  iptv: ActionHandler<IptvRequest, IptvResponse>;
 };
 
 /**

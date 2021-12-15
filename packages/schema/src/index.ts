@@ -91,10 +91,6 @@ function init(schemas: any) {
         request: createValidator(schemas, "in", "CaptchaRequest"),
         response: createValidator(schemas, "out", "CaptchaResponse"),
       },
-      iptv: {
-        request: createValidator(schemas, "in", "IptvRequest"),
-        response: createValidator(schemas, "out", "IptvResponse"),
-      },
     },
   };
 
