@@ -4,7 +4,6 @@
 
 - Moved dashboard system from `addon.dashboards` to `addon.pages`
 - Removed `GenericID`, most ID's are of type `string` now
-- Made typing of some objects more strict
 - Various other bugfixes and improvments
 - Removed legacy `iptv` action
 
