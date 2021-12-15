@@ -11,8 +11,6 @@ import {
   IptvResponse,
   ItemRequest,
   ItemResponse,
-  PageRequest,
-  PageResponse,
   ResolveRequest,
   ResolveResponse,
   SelftestRequest,
@@ -280,7 +278,6 @@ type ActionHandler<InputType = any, OutputType = any> = (
 export type ActionHandlers = {
   selftest: ActionHandler<SelftestRequest, SelftestResponse>;
   addon: ActionHandler<AddonRequest, AddonResponse>;
-  page: ActionHandler<PageRequest, PageResponse>;
   catalog: ActionHandler<CatalogRequest, CatalogResponse>;
   item: ActionHandler<ItemRequest, ItemResponse>;
   source: ActionHandler<SourceRequest, SourceResponse>;

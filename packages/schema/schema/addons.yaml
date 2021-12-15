@@ -3,13 +3,13 @@ definitions:
   AddonResourceActions:
     type: string
     enum:
-      - page
       - catalog
       - item
       - source
       - subtitle
       - resolve
       - captcha
+      - iptv # legacy
   AddonActions:
     oneOf:
       - type: string
@@ -97,7 +97,7 @@ definitions:
           $ref: "catalogs.yaml#/definitions/Catalog"
       pages:
         description: |
-          Actions: `page`
+          Actions: `catalog`
           Pages which contains a collection of dashboards.
         type: array
         items:

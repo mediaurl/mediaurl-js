@@ -3,7 +3,6 @@
 ## v2.1.0
 
 - Moved dashboard system from `addon.dashboards` to `addon.pages`
-- Created `page` action
 - Removed `GenericID`, most ID's are of type `string` now
 - Made typing of some objects more strict
 - Various other bugfixes and improvments

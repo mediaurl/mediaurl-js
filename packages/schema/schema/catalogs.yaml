@@ -173,12 +173,31 @@ definitions:
           - $ref: "general.yaml#/definitions/TranslatedText"
       dashboards:
         description: |
-          Actions: `catalog`
           Predefined dashboards. This dashboards get updated when the addon is
-          updated. The dashboard configuration is preserved.
+          updated.
         type: array
         items:
-          $ref: "#/definitions/DashboardItem"
+          oneOf:
+            - $ref: "#/definitions/DashboardItem"
+            - type: object
+              description: |
+                Copy all dashboards from another page which can be on defined
+                in another addon.
+              additionalProperties: false
+              required: [type]
+              properties:
+                type:
+                  type: string
+                  enum: [copyItems]
+                addonId:
+                  description: |
+                    Addon ID from where to import dashboard from. If not set,
+                    the current addon is used.
+                  type: string
+                pageId:
+                  description: |
+                    Page ID to import.
+                  type: string
   BaseDirectoryItem:
     type: object
     properties:
@@ -214,6 +233,11 @@ definitions:
       - $ref: "#/definitions/BaseDirectoryItem"
       - type: object
         properties:
+          pageId:
+            description: |
+              To use the dashboard of another addon, the `pageId` might
+              be required.
+            type: string
           id:
             description: |
               ID of dashboard.

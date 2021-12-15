@@ -35,15 +35,16 @@ export const migrations = {
       output: AddonResponse
     ) {
       const addon = <Addon>ctx.validator.response(output);
-      if ((<any>addon).type !== "server") {
-        if ((<any>addon).requestArgs) {
+      const any = <any>addon;
+      if (any.type !== "server") {
+        if (any.requestArgs) {
           throw new Error(
             `DEPRECATION: The addon property "requestArgs" was renamed to "triggers"`
           );
         }
 
         if (addon.triggers && isPreVersion(ctx, "1.1.3")) {
-          (<any>addon).requestArgs = addon.triggers;
+          any.requestArgs = addon.triggers;
         }
 
         if (addon.pages?.length && isPreVersion(ctx, "1.8.0")) {
@@ -52,10 +53,10 @@ export const migrations = {
               `Legacy app version ${ctx.user?.app?.version} requires predefined dashboards on first page`
             );
           }
-          (<any>addon).dashboards = addon.pages[0].dashboards;
+          any.dashboards = addon.pages[0].dashboards;
         }
 
-        (<any>addon).sdkVersion = sdkVersion;
+        any.sdkVersion = sdkVersion;
       }
       return addon;
     },

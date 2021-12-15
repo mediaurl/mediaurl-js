@@ -5,7 +5,6 @@ import { ActionHandlers, ResolverHandlerFn } from "./types";
 import { validateAddonProps } from "./validators";
 
 const resourceActions: AddonResourceActions[] = [
-  "page",
   "catalog",
   "item",
   "source",

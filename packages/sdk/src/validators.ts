@@ -1,4 +1,9 @@
-import { Addon, AddonActions, getServerValidators } from "@mediaurl/schema";
+import {
+  Addon,
+  AddonActions,
+  DashboardItem,
+  getServerValidators,
+} from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -36,7 +41,9 @@ export const validateAddonProps = (input: Addon) => {
         pageIds.add(pageId);
         if (page.dashboards) {
           const dashboardIds = new Set<string>([]);
-          for (const dashboard of page.dashboards) {
+          for (const item of page.dashboards) {
+            if (item.type === "copyItems") continue;
+            const dashboard = <DashboardItem>item;
             const id = dashboard.id ?? "";
             if (dashboardIds.has(id)) {
               throw new Error(
