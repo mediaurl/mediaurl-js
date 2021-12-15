@@ -127,7 +127,6 @@ definitions:
     default: {}
   Catalog:
     type: object
-    additionalProperties: false
     properties:
       id:
         description: ID of catalog.
