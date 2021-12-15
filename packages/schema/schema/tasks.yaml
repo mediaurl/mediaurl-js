@@ -7,7 +7,6 @@ definitions:
   # fetch
   TaskFetchRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -16,7 +15,6 @@ definitions:
         $ref: "general.yaml#/definitions/Url"
       params:
         type: object
-        additionalProperties: false
         properties:
           method:
             type: string
@@ -44,7 +42,6 @@ definitions:
     required: [type, url]
   TaskFetchResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -66,7 +63,6 @@ definitions:
   # recaptcha
   TaskRecaptchaRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -90,7 +86,6 @@ definitions:
     required: [type, url, siteKey]
   TaskRecaptchaResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -101,7 +96,6 @@ definitions:
   # Toast
   TaskToastRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -112,7 +106,6 @@ definitions:
     required: [type, text]
   TaskToastResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -121,7 +114,6 @@ definitions:
   # Notification
   TaskNotificationRequest:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -153,7 +145,6 @@ definitions:
     required: [type]
   TaskNotificationResponse:
     type: object
-    additionalProperties: false
     properties:
       type:
         type: string
@@ -162,7 +153,6 @@ definitions:
   # Handlers
   TaskRequest:
     type: object
-    additionalProperties: false
     properties:
       kind:
         type: string
@@ -178,7 +168,6 @@ definitions:
     required: [kind, id, data]
   TaskResponse:
     type: object
-    additionalProperties: false
     properties:
       kind:
         type: string

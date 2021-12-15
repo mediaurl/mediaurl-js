@@ -38,6 +38,7 @@ definitions:
       - type: string
   Regions:
     type: object
+    additionalProperties: false
     properties:
       allowed:
         description: |
@@ -55,7 +56,6 @@ definitions:
         items:
           $ref: "general.yaml#/definitions/Country"
         default: []
-    additionalProperties: false
   Language:
     description: Language in ISO-639-1 format.
     type: string

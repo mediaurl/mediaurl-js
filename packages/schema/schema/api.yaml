@@ -78,7 +78,6 @@ definitions:
         required: [id, adult, search, sort, filter, cursor]
   CatalogResponse:
     type: object
-    additionalProperties: false
     properties:
       catalogId:
         description: Overwrite the `catalogId` of a catalog.
