@@ -106,11 +106,13 @@ export const replayRecordData = async (
       resolve = r;
     });
 
+    const clientVersion = require("../../package.json").version;
+
     const addonHandler = engine.createAddonHandler(addon);
     addonHandler({
       action: data.action,
       input: {
-        clientVersion: "1.0.0",
+        clientVersion,
         ...data.input,
       },
       sig: "",
