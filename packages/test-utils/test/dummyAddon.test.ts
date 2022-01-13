@@ -23,6 +23,7 @@ const requestEnd = (done: (err?: Error) => void, log = false) => (
 const defaults = {
   language: "en",
   region: "UK",
+  clientVersion: require("@mediaurl/sdk/package.json").version,
 };
 
 const itemDefaults: ItemRequest = {

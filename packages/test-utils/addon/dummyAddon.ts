@@ -31,8 +31,9 @@ export const dummyAddon = createAddon({
   pages: [
     {
       dashboards: [
-        {}, // Root catalog
+        { type: "directory" }, // Root catalog
         {
+          type: "directory",
           id: "by-year",
           name: "By year",
           args: { sort: "year" },

@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.2.0
+
+- Added `directory.initialData` to send preloaded data
+- Improved `item.similarItems` system
+- Added `item.topItems`
+- Made `type: directory` a requirement for dashboards
+
 ## v2.1.0
 
 - Moved dashboard system from `addon.dashboards` to `addon.pages`

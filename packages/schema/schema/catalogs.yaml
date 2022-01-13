@@ -5,12 +5,18 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      imageShape:
+      shape:
         description: |
           Shape of the images.
           If not set, a value depening on the item type is used.
         type: string
-        enum: [regular, landscape, square]
+        enum: [portrait, landscape, square, round]
+      size:
+        description: |
+          Shape of the images.
+          If not set, a value depening on the item type is used.
+        type: string
+        enum: [small, normal, large]
       displayName:
         description: |
           Display the item name over the image.
@@ -133,7 +139,7 @@ definitions:
         type: string
         default: ""
       name:
-        description: Name of item.
+        description: Name of catalog.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
       # description:
@@ -199,7 +205,11 @@ definitions:
                   type: string
   BaseDirectoryItem:
     type: object
+    required: [type]
     properties:
+      type:
+        type: string
+        enum: [directory]
       catalogId:
         description: |
           Catalog this directory belongs to. It will use the `options` and `features`
@@ -215,73 +225,65 @@ definitions:
         description: Name of directory.
         oneOf:
           - $ref: "general.yaml#/definitions/TranslatedText"
-      description:
-        description: Description of directory.
-        oneOf:
-          - $ref: "general.yaml#/definitions/TranslatedText"
+      # description:
+      #   description: Description of directory.
+      #   oneOf:
+      #     - $ref: "general.yaml#/definitions/TranslatedText"
       options:
         $ref: "#/definitions/CatalogOptions"
       features:
         $ref: "#/definitions/CatalogFeatures"
       args:
         $ref: "#/definitions/CatalogArguments"
+      initialData:
+        description: |
+          Optionally define initial items.
+        type: object
+        required: [items, nextCursor]
+        properties:
+          items:
+            description: Array of items.
+            type: array
+            items:
+              $ref: "items.yaml#/definitions/MainItem"
+          nextCursor:
+            description: |
+              Used for pagination. This describes the position of the current catalog.
+              This value will be used on the next request on `CatalogRequest.cursor`.
+              If the end of the catalog is reached, set this to `null`.
+            type: ["null", string, number]
+            nullable: true
+            default: null
   DashboardItem:
     description: |
-      Directories which will be displayed on the dashboard in the app.
-    allOf:
-      - $ref: "#/definitions/BaseDirectoryItem"
-      - type: object
-        properties:
-          pageId:
-            description: |
-              To use the dashboard of another addon, the `pageId` might
-              be required.
-            type: string
-          id:
-            description: |
-              ID of dashboard.
-              To overwrite (or reconfigure) other dashboards, set
-              this to an already existing dashboard. The found object
-              then is merged with this one.
-            type: string
+      Directories and items which will be displayed on the home page in the app.
+    oneOf:
+      - allOf:
+          - $ref: "#/definitions/BaseDirectoryItem"
+          - type: object
+            properties:
+              pageId:
+                description: |
+                  To use the dashboard of another addon, the `pageId` might
+                  be required.
+                type: string
+              id:
+                description: |
+                  ID of dashboard.
+                  To overwrite (or reconfigure) other dashboards, set
+                  this to an already existing dashboard. The found object
+                  then is merged with this one.
+                type: string
+      - $ref: "items.yaml#/definitions/PlayableItem"
   DirectoryItem:
     description: A directory is a sub directory of a catalog.
     allOf:
       - $ref: "#/definitions/BaseDirectoryItem"
       - type: object
-        required: [type, id]
         properties:
-          type:
-            type: string
-            enum: [directory]
           id:
             description: ID of directory.
             type: string
           images:
-            $ref: "items.yaml#/definitions/ItemImages"
-  SimilarItem:
-    description: |
-      This is basically a `directory`.
-      List of similar items which will be displayed on the item screen. You can
-      either return a list of `items` to be displayed. When `items` is not set,
-      a `catalog` request will be made.
-    allOf:
-      - $ref: "#/definitions/BaseDirectoryItem"
-      - type: object
-        properties:
-          id:
-            description: Directory ID item.
-            type: string
-            default: ""
-          items:
-            description: |
-              Optionally define a list of items. No `catalog` request will be
-              made if this property is set.
-            type: array
-            items:
-              $ref: "#/definitions/MainItem"
-  DirectoryLikeItem:
-    anyOf:
-      - $ref: "#/definitions/DashboardItem"
-      - $ref: "#/definitions/DirectoryItem"
-      - $ref: "#/definitions/SimilarItem"
+            oneOf:
+              - $ref: "items.yaml#/definitions/ItemImages"

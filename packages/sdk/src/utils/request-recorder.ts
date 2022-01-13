@@ -109,7 +109,10 @@ export const replayRecordData = async (
     const addonHandler = engine.createAddonHandler(addon);
     addonHandler({
       action: data.action,
-      input: data.input,
+      input: {
+        clientVersion: "1.0.0",
+        ...data.input,
+      },
       sig: "",
       request: {
         ip: "127.0.0.1",

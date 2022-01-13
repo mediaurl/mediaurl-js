@@ -34,6 +34,7 @@ definitions:
     allOf:
       - $ref: "#/definitions/DefaultAddonRequest"
       - type: object
+        required: [id, adult, search, sort, filter, cursor]
         properties:
           catalogId:
             description: |
@@ -75,9 +76,9 @@ definitions:
             type: ["null", string, number]
             nullable: true
             default: null
-        required: [id, adult, search, sort, filter, cursor]
   CatalogResponse:
     type: object
+    required: [items, nextCursor]
     properties:
       catalogId:
         description: Overwrite the `catalogId` of a catalog.
@@ -102,7 +103,6 @@ definitions:
           If the end of the catalog is reached, set this to `null`.
         type: ["null", string, number]
         nullable: true
-    required: [items, nextCursor]
   ItemRequest:
     description: Request parameters for a item request.
     allOf:

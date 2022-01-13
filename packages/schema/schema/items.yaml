@@ -139,11 +139,16 @@ definitions:
         type: array
         items:
           $ref: "objects.yaml#/definitions/Source"
+      topItems:
+        type: array
+        items:
+          oneOf:
+            - $ref: "catalogs.yaml#/definitions/DirectoryItem"
       similarItems:
         type: array
         items:
           oneOf:
-            - $ref: "catalogs.yaml#/definitions/SimilarItem"
+            - $ref: "catalogs.yaml#/definitions/DirectoryItem"
     required: [ids]
   MovieItem:
     allOf:
@@ -252,11 +257,16 @@ definitions:
           The app will not try to find more subtitles via other addons.
           Defaults to `false`.
         type: boolean
+      topItems:
+        type: array
+        items:
+          oneOf:
+            - $ref: "catalogs.yaml#/definitions/DirectoryItem"
       similarItems:
         type: array
         items:
           oneOf:
-            - $ref: "catalogs.yaml#/definitions/SimilarItem"
+            - $ref: "catalogs.yaml#/definitions/DirectoryItem"
     required: [type, ids]
   UnknownItem:
     description: This item can be mutated to a `movie`, `series` or `channel` item.
@@ -344,7 +354,7 @@ definitions:
           required: [start, stop, name]
         default: []
     required: [type, ids, url]
-  VODItem:
+  VodItem:
     description: All items which could be played, excludes `directory` and `iptv`.
     anyOf:
       - $ref: "#/definitions/MovieItem"
@@ -354,7 +364,7 @@ definitions:
   PlayableItem:
     description: All items which could be played, excludes `directory`.
     anyOf:
-      - $ref: "#/definitions/VODItem"
+      - $ref: "#/definitions/VodItem"
       - $ref: "#/definitions/IptvItem"
   MainItem:
     description: All items, including `directory`.

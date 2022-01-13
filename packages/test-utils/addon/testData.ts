@@ -23,9 +23,13 @@ const itemBigBuckBunny = (fullData: boolean) =>
       ? {
           similarItems: [
             {
+              type: "directory",
               id: "test",
               name: "Big Buck Bunny static similar items",
-              items: [itemTest1(false), itemElephant(false)],
+              initialData: {
+                items: [itemTest1(false), itemElephant(false)],
+                nextCursor: null,
+              },
             },
           ],
         }
@@ -45,9 +49,13 @@ const itemElephant = (fullData: boolean) =>
       ? {
           similarItems: [
             {
+              type: "directory",
               id: "test",
               name: "Elephants Dream static similar items",
-              items: [itemTest1(false), itemBigBuckBunny(false)],
+              initialData: {
+                items: [itemTest1(false), itemBigBuckBunny(false)],
+                nextCursor: null,
+              },
             },
           ],
         }
@@ -67,14 +75,19 @@ const item4k = (fullData: boolean) =>
       ? {
           similarItems: [
             {
+              type: "directory",
               id: "test",
               name: "Dynamic similar items",
               args: {},
             },
             {
+              type: "directory",
               id: "test-2",
               name: "Static similar items",
-              items: [itemTest1(false), itemBigBuckBunny(false)],
+              initialData: {
+                items: [itemTest1(false), itemBigBuckBunny(false)],
+                nextCursor: null,
+              },
             },
           ],
         }

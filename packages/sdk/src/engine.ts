@@ -6,7 +6,7 @@ import {
 } from "@mediaurl/cache";
 import { cloneDeep } from "lodash";
 import { AddonClass } from "./addon";
-import { migrations } from "./migrations";
+import { MigrationContext, migrations } from "./migrations";
 import {
   createTaskFetch,
   createTaskNotification,
@@ -160,6 +160,11 @@ const createAddonHandler = (
   // Store input data for recording
   const originalInput = requestRecorder ? cloneDeep(input) : null;
 
+  // Migration of very old addons
+  if ((action as any) === "directory") {
+    action = "catalog";
+  }
+
   // Run event handlers
   if (options.middlewares.init) {
     for (const fn of options.middlewares.init) {
@@ -228,7 +233,8 @@ const createAddonHandler = (
   }
 
   // Migration and input validation
-  const migrationContext = {
+  const migrationContext: MigrationContext = {
+    clientVersion: input.clientVersion ?? null,
     addon,
     data: {},
     user,

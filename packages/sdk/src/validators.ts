@@ -1,9 +1,4 @@
-import {
-  Addon,
-  AddonActions,
-  DashboardItem,
-  getServerValidators,
-} from "@mediaurl/schema";
+import { Addon, AddonActions, getServerValidators } from "@mediaurl/schema";
 
 const handleError = (kind: string, error: Error) => {
   console.error(error.message);
@@ -42,15 +37,26 @@ export const validateAddonProps = (input: Addon) => {
         if (page.dashboards) {
           const dashboardIds = new Set<string>([]);
           for (const item of page.dashboards) {
-            if (item.type === "copyItems") continue;
-            const dashboard = <DashboardItem>item;
-            const id = dashboard.id ?? "";
-            if (dashboardIds.has(id)) {
-              throw new Error(
-                `Dashboard ID's must be unique, ID "${page.id}/${dashboard.id}" already exists`
-              );
+            switch (item.type) {
+              case "copyItems":
+                break;
+              case "channel":
+              case "iptv":
+              case "movie":
+              case "series":
+              case "unknown":
+                break;
+              case "directory": {
+                const id = item.id ?? "";
+                if (dashboardIds.has(id)) {
+                  throw new Error(
+                    `Dashboard ID's must be unique, ID "${page.id}/${id}" already exists`
+                  );
+                }
+                dashboardIds.add(id);
+                break;
+              }
             }
-            dashboardIds.add(id);
           }
         }
       }

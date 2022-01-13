@@ -45,8 +45,9 @@ addRecord({
     pages: [
       {
         dashboards: [
-          {},
+          { type: "directory" },
           {
+            type: "directory",
             id: "by-year",
             name: "By year",
             args: {
@@ -255,28 +256,32 @@ addRecord({
     year: 2013,
     similarItems: [
       {
+        type: "directory",
         id: "test",
         name: "Big Buck Bunny static similar items",
-        items: [
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "id1234",
+        initialData: {
+          items: [
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "id1234",
+              },
+              name: "Test Item 1",
+              description: "This item does not have any sources.",
+              year: 2011,
             },
-            name: "Test Item 1",
-            description: "This item does not have any sources.",
-            year: 2011,
-          },
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "elephant",
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "elephant",
+              },
+              name: "Elephants Dream",
+              description: "Dream of elephants?",
+              year: 2012,
             },
-            name: "Elephants Dream",
-            description: "Dream of elephants?",
-            year: 2012,
-          },
-        ],
+          ],
+          nextCursor: null,
+        },
       },
     ],
   },
@@ -405,27 +410,31 @@ addRecord({
     year: 2012,
     similarItems: [
       {
+        type: "directory",
         id: "test",
         name: "Elephants Dream static similar items",
-        items: [
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "id1234",
+        initialData: {
+          items: [
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "id1234",
+              },
+              name: "Test Item 1",
+              description: "This item does not have any sources.",
+              year: 2011,
             },
-            name: "Test Item 1",
-            description: "This item does not have any sources.",
-            year: 2011,
-          },
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "id1235",
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "id1235",
+              },
+              name: "Big Buck Bunny",
+              year: 2013,
             },
-            name: "Big Buck Bunny",
-            year: 2013,
-          },
-        ],
+          ],
+          nextCursor: null,
+        },
       },
     ],
   },
@@ -635,32 +644,37 @@ addRecord({
     year: 2012,
     similarItems: [
       {
+        type: "directory",
         id: "test",
         name: "Dynamic similar items",
         args: {},
       },
       {
+        type: "directory",
         id: "test-2",
         name: "Static similar items",
-        items: [
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "id1234",
+        initialData: {
+          items: [
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "id1234",
+              },
+              name: "Test Item 1",
+              description: "This item does not have any sources.",
+              year: 2011,
             },
-            name: "Test Item 1",
-            description: "This item does not have any sources.",
-            year: 2011,
-          },
-          {
-            type: "movie",
-            ids: {
-              "dummy-test": "id1235",
+            {
+              type: "movie",
+              ids: {
+                "dummy-test": "id1235",
+              },
+              name: "Big Buck Bunny",
+              year: 2013,
             },
-            name: "Big Buck Bunny",
-            year: 2013,
-          },
-        ],
+          ],
+          nextCursor: null,
+        },
       },
     ],
   },
