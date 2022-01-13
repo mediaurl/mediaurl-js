@@ -30,10 +30,11 @@ export type MigrationContext = {
 };
 
 const isPreVersion = (ctx: MigrationContext, version: string) =>
-  !ctx.user?.app?.version || semver.lt(version, ctx.user.app.version);
+  !ctx.clientVersion &&
+  (!ctx.user?.app?.version || semver.lt(ctx.user.app.version, version));
 
 const isPreClientVersion = (ctx: MigrationContext, version: string) => {
-  return !ctx.clientVersion || semver.lt(version, ctx.clientVersion);
+  return !ctx.clientVersion || semver.lt(ctx.clientVersion, version);
 };
 
 const downgradeDirectoryV2 = (directory: {
@@ -47,6 +48,10 @@ const downgradeDirectoryV2 = (directory: {
   }
   if (![undefined, "landscape", "square"].includes(directory.options?.shape)) {
     directory.options.imageShape = "regular";
+  }
+
+  if (directory.options?.size) {
+    delete directory.options.size;
   }
 
   if (directory.initialData) {
@@ -76,7 +81,6 @@ export const migrations = {
         }
 
         if (isPreClientVersion(ctx, "2.1.0")) {
-          console.warn('isPreClientVersion(ctx, "2.1.0")', ctx.clientVersion);
           addon.catalogs?.forEach(downgradeDirectoryV2);
           if (addon.pages?.length) {
             addon.pages.forEach((page) => {
@@ -95,7 +99,6 @@ export const migrations = {
         }
 
         if (addon.pages?.length && isPreVersion(ctx, "1.8.0")) {
-          console.warn('isPreVersion(ctx, "1.8.0")', ctx.user?.app.version);
           if (!addon.pages[0]?.dashboards) {
             throw new Error(
               `Legacy app version ${ctx.user?.app?.version} requires predefined dashboards on first page`

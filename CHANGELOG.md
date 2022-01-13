@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.1
+
+- Fixed a migration bug
+
 ## v2.2.0
 
 - Added `directory.initialData` to send preloaded data
