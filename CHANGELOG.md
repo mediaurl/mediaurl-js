@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.0
+
+- Implemented push notifications
+
 ## v2.2.1
 
 - Fixed a migration bug

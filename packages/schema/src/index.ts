@@ -91,6 +91,10 @@ function init(schemas: any) {
         request: createValidator(schemas, "in", "CaptchaRequest"),
         response: createValidator(schemas, "out", "CaptchaResponse"),
       },
+      "push-notification": {
+        request: createValidator(schemas, "in", "PushNotificationRequest"),
+        response: createValidator(schemas, "out", "PushNotificationResponse"),
+      },
     },
   };
 

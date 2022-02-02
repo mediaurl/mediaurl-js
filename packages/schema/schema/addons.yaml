@@ -9,6 +9,7 @@ definitions:
       - subtitle
       - resolve
       - captcha
+      - push-notification
   AddonActions:
     oneOf:
       - type: string

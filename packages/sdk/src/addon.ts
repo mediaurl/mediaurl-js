@@ -11,6 +11,7 @@ const resourceActions: AddonResourceActions[] = [
   "subtitle",
   "resolve",
   "captcha",
+  "push-notification",
 ];
 
 type Resolver = {

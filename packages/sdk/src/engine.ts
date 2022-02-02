@@ -207,6 +207,7 @@ const createAddonHandler = (
     const allowInvalidSignature =
       testMode ||
       action === "addon" ||
+      action === "push-notification" ||
       process.env.SKIP_AUTH === "1" ||
       process.env.NODE_ENV !== "production";
     if (!allowInvalidSignature) {

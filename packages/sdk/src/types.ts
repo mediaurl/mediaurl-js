@@ -9,6 +9,8 @@ import {
   CatalogResponse,
   ItemRequest,
   ItemResponse,
+  PushNotificationRequest,
+  PushNotificationResponse,
   ResolveRequest,
   ResolveResponse,
   SelftestRequest,
@@ -282,6 +284,10 @@ export type ActionHandlers = {
   subtitle: ActionHandler<SubtitleRequest, SubtitleResponse>;
   resolve: ActionHandler<ResolveRequest, ResolveResponse>;
   captcha: ActionHandler<CaptchaRequest, CaptchaResponse>;
+  "push-notification": ActionHandler<
+    PushNotificationRequest,
+    PushNotificationResponse
+  >;
 };
 
 /**

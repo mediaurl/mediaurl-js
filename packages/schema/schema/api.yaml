@@ -220,3 +220,20 @@ definitions:
     oneOf:
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
       - type: "null"
+  PushNotificationRequest:
+    oneOf:
+      - $ref: "#/definitions/DefaultAddonRequest"
+  PushNotificationResponse:
+    oneOf:
+      - type: object
+        required: [id, message]
+        properties:
+          id:
+            type: string
+          title:
+            type: string
+          message:
+            type: string
+          picture:
+            type: string
+      - type: "null"
