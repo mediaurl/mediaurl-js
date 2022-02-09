@@ -221,8 +221,18 @@ definitions:
       - $ref: "tasks.yaml#/definitions/TaskRecaptchaResponse"
       - type: "null"
   PushNotificationRequest:
-    oneOf:
+    allOf:
       - $ref: "#/definitions/DefaultAddonRequest"
+      - type: object
+        properties:
+          ignoreIds:
+            description: List of notification ID's which were already displayed.
+            type: array
+            items:
+              type: string
+          metadata:
+            description: Metadata about the app state, user infos and so on.
+            type: object
   PushNotificationResponse:
     oneOf:
       - type: object
