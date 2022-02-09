@@ -1,7 +1,7 @@
 {
   "name": "@mediaurl/cache",
   "description": "MediaURL Cache Handler",
-  "version": "2.3.0-alpha.0",
+  "version": "2.3.0",
   "main": "dist",
   "scripts": {
     "test": "jest",
