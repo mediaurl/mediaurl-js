@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.1
+
+- Fixed caching issue
+
 ## v2.3.0
 
 - Implemented push notifications

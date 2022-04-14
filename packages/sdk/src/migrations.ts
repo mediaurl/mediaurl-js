@@ -67,7 +67,7 @@ export const migrations = {
       input: AddonRequest,
       output: AddonResponse
     ) {
-      const addon = <Addon>ctx.validator.response(output);
+      const addon = <Addon>output;
       const any = <any>addon;
       if (any.type !== "server") {
         if (any.requestArgs) {
@@ -130,8 +130,6 @@ export const migrations = {
       input: CatalogRequest,
       output: CatalogResponse
     ) {
-      output = ctx.validator.response(output);
-
       if (ctx.data.update === 1) {
         const o = <CatalogResponse>output;
         (<any>o).hasMore = o.nextCursor !== null;
@@ -158,8 +156,6 @@ export const migrations = {
       return ctx.validator.request(input);
     },
     response(ctx: MigrationContext, input: ItemRequest, output: ItemResponse) {
-      output = ctx.validator.response(output);
-
       if (isPreClientVersion(ctx, "2.1.0")) {
         if (output?.similarItems) {
           (output.similarItems as DirectoryItem[]).forEach((directory) => {
@@ -172,7 +168,7 @@ export const migrations = {
           });
         }
       }
-      return ctx.validator.response(output);
+      return output;
     },
   },
   source: {

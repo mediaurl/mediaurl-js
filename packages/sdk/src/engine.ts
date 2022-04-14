@@ -301,12 +301,8 @@ const createAddonHandler = (
         break;
     }
 
-    // Apply migrations
-    if (migrations[action]?.response) {
-      output = migrations[action].response(migrationContext, input, output);
-    } else {
-      output = migrationContext.validator.response(output);
-    }
+    // Validate putput
+    output = migrationContext.validator.response(output);
 
     // Handle the requestCache
     if (inlineCache) await inlineCache.set(output);
@@ -330,6 +326,11 @@ const createAddonHandler = (
       output = { error: error.message || error };
       if (!error.noBacktraceLog) console.warn(error);
     }
+  }
+
+  // Apply migrations
+  if (migrations[action]?.response) {
+    output = migrations[action].response(migrationContext, input, output);
   }
 
   // Run event handlers
